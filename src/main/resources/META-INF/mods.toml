@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+issueTrackerURL="https://github.com/FTBTeam/FTB-GUI-Library/issues"
+
+[[mods]]
+modId="ftbguilibrary"
+version="${file.jarVersion}"
+displayName="FTB GUI Library"
+authors="LatvianModder"
+description='''
+FTB GUI Library add nothing.
+'''
+
+[[dependencies.ftbguilibrary]]
+    modId="forge"
+    mandatory=true
+    versionRange="[28,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.ftbguilibrary]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.14.4]"
+    ordering="NONE"
+    side="BOTH"

@@ -1,1 +1,1 @@
-# FTB-GUI-Library
+# FTB GUI Library
