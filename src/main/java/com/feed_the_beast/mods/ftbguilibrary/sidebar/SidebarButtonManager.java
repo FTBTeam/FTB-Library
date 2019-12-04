@@ -7,11 +7,11 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
@@ -75,7 +75,7 @@ public enum SidebarButtonManager implements ISelectiveResourceReloadListener
 
 		groups.clear();
 
-		JsonElement element = readJson(new File(Minecraft.getInstance().gameDir, "local/client/sidebar_buttons.json"));
+		JsonElement element = readJson(FMLPaths.CONFIGDIR.get().resolve("sidebar_buttons.json").toFile());
 		JsonObject sidebarButtonConfig;
 
 		if (element.isJsonObject())
@@ -230,7 +230,9 @@ public enum SidebarButtonManager implements ISelectiveResourceReloadListener
 			}
 		}
 
-		try (FileWriter writer = new FileWriter(new File(Minecraft.getInstance().gameDir, "local/client/sidebar_buttons.json")))
+		File file = FMLPaths.CONFIGDIR.get().resolve("sidebar_buttons.json").toFile();
+
+		try (FileWriter writer = new FileWriter(file))
 		{
 			Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 			JsonWriter jsonWriter = new JsonWriter(writer);

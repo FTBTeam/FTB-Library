@@ -2,11 +2,9 @@ package com.feed_the_beast.mods.ftbguilibrary.sidebar;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.CreativeScreen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
@@ -22,11 +20,11 @@ public class GuiButtonSidebarGroup extends AbstractButton
 {
 	public static Rectangle lastDrawnArea = new Rectangle();
 
-	private final DisplayEffectsScreen gui;
+	private final ContainerScreen gui;
 	public final List<GuiButtonSidebar> buttons;
 	private GuiButtonSidebar mouseOver;
 
-	public GuiButtonSidebarGroup(DisplayEffectsScreen g)
+	public GuiButtonSidebarGroup(ContainerScreen g)
 	{
 		super(0, 0, 0, 0, "");
 		gui = g;
@@ -40,7 +38,6 @@ public class GuiButtonSidebarGroup extends AbstractButton
 		mouseOver = null;
 		int rx, ry = 0;
 		boolean addedAny;
-		boolean top = /*FIXME: FTBLibClientConfig.action_buttons.top()*/ true || !gui.getMinecraft().player.getActivePotionEffects().isEmpty() || (gui instanceof InventoryScreen && ((InventoryScreen) gui).getRecipeGui().isVisible());
 
 		for (SidebarButtonGroup group : SidebarButtonManager.INSTANCE.groups)
 		{
@@ -63,31 +60,10 @@ public class GuiButtonSidebarGroup extends AbstractButton
 			}
 		}
 
-		int guiLeft = gui.getGuiLeft();
-		int guiTop = gui.getGuiTop();
-
-		if (top)
+		for (GuiButtonSidebar button : buttons)
 		{
-			for (GuiButtonSidebar button : buttons)
-			{
-				button.x = 1 + button.buttonX * 17;
-				button.y = 1 + button.buttonY * 17;
-			}
-		}
-		else
-		{
-			int offsetY = 8;
-
-			if (gui instanceof CreativeScreen)
-			{
-				offsetY = 6;
-			}
-
-			for (GuiButtonSidebar button : buttons)
-			{
-				button.x = guiLeft - 18 - button.buttonY * 17;
-				button.y = guiTop + offsetY + button.buttonX * 17;
-			}
+			button.x = 1 + button.buttonX * 17;
+			button.y = 1 + button.buttonY * 17;
 		}
 
 		x = Integer.MAX_VALUE;

@@ -5,10 +5,12 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.IconPresets;
 import com.feed_the_beast.mods.ftbguilibrary.icon.IconRenderer;
 import com.feed_the_beast.mods.ftbguilibrary.sidebar.GuiButtonSidebarGroup;
 import com.feed_the_beast.mods.ftbguilibrary.sidebar.SidebarButtonManager;
+import com.feed_the_beast.mods.ftbguilibrary.utils.ClientUtils;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -20,6 +22,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
  * @author LatvianModder
@@ -27,6 +30,7 @@ import java.lang.reflect.Field;
 public class FTBGUILibraryClient extends FTBGUILibraryCommon
 {
 	public static boolean shouldRenderIcons = false;
+	public static int showButtons = 1;
 
 	@Override
 	public void init()
@@ -35,10 +39,16 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, true, this::renderTick);
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, true, this::guiInit);
 		((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(SidebarButtonManager.INSTANCE);
+		MinecraftForge.EVENT_BUS.addListener(this::clientTick);
 	}
 
 	private void textureStitch(TextureStitchEvent.Pre event)
 	{
+		if (!event.getMap().getBasePath().equals("textures"))
+		{
+			return;
+		}
+
 		try
 		{
 			for (Field field : GuiIcons.class.getDeclaredFields())
@@ -59,7 +69,7 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 		}
 	}
 
-	public void renderTick(TickEvent.RenderTickEvent event)
+	private void renderTick(TickEvent.RenderTickEvent event)
 	{
 		if (event.phase == TickEvent.Phase.START)
 		{
@@ -75,7 +85,7 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 		IconRenderer.render();
 	}
 
-	public void guiInit(GuiScreenEvent.InitGuiEvent.Post event)
+	private void guiInit(GuiScreenEvent.InitGuiEvent.Post event)
 	{
 		//sidebarButtonScale = 0D;
 
@@ -85,8 +95,29 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 		}
 	}
 
+	private void clientTick(TickEvent.ClientTickEvent event)
+	{
+		if (event.phase == TickEvent.Phase.END)
+		{
+			if (!ClientUtils.RUN_LATER.isEmpty())
+			{
+				for (Runnable runnable : new ArrayList<>(ClientUtils.RUN_LATER))
+				{
+					runnable.run();
+				}
+
+				ClientUtils.RUN_LATER.clear();
+			}
+		}
+	}
+
 	public static boolean areButtonsVisible(@Nullable Screen gui)
 	{
-		return /*FIXME: FTBLibClientConfig.action_buttons != EnumSidebarButtonPlacement.DISABLED && */gui instanceof DisplayEffectsScreen && !SidebarButtonManager.INSTANCE.groups.isEmpty();
+		if (showButtons == 0 || showButtons == 2 && !(gui instanceof DisplayEffectsScreen))
+		{
+			return false;
+		}
+
+		return gui instanceof ContainerScreen && !SidebarButtonManager.INSTANCE.groups.isEmpty();
 	}
 }

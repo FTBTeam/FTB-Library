@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
+import com.feed_the_beast.mods.ftbguilibrary.utils.ClientUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -202,8 +203,7 @@ public class GuiHelper
 		}
 
 		RenderHelper.enableGUIStandardItemLighting();
-		//FIXME: OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-
+		ClientUtils.pushMaxBrightness();
 		GlStateManager.enableTexture();
 
 		try
@@ -228,6 +228,7 @@ public class GuiHelper
 			result = false;
 		}
 
+		ClientUtils.popBrightness();
 		GlStateManager.popMatrix();
 		renderItem.zLevel = 0F;
 		return result;

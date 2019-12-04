@@ -7,20 +7,20 @@ import javax.annotation.Nullable;
 
 public abstract class Button extends Widget
 {
-	protected String title = "";
-	protected Icon icon = Icon.EMPTY;
-
-	public Button(Panel panel)
-	{
-		super(panel);
-		setSize(16, 16);
-	}
+	protected String title;
+	protected Icon icon;
 
 	public Button(Panel panel, String t, Icon i)
 	{
-		this(panel);
+		super(panel);
+		setSize(16, 16);
 		icon = i;
 		title = t;
+	}
+
+	public Button(Panel panel)
+	{
+		this(panel, "", Icon.EMPTY);
 	}
 
 	@Override

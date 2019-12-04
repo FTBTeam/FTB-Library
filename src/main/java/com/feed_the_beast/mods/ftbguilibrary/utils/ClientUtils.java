@@ -2,9 +2,9 @@ package com.feed_the_beast.mods.ftbguilibrary.utils;
 
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiBase;
 import com.feed_the_beast.mods.ftbguilibrary.widget.IGuiWrapper;
+import com.mojang.blaze3d.platform.GLX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.world.dimension.DimensionType;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -19,44 +19,38 @@ public class ClientUtils
 	private static float lastBrightnessX, lastBrightnessY;
 	private static Boolean hasJavaFX = null;
 
-	public static DimensionType getDim()
+	public static void pushBrightness(float u, float t)
 	{
-		return Minecraft.getInstance().world != null ? Minecraft.getInstance().world.getDimension().getType() : DimensionType.OVERWORLD;
-	}
-
-	public static void pushBrightness(int u, int t)
-	{
-		//lastBrightnessX = OpenGlHelper.lastBrightnessX;
-		//lastBrightnessY = OpenGlHelper.lastBrightnessY;
-		//FIXME: OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, u, t);
+		lastBrightnessX = GLX.lastBrightnessX;
+		lastBrightnessY = GLX.lastBrightnessY;
+		GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, u, t);
 	}
 
 	public static void pushMaxBrightness()
 	{
-		pushBrightness(240, 240);
+		pushBrightness(240F, 240F);
 	}
 
 	public static void popBrightness()
 	{
-		//FIXME: OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+		GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, lastBrightnessX, lastBrightnessY);
 	}
 
 	public static void execClientCommand(String command, boolean printChat)
 	{
+		command = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(command);
+
+		if (command.isEmpty())
+		{
+			return;
+		}
+
 		if (printChat)
 		{
 			Minecraft.getInstance().ingameGUI.getChatGUI().addToSentMessages(command);
 		}
 
-		//FIXME: if (ClientCommandHandler.instance.executeCommand(Minecraft.getInstance().player, command) == 0)
-		{
-			Minecraft.getInstance().player.sendChatMessage(command);
-		}
-	}
-
-	public static void execClientCommand(String command)
-	{
-		execClientCommand(command, false);
+		Minecraft.getInstance().player.sendChatMessage(command);
 	}
 
 	public static void runLater(final Runnable runnable)

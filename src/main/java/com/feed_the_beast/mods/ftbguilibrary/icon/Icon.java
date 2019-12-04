@@ -162,6 +162,11 @@ public abstract class Icon implements Drawable
 		return icon == null ? getIcon(s) : icon;
 	}
 
+	public static Icon getIcon(ResourceLocation id)
+	{
+		return getIcon(id.toString());
+	}
+
 	public static Icon getIcon(String id)
 	{
 		if (id.isEmpty())

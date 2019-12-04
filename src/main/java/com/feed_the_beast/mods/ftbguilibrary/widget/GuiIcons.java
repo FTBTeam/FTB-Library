@@ -69,9 +69,9 @@ public interface GuiIcons
 	Icon CHECK = get("check");
 	Icon STAR = get("star");
 	Icon HEART = get("heart");
-	Icon BOOK = Icon.getIcon("minecraft:items/book_normal");
-	Icon BOOK_RED = Icon.getIcon("minecraft:items/book_enchanted");
-	Icon BARRIER = Icon.getIcon("minecraft:items/barrier");
+	Icon BOOK = Icon.getIcon("minecraft:item/book");
+	Icon BOOK_RED = Icon.getIcon("minecraft:item/enchanted_book");
+	Icon BARRIER = Icon.getIcon("minecraft:item/barrier");
 	Icon TOGGLE_GAMEMODE = get("toggle_gamemode");
 	Icon TOGGLE_RAIN = get("toggle_rain");
 	Icon TOGGLE_DAY = get("toggle_day");

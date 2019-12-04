@@ -1,8 +1,6 @@
 package com.feed_the_beast.mods.ftbguilibrary.utils;
 
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 import java.math.RoundingMode;
@@ -490,31 +488,6 @@ public class StringUtils
 		}
 
 		return map;
-	}
-
-	@SuppressWarnings("ConstantConditions")
-	public static ITextComponent color(ITextComponent component, @Nullable TextFormatting color)
-	{
-		component.getStyle().setColor(color);
-		return component;
-	}
-
-	public static ITextComponent bold(ITextComponent component, boolean value)
-	{
-		component.getStyle().setBold(value);
-		return component;
-	}
-
-	public static ITextComponent italic(ITextComponent component, boolean value)
-	{
-		component.getStyle().setItalic(value);
-		return component;
-	}
-
-	public static ITextComponent underlined(ITextComponent component, boolean value)
-	{
-		component.getStyle().setUnderlined(value);
-		return component;
 	}
 
 	public static String fixTabs(String string, int tabSize) //FIXME

@@ -1,5 +1,6 @@
 package com.feed_the_beast.mods.ftbguilibrary.sidebar;
 
+import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibraryClient;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.misc.GuiLoading;
 import com.feed_the_beast.mods.ftbguilibrary.utils.ChainedBooleanSupplier;
@@ -186,7 +187,7 @@ public class SidebarButton implements Comparable<SidebarButton>
 
 	public boolean isActuallyVisible()
 	{
-		return configValue && /*FIXME: FTBLibClientConfig.action_buttons != EnumSidebarButtonPlacement.DISABLED && */isVisible();
+		return configValue && FTBGUILibraryClient.showButtons != 0 && isVisible();
 	}
 
 	public boolean isVisible()

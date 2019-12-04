@@ -457,15 +457,19 @@ public class TextBox extends Widget
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean charTyped(char c, KeyModifiers modifiers)
 	{
-		if (SharedConstants.isAllowedCharacter(c))
+		if (isFocused())
 		{
-			writeText(Character.toString(c));
+			if (SharedConstants.isAllowedCharacter(c))
+			{
+				writeText(Character.toString(c));
+			}
+
 			return true;
 		}
 

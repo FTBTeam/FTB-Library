@@ -1,7 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.misc.GuiLoading;
-import com.feed_the_beast.mods.ftbguilibrary.misc.YesNoCallback;
+import com.feed_the_beast.mods.ftbguilibrary.utils.BooleanConsumer;
 import com.feed_the_beast.mods.ftbguilibrary.utils.ClientUtils;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
@@ -369,7 +369,7 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 		{
 			return true;
 		}
-		else if (/*FIXME: FTBLibConfig.debugging.gui_widget_bounds && */key.is(GLFW.GLFW_KEY_B))
+		else if (Minecraft.getInstance().gameSettings.advancedItemTooltips && key.is(GLFW.GLFW_KEY_B))
 		{
 			Theme.renderDebugBoxes = !Theme.renderDebugBoxes;
 			return true;
@@ -512,17 +512,6 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 				ClientUtils.execClientCommand(path, false);
 				return true;
 			}
-			case "curseforgepages":
-			{
-				String[] s = path.split(":", 2);
-
-				if (s.length == 2)
-				{
-					return handleClick("https://www.curseforge.com/minecraft/mc-mods/" + s[0] + "/pages/" + s[1]);
-				}
-
-				return false;
-			}
 			case "custom":
 				return MinecraftForge.EVENT_BUS.post(new CustomClickEvent(new ResourceLocation(path)));
 			default:
@@ -530,12 +519,12 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 		}
 	}
 
-	public void openYesNoFull(ITextComponent title, ITextComponent desc, YesNoCallback callback)
+	public void openYesNoFull(ITextComponent title, ITextComponent desc, BooleanConsumer callback)
 	{
 		Minecraft.getInstance().displayGuiScreen(new ConfirmScreen(result ->
 		{
 			openGui();
-			callback.onButtonClicked(result);
+			callback.accept(result);
 			refreshWidgets();
 		}, title, desc));
 	}

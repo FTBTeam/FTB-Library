@@ -48,6 +48,9 @@ public interface IOpenableGui extends Runnable
 	@Override
 	default void run()
 	{
-		openGui();
+		if (ClientUtils.getCurrentGuiAs(IOpenableGui.class) != this)
+		{
+			openGui();
+		}
 	}
 }
