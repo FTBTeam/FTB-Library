@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 /**
  * @author LatvianModder
  */
-public abstract class ConfigValue<T>
+public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 {
 	public ConfigGroup group;
 	public T initial;
@@ -21,11 +21,10 @@ public abstract class ConfigValue<T>
 	public T defaultValue;
 
 	public String id = "";
-	public int order = 0;
-	public String translationKey = "";
-	public Icon icon = Icon.EMPTY;
-	public boolean hidden = false;
-	public boolean canEdit = true;
+	private int order = 0;
+	private String nameKey = "";
+	private Icon icon = Icon.EMPTY;
+	private boolean canEdit = true;
 
 	public ConfigValue<T> init(ConfigGroup g, String i, T value, Consumer<T> c, T def)
 	{
@@ -35,14 +34,8 @@ public abstract class ConfigValue<T>
 		current = copy(value);
 		callback = c;
 		defaultValue = def;
+		order = g.getValues().size();
 		return this;
-	}
-
-	public <E extends ConfigValue<T>> E init(T value, Consumer<T> c, T def)
-	{
-		ConfigGroup group = new ConfigGroup("unknown");
-		group.add("unknown", this, value, c, def);
-		return (E) this;
 	}
 
 	public final boolean setCurrentValue(T value)
@@ -109,19 +102,66 @@ public abstract class ConfigValue<T>
 		return p.isEmpty() ? id : (id + '.' + p);
 	}
 
-	public String getTranslationKey()
+	public String getNameKey()
 	{
-		return translationKey.isEmpty() ? getPath() : translationKey;
+		return nameKey.isEmpty() ? getPath() : nameKey;
+	}
+
+	public ConfigValue<T> setNameKey(String key)
+	{
+		nameKey = key;
+		return this;
 	}
 
 	public String getName()
 	{
-		return I18n.format(getTranslationKey());
+		return I18n.format(getNameKey());
 	}
 
 	public String getTooltip()
 	{
-		String k = getTranslationKey();
+		String k = getNameKey();
 		return I18n.hasKey(k) ? I18n.format(k) : "";
+	}
+
+	public ConfigValue<T> setOrder(int o)
+	{
+		order = o;
+		return this;
+	}
+
+	public ConfigValue<T> setCanEdit(boolean e)
+	{
+		canEdit = e;
+		return this;
+	}
+
+	public boolean getCanEdit()
+	{
+		return canEdit;
+	}
+
+	public ConfigValue<T> setIcon(Icon i)
+	{
+		icon = i;
+		return this;
+	}
+
+	public Icon getIcon(T value)
+	{
+		return icon;
+	}
+
+	@Override
+	public int compareTo(ConfigValue<T> o)
+	{
+		int i = group.getPath().compareToIgnoreCase(o.group.getPath());
+
+		if (i == 0)
+		{
+			i = Integer.compare(order, o.order);
+		}
+
+		return i;
 	}
 }

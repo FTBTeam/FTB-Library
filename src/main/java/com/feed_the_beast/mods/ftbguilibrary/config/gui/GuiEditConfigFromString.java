@@ -1,7 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.config.gui;
 
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigFromString;
-import com.feed_the_beast.mods.ftbguilibrary.config.ConfigValue;
+import com.feed_the_beast.mods.ftbguilibrary.config.ConfigGroup;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
@@ -18,9 +18,11 @@ import java.util.function.Consumer;
 
 public class GuiEditConfigFromString<T> extends GuiBase
 {
-	public static <E> void open(ConfigValue<E> type, E value, Consumer<E> setter, E defaultValue, Runnable callback)
+	public static <E> void open(ConfigFromString<E> type, E value, Consumer<E> setter, E defaultValue, Runnable callback)
 	{
-		new GuiEditConfigFromString<E>(type.init(value, setter, defaultValue), callback).openGui();
+		ConfigGroup group = new ConfigGroup("group");
+		group.add("value", type, value, setter, defaultValue);
+		new GuiEditConfigFromString<E>(type, callback).openGui();
 	}
 
 	private final ConfigFromString<T> value;
@@ -70,7 +72,7 @@ public class GuiEditConfigFromString<T> extends GuiBase
 			@Override
 			public WidgetType getWidgetType()
 			{
-				return value.canEdit && textBox.isTextValid() ? super.getWidgetType() : WidgetType.DISABLED;
+				return value.getCanEdit() && textBox.isTextValid() ? super.getWidgetType() : WidgetType.DISABLED;
 			}
 
 			@Override
@@ -87,7 +89,7 @@ public class GuiEditConfigFromString<T> extends GuiBase
 			@Override
 			public boolean allowInput()
 			{
-				return value.canEdit;
+				return value.getCanEdit();
 			}
 
 			@Override
@@ -111,7 +113,7 @@ public class GuiEditConfigFromString<T> extends GuiBase
 			@Override
 			public void onEnterPressed()
 			{
-				if (value.canEdit)
+				if (value.getCanEdit())
 				{
 					buttonAccept.onClicked(MouseButton.LEFT);
 				}

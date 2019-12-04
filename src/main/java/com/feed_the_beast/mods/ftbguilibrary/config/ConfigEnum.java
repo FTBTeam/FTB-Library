@@ -89,12 +89,6 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 	}
 
 	@Override
-	public List<E> getVariants()
-	{
-		return nameMap.values;
-	}
-
-	@Override
 	public E getIteration(E value, boolean next)
 	{
 		return next ? nameMap.getNext(value) : nameMap.getPrevious(value);

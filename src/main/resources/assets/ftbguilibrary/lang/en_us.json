@@ -45,5 +45,5 @@
 	"ftblib.select_item.nbt": "Edit NBT",
 	"ftblib.select_item.caps": "Edit Capabilities",
 	"ftblib.select_item.display_name": "Set Display Name",
-	"ftblib.select_team.gui": "Select Team"
+	"config.group.value": "Value"
 }

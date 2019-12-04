@@ -87,8 +87,6 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 
 	private void guiInit(GuiScreenEvent.InitGuiEvent.Post event)
 	{
-		//sidebarButtonScale = 0D;
-
 		if (areButtonsVisible(event.getGui()))
 		{
 			event.addWidget(new GuiButtonSidebarGroup((DisplayEffectsScreen) event.getGui()));

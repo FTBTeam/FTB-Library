@@ -22,22 +22,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class GuiEditConfig extends GuiBase
 {
 	public static final Color4I COLOR_BACKGROUND = Color4I.rgba(0x99333333);
-	public static final Comparator<ConfigValue> COMPARATOR = (o1, o2) -> {
-		int i = o1.group.getPath().compareToIgnoreCase(o2.group.getPath());
-
-		if (i == 0)
-		{
-			i = Integer.compare(o1.order, o2.order);
-		}
-
-		return i;
-	};
 
 	public static Theme THEME = new Theme()
 	{
@@ -154,7 +143,7 @@ public class GuiEditConfig extends GuiBase
 			group = g;
 			inst = i;
 
-			if (!inst.canEdit)
+			if (!inst.getCanEdit())
 			{
 				keyText = TextFormatting.GRAY + inst.getName();
 			}
@@ -282,7 +271,7 @@ public class GuiEditConfig extends GuiBase
 
 		if (!list.isEmpty())
 		{
-			list.sort(COMPARATOR);
+			list.sort(null);
 
 			ButtonConfigGroup group = null;
 
@@ -351,10 +340,7 @@ public class GuiEditConfig extends GuiBase
 	{
 		for (ConfigValue value : group.getValues())
 		{
-			if (!value.hidden)
-			{
-				list.add(value);
-			}
+			list.add(value);
 		}
 
 		for (ConfigGroup group1 : group.getGroups())

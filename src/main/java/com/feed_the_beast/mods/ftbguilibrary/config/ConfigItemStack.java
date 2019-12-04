@@ -56,7 +56,7 @@ public class ConfigItemStack extends ConfigValue<ItemStack>
 	@Override
 	public void onClicked(MouseButton button, Runnable callback)
 	{
-		if (canEdit)
+		if (getCanEdit())
 		{
 			new GuiSelectItemStack(this, callback).openGui();
 		}

@@ -49,7 +49,6 @@ public class ConfigGroup
 	public <T, CV extends ConfigValue<T>> CV add(String id, CV type, T value, Consumer<T> callback, T defaultValue)
 	{
 		type.init(this, id, value, callback, defaultValue);
-		type.order = values.size();
 		values.put(id, type);
 		return type;
 	}

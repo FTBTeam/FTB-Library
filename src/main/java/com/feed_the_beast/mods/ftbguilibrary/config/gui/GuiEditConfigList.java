@@ -76,7 +76,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 
 			if (getMouseX() >= getX() + width - 19)
 			{
-				if (list.canEdit)
+				if (list.getCanEdit())
 				{
 					list.current.remove(index);
 					parent.refreshWidgets();
@@ -175,7 +175,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 					add(new ButtonConfigValue<>(this, list, i));
 				}
 
-				if (list.canEdit)
+				if (list.getCanEdit())
 				{
 					add(new ButtonAddValue(this));
 				}
