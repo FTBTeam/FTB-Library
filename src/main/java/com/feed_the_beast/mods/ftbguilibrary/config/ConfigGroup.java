@@ -46,6 +46,27 @@ public class ConfigGroup
 		return I18n.hasKey(t) ? I18n.format(t) : "";
 	}
 
+	public ConfigGroup getGroup(String id)
+	{
+		int index = id.indexOf('.');
+
+		if (index == -1)
+		{
+			ConfigGroup g = groups.get(id);
+
+			if (g == null)
+			{
+				g = new ConfigGroup(id);
+				g.parent = this;
+				groups.put(g.id, g);
+			}
+
+			return g;
+		}
+
+		return getGroup(id.substring(0, index)).getGroup(id.substring(index + 1));
+	}
+
 	public <T, CV extends ConfigValue<T>> CV add(String id, CV type, T value, Consumer<T> callback, T defaultValue)
 	{
 		type.init(this, id, value, callback, defaultValue);
