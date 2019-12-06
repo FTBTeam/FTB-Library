@@ -5,6 +5,8 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 
+import javax.annotation.Nullable;
+
 /**
  * @author LatvianModder
  */
@@ -13,48 +15,35 @@ public class ConfigItemStack extends ConfigValue<ItemStack>
 	public final boolean singleItemOnly;
 	public final boolean allowEmpty;
 
-	public ConfigItemStack(boolean b, boolean e)
+	public ConfigItemStack(boolean single, boolean empty)
 	{
-		singleItemOnly = b;
-		allowEmpty = e;
+		singleItemOnly = single;
+		allowEmpty = empty;
 	}
 
 	@Override
 	public ItemStack copy(ItemStack value)
 	{
-		return value.copy();
+		return value.isEmpty() ? ItemStack.EMPTY : value.copy();
 	}
 
 	@Override
-	public boolean isEmpty(ItemStack value)
+	public String getStringForGUI(@Nullable ItemStack v)
 	{
-		return value.isEmpty();
-	}
-
-	@Override
-	public boolean isValid(ItemStack value)
-	{
-		if (!allowEmpty && value.isEmpty())
+		if (v == null || v.isEmpty())
 		{
-			return false;
+			return ItemStack.EMPTY.getDisplayName().getFormattedText();
+		}
+		else if (v.getCount() <= 1)
+		{
+			return v.getDisplayName().getFormattedText();
 		}
 
-		return !singleItemOnly || value.getCount() <= 1;
+		return new StringTextComponent(v.getCount() + "x ").appendSibling(v.getDisplayName()).getFormattedText();
 	}
 
 	@Override
-	public String getStringForGUI(ItemStack value)
-	{
-		if (value.getCount() <= 1)
-		{
-			return value.getDisplayName().getFormattedText();
-		}
-
-		return new StringTextComponent(value.getCount() + "x ").appendSibling(value.getDisplayName()).getFormattedText();
-	}
-
-	@Override
-	public void onClicked(MouseButton button, Runnable callback)
+	public void onClicked(MouseButton button, ConfigCallback callback)
 	{
 		if (getCanEdit())
 		{

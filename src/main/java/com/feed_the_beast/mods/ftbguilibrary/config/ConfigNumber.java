@@ -3,6 +3,8 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
 
+import javax.annotation.Nullable;
+
 /**
  * @author LatvianModder
  */
@@ -20,17 +22,14 @@ public abstract class ConfigNumber<T extends Number> extends ConfigFromString<T>
 	}
 
 	@Override
-	public abstract boolean isValid(T value);
-
-	@Override
-	public Color4I getColor(T value)
+	public Color4I getColor(@Nullable T v)
 	{
 		return COLOR;
 	}
 
 	@Override
-	public String getStringForGUI(T value)
+	public String getStringForGUI(@Nullable T v)
 	{
-		return StringUtils.formatDouble(value.doubleValue(), true);
+		return v == null ? "null" : StringUtils.formatDouble(v.doubleValue(), true);
 	}
 }

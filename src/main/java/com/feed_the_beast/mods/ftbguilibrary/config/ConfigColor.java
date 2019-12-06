@@ -2,7 +2,8 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 
-import java.util.Optional;
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * @author LatvianModder
@@ -10,13 +11,13 @@ import java.util.Optional;
 public class ConfigColor extends ConfigFromString<Color4I>
 {
 	@Override
-	public Color4I getColor(Color4I value)
+	public Color4I getColor(Color4I v)
 	{
-		return value;
+		return v;
 	}
 
 	@Override
-	public Optional<Color4I> getValueFromString(String string)
+	public boolean parse(@Nullable Consumer<Color4I> callback, String string)
 	{
 		try
 		{
@@ -24,7 +25,7 @@ public class ConfigColor extends ConfigFromString<Color4I>
 			{
 				if (string.length() < 5)
 				{
-					return Optional.empty();
+					return false;
 				}
 
 				String[] s = string.split(",");
@@ -39,14 +40,19 @@ public class ConfigColor extends ConfigFromString<Color4I>
 						c[i] = Integer.parseInt(s[i]);
 					}
 
-					return Optional.of(Color4I.rgba(c[0], c[1], c[2], c[3]));
+					if (callback != null)
+					{
+						callback.accept(Color4I.rgba(c[0], c[1], c[2], c[3]));
+					}
+
+					return true;
 				}
 			}
 			else
 			{
 				if (string.length() < 6)
 				{
-					return Optional.empty();
+					return false;
 				}
 				else if (string.startsWith("#"))
 				{
@@ -54,13 +60,19 @@ public class ConfigColor extends ConfigFromString<Color4I>
 				}
 
 				int hex = Integer.parseInt(string, 16);
-				return Optional.of(Color4I.rgba(0xFF000000 | hex));
+
+				if (callback != null)
+				{
+					callback.accept(Color4I.rgba(0xFF000000 | hex));
+				}
+
+				return true;
 			}
 		}
 		catch (Exception ex)
 		{
 		}
 
-		return Optional.empty();
+		return false;
 	}
 }

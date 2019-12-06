@@ -488,12 +488,17 @@ public class TextBox extends Widget
 	{
 	}
 
+	public String getFormattedText()
+	{
+		return (!isFocused() && text.isEmpty() && !ghostText.isEmpty()) ? (TextFormatting.ITALIC + ghostText) : text;
+	}
+
 	@Override
 	public void draw(Theme theme, int x, int y, int w, int h)
 	{
 		drawTextBox(theme, x, y, w, h);
 		boolean drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
-		String textToDraw = drawGhostText ? (TextFormatting.ITALIC + ghostText) : text;
+		String textToDraw = getFormattedText();
 		GuiHelper.pushScissor(getScreen(), x, y, w, h);
 
 		Color4I col = validText ? (textColor.isEmpty() ? theme.getContentColor(WidgetType.NORMAL) : textColor).withAlpha(drawGhostText ? 120 : 255) : Color4I.RED;

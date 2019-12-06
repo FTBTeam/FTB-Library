@@ -40,6 +40,7 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, true, this::guiInit);
 		((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(SidebarButtonManager.INSTANCE);
 		MinecraftForge.EVENT_BUS.addListener(this::clientTick);
+		//new FTBGUILibraryTest().init();
 	}
 
 	private void textureStitch(TextureStitchEvent.Pre event)

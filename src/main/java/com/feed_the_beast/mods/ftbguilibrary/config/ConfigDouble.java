@@ -3,8 +3,9 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * @author LatvianModder
@@ -14,12 +15,6 @@ public class ConfigDouble extends ConfigNumber<Double>
 	public ConfigDouble(double mn, double mx)
 	{
 		super(mn, mx);
-	}
-
-	@Override
-	public boolean isValid(Double value)
-	{
-		return value >= min && value <= max;
 	}
 
 	@Override
@@ -39,19 +34,54 @@ public class ConfigDouble extends ConfigNumber<Double>
 	}
 
 	@Override
-	public Optional<Double> getValueFromString(String string)
+	public String getStringFromValue(@Nullable Double v)
 	{
-		if (string.isEmpty())
+		if (v == null)
 		{
-			return Optional.empty();
+			return "null";
 		}
-		else if (string.equals("+Inf"))
+		else if (v == Double.POSITIVE_INFINITY)
 		{
-			return Optional.of(Double.POSITIVE_INFINITY);
+			return "+Inf";
+		}
+		else if (v == Double.NEGATIVE_INFINITY)
+		{
+			return "-Inf";
+		}
+
+		return super.getStringFromValue(v);
+	}
+
+	@Override
+	public boolean parse(@Nullable Consumer<Double> callback, String string)
+	{
+		if (string.equals("+Inf"))
+		{
+			if (max == Double.POSITIVE_INFINITY)
+			{
+				if (callback != null)
+				{
+					callback.accept(Double.POSITIVE_INFINITY);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 		else if (string.equals("-Inf"))
 		{
-			return Optional.of(Double.NEGATIVE_INFINITY);
+			if (min == Double.NEGATIVE_INFINITY)
+			{
+				if (callback != null)
+				{
+					callback.accept(Double.NEGATIVE_INFINITY);
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
 		try
@@ -74,11 +104,22 @@ public class ConfigDouble extends ConfigNumber<Double>
 				string = string.substring(0, string.length() - 1);
 			}
 
-			return Optional.of(Double.parseDouble(string.trim()) * multiplier);
+			double v = Double.parseDouble(string.trim()) * multiplier;
+
+			if (v >= min && v <= max)
+			{
+				if (callback != null)
+				{
+					callback.accept(v);
+				}
+
+				return true;
+			}
 		}
 		catch (Exception ex)
 		{
-			return Optional.empty();
 		}
+
+		return false;
 	}
 }

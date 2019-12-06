@@ -3,7 +3,6 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.config.gui.GuiSelectFluid;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -20,25 +19,13 @@ public class ConfigFluid extends ConfigValue<Fluid>
 	}
 
 	@Override
-	public boolean isValid(Fluid value)
+	public String getStringForGUI(Fluid v)
 	{
-		return allowEmpty || value != Fluids.EMPTY;
+		return new FluidStack(v, FluidAttributes.BUCKET_VOLUME).getDisplayName().getFormattedText();
 	}
 
 	@Override
-	public boolean isEmpty(Fluid value)
-	{
-		return value == Fluids.EMPTY;
-	}
-
-	@Override
-	public String getStringForGUI(Fluid value)
-	{
-		return new FluidStack(value, FluidAttributes.BUCKET_VOLUME).getDisplayName().getFormattedText();
-	}
-
-	@Override
-	public void onClicked(MouseButton button, Runnable callback)
+	public void onClicked(MouseButton button, ConfigCallback callback)
 	{
 		new GuiSelectFluid(this, callback).openGui();
 	}

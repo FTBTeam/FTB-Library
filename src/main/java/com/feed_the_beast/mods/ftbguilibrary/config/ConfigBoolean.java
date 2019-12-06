@@ -2,6 +2,8 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 
+import javax.annotation.Nullable;
+
 /**
  * @author LatvianModder
  */
@@ -11,20 +13,20 @@ public class ConfigBoolean extends ConfigWithVariants<Boolean>
 	public static final Color4I COLOR_FALSE = Color4I.rgb(0xD52834);
 
 	@Override
-	public Color4I getColor(Boolean value)
+	public Color4I getColor(Boolean v)
 	{
-		return value ? COLOR_TRUE : COLOR_FALSE;
+		return v ? COLOR_TRUE : COLOR_FALSE;
 	}
 
 	@Override
-	public Boolean getIteration(Boolean value, boolean next)
+	public Boolean getIteration(Boolean v, boolean next)
 	{
-		return !value;
+		return !v;
 	}
 
 	@Override
-	public String getStringForGUI(Boolean value)
+	public String getStringForGUI(@Nullable Boolean v)
 	{
-		return value ? "True" : "False";
+		return v == null ? "null" : v ? "True" : "False";
 	}
 }

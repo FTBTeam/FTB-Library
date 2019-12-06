@@ -53,4 +53,12 @@ public interface IOpenableGui extends Runnable
 			openGui();
 		}
 	}
+
+	default Runnable openAfter(Runnable runnable)
+	{
+		return () -> {
+			runnable.run();
+			IOpenableGui.this.run();
+		};
+	}
 }

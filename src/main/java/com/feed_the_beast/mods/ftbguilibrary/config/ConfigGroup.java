@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -20,7 +21,8 @@ public class ConfigGroup
 	public ConfigGroup parent;
 	private final Map<String, ConfigValue> values;
 	private final Map<String, ConfigGroup> groups;
-	public Runnable savedCallback;
+	public ConfigCallback savedCallback;
+	private String nameKey;
 
 	public ConfigGroup(String i)
 	{
@@ -28,21 +30,28 @@ public class ConfigGroup
 		values = new LinkedHashMap<>();
 		groups = new LinkedHashMap<>();
 		savedCallback = null;
+		nameKey = "";
 	}
 
-	public String getTranslationKey()
+	public String getNameKey()
 	{
-		return getPath();
+		return nameKey.isEmpty() ? getPath() : nameKey;
+	}
+
+	public ConfigGroup setNameKey(String key)
+	{
+		nameKey = key;
+		return this;
 	}
 
 	public String getName()
 	{
-		return I18n.format(getTranslationKey());
+		return I18n.format(getNameKey());
 	}
 
 	public String getTooltip()
 	{
-		String t = getTranslationKey() + ".tooltip";
+		String t = getNameKey() + ".tooltip";
 		return I18n.hasKey(t) ? I18n.format(t) : "";
 	}
 
@@ -67,7 +76,7 @@ public class ConfigGroup
 		return getGroup(id.substring(0, index)).getGroup(id.substring(index + 1));
 	}
 
-	public <T, CV extends ConfigValue<T>> CV add(String id, CV type, T value, Consumer<T> callback, T defaultValue)
+	public <T, CV extends ConfigValue<T>> CV add(String id, CV type, @Nullable T value, Consumer<T> callback, @Nullable T defaultValue)
 	{
 		type.init(this, id, value, callback, defaultValue);
 		values.put(id, type);
@@ -84,12 +93,12 @@ public class ConfigGroup
 		return add(id, new ConfigInt(min, max), value, setter, def);
 	}
 
-	public ConfigLong addInt(String id, long value, Consumer<Long> setter, long def, long min, long max)
+	public ConfigLong addLong(String id, long value, Consumer<Long> setter, long def, long min, long max)
 	{
 		return add(id, new ConfigLong(min, max), value, setter, def);
 	}
 
-	public ConfigDouble addInt(String id, double value, Consumer<Double> setter, double def, double min, double max)
+	public ConfigDouble addDouble(String id, double value, Consumer<Double> setter, double def, double min, double max)
 	{
 		return add(id, new ConfigDouble(min, max), value, setter, def);
 	}
@@ -133,6 +142,11 @@ public class ConfigGroup
 		return addTristate(id, value, setter, Tristate.DEFAULT);
 	}
 
+	public ConfigItemStack addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, boolean singleItemOnly, boolean allowEmpty)
+	{
+		return add(id, new ConfigItemStack(singleItemOnly, allowEmpty), value, setter, def);
+	}
+
 	public final Collection<ConfigValue> getValues()
 	{
 		return values.values();
@@ -153,38 +167,24 @@ public class ConfigGroup
 		return parent.getPath() + '.' + id;
 	}
 
-	public boolean reset()
+	public void save(boolean accepted)
 	{
-		boolean b = false;
-
-		for (ConfigValue value : values.values())
+		if (accepted)
 		{
-			b = value.reset() || b;
+			for (ConfigValue value : values.values())
+			{
+				value.setter.accept(value.value);
+			}
 		}
 
 		for (ConfigGroup group : groups.values())
 		{
-			b = group.reset() || b;
-		}
-
-		return b;
-	}
-
-	public void save()
-	{
-		for (ConfigValue value : values.values())
-		{
-			value.callback.accept(value.current);
-		}
-
-		for (ConfigGroup group : groups.values())
-		{
-			group.save();
+			group.save(accepted);
 		}
 
 		if (savedCallback != null)
 		{
-			savedCallback.run();
+			savedCallback.save(accepted);
 		}
 	}
 }

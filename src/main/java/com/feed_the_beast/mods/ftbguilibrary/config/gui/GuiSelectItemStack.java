@@ -1,11 +1,13 @@
 package com.feed_the_beast.mods.ftbguilibrary.config.gui;
 
+import com.feed_the_beast.mods.ftbguilibrary.config.ConfigCallback;
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigInt;
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigItemStack;
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigNBT;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.icon.ItemIcon;
+import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.widget.BlankPanel;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Button;
@@ -93,7 +95,7 @@ public class GuiSelectItemStack extends GuiBase
 		@Override
 		public WidgetType getWidgetType()
 		{
-			return stack.getItem() == config.current.getItem() && Objects.equals(stack.getTag(), config.current.getTag()) ? WidgetType.MOUSE_OVER : super.getWidgetType();
+			return stack.getItem() == current.getItem() && Objects.equals(stack.getTag(), current.getTag()) ? WidgetType.MOUSE_OVER : super.getWidgetType();
 		}
 
 		@Override
@@ -112,7 +114,7 @@ public class GuiSelectItemStack extends GuiBase
 		public void onClicked(MouseButton button)
 		{
 			playClickSound();
-			config.current = stack.copy();
+			current = stack.copy();
 		}
 
 		@Override
@@ -141,7 +143,7 @@ public class GuiSelectItemStack extends GuiBase
 		@Override
 		public String getTitle()
 		{
-			return I18n.format("ftblib.select_item.list_mode", TextFormatting.GRAY + (allItems ? I18n.format("ftblib.select_item.list_mode.all") : I18n.format("ftblib.select_item.list_mode.inv"))) + TextFormatting.DARK_GRAY + " [" + (panelStacks.widgets.size() - 1) + "]";
+			return I18n.format("ftbguilibrary.select_item.list_mode", TextFormatting.GRAY + (allItems ? I18n.format("ftbguilibrary.select_item.list_mode.all") : I18n.format("ftbguilibrary.select_item.list_mode.inv"))) + TextFormatting.DARK_GRAY + " [" + (panelStacks.widgets.size() - 1) + "]";
 		}
 
 		@Override
@@ -163,7 +165,7 @@ public class GuiSelectItemStack extends GuiBase
 		@Override
 		public WidgetType getWidgetType()
 		{
-			return config.current.isEmpty() ? WidgetType.DISABLED : super.getWidgetType();
+			return current.isEmpty() ? WidgetType.DISABLED : super.getWidgetType();
 		}
 	}
 
@@ -177,20 +179,28 @@ public class GuiSelectItemStack extends GuiBase
 		@Override
 		public void drawIcon(Theme theme, int x, int y, int w, int h)
 		{
-			GuiHelper.drawItem(config.current, x, y, w / 16D, h / 16D, true);
+			GuiHelper.drawItem(current, x, y, w / 16D, h / 16D, true);
 		}
 
 		@Override
 		public String getTitle()
 		{
-			return config.current.getDisplayName().getFormattedText();
+			return current.getDisplayName().getFormattedText();
 		}
 
 		@Override
 		public void onClicked(MouseButton button)
 		{
 			playClickSound();
-			GuiEditConfigFromString.open(new ConfigNBT(), config.current.serializeNBT(), n -> config.current = ItemStack.read(n), config.defaultValue.serializeNBT(), this);
+			ConfigNBT c = new ConfigNBT();
+			GuiEditConfigFromString.open(c, current.serializeNBT(), config.defaultValue.serializeNBT(), accepted -> {
+				if (accepted)
+				{
+					current = ItemStack.read(c.value);
+				}
+
+				run();
+			});
 		}
 	}
 
@@ -198,14 +208,22 @@ public class GuiSelectItemStack extends GuiBase
 	{
 		public ButtonCount(Panel panel)
 		{
-			super(panel, I18n.format("ftblib.select_item.count"), ItemIcon.getItemIcon(Items.PAPER));
+			super(panel, I18n.format("ftbguilibrary.select_item.count"), ItemIcon.getItemIcon(Items.PAPER));
 		}
 
 		@Override
 		public void onClicked(MouseButton button)
 		{
 			playClickSound();
-			GuiEditConfigFromString.open(new ConfigInt(0, config.current.getMaxStackSize()), config.current.getCount(), integer -> config.current.setCount(integer), config.defaultValue.getCount(), this);
+			ConfigInt c = new ConfigInt(0, current.getMaxStackSize());
+			GuiEditConfigFromString.open(c, current.getCount(), config.defaultValue.getCount(), accepted -> {
+				if (accepted)
+				{
+					current.setCount(c.value);
+				}
+
+				run();
+			});
 		}
 	}
 
@@ -213,23 +231,22 @@ public class GuiSelectItemStack extends GuiBase
 	{
 		public ButtonNBT(Panel panel)
 		{
-			super(panel, I18n.format("ftblib.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
+			super(panel, I18n.format("ftbguilibrary.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
 		}
 
 		@Override
 		public void onClicked(MouseButton button)
 		{
 			playClickSound();
-			GuiEditConfigFromString.open(new ConfigNBT(), config.current.hasTag() ? config.current.getTag() : new CompoundNBT(), n -> {
-				if (n.isEmpty())
+			ConfigNBT c = new ConfigNBT();
+			GuiEditConfigFromString.open(c, current.getTag(), config.defaultValue.getTag(), accepted -> {
+				if (accepted)
 				{
-					config.current.setTag(null);
+					current.setTag(c.value);
 				}
-				else
-				{
-					config.current.setTag(n);
-				}
-			}, config.defaultValue.hasTag() ? config.defaultValue.getTag() : new CompoundNBT(), this);
+
+				run();
+			});
 		}
 	}
 
@@ -237,7 +254,7 @@ public class GuiSelectItemStack extends GuiBase
 	{
 		public ButtonCaps(Panel panel)
 		{
-			super(panel, I18n.format("ftblib.select_item.caps"), ItemIcon.getItemIcon(Blocks.ANVIL));
+			super(panel, I18n.format("ftbguilibrary.select_item.caps"), ItemIcon.getItemIcon(Blocks.ANVIL));
 		}
 
 		@Override
@@ -245,21 +262,26 @@ public class GuiSelectItemStack extends GuiBase
 		{
 			playClickSound();
 
-			final CompoundNBT nbt = config.current.serializeNBT();
-			CompoundNBT caps = nbt.getCompound("ForgeCaps");
+			final CompoundNBT nbt = current.serializeNBT();
+			ConfigNBT c = new ConfigNBT();
 
-			GuiEditConfigFromString.open(new ConfigNBT(), caps, n -> {
-				if (n.isEmpty())
+			GuiEditConfigFromString.open(c, (CompoundNBT) nbt.get("ForgeCaps"), (CompoundNBT) config.defaultValue.serializeNBT().get("ForgeCaps"), accepted -> {
+				if (accepted)
 				{
-					nbt.remove("ForgeCaps");
-				}
-				else
-				{
-					nbt.put("ForgeCaps", n);
+					if (c.value == null || c.value.isEmpty())
+					{
+						nbt.remove("ForgeCaps");
+					}
+					else
+					{
+						nbt.put("ForgeCaps", c.value);
+					}
+
+					current = ItemStack.read(nbt);
 				}
 
-				config.current = ItemStack.read(nbt);
-			}, config.defaultValue.serializeNBT().getCompound("ForgeCaps"), this);
+				GuiSelectItemStack.this.run();
+			});
 		}
 	}
 
@@ -313,7 +335,7 @@ public class GuiSelectItemStack extends GuiBase
 
 			ItemStackButton button = new ItemStackButton(panelStacks, ItemStack.EMPTY);
 
-			if (button.shouldAdd(search, mod))
+			if (config.allowEmpty && button.shouldAdd(search, mod))
 			{
 				widgets.add(new ItemStackButton(panelStacks, ItemStack.EMPTY));
 			}
@@ -341,7 +363,8 @@ public class GuiSelectItemStack extends GuiBase
 	}
 
 	private final ConfigItemStack config;
-	private final Runnable callback;
+	private final ConfigCallback callback;
+	private ItemStack current;
 	private final Button buttonCancel, buttonAccept;
 	private final Panel panelStacks;
 	private final PanelScrollBar scrollBar;
@@ -351,11 +374,12 @@ public class GuiSelectItemStack extends GuiBase
 	private List<Widget> newStackWidgets;
 	public long update = Long.MAX_VALUE;
 
-	public GuiSelectItemStack(ConfigItemStack c, Runnable cb)
+	public GuiSelectItemStack(ConfigItemStack c, ConfigCallback cb)
 	{
 		setSize(211, 150);
-		callback = cb;
 		config = c;
+		callback = cb;
+		current = config.value.isEmpty() ? ItemStack.EMPTY : config.value.copy();
 
 		int bsize = width / 2 - 10;
 
@@ -365,8 +389,7 @@ public class GuiSelectItemStack extends GuiBase
 			public void onClicked(MouseButton button)
 			{
 				playClickSound();
-				onClosed();
-				callback.run();
+				callback.save(false);
 			}
 
 			@Override
@@ -384,8 +407,8 @@ public class GuiSelectItemStack extends GuiBase
 			public void onClicked(MouseButton button)
 			{
 				playClickSound();
-				config.setCurrentValue(config.current);
-				callback.run();
+				config.setCurrentValue(current);
+				callback.save(true);
 			}
 
 			@Override
@@ -497,6 +520,18 @@ public class GuiSelectItemStack extends GuiBase
 		}
 
 		threadItemList = null;
+	}
+
+	@Override
+	public boolean onClosedByKey(Key key)
+	{
+		if (super.onClosedByKey(key))
+		{
+			callback.save(false);
+			return false;
+		}
+
+		return false;
 	}
 
 	@Override

@@ -3,10 +3,13 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -15,58 +18,41 @@ import java.util.function.Consumer;
 public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 {
 	public ConfigGroup group;
-	public T initial;
-	public T current;
-	public Consumer<T> callback;
+	public T value;
+	public Consumer<T> setter;
 	public T defaultValue;
 
 	public String id = "";
 	private int order = 0;
 	private String nameKey = "";
-	private Icon icon = Icon.EMPTY;
+	private Icon icon = GuiIcons.SETTINGS;
 	private boolean canEdit = true;
 
-	public ConfigValue<T> init(ConfigGroup g, String i, T value, Consumer<T> c, T def)
+	public ConfigValue<T> init(ConfigGroup g, String i, @Nullable T v, Consumer<T> c, @Nullable T def)
 	{
 		group = g;
 		id = i;
-		initial = value;
-		current = copy(value);
-		callback = c;
+		value = v == null ? null : copy(v);
+		setter = c;
 		defaultValue = def;
 		order = g.getValues().size();
 		return this;
 	}
 
-	public final boolean setCurrentValue(T value)
+	public final boolean setCurrentValue(T v)
 	{
-		if (isValid(value) && !isEqual(current, value))
+		if (!isEqual(value, v))
 		{
-			current = value;
+			value = v;
 			return true;
 		}
 
 		return false;
 	}
 
-	public final boolean reset()
+	public boolean isEqual(T v1, T v2)
 	{
-		return setCurrentValue(initial);
-	}
-
-	public final boolean isDefault()
-	{
-		return isEqual(current, defaultValue);
-	}
-
-	public boolean isValid(T value)
-	{
-		return true;
-	}
-
-	public boolean isEqual(T value1, T value2)
-	{
-		return value1.equals(value2);
+		return Objects.equals(v1, v2);
 	}
 
 	public T copy(T value)
@@ -74,7 +60,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 		return value;
 	}
 
-	public Color4I getColor(T value)
+	public Color4I getColor(@Nullable T v)
 	{
 		return Color4I.GRAY;
 	}
@@ -84,22 +70,17 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 		list.add(TextFormatting.AQUA + "Default: " + TextFormatting.RESET + getStringForGUI(defaultValue));
 	}
 
-	public abstract void onClicked(MouseButton button, Runnable callback);
+	public abstract void onClicked(MouseButton button, ConfigCallback callback);
 
-	public String getStringForGUI(T value)
+	public String getStringForGUI(@Nullable T v)
 	{
-		return value.toString();
-	}
-
-	public boolean isEmpty(T value)
-	{
-		return false;
+		return String.valueOf(v);
 	}
 
 	public String getPath()
 	{
 		String p = group.getPath();
-		return p.isEmpty() ? id : (id + '.' + p);
+		return p.isEmpty() ? id : (p + '.' + id);
 	}
 
 	public String getNameKey()

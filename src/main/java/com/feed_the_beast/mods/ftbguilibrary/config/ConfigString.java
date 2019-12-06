@@ -5,7 +5,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -22,28 +22,37 @@ public class ConfigString extends ConfigFromString<String>
 		pattern = p;
 	}
 
-	@Override
-	public boolean isValid(String value)
+	public ConfigString()
 	{
-		return pattern == null || pattern.matcher(value).matches();
+		this(null);
 	}
 
 	@Override
-	public Color4I getColor(String value)
+	public Color4I getColor(@Nullable String v)
 	{
 		return COLOR;
 	}
 
 	@Override
-	public String getStringForGUI(String value)
+	public boolean parse(@Nullable Consumer<String> callback, String string)
 	{
-		return '"' + value + '"';
+		if (pattern == null || pattern.matcher(string).matches())
+		{
+			if (callback != null)
+			{
+				callback.accept(string);
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
-	public Optional<String> getValueFromString(String string)
+	public String getStringForGUI(@Nullable String v)
 	{
-		return Optional.of(string);
+		return v == null ? "null" : ('"' + v + '"');
 	}
 
 	@Override
@@ -55,11 +64,5 @@ public class ConfigString extends ConfigFromString<String>
 		{
 			list.add(TextFormatting.AQUA + "Regex: " + TextFormatting.RESET + pattern.pattern());
 		}
-	}
-
-	@Override
-	public boolean isEmpty(String value)
-	{
-		return value.isEmpty();
 	}
 }

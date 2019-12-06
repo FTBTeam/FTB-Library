@@ -1,5 +1,6 @@
 package com.feed_the_beast.mods.ftbguilibrary.config.gui;
 
+import com.feed_the_beast.mods.ftbguilibrary.config.ConfigCallback;
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigFromString;
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigGroup;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
@@ -13,31 +14,30 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 
-import java.util.Optional;
-import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 public class GuiEditConfigFromString<T> extends GuiBase
 {
-	public static <E> void open(ConfigFromString<E> type, E value, Consumer<E> setter, E defaultValue, Runnable callback)
+	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, ConfigCallback callback)
 	{
 		ConfigGroup group = new ConfigGroup("group");
-		group.add("value", type, value, setter, defaultValue);
-		new GuiEditConfigFromString<E>(type, callback).openGui();
+		group.add("value", type, value, e -> {}, defaultValue);
+		new GuiEditConfigFromString<>(type, callback).openGui();
 	}
 
-	private final ConfigFromString<T> value;
-	private final Runnable callback;
-	private T initialValue;
+	private final ConfigFromString<T> config;
+	private final ConfigCallback callback;
+	private T current;
 
 	private final Button buttonCancel, buttonAccept;
 	private final TextBox textBox;
 
-	public GuiEditConfigFromString(ConfigFromString<T> val, Runnable c)
+	public GuiEditConfigFromString(ConfigFromString<T> c, ConfigCallback cb)
 	{
 		setSize(230, 54);
-		value = val;
-		callback = c;
-		initialValue = val.current;
+		config = c;
+		callback = cb;
+		current = config.value == null ? null : config.copy(config.value);
 
 		int bsize = width / 2 - 10;
 
@@ -47,8 +47,7 @@ public class GuiEditConfigFromString<T> extends GuiBase
 			public void onClicked(MouseButton button)
 			{
 				playClickSound();
-				value.setCurrentValue(initialValue);
-				callback.run();
+				callback.save(false);
 			}
 
 			@Override
@@ -66,13 +65,14 @@ public class GuiEditConfigFromString<T> extends GuiBase
 			public void onClicked(MouseButton button)
 			{
 				playClickSound();
-				callback.run();
+				config.setCurrentValue(current);
+				callback.save(true);
 			}
 
 			@Override
 			public WidgetType getWidgetType()
 			{
-				return value.getCanEdit() && textBox.isTextValid() ? super.getWidgetType() : WidgetType.DISABLED;
+				return config.getCanEdit() && textBox.isTextValid() ? super.getWidgetType() : WidgetType.DISABLED;
 			}
 
 			@Override
@@ -89,31 +89,28 @@ public class GuiEditConfigFromString<T> extends GuiBase
 			@Override
 			public boolean allowInput()
 			{
-				return value.getCanEdit();
+				return config.getCanEdit();
 			}
 
 			@Override
 			public boolean isValid(String txt)
 			{
-				Optional<T> v = value.getValueFromString(txt);
-				return v.isPresent() && value.isValid(v.get());
+				return config.parse(null, txt);
 			}
 
 			@Override
 			public void onTextChanged()
 			{
-				Optional<T> v = value.getValueFromString(getText());
-
-				if (v.isPresent() && value.setCurrentValue(v.get()))
-				{
-					textColor = value.getColor(value.current);
-				}
+				config.parse(t -> {
+					current = t;
+					textColor = config.getColor(t);
+				}, getText());
 			}
 
 			@Override
 			public void onEnterPressed()
 			{
-				if (value.getCanEdit())
+				if (config.getCanEdit())
 				{
 					buttonAccept.onClicked(MouseButton.LEFT);
 				}
@@ -121,8 +118,8 @@ public class GuiEditConfigFromString<T> extends GuiBase
 		};
 
 		textBox.setPosAndSize(8, 8, width - 16, 16);
-		textBox.setText(value.getStringFromValue(value.current));
-		textBox.textColor = value.getColor(value.current);
+		textBox.setText(config.getStringFromValue(current));
+		textBox.textColor = config.getColor(current);
 		textBox.setCursorPosition(textBox.getText().length());
 		textBox.setFocused(true);
 	}
@@ -132,7 +129,8 @@ public class GuiEditConfigFromString<T> extends GuiBase
 	{
 		if (super.onClosedByKey(key))
 		{
-			callback.run();
+			config.setCurrentValue(current);
+			callback.save(true);
 			return false;
 		}
 

@@ -3,22 +3,29 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.config.gui.GuiEditConfigFromString;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 
-import java.util.Optional;
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * @author LatvianModder
  */
 public abstract class ConfigFromString<T> extends ConfigValue<T>
 {
-	public abstract Optional<T> getValueFromString(String string);
+	public abstract boolean parse(@Nullable Consumer<T> callback, String string);
 
-	public String getStringFromValue(T value)
+	public String getStringFromValue(@Nullable T v)
 	{
-		return value.toString();
+		return String.valueOf(v);
 	}
 
 	@Override
-	public void onClicked(MouseButton button, Runnable callback)
+	public String getStringForGUI(@Nullable T v)
+	{
+		return getStringFromValue(v);
+	}
+
+	@Override
+	public void onClicked(MouseButton button, ConfigCallback callback)
 	{
 		new GuiEditConfigFromString<>(this, callback).openGui();
 	}

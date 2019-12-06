@@ -7,15 +7,15 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
  */
 public abstract class ConfigWithVariants<T> extends ConfigValue<T>
 {
-	public abstract T getIteration(T value, boolean next);
+	public abstract T getIteration(T v, boolean next);
 
 	@Override
-	public void onClicked(MouseButton button, Runnable callback)
+	public void onClicked(MouseButton button, ConfigCallback callback)
 	{
 		if (getCanEdit())
 		{
-			setCurrentValue(getIteration(current, button.isLeft()));
-			callback.run();
+			setCurrentValue(getIteration(value, button.isLeft()));
+			callback.save(true);
 		}
 	}
 }

@@ -43,54 +43,41 @@ public class ConfigList<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 	@Override
 	public void addInfo(List<String> l)
 	{
-		if (current.isEmpty())
+		if (!value.isEmpty())
 		{
-			l.add(TextFormatting.AQUA + "Value: []");
-		}
-		else
-		{
-			l.add(TextFormatting.AQUA + "Value: [");
+			l.add(TextFormatting.AQUA + "List:");
 
-			for (E value : current)
+			for (E value : value)
 			{
-				l.add("  " + type.getStringForGUI(value));
+				l.add(type.getStringForGUI(value));
 			}
 
-			l.add(TextFormatting.AQUA + "]");
+			if (!defaultValue.isEmpty())
+			{
+				l.add("");
+			}
 		}
 
-		if (defaultValue.isEmpty())
+		if (!defaultValue.isEmpty())
 		{
-			l.add(TextFormatting.AQUA + "Default: []");
-		}
-		else
-		{
-			l.add(TextFormatting.AQUA + "Default: [");
+			l.add(TextFormatting.AQUA + "Default:");
 
 			for (E value : defaultValue)
 			{
-				l.add("  " + type.getStringForGUI(value));
+				l.add(type.getStringForGUI(value));
 			}
-
-			l.add(TextFormatting.AQUA + "]");
 		}
 	}
 
 	@Override
-	public void onClicked(MouseButton button, Runnable callback)
+	public void onClicked(MouseButton button, ConfigCallback callback)
 	{
 		new GuiEditConfigList<>(this, callback).openGui();
 	}
 
 	@Override
-	public String getStringForGUI(List<E> value)
+	public String getStringForGUI(List<E> v)
 	{
-		return value.isEmpty() ? "[]" : "[...]";
-	}
-
-	@Override
-	public boolean isEmpty(List<E> value)
-	{
-		return value.isEmpty();
+		return v.isEmpty() ? "[]" : "[...]";
 	}
 }

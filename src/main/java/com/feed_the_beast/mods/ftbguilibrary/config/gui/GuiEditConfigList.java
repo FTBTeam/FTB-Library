@@ -1,5 +1,6 @@
 package com.feed_the_beast.mods.ftbguilibrary.config.gui;
 
+import com.feed_the_beast.mods.ftbguilibrary.config.ConfigCallback;
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigList;
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigValue;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
@@ -44,7 +45,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		{
 			boolean mouseOver = getMouseY() >= 20 && isMouseOver();
 
-			MutableColor4I textCol = list.type.getColor(list.current.get(index)).mutable();
+			MutableColor4I textCol = list.type.getColor(list.value.get(index)).mutable();
 			textCol.setAlpha(255);
 
 			if (mouseOver)
@@ -59,7 +60,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 				}
 			}
 
-			theme.drawString(getGui().getTheme().trimStringToWidth(list.type.getStringForGUI(list.current.get(index)), width), x + 4, y + 2, textCol, 0);
+			theme.drawString(getGui().getTheme().trimStringToWidth(list.type.getStringForGUI(list.value.get(index)), width), x + 4, y + 2, textCol, 0);
 
 			if (mouseOver)
 			{
@@ -78,17 +79,20 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 			{
 				if (list.getCanEdit())
 				{
-					list.current.remove(index);
+					list.value.remove(index);
 					parent.refreshWidgets();
 				}
 			}
 			else
 			{
-				list.type.current = list.current.get(index);
-				list.type.initial = list.type.copy(list.type.current);
-				list.type.onClicked(button, () -> {
-					list.current.set(index, list.type.current);
-					getGui().openGui();
+				list.type.value = list.value.get(index);
+				list.type.onClicked(button, accepted -> {
+					if (accepted)
+					{
+						list.value.set(index, list.type.value);
+					}
+
+					openGui();
 				});
 			}
 		}
@@ -102,7 +106,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 			}
 			else
 			{
-				list.type.current = list.current.get(index);
+				list.type.value = list.value.get(index);
 				list.type.addInfo(l);
 			}
 		}
@@ -135,12 +139,14 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		public void onClicked(MouseButton button)
 		{
 			playClickSound();
-			list.type.current = list.type.copy(list.type.defaultValue);
-			list.current.add(list.type.current);
-			list.type.initial = list.type.copy(list.type.current);
-			list.type.onClicked(button, () -> {
-				list.current.set(list.current.size() - 1, list.type.current);
-				getGui().openGui();
+			list.type.value = list.type.defaultValue == null ? null : list.type.copy(list.type.defaultValue);
+			list.type.onClicked(button, accepted -> {
+				if (accepted)
+				{
+					list.value.add(list.type.value);
+				}
+
+				openGui();
 			});
 		}
 
@@ -151,14 +157,14 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 	}
 
 	private final ConfigList<E, CV> list;
-	private final Runnable callback;
+	private final ConfigCallback callback;
 
 	private final String title;
 	private final Panel configPanel;
 	private final Button buttonAccept, buttonCancel;
 	private final PanelScrollBar scroll;
 
-	public GuiEditConfigList(ConfigList<E, CV> l, Runnable cb)
+	public GuiEditConfigList(ConfigList<E, CV> l, ConfigCallback cb)
 	{
 		list = l;
 		callback = cb;
@@ -170,7 +176,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 			@Override
 			public void addWidgets()
 			{
-				for (int i = 0; i < list.current.size(); i++)
+				for (int i = 0; i < list.value.size(); i++)
 				{
 					add(new ButtonConfigValue<>(this, list, i));
 				}
@@ -194,14 +200,8 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		};
 
 		scroll = new PanelScrollBar(this, configPanel);
-
-		buttonAccept = new SimpleButton(this, I18n.format("gui.accept"), GuiIcons.ACCEPT, (widget, button) ->
-		{
-			widget.getGui().closeGui();
-			callback.run();
-		});
-
-		buttonCancel = new SimpleButton(this, I18n.format("gui.cancel"), GuiIcons.CANCEL, (widget, button) -> widget.getGui().closeGui());
+		buttonAccept = new SimpleButton(this, I18n.format("gui.accept"), GuiIcons.ACCEPT, (widget, button) -> callback.save(true));
+		buttonCancel = new SimpleButton(this, I18n.format("gui.cancel"), GuiIcons.CANCEL, (widget, button) -> callback.save(false));
 	}
 
 	@Override

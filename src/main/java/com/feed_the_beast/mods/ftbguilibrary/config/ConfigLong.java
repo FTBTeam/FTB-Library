@@ -3,8 +3,9 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * @author LatvianModder
@@ -14,12 +15,6 @@ public class ConfigLong extends ConfigNumber<Long>
 	public ConfigLong(long mn, long mx)
 	{
 		super(mn, mx);
-	}
-
-	@Override
-	public boolean isValid(Long value)
-	{
-		return value >= min && value <= max;
 	}
 
 	@Override
@@ -39,20 +34,26 @@ public class ConfigLong extends ConfigNumber<Long>
 	}
 
 	@Override
-	public Optional<Long> getValueFromString(String string)
+	public boolean parse(@Nullable Consumer<Long> callback, String string)
 	{
-		if (string.isEmpty())
-		{
-			return Optional.empty();
-		}
-
 		try
 		{
-			return Optional.of(Long.decode(string));
+			long v = Long.decode(string);
+
+			if (v >= min && v <= max)
+			{
+				if (callback != null)
+				{
+					callback.accept(v);
+				}
+
+				return true;
+			}
 		}
 		catch (Exception ex)
 		{
-			return Optional.empty();
 		}
+
+		return false;
 	}
 }

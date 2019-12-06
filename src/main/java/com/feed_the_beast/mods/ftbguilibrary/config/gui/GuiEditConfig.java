@@ -166,7 +166,7 @@ public class GuiEditConfig extends GuiBase
 			theme.drawString(keyText, x + 4, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
 			GlStateManager.color4f(1F, 1F, 1F, 1F);
 
-			String s = inst.getStringForGUI(inst.current);
+			String s = inst.getStringForGUI(inst.value);
 			int slen = theme.getStringWidth(s);
 
 			if (slen > 150)
@@ -175,7 +175,7 @@ public class GuiEditConfig extends GuiBase
 				slen = 152;
 			}
 
-			MutableColor4I textCol = inst.getColor(inst.current).mutable();
+			MutableColor4I textCol = inst.getColor(inst.value).mutable();
 			textCol.setAlpha(255);
 
 			if (mouseOver)
@@ -198,7 +198,7 @@ public class GuiEditConfig extends GuiBase
 			if (getMouseY() >= 20)
 			{
 				playClickSound();
-				inst.onClicked(button, GuiEditConfig.this);
+				inst.onClicked(button, accepted -> run());
 			}
 		}
 
@@ -231,7 +231,6 @@ public class GuiEditConfig extends GuiBase
 	private final Panel configPanel;
 	private final Button buttonAccept, buttonCancel, buttonCollapseAll, buttonExpandAll;
 	private final PanelScrollBar scroll;
-	private int shouldClose = 0;
 	private int groupSize = 0;
 
 	public GuiEditConfig(ConfigGroup g)
@@ -295,17 +294,8 @@ public class GuiEditConfig extends GuiBase
 
 		scroll = new PanelScrollBar(this, configPanel);
 
-		buttonAccept = new SimpleButton(this, I18n.format("gui.close"), GuiIcons.ACCEPT, (widget, button) ->
-		{
-			shouldClose = 1;
-			widget.getGui().closeGui();
-		});
-
-		buttonCancel = new SimpleButton(this, I18n.format("gui.cancel"), GuiIcons.CANCEL, (widget, button) ->
-		{
-			shouldClose = 2;
-			widget.getGui().closeGui();
-		});
+		buttonAccept = new SimpleButton(this, I18n.format("gui.close"), GuiIcons.ACCEPT, (widget, button) -> group.save(true));
+		buttonCancel = new SimpleButton(this, I18n.format("gui.cancel"), GuiIcons.CANCEL, (widget, button) -> group.save(false));
 
 		buttonExpandAll = new SimpleButton(this, I18n.format("gui.expand_all"), GuiIcons.ADD, (widget, button) ->
 		{
@@ -389,25 +379,12 @@ public class GuiEditConfig extends GuiBase
 	}
 
 	@Override
-	public void onClosed()
-	{
-		super.onClosed();
-
-		if (shouldClose != 1)
-		{
-			group.reset();
-		}
-
-		group.save();
-	}
-
-	@Override
 	public boolean onClosedByKey(Key key)
 	{
 		if (super.onClosedByKey(key))
 		{
-			shouldClose = 1;
-			closeGui();
+			group.save(true);
+			return false;
 		}
 
 		return false;

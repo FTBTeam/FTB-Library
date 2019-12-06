@@ -1,10 +1,12 @@
 package com.feed_the_beast.mods.ftbguilibrary.config.gui;
 
+import com.feed_the_beast.mods.ftbguilibrary.config.ConfigCallback;
 import com.feed_the_beast.mods.ftbguilibrary.config.ConfigFluid;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.icon.ItemIcon;
 import com.feed_the_beast.mods.ftbguilibrary.misc.GuiButtonListBase;
+import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Panel;
 import com.feed_the_beast.mods.ftbguilibrary.widget.SimpleTextButton;
@@ -22,11 +24,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class GuiSelectFluid extends GuiButtonListBase
 {
 	private final ConfigFluid config;
-	private final Runnable callback;
+	private final ConfigCallback callback;
 
-	public GuiSelectFluid(ConfigFluid c, Runnable cb)
+	public GuiSelectFluid(ConfigFluid c, ConfigCallback cb)
 	{
-		setTitle(I18n.format("ftblib.select_fluid.gui"));
+		setTitle(I18n.format("ftbguilibrary.select_fluid.gui"));
 		setHasSearchBox(true);
 		config = c;
 		callback = cb;
@@ -46,7 +48,7 @@ public class GuiSelectFluid extends GuiButtonListBase
 				{
 					playClickSound();
 					config.setCurrentValue(Fluids.EMPTY);
-					callback.run();
+					callback.save(true);
 				}
 
 				@Override
@@ -59,7 +61,7 @@ public class GuiSelectFluid extends GuiButtonListBase
 
 		for (Fluid fluid : ForgeRegistries.FLUIDS)
 		{
-			if (fluid == Fluids.EMPTY)
+			if (fluid == Fluids.EMPTY || fluid.getDefaultState().isSource())
 			{
 				continue;
 			}
@@ -74,7 +76,7 @@ public class GuiSelectFluid extends GuiButtonListBase
 				{
 					playClickSound();
 					config.setCurrentValue(fluid);
-					callback.run();
+					callback.save(true);
 				}
 
 				@Override
@@ -84,5 +86,17 @@ public class GuiSelectFluid extends GuiButtonListBase
 				}
 			});
 		}
+	}
+
+	@Override
+	public boolean onClosedByKey(Key key)
+	{
+		if (super.onClosedByKey(key))
+		{
+			callback.save(false);
+			return false;
+		}
+
+		return false;
 	}
 }

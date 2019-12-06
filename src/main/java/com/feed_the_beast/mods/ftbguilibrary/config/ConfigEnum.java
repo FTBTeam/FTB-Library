@@ -26,15 +26,15 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 	}
 
 	@Override
-	public String getStringForGUI(E value)
+	public String getStringForGUI(E v)
 	{
-		return nameMap.getDisplayName(value).getFormattedText();
+		return nameMap.getDisplayName(v).getFormattedText();
 	}
 
 	@Override
-	public Color4I getColor(E value)
+	public Color4I getColor(E v)
 	{
-		Color4I col = nameMap.getColor(value);
+		Color4I col = nameMap.getColor(v);
 		return col.isEmpty() ? COLOR : col;
 	}
 
@@ -49,13 +49,13 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 
 			for (E v : nameMap)
 			{
-				list.add((isEqual(v, current) ? (TextFormatting.AQUA + "+ ") : (TextFormatting.DARK_GRAY + "- ")) + nameMap.getDisplayName(v).getString());
+				list.add((isEqual(v, value) ? (TextFormatting.AQUA + "+ ") : (TextFormatting.DARK_GRAY + "- ")) + nameMap.getDisplayName(v).getString());
 			}
 		}
 	}
 
 	@Override
-	public void onClicked(MouseButton button, Runnable callback)
+	public void onClicked(MouseButton button, ConfigCallback callback)
 	{
 		if (nameMap.values.size() > 16 || GuiBase.isCtrlKeyDown())
 		{
@@ -73,7 +73,7 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 							{
 								playClickSound();
 								setCurrentValue(v);
-								callback.run();
+								callback.save(true);
 							}
 						});
 					}
@@ -89,8 +89,8 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 	}
 
 	@Override
-	public E getIteration(E value, boolean next)
+	public E getIteration(E v, boolean next)
 	{
-		return next ? nameMap.getNext(value) : nameMap.getPrevious(value);
+		return next ? nameMap.getNext(v) : nameMap.getPrevious(v);
 	}
 }
