@@ -11,6 +11,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,119 +25,77 @@ import java.util.function.Function;
  */
 public final class NameMap<E> implements Iterable<E>
 {
-	public static class ObjectProperties<T>
+	public static final class Builder<T>
 	{
-		public String getName(T object)
+		private final T defaultValue;
+		private final List<T> values;
+
+		private Function<T, String> idProvider = t -> StringUtils.getID(t, StringUtils.FLAG_ID_FIX | StringUtils.FLAG_ID_ONLY_LOWERCASE);
+		private Function<T, ITextComponent> nameProvider = t -> new StringTextComponent(idProvider.apply(t));
+		private Function<T, Color4I> colorProvider = t -> Icon.EMPTY;
+		private Function<T, Icon> iconProvider = t -> Icon.EMPTY;
+
+		private Builder(T def, List<T> v)
 		{
-			return StringUtils.getID(object, StringUtils.FLAG_ID_ONLY_LOWERCASE | StringUtils.FLAG_ID_FIX);
+			defaultValue = def;
+			values = v;
 		}
 
-		public ITextComponent getDisplayName(T value)
+		public Builder<T> id(Function<T, String> p)
 		{
-			return new StringTextComponent(getName(value));
+			idProvider = p;
+			return this;
 		}
 
-		public Color4I getColor(T object)
+		public Builder<T> name(Function<T, ITextComponent> p)
 		{
-			return Icon.EMPTY;
+			nameProvider = p;
+			return this;
+		}
+
+		public Builder<T> nameKey(Function<T, String> p)
+		{
+			return name(v -> new TranslationTextComponent(p.apply(v)));
+		}
+
+		public Builder<T> color(Function<T, Color4I> p)
+		{
+			colorProvider = p;
+			return this;
+		}
+
+		public Builder<T> icon(Function<T, Icon> p)
+		{
+			iconProvider = p;
+			return this;
+		}
+
+		public NameMap<T> create()
+		{
+			return new NameMap<>(this);
 		}
 	}
 
-	@SafeVarargs
-	public static <T> NameMap<T> create(T defaultValue, ObjectProperties<T> objectProperties, T... values)
+	public static <T> NameMap.Builder<T> of(T defaultValue, List<T> values)
 	{
-		List<T> list = new ArrayList<>(values.length);
-
-		for (T e : values)
-		{
-			if (e != null)
-			{
-				list.add(e);
-			}
-		}
-
-		if (list.isEmpty())
-		{
-			throw new IllegalStateException("Value list can't be empty!");
-		}
-
-		return new NameMap<>(defaultValue, objectProperties, list);
+		return new Builder<>(defaultValue, values);
 	}
 
-	@SafeVarargs
-	public static <T> NameMap<T> create(T defaultValue, T... values)
+	public static <T> NameMap.Builder<T> of(T defaultValue, T[] values)
 	{
-		return create(defaultValue, new ObjectProperties<>(), values);
+		return of(defaultValue, Arrays.asList(values));
 	}
 
-	@SafeVarargs
-	public static <T> NameMap<T> createWithName(T defaultValue, Function<T, ITextComponent> nameGetter, T... values)
-	{
-		return create(defaultValue, new ObjectProperties<T>()
-		{
-			@Override
-			public ITextComponent getDisplayName(T value)
-			{
-				return nameGetter.apply(value);
-			}
-		}, values);
-	}
-
-	@SafeVarargs
-	public static <T> NameMap<T> createWithNameAndColor(T defaultValue, Function<T, ITextComponent> nameGetter, Function<T, Color4I> colorGetter, T... values)
-	{
-		return create(defaultValue, new ObjectProperties<T>()
-		{
-			@Override
-			public ITextComponent getDisplayName(T value)
-			{
-				return nameGetter.apply(value);
-			}
-
-			@Override
-			public Color4I getColor(T object)
-			{
-				return colorGetter.apply(object);
-			}
-		}, values);
-	}
-
-	@SafeVarargs
-	public static <T> NameMap<T> createWithTranslation(T defaultValue, Function<T, String> nameGetter, T... values)
-	{
-		return create(defaultValue, new ObjectProperties<T>()
-		{
-			@Override
-			public ITextComponent getDisplayName(T value)
-			{
-				return new TranslationTextComponent(nameGetter.apply(value));
-			}
-		}, values);
-	}
-
-	@SafeVarargs
-	public static <T> NameMap<T> createWithBaseTranslationKey(T defaultValue, String baseTranslationKey, T... values)
-	{
-		return create(defaultValue, new ObjectProperties<T>()
-		{
-			@Override
-			public ITextComponent getDisplayName(T value)
-			{
-				return new TranslationTextComponent(baseTranslationKey + "." + getName(value));
-			}
-		}, values);
-	}
-
-	private final ObjectProperties<E> objectProperties;
+	private final Builder<E> builder;
 	public final E defaultValue;
 	public final Map<String, E> map;
 	public final List<String> keys;
 	public final List<E> values;
 
-	private NameMap(E def, ObjectProperties<E> ng, List<E> v)
+	private NameMap(Builder<E> b)
 	{
-		objectProperties = ng;
-		values = v;
+		builder = b;
+		values = Collections.unmodifiableList(b.values);
 
 		Map<String, E> map0 = new LinkedHashMap<>(size());
 
@@ -147,12 +106,12 @@ public final class NameMap<E> implements Iterable<E>
 
 		map = Collections.unmodifiableMap(map0);
 		keys = Collections.unmodifiableList(new ArrayList<>(map.keySet()));
-		defaultValue = get(getName(def));
+		defaultValue = get(getName(builder.defaultValue));
 	}
 
 	private NameMap(E def, NameMap<E> n)
 	{
-		objectProperties = n.objectProperties;
+		builder = n.builder;
 		map = n.map;
 		keys = n.keys;
 		values = n.values;
@@ -161,17 +120,17 @@ public final class NameMap<E> implements Iterable<E>
 
 	public String getName(E value)
 	{
-		return objectProperties.getName(value);
+		return builder.idProvider.apply(value);
 	}
 
 	public ITextComponent getDisplayName(E value)
 	{
-		return objectProperties.getDisplayName(value);
+		return builder.nameProvider.apply(value);
 	}
 
 	public Color4I getColor(E value)
 	{
-		return objectProperties.getColor(value);
+		return builder.colorProvider.apply(value);
 	}
 
 	public NameMap<E> withDefault(E def)
@@ -191,15 +150,8 @@ public final class NameMap<E> implements Iterable<E>
 
 	public E get(@Nullable String s)
 	{
-		if (s == null || s.isEmpty() || s.charAt(0) == '-')
-		{
-			return defaultValue;
-		}
-		else
-		{
-			E e = map.get(s);
-			return e == null ? defaultValue : e;
-		}
+		E value = getNullable(s);
+		return value == null ? defaultValue : value;
 	}
 
 	@Nullable
@@ -264,5 +216,10 @@ public final class NameMap<E> implements Iterable<E>
 	public E read(PacketBuffer data)
 	{
 		return get(data.readVarInt());
+	}
+
+	public Icon getIcon(E v)
+	{
+		return Icon.EMPTY;
 	}
 }

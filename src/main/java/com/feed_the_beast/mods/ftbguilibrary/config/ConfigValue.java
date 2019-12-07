@@ -39,7 +39,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 		return this;
 	}
 
-	public final boolean setCurrentValue(T v)
+	public final boolean setCurrentValue(@Nullable T v)
 	{
 		if (!isEqual(value, v))
 		{
@@ -50,7 +50,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 		return false;
 	}
 
-	public boolean isEqual(T v1, T v2)
+	public boolean isEqual(@Nullable T v1, @Nullable T v2)
 	{
 		return Objects.equals(v1, v2);
 	}
@@ -128,7 +128,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 		return this;
 	}
 
-	public Icon getIcon(T value)
+	public Icon getIcon(@Nullable T v)
 	{
 		return icon;
 	}

@@ -9,6 +9,7 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.Panel;
 import com.feed_the_beast.mods.ftbguilibrary.widget.SimpleTextButton;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -16,8 +17,6 @@ import java.util.List;
  */
 public class ConfigEnum<E> extends ConfigWithVariants<E>
 {
-	public static final Color4I COLOR = Color4I.rgb(0x0094FF);
-
 	public final NameMap<E> nameMap;
 
 	public ConfigEnum(NameMap<E> nm)
@@ -35,7 +34,7 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 	public Color4I getColor(E v)
 	{
 		Color4I col = nameMap.getColor(v);
-		return col.isEmpty() ? COLOR : col;
+		return col.isEmpty() ? Tristate.DEFAULT.color : col;
 	}
 
 	@Override
@@ -92,5 +91,21 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 	public E getIteration(E v, boolean next)
 	{
 		return next ? nameMap.getNext(v) : nameMap.getPrevious(v);
+	}
+
+	@Override
+	public Icon getIcon(@Nullable E v)
+	{
+		if (v != null)
+		{
+			Icon icon = nameMap.getIcon(v);
+
+			if (!icon.isEmpty())
+			{
+				return icon;
+			}
+		}
+
+		return super.getIcon(v);
 	}
 }

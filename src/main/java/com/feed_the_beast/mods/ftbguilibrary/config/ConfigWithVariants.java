@@ -12,7 +12,7 @@ public abstract class ConfigWithVariants<T> extends ConfigValue<T>
 	@Override
 	public void onClicked(MouseButton button, ConfigCallback callback)
 	{
-		if (getCanEdit())
+		if (value != null && getCanEdit())
 		{
 			setCurrentValue(getIteration(value, button.isLeft()));
 			callback.save(true);
