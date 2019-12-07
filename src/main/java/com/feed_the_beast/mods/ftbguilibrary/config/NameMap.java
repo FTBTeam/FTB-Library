@@ -58,6 +58,11 @@ public final class NameMap<E> implements Iterable<E>
 			return name(v -> new TranslationTextComponent(p.apply(v)));
 		}
 
+		public Builder<T> baseNameKey(String key)
+		{
+			return name(v -> new TranslationTextComponent(key + '.' + idProvider.apply(v)));
+		}
+
 		public Builder<T> color(Function<T, Color4I> p)
 		{
 			colorProvider = p;
