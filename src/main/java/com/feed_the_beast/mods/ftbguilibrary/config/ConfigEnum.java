@@ -22,6 +22,8 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 	public ConfigEnum(NameMap<E> nm)
 	{
 		nameMap = nm;
+		defaultValue = nameMap.defaultValue;
+		value = nameMap.defaultValue;
 	}
 
 	@Override

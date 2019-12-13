@@ -20,6 +20,8 @@ public class ConfigString extends ConfigFromString<String>
 	public ConfigString(@Nullable Pattern p)
 	{
 		pattern = p;
+		defaultValue = "";
+		value = "";
 	}
 
 	public ConfigString()

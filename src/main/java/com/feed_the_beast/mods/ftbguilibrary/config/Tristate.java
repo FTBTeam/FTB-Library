@@ -4,7 +4,7 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.Event;
@@ -18,11 +18,17 @@ public enum Tristate
 	TRUE("true", "true", Event.Result.ALLOW, Color4I.rgb(0x33AA33), 0, GuiIcons.ACCEPT),
 	DEFAULT("default", "Default", Event.Result.DEFAULT, Color4I.rgb(0x0094FF), 2, GuiIcons.SETTINGS);
 
-	public static final NameMap<Tristate> NAME_MAP = NameMap.of(DEFAULT, values()).id(v -> v.name).name(v -> new StringTextComponent(v.displayName)).color(v -> v.color).icon(v -> v.icon).create();
+	public static final Tristate[] VALUES = values();
+	public static final NameMap<Tristate> NAME_MAP = NameMap.of(DEFAULT, VALUES).id(v -> v.name).name(v -> new StringTextComponent(v.displayName)).color(v -> v.color).icon(v -> v.icon).create();
 
 	public static Tristate read(CompoundNBT nbt, String key)
 	{
-		return nbt.contains(key, Constants.NBT.TAG_BYTE) ? NAME_MAP.get(MathHelper.clamp(nbt.getByte(key), 0, 2)) : DEFAULT;
+		return nbt.contains(key, Constants.NBT.TAG_BYTE) ? nbt.getBoolean(key) ? TRUE : FALSE : DEFAULT;
+	}
+
+	public static Tristate read(PacketBuffer buffer)
+	{
+		return VALUES[buffer.readUnsignedByte()];
 	}
 
 	public final String name;
@@ -74,6 +80,14 @@ public enum Tristate
 
 	public void write(CompoundNBT nbt, String key)
 	{
-		nbt.putByte(key, (byte) NAME_MAP.getIndex(this));
+		if (!isDefault())
+		{
+			nbt.putBoolean(key, isTrue());
+		}
+	}
+
+	public void write(PacketBuffer buffer)
+	{
+		buffer.writeByte(ordinal());
 	}
 }

@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
+import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -10,6 +11,12 @@ import java.util.function.Consumer;
  */
 public class ConfigColor extends ConfigFromString<Color4I>
 {
+	public ConfigColor()
+	{
+		defaultValue = Icon.EMPTY;
+		value = Icon.EMPTY;
+	}
+
 	@Override
 	public Color4I getColor(Color4I v)
 	{

@@ -19,6 +19,8 @@ public class ConfigItemStack extends ConfigValue<ItemStack>
 	{
 		singleItemOnly = single;
 		allowEmpty = empty;
+		defaultValue = ItemStack.EMPTY;
+		value = ItemStack.EMPTY;
 	}
 
 	@Override
