@@ -90,7 +90,7 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 	{
 		if (areButtonsVisible(event.getGui()))
 		{
-			event.addWidget(new GuiButtonSidebarGroup((DisplayEffectsScreen) event.getGui()));
+			event.addWidget(new GuiButtonSidebarGroup((ContainerScreen) event.getGui()));
 		}
 	}
 

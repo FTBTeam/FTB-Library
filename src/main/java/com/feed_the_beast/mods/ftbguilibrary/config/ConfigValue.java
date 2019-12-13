@@ -101,7 +101,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 
 	public String getTooltip()
 	{
-		String k = getNameKey();
+		String k = getNameKey() + ".tooltip";
 		return I18n.hasKey(k) ? I18n.format(k) : "";
 	}
 
