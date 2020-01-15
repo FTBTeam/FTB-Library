@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
@@ -56,6 +57,7 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 	public boolean fixUnicode;
 	private Screen prevScreen;
 	public Panel contextMenu = null;
+	public ItemRenderer itemRenderer;
 
 	public GuiBase()
 	{
@@ -86,7 +88,7 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 		}
 		else
 		{
-			screen = Minecraft.getInstance().mainWindow;
+			screen = Minecraft.getInstance().getWindow();
 		}
 
 		if (onInit())

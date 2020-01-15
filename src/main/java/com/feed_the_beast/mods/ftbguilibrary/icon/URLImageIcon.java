@@ -5,7 +5,7 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.PixelBuffer;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DownloadingTexture;
-import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -52,13 +52,13 @@ public class URLImageIcon extends ImageIcon
 	public void bindTexture()
 	{
 		TextureManager manager = Minecraft.getInstance().getTextureManager();
-		ITextureObject img = manager.getTexture(texture);
+		Texture img = manager.getTexture(texture);
 
 		if (img == null)
 		{
 			if (uri.getScheme().equals("http") || uri.getScheme().equals("https"))
 			{
-				img = new DownloadingTexture(null, url, MISSING_IMAGE, null);
+				img = new DownloadingTexture(null, url, MISSING_IMAGE, false, null);
 			}
 			else
 			{
@@ -81,10 +81,10 @@ public class URLImageIcon extends ImageIcon
 					file = new File(uri);
 				}
 
-				img = new DownloadingTexture(file, url, MISSING_IMAGE, null);
+				img = new DownloadingTexture(file, url, MISSING_IMAGE, false, null);
 			}
 
-			manager.loadTexture(texture, img);
+			manager.registerTexture(texture, img);
 		}
 
 		GlStateManager.bindTexture(img.getGlTextureId());

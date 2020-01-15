@@ -1,13 +1,9 @@
 package com.feed_the_beast.mods.ftbguilibrary.icon;
 
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -17,7 +13,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -124,7 +119,7 @@ public class ItemIcon extends Icon
 	public void draw(int x, int y, int w, int h)
 	{
 		GuiHelper.drawItem(getStack(), x, y, w / 16D, h / 16D, true);
-		GuiHelper.setupDrawing();
+		//GuiHelper.setupDrawing();
 	}
 
 	@Override
@@ -132,30 +127,20 @@ public class ItemIcon extends Icon
 	public void drawStatic(int x, int y, int w, int h)
 	{
 		GuiHelper.drawItem(getStack(), x, y, w / 16D, h / 16D, false);
-		GuiHelper.setupDrawing();
+		//GuiHelper.setupDrawing();
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void drawItem3D(ItemStack stack)
+	public static void drawItem3D(MatrixStack matrixStack, ItemStack stack)
 	{
-		Minecraft mc = Minecraft.getInstance();
-		mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-		mc.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-		GlStateManager.pushMatrix();
-		GlStateManager.scalef(1F, -1F, -0.02F);
-		IBakedModel bakedmodel = mc.getItemRenderer().getItemModelWithOverrides(stack, mc.world, mc.player);
-		bakedmodel = ForgeHooksClient.handleCameraTransforms(bakedmodel, ItemCameraTransforms.TransformType.GUI, false);
-		mc.getItemRenderer().renderItem(stack, bakedmodel);
-		GlStateManager.popMatrix();
-		mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-		mc.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+		//FIXME: Draw flat 3D item
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw3D()
+	public void draw3D(MatrixStack matrixStack)
 	{
-		drawItem3D(getStack());
+		drawItem3D(matrixStack, getStack());
 	}
 
 	public String toString()

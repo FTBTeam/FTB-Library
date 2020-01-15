@@ -3,7 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -166,8 +166,8 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 			GuiHelper.setFixUnicode(true);
 		}
 
-		GlStateManager.pushMatrix();
-		GlStateManager.translatef(-guiLeft, -guiTop, 0F);
+		RenderSystem.pushMatrix();
+		RenderSystem.translatef(-guiLeft, -guiTop, 0F);
 		GuiHelper.setupDrawing();
 
 		Theme theme = wrappedGui.getTheme();
@@ -208,7 +208,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 			renderHoveredToolTip(mouseX, mouseY);
 		}
 
-		GlStateManager.popMatrix();
+		RenderSystem.popMatrix();
 
 		if (wrappedGui.fixUnicode)
 		{

@@ -6,7 +6,7 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.icon.ImageIcon;
 import com.feed_the_beast.mods.ftbguilibrary.icon.PartIcon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Bits;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import it.unimi.dsi.fastutil.booleans.BooleanStack;
 import net.minecraft.client.Minecraft;
@@ -203,9 +203,9 @@ public class Theme
 			i = getFont().drawString(text, x, y, color.rgba());
 		}
 
-		GlStateManager.color4f(1F, 1F, 1F, 1F);
-		GlStateManager.disableAlphaTest();
-		GlStateManager.enableBlend();
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.disableAlphaTest();
+		RenderSystem.enableBlend();
 		return i;
 	}
 

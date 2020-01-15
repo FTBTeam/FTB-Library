@@ -9,8 +9,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -28,7 +28,7 @@ public class ImageIcon extends Icon
 	public static final ResourceLocation MISSING_IMAGE = new ResourceLocation(FTBGUILibrary.MOD_ID, "textures/gui/missing_image.png");
 
 	public final ResourceLocation texture;
-	public double minU, minV, maxU, maxV;
+	public float minU, minV, maxU, maxV;
 	public double tileSize;
 	public Color4I color;
 
@@ -59,10 +59,10 @@ public class ImageIcon extends Icon
 	protected void setProperties(IconProperties properties)
 	{
 		super.setProperties(properties);
-		minU = properties.getDouble("u0", minU);
-		minV = properties.getDouble("v0", minV);
-		maxU = properties.getDouble("u1", maxU);
-		maxV = properties.getDouble("v1", maxV);
+		minU = (float) properties.getDouble("u0", minU);
+		minV = (float) properties.getDouble("v0", minV);
+		maxU = (float) properties.getDouble("u1", maxU);
+		maxV = (float) properties.getDouble("v1", maxV);
 		tileSize = properties.getDouble("tile_size", tileSize);
 	}
 
@@ -71,12 +71,12 @@ public class ImageIcon extends Icon
 	public void bindTexture()
 	{
 		TextureManager manager = Minecraft.getInstance().getTextureManager();
-		ITextureObject tex = manager.getTexture(texture);
+		Texture tex = manager.getTexture(texture);
 
 		if (tex == null)
 		{
 			tex = new SimpleTexture(texture);
-			manager.loadTexture(texture, tex);
+			manager.registerTexture(texture, tex);
 		}
 
 		GlStateManager.bindTexture(tex.getGlTextureId());
@@ -101,11 +101,11 @@ public class ImageIcon extends Icon
 
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-			buffer.pos(x, y + h, 0).tex(x / tileSize, (y + h) / tileSize).color(r, g, b, a).endVertex();
-			buffer.pos(x + w, y + h, 0).tex((x + w) / tileSize, (y + h) / tileSize).color(r, g, b, a).endVertex();
-			buffer.pos(x + w, y, 0).tex((x + w) / tileSize, y / tileSize).color(r, g, b, a).endVertex();
-			buffer.pos(x, y, 0).tex(x / tileSize, y / tileSize).color(r, g, b, a).endVertex();
+			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEXTURE);
+			buffer.vertex(x, y + h, 0).color(r, g, b, a).texture((float) (x / tileSize), (float) ((y + h) / tileSize)).endVertex();
+			buffer.vertex(x + w, y + h, 0).color(r, g, b, a).texture((float) ((x + w) / tileSize), (float) ((y + h) / tileSize)).endVertex();
+			buffer.vertex(x + w, y, 0).color(r, g, b, a).texture((float) ((x + w) / tileSize), (float) (y / tileSize)).endVertex();
+			buffer.vertex(x, y, 0).color(r, g, b, a).texture((float) (x / tileSize), (float) (y / tileSize)).endVertex();
 			tessellator.draw();
 		}
 	}
@@ -152,7 +152,7 @@ public class ImageIcon extends Icon
 	}
 
 	@Override
-	public ImageIcon withUV(double u0, double v0, double u1, double v1)
+	public ImageIcon withUV(float u0, float v0, float u1, float v1)
 	{
 		ImageIcon icon = copy();
 		icon.minU = u0;

@@ -2,6 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -82,11 +83,11 @@ public class CombinedIcon extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw3D()
+	public void draw3D(MatrixStack matrixStack)
 	{
 		for (Icon icon : list)
 		{
-			icon.draw3D();
+			icon.draw3D(matrixStack);
 		}
 	}
 

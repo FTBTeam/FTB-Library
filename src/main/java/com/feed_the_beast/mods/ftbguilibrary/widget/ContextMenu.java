@@ -2,7 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.util.List;
@@ -165,9 +165,9 @@ public class ContextMenu extends Panel
 	@Override
 	public void draw(Theme theme, int x, int y, int w, int h)
 	{
-		GlStateManager.pushMatrix();
-		GlStateManager.translatef(0F, 0F, 900F);
+		RenderSystem.pushMatrix();
+		RenderSystem.translatef(0F, 0F, 900F);
 		super.draw(theme, x, y, w, h);
-		GlStateManager.popMatrix();
+		RenderSystem.popMatrix();
 	}
 }

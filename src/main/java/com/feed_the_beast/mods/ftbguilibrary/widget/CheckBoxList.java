@@ -1,7 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,7 +152,7 @@ public class CheckBoxList extends Button
 			drawCheckboxBackground(theme, x, ey, 10, 10);
 			getCheckboxIcon(theme, x + 1, ey + 1, 8, 8, i, entry.value);
 			theme.drawString(entry.name, x + 12, ey + 1);
-			GlStateManager.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
 		}
 	}
 }

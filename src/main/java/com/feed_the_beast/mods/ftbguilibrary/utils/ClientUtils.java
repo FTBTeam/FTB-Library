@@ -2,9 +2,11 @@ package com.feed_the_beast.mods.ftbguilibrary.utils;
 
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiBase;
 import com.feed_the_beast.mods.ftbguilibrary.widget.IGuiWrapper;
-import com.mojang.blaze3d.platform.GLX;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import org.lwjgl.opengl.GL13;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -21,9 +23,9 @@ public class ClientUtils
 
 	public static void pushBrightness(float u, float t)
 	{
-		lastBrightnessX = GLX.lastBrightnessX;
-		lastBrightnessY = GLX.lastBrightnessY;
-		GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, u, t);
+		lastBrightnessX = GlStateManager.lastBrightnessX;
+		lastBrightnessY = GlStateManager.lastBrightnessY;
+		RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, u, t);
 	}
 
 	public static void pushMaxBrightness()
@@ -33,7 +35,7 @@ public class ClientUtils
 
 	public static void popBrightness()
 	{
-		GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, lastBrightnessX, lastBrightnessY);
+		RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, lastBrightnessX, lastBrightnessY);
 	}
 
 	public static void execClientCommand(String command, boolean printChat)

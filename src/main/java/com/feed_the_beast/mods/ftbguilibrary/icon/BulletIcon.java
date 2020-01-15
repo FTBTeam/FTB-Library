@@ -3,7 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -104,7 +104,7 @@ public class BulletIcon extends Icon
 			cd = colorD;
 		}
 
-		GlStateManager.disableTexture();
+		RenderSystem.disableTexture();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -116,8 +116,8 @@ public class BulletIcon extends Icon
 		GuiHelper.addRectToBuffer(buffer, x + 1, y + 1, w - 2, h - 2, c);
 
 		tessellator.draw();
-		GlStateManager.enableTexture();
-		GlStateManager.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.enableTexture();
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
 	}
 
 	@Override

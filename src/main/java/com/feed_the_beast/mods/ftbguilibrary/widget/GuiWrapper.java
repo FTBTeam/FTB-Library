@@ -30,6 +30,7 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 	public void init()
 	{
 		super.init();
+		wrappedGui.itemRenderer = itemRenderer;
 		wrappedGui.initGui();
 	}
 

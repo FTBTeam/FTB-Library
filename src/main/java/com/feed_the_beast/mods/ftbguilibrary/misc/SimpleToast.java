@@ -3,7 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.misc;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.toasts.IToast;
@@ -26,7 +26,7 @@ public class SimpleToast implements IToast
 		GuiHelper.setupDrawing();
 		Minecraft mc = gui.getMinecraft();
 		mc.getTextureManager().bindTexture(TEXTURE_TOASTS);
-		GlStateManager.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
 		gui.blit(0, 0, 0, 0, 160, 32);
 
 		List<String> list = mc.fontRenderer.listFormattedStringToWidth(getSubtitle(), 125);
@@ -63,7 +63,7 @@ public class SimpleToast implements IToast
 			playSound(mc.getSoundHandler());
 		}
 
-		RenderHelper.enableGUIStandardItemLighting();
+		RenderHelper.disableGuiDepthLighting();
 		getIcon().draw(8, 8, 16, 16);
 		return delta >= 5000L ? IToast.Visibility.HIDE : IToast.Visibility.SHOW;
 	}

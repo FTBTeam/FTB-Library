@@ -3,7 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -38,7 +38,7 @@ public class IconWithBorder extends IconWithParent
 	{
 		parent.draw(x + 1, y + 1, w - 2, h - 2);
 		GuiHelper.drawHollowRect(x, y, w, h, color, roundEdges);
-		GlStateManager.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
 	}
 
 	@Override

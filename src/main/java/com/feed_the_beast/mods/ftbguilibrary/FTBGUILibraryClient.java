@@ -11,8 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,12 +40,12 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, true, this::guiInit);
 		((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(SidebarButtonManager.INSTANCE);
 		MinecraftForge.EVENT_BUS.addListener(this::clientTick);
-		//new FTBGUILibraryTest().init();
+		new FTBGUILibraryTest().init();
 	}
 
 	private void textureStitch(TextureStitchEvent.Pre event)
 	{
-		if (!event.getMap().getBasePath().equals("textures"))
+		if (!event.getMap().getId().equals(PlayerContainer.BLOCK_ATLAS_TEXTURE))
 		{
 			return;
 		}
@@ -60,8 +60,8 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 				if (o instanceof AtlasSpriteIcon)
 				{
 					AtlasSpriteIcon a = (AtlasSpriteIcon) o;
-					event.addSprite(new ResourceLocation(a.name));
-					IconPresets.MAP.put(a.name, a);
+					event.addSprite(a.id);
+					IconPresets.MAP.put(a.id.toString(), a);
 				}
 			}
 		}

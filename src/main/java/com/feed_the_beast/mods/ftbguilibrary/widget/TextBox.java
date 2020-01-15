@@ -6,6 +6,7 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -582,22 +583,22 @@ public class TextBox extends Widget
 
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder vertexbuffer = tessellator.getBuffer();
-			GlStateManager.color4f(0F, 0F, 255F, 255F);
-			GlStateManager.disableTexture();
-			GlStateManager.enableColorLogicOp();
-			GlStateManager.logicOp(GlStateManager.LogicOp.OR_REVERSE);
+			RenderSystem.color4f(0F, 0F, 255F, 255F);
+			RenderSystem.disableTexture();
+			RenderSystem.enableColorLogicOp();
+			RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
 			vertexbuffer.begin(7, DefaultVertexFormats.POSITION);
-			vertexbuffer.pos(startX, endY, 0).endVertex();
-			vertexbuffer.pos(endX, endY, 0).endVertex();
-			vertexbuffer.pos(endX, startY, 0).endVertex();
-			vertexbuffer.pos(startX, startY, 0).endVertex();
+			vertexbuffer.vertex(startX, endY, 0).endVertex();
+			vertexbuffer.vertex(endX, endY, 0).endVertex();
+			vertexbuffer.vertex(endX, startY, 0).endVertex();
+			vertexbuffer.vertex(startX, startY, 0).endVertex();
 			tessellator.draw();
-			GlStateManager.disableColorLogicOp();
-			GlStateManager.enableTexture();
+			RenderSystem.disableColorLogicOp();
+			RenderSystem.enableTexture();
 		}
 
 		GuiHelper.popScissor(getScreen());
-		GlStateManager.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
 	}
 
 	public void drawTextBox(Theme theme, int x, int y, int w, int h)

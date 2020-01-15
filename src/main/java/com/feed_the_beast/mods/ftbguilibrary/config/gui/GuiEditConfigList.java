@@ -16,7 +16,7 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.SimpleButton;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Theme;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Widget;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetLayout;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
@@ -67,7 +67,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 				theme.drawString("[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
 			}
 
-			GlStateManager.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
 		}
 
 		@Override
@@ -132,7 +132,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 			}
 
 			theme.drawString(getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
-			GlStateManager.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
 		}
 
 		@Override

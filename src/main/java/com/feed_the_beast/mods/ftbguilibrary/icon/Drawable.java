@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.icon;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -19,11 +20,11 @@ public interface Drawable
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	default void draw3D()
+	default void draw3D(MatrixStack matrixStack)
 	{
-		GlStateManager.pushMatrix();
-		GlStateManager.scaled(1D / 16D, 1D / 16D, 1D);
+		RenderSystem.pushMatrix();
+		RenderSystem.scaled(1D / 16D, 1D / 16D, 1D);
 		draw(-8, -8, 16, 16);
-		GlStateManager.popMatrix();
+		RenderSystem.popMatrix();
 	}
 }

@@ -17,7 +17,7 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.Theme;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Widget;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetLayout;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetType;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
@@ -105,7 +105,7 @@ public class GuiEditConfig extends GuiBase
 		{
 			COLOR_BACKGROUND.draw(x, y, w, h);
 			theme.drawString(getTitle(), x + 2, y + 2);
-			GlStateManager.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
 
 			if (isMouseOver())
 			{
@@ -164,7 +164,7 @@ public class GuiEditConfig extends GuiBase
 			}
 
 			theme.drawString(keyText, x + 4, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
-			GlStateManager.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
 
 			String s = inst.getStringForGUI(inst.value);
 			int slen = theme.getStringWidth(s);
@@ -189,7 +189,7 @@ public class GuiEditConfig extends GuiBase
 			}
 
 			theme.drawString(s, getGui().width - (slen + 20), y + 2, textCol, 0);
-			GlStateManager.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
 		}
 
 		@Override

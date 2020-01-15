@@ -5,7 +5,7 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Bits;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
@@ -207,16 +207,16 @@ public class TextField extends Widget
 		}
 		else
 		{
-			GlStateManager.pushMatrix();
-			GlStateManager.translatef(tx, ty, 0);
-			GlStateManager.scalef(scale, scale, 1F);
+			RenderSystem.pushMatrix();
+			RenderSystem.translatef(tx, ty, 0);
+			RenderSystem.scalef(scale, scale, 1F);
 
 			for (int i = 0; i < text.length; i++)
 			{
 				theme.drawString(text[i], 0, i * textSpacing, col, textFlags);
 			}
 
-			GlStateManager.popMatrix();
+			RenderSystem.popMatrix();
 		}
 	}
 }

@@ -2,7 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 
 import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibraryClient;
 import com.feed_the_beast.mods.ftbguilibrary.utils.IPixelBuffer;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
@@ -149,26 +149,26 @@ public class IconRenderer
 		QUEUE.clear();
 
 		Minecraft mc = Minecraft.getInstance();
-		MainWindow res = mc.mainWindow;
+		MainWindow res = mc.getWindow();
 		int size = Math.min(Math.min(res.getWidth(), res.getHeight()), 64);
 
 		//FIXME: Check if its needed, used to be mc.entityRenderer.setupOverlayRendering();
-		res.loadGUIRenderMatrix(Minecraft.IS_RUNNING_ON_MAC);
-		RenderHelper.enableGUIStandardItemLighting();
+		//res.loadGUIRenderMatrix(Minecraft.IS_RUNNING_ON_MAC);
+		RenderHelper.disableGuiDepthLighting();
 		double scale = size / (16D * res.getGuiScaleFactor());
-		GlStateManager.translated(0, 0, -(scale * 100D));
-		GlStateManager.scaled(scale, scale, scale);
+		RenderSystem.translated(0, 0, -(scale * 100D));
+		RenderSystem.scaled(scale, scale, scale);
 
 		float oldZLevel = mc.getItemRenderer().zLevel;
 		mc.getItemRenderer().zLevel = -50;
 
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.enableColorMaterial();
-		GlStateManager.enableDepthTest();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.disableAlphaTest();
+		RenderSystem.enableRescaleNormal();
+		RenderSystem.enableColorMaterial();
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableBlend();
+		RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.disableAlphaTest();
 
 		int[] pixels = new int[size * size];
 		AffineTransform at = new AffineTransform();
@@ -178,17 +178,18 @@ public class IconRenderer
 
 		for (IconCallbackPair pair : queued)
 		{
-			GlStateManager.pushMatrix();
-			GlStateManager.clearColor(0F, 0F, 0F, 0F);
-			GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, false);
+			RenderSystem.pushMatrix();
+			RenderSystem.clearColor(0F, 0F, 0F, 0F);
+			RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, false);
 			pair.icon.drawStatic(0, 0, 16, 16);
-			GlStateManager.popMatrix();
+			RenderSystem.popMatrix();
 
 			try
 			{
 				ByteBuffer buf = BufferUtils.createByteBuffer(size * size * 4);
 				GL11.glReadBuffer(GL11.GL_BACK);
-				GlStateManager.getError(); //FIXME: For some reason it throws error here, but it still works. Calling this to not spam console
+				GL11.glGetError();
+				//RenderSystem.getError(); //FIXME: For some reason it throws error here, but it still works. Calling this to not spam console
 				GL11.glReadPixels(0, res.getHeight() - size, size, size, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, buf);
 				buf.asIntBuffer().get(pixels);
 				img.setRGB(0, 0, size, size, pixels, 0, size);
@@ -209,10 +210,10 @@ public class IconRenderer
 			}
 		}
 
-		GlStateManager.disableLighting();
-		GlStateManager.disableColorMaterial();
-		GlStateManager.disableDepthTest();
-		GlStateManager.disableBlend();
+		RenderSystem.disableLighting();
+		RenderSystem.disableColorMaterial();
+		RenderSystem.disableDepthTest();
+		RenderSystem.disableBlend();
 		mc.getItemRenderer().zLevel = oldZLevel;
 	}
 }

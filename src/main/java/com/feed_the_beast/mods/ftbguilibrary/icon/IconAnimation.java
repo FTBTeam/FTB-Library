@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -84,11 +85,11 @@ public class IconAnimation extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw3D()
+	public void draw3D(MatrixStack matrixStack)
 	{
 		if (!list.isEmpty())
 		{
-			list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw3D();
+			list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw3D(matrixStack);
 		}
 	}
 

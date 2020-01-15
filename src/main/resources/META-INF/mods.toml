@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[28,)"
+loaderVersion="[30,)"
 issueTrackerURL="https://github.com/FTBTeam/FTB-GUI-Library/issues"
 
 [[mods]]
@@ -14,13 +14,13 @@ FTB GUI Library add nothing.
 [[dependencies.ftbguilibrary]]
     modId="forge"
     mandatory=true
-    versionRange="[28,)"
+    versionRange="[30,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.ftbguilibrary]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.4]"
+    versionRange="[1.15,)"
     ordering="NONE"
     side="BOTH"

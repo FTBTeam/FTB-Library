@@ -69,7 +69,7 @@ public class GuiSelectFluid extends GuiButtonListBase
 			FluidStack fluidStack = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
 			FluidAttributes attributes = fluidStack.getFluid().getAttributes();
 
-			panel.add(new SimpleTextButton(panel, fluidStack.getDisplayName().getFormattedText(), Icon.getIcon(attributes.getStill(fluidStack)).withTint(Color4I.rgb(attributes.getColor(fluidStack))))
+			panel.add(new SimpleTextButton(panel, fluidStack.getDisplayName().getFormattedText(), Icon.getIcon(attributes.getStillTexture(fluidStack)).withTint(Color4I.rgb(attributes.getColor(fluidStack))))
 			{
 				@Override
 				public void onClicked(MouseButton button)

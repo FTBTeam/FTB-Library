@@ -5,14 +5,13 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.PixelBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 
@@ -21,12 +20,12 @@ import javax.annotation.Nullable;
  */
 public class AtlasSpriteIcon extends Icon
 {
-	public final String name;
+	public final ResourceLocation id;
 	public Color4I color;
 
-	AtlasSpriteIcon(String n)
+	AtlasSpriteIcon(ResourceLocation n)
 	{
-		name = n;
+		id = n;
 		color = Color4I.WHITE;
 	}
 
@@ -34,29 +33,38 @@ public class AtlasSpriteIcon extends Icon
 	@OnlyIn(Dist.CLIENT)
 	public void draw(int x, int y, int w, int h)
 	{
-		TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-		textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-		textureManager.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureMap().getAtlasSprite(name);
+		TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().func_229356_a_(PlayerContainer.BLOCK_ATLAS_TEXTURE).getSprite(id);
+
+		if (sprite == null)
+		{
+			return;
+		}
+
 		int r = color.redi();
 		int g = color.greeni();
 		int b = color.bluei();
 		int a = color.alphai();
-		buffer.pos(x, y + h, 0D).tex(sprite.getMinU(), sprite.getMaxV()).color(r, g, b, a).endVertex();
-		buffer.pos(x + w, y + h, 0D).tex(sprite.getMaxU(), sprite.getMaxV()).color(r, g, b, a).endVertex();
-		buffer.pos(x + w, y, 0D).tex(sprite.getMaxU(), sprite.getMinV()).color(r, g, b, a).endVertex();
-		buffer.pos(x, y, 0D).tex(sprite.getMinU(), sprite.getMinV()).color(r, g, b, a).endVertex();
-		tessellator.draw();
-		textureManager.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+
+		float minU = sprite.getMinU();
+		float minV = sprite.getMinV();
+		float maxU = sprite.getMaxU();
+		float maxV = sprite.getMaxV();
+
+		sprite.getAtlas().bindTexture();
+		BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+		buffer.begin(7, DefaultVertexFormats.POSITION_COLOR_TEXTURE);
+		buffer.vertex(x, y, 0D).color(r, g, b, a).texture(minU, minV).endVertex();
+		buffer.vertex(x, y + h, 0D).color(r, g, b, a).texture(minU, maxV).endVertex();
+		buffer.vertex(x + w, y + h, 0D).color(r, g, b, a).texture(maxU, maxV).endVertex();
+		buffer.vertex(x + w, y, 0D).color(r, g, b, a).texture(maxU, minV).endVertex();
+		buffer.finishDrawing();
+		WorldVertexBufferUploader.draw(buffer);
 	}
 
 	@Override
 	public String toString()
 	{
-		return name;
+		return id.toString();
 	}
 
 	@Override
@@ -71,8 +79,7 @@ public class AtlasSpriteIcon extends Icon
 	{
 		try
 		{
-			ResourceLocation rl = new ResourceLocation(name);
-			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(rl.getNamespace(), "textures/" + rl.getPath() + ".png")).getInputStream());
+			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(id.getNamespace(), "textures/" + id.getPath() + ".png")).getInputStream());
 		}
 		catch (Exception ex)
 		{
@@ -83,7 +90,7 @@ public class AtlasSpriteIcon extends Icon
 	@Override
 	public AtlasSpriteIcon copy()
 	{
-		return new AtlasSpriteIcon(name);
+		return new AtlasSpriteIcon(id);
 	}
 
 	@Override

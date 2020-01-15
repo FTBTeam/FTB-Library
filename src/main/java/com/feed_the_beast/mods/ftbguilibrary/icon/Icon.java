@@ -4,6 +4,7 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.IPixelBuffer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,7 +36,7 @@ public abstract class Icon implements Drawable
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
-		public void draw3D()
+		public void draw3D(MatrixStack matrixStack)
 		{
 		}
 
@@ -280,7 +281,7 @@ public abstract class Icon implements Drawable
 			}
 		}
 
-		return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(new ResourceLocation(id)) : new AtlasSpriteIcon(id);
+		return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(new ResourceLocation(id)) : new AtlasSpriteIcon(new ResourceLocation(id));
 	}
 
 	public boolean isEmpty()
@@ -359,12 +360,12 @@ public abstract class Icon implements Drawable
 		return this;
 	}
 
-	public Icon withUV(double u0, double v0, double u1, double v1)
+	public Icon withUV(float u0, float v0, float u1, float v1)
 	{
 		return this;
 	}
 
-	public Icon withUV(double x, double y, double w, double h, double tw, double th)
+	public Icon withUV(float x, float y, float w, float h, float tw, float th)
 	{
 		return withUV(x / tw, y / th, (x + w) / tw, (y + h) / th);
 	}

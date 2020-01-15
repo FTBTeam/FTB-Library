@@ -1,7 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.sidebar;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -96,14 +96,14 @@ public class GuiButtonSidebarGroup extends AbstractButton
 		height = maxY - y;
 		//zLevel = 0F;
 
-		GlStateManager.pushMatrix();
-		GlStateManager.translatef(0, 0, 500);
+		RenderSystem.pushMatrix();
+		RenderSystem.translatef(0, 0, 500);
 
 		FontRenderer font = gui.getMinecraft().fontRenderer;
 
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
 
 		for (GuiButtonSidebar b : buttons)
 		{
@@ -124,7 +124,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 					int width = 16;
 					Color4I.LIGHT_RED.draw(b.x + width - nw, b.y - 1, nw + 1, 9);
 					font.drawString(text, b.x + width - nw + 1, b.y, 0xFFFFFFFF);
-					GlStateManager.color4f(1F, 1F, 1F, 1F);
+					RenderSystem.color4f(1F, 1F, 1F, 1F);
 				}
 			}
 		}
@@ -149,10 +149,10 @@ public class GuiButtonSidebarGroup extends AbstractButton
 				tw = Math.max(tw, font.getStringWidth(s));
 			}
 
-			GlStateManager.pushMatrix();
-			GlStateManager.translatef(0, 0, 500);
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			RenderSystem.pushMatrix();
+			RenderSystem.translatef(0, 0, 500);
+			RenderSystem.enableBlend();
+			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			Color4I.DARK_GRAY.draw(mx1 - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
 
 			for (int i = 0; i < list.size(); i++)
@@ -160,12 +160,12 @@ public class GuiButtonSidebarGroup extends AbstractButton
 				font.drawString(list.get(i), mx1, my1 + i * 10, 0xFFFFFFFF);
 			}
 
-			GlStateManager.color4f(1F, 1F, 1F, 1F);
-			GlStateManager.popMatrix();
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.popMatrix();
 		}
 
-		GlStateManager.color4f(1F, 1F, 1F, 1F);
-		GlStateManager.popMatrix();
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.popMatrix();
 		//zLevel = 0F;
 
 		lastDrawnArea = new Rectangle(x, y, width, height);

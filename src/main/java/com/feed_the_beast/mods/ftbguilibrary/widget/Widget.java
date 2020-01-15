@@ -243,12 +243,12 @@ public class Widget implements IGuiWrapper
 
 	public static boolean isMouseButtonDown(MouseButton button)
 	{
-		return GLFW.glfwGetMouseButton(Minecraft.getInstance().mainWindow.getHandle(), button.id) == GLFW.GLFW_PRESS;
+		return GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getHandle(), button.id) == GLFW.GLFW_PRESS;
 	}
 
 	public static boolean isKeyDown(int key)
 	{
-		return GLFW.glfwGetKey(Minecraft.getInstance().mainWindow.getHandle(), key) == GLFW.GLFW_PRESS;
+		return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getHandle(), key) == GLFW.GLFW_PRESS;
 	}
 
 	public static String getClipboardString()

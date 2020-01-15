@@ -1,15 +1,13 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
-import com.feed_the_beast.mods.ftbguilibrary.utils.ClientUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
@@ -79,10 +77,10 @@ public class GuiHelper
 
 	public static void setupDrawing()
 	{
-		GlStateManager.color4f(1F, 1F, 1F, 1F);
-		GlStateManager.disableLighting();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.disableLighting();
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 	}
 
 	public static void playSound(SoundEvent event, float pitch)
@@ -90,7 +88,7 @@ public class GuiHelper
 		Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(event, pitch));
 	}
 
-	public static void drawTexturedRect(int x, int y, int w, int h, Color4I col, double u0, double v0, double u1, double v1)
+	public static void drawTexturedRect(int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1)
 	{
 		if (u0 == u1 || v0 == v1)
 		{
@@ -104,7 +102,7 @@ public class GuiHelper
 		{
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEXTURE);
 			addRectToBufferWithUV(buffer, x, y, w, h, col, u0, v0, u1, v1);
 			tessellator.draw();
 		}
@@ -116,22 +114,22 @@ public class GuiHelper
 		int g = col.greeni();
 		int b = col.bluei();
 		int a = col.alphai();
-		buffer.pos(x, y + h, 0D).color(r, g, b, a).endVertex();
-		buffer.pos(x + w, y + h, 0D).color(r, g, b, a).endVertex();
-		buffer.pos(x + w, y, 0D).color(r, g, b, a).endVertex();
-		buffer.pos(x, y, 0D).color(r, g, b, a).endVertex();
+		buffer.vertex(x, y + h, 0D).color(r, g, b, a).endVertex();
+		buffer.vertex(x + w, y + h, 0D).color(r, g, b, a).endVertex();
+		buffer.vertex(x + w, y, 0D).color(r, g, b, a).endVertex();
+		buffer.vertex(x, y, 0D).color(r, g, b, a).endVertex();
 	}
 
-	public static void addRectToBufferWithUV(BufferBuilder buffer, int x, int y, int w, int h, Color4I col, double u0, double v0, double u1, double v1)
+	public static void addRectToBufferWithUV(BufferBuilder buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1)
 	{
 		int r = col.redi();
 		int g = col.greeni();
 		int b = col.bluei();
 		int a = col.alphai();
-		buffer.pos(x, y + h, 0D).tex(u0, v1).color(r, g, b, a).endVertex();
-		buffer.pos(x + w, y + h, 0D).tex(u1, v1).color(r, g, b, a).endVertex();
-		buffer.pos(x + w, y, 0D).tex(u1, v0).color(r, g, b, a).endVertex();
-		buffer.pos(x, y, 0D).tex(u0, v0).color(r, g, b, a).endVertex();
+		buffer.vertex(x, y + h, 0D).color(r, g, b, a).texture(u0, v1).endVertex();
+		buffer.vertex(x + w, y + h, 0D).color(r, g, b, a).texture(u1, v1).endVertex();
+		buffer.vertex(x + w, y, 0D).color(r, g, b, a).texture(u1, v0).endVertex();
+		buffer.vertex(x, y, 0D).color(r, g, b, a).texture(u0, v0).endVertex();
 	}
 
 	public static void drawHollowRect(int x, int y, int w, int h, Color4I col, boolean roundEdges)
@@ -142,7 +140,7 @@ public class GuiHelper
 			return;
 		}
 
-		GlStateManager.disableTexture();
+		RenderSystem.disableTexture();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -162,12 +160,12 @@ public class GuiHelper
 		}
 
 		tessellator.draw();
-		GlStateManager.enableTexture();
+		RenderSystem.enableTexture();
 	}
 
 	public static void drawRectWithShade(int x, int y, int w, int h, Color4I col, int intensity)
 	{
-		GlStateManager.disableTexture();
+		RenderSystem.disableTexture();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -180,7 +178,7 @@ public class GuiHelper
 		addRectToBuffer(buffer, x + w - 1, y + 1, 1, h - 2, col);
 		addRectToBuffer(buffer, x + 1, y + h - 1, w - 1, 1, col);
 		tessellator.draw();
-		GlStateManager.enableTexture();
+		RenderSystem.enableTexture();
 	}
 
 	public static boolean drawItem(ItemStack stack, double x, double y, double scaleX, double scaleY, boolean renderOverlay)
@@ -189,22 +187,24 @@ public class GuiHelper
 		{
 			return false;
 		}
+		
+		/*
 
 		boolean result = true;
 
 		ItemRenderer renderItem = Minecraft.getInstance().getItemRenderer();
 		renderItem.zLevel = 180F;
-		GlStateManager.pushMatrix();
-		GlStateManager.translated(x, y, 32D);
+		RenderSystem.pushMatrix();
+		RenderSystem.translated(x, y, 32D);
 
 		if (scaleX != 1D || scaleY != 1D)
 		{
-			GlStateManager.scaled(scaleX, scaleY, 1D);
+			RenderSystem.scaled(scaleX, scaleY, 1D);
 		}
 
-		RenderHelper.enableGUIStandardItemLighting();
+		RenderHelper.disableGuiDepthLighting();
 		ClientUtils.pushMaxBrightness();
-		GlStateManager.enableTexture();
+		RenderSystem.enableTexture();
 
 		try
 		{
@@ -229,9 +229,30 @@ public class GuiHelper
 		}
 
 		ClientUtils.popBrightness();
-		GlStateManager.popMatrix();
+		RenderSystem.popMatrix();
 		renderItem.zLevel = 0F;
 		return result;
+		 */
+
+		RenderSystem.pushMatrix();
+		RenderSystem.translated(x, y, 0D);
+		RenderSystem.scaled(scaleX, scaleY, 1D);
+		Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(stack, 0, 0);
+
+		if (renderOverlay)
+		{
+			FontRenderer font = stack.getItem().getFontRenderer(stack);
+
+			if (font == null)
+			{
+				font = Minecraft.getInstance().fontRenderer;
+			}
+
+			Minecraft.getInstance().getItemRenderer().renderItemOverlayIntoGUI(font, stack, 0, 0, null);
+		}
+
+		RenderSystem.popMatrix();
+		return true;
 	}
 
 	public static boolean drawItem(ItemStack stack, double x, double y, boolean renderOverlay)
