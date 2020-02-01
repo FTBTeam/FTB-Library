@@ -2,7 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 
 import com.feed_the_beast.mods.ftbguilibrary.utils.IPixelBuffer;
 import com.feed_the_beast.mods.ftbguilibrary.utils.PixelBuffer;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DownloadingTexture;
 import net.minecraft.client.renderer.texture.Texture;
@@ -84,10 +84,10 @@ public class URLImageIcon extends ImageIcon
 				img = new DownloadingTexture(file, url, MISSING_IMAGE, false, null);
 			}
 
-			manager.registerTexture(texture, img);
+			manager.loadTexture(texture, img);
 		}
 
-		GlStateManager.bindTexture(img.getGlTextureId());
+		RenderSystem.bindTexture(img.getGlTextureId());
 	}
 
 	public String toString()

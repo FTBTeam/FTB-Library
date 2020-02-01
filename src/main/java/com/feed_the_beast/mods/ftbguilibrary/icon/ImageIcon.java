@@ -76,7 +76,7 @@ public class ImageIcon extends Icon
 		if (tex == null)
 		{
 			tex = new SimpleTexture(texture);
-			manager.registerTexture(texture, tex);
+			manager.loadTexture(texture, tex);
 		}
 
 		GlStateManager.bindTexture(tex.getGlTextureId());
@@ -101,11 +101,11 @@ public class ImageIcon extends Icon
 
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEXTURE);
-			buffer.vertex(x, y + h, 0).color(r, g, b, a).texture((float) (x / tileSize), (float) ((y + h) / tileSize)).endVertex();
-			buffer.vertex(x + w, y + h, 0).color(r, g, b, a).texture((float) ((x + w) / tileSize), (float) ((y + h) / tileSize)).endVertex();
-			buffer.vertex(x + w, y, 0).color(r, g, b, a).texture((float) ((x + w) / tileSize), (float) (y / tileSize)).endVertex();
-			buffer.vertex(x, y, 0).color(r, g, b, a).texture((float) (x / tileSize), (float) (y / tileSize)).endVertex();
+			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEX);
+			buffer.pos(x, y + h, 0).color(r, g, b, a).tex((float) (x / tileSize), (float) ((y + h) / tileSize)).endVertex();
+			buffer.pos(x + w, y + h, 0).color(r, g, b, a).tex((float) ((x + w) / tileSize), (float) ((y + h) / tileSize)).endVertex();
+			buffer.pos(x + w, y, 0).color(r, g, b, a).tex((float) ((x + w) / tileSize), (float) (y / tileSize)).endVertex();
+			buffer.pos(x, y, 0).color(r, g, b, a).tex((float) (x / tileSize), (float) (y / tileSize)).endVertex();
 			tessellator.draw();
 		}
 	}

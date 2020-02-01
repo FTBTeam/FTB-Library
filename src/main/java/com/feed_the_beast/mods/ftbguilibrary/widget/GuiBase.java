@@ -88,7 +88,7 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 		}
 		else
 		{
-			screen = Minecraft.getInstance().getWindow();
+			screen = Minecraft.getInstance().getMainWindow();
 		}
 
 		if (onInit())

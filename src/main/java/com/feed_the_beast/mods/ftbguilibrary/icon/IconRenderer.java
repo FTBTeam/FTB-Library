@@ -149,12 +149,12 @@ public class IconRenderer
 		QUEUE.clear();
 
 		Minecraft mc = Minecraft.getInstance();
-		MainWindow res = mc.getWindow();
+		MainWindow res = mc.getMainWindow();
 		int size = Math.min(Math.min(res.getWidth(), res.getHeight()), 64);
 
 		//FIXME: Check if its needed, used to be mc.entityRenderer.setupOverlayRendering();
 		//res.loadGUIRenderMatrix(Minecraft.IS_RUNNING_ON_MAC);
-		RenderHelper.disableGuiDepthLighting();
+		RenderHelper.enableStandardItemLighting();
 		double scale = size / (16D * res.getGuiScaleFactor());
 		RenderSystem.translated(0, 0, -(scale * 100D));
 		RenderSystem.scaled(scale, scale, scale);

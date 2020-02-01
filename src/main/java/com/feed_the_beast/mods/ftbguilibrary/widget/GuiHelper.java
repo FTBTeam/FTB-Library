@@ -102,7 +102,7 @@ public class GuiHelper
 		{
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEXTURE);
+			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEX);
 			addRectToBufferWithUV(buffer, x, y, w, h, col, u0, v0, u1, v1);
 			tessellator.draw();
 		}
@@ -114,10 +114,10 @@ public class GuiHelper
 		int g = col.greeni();
 		int b = col.bluei();
 		int a = col.alphai();
-		buffer.vertex(x, y + h, 0D).color(r, g, b, a).endVertex();
-		buffer.vertex(x + w, y + h, 0D).color(r, g, b, a).endVertex();
-		buffer.vertex(x + w, y, 0D).color(r, g, b, a).endVertex();
-		buffer.vertex(x, y, 0D).color(r, g, b, a).endVertex();
+		buffer.pos(x, y + h, 0D).color(r, g, b, a).endVertex();
+		buffer.pos(x + w, y + h, 0D).color(r, g, b, a).endVertex();
+		buffer.pos(x + w, y, 0D).color(r, g, b, a).endVertex();
+		buffer.pos(x, y, 0D).color(r, g, b, a).endVertex();
 	}
 
 	public static void addRectToBufferWithUV(BufferBuilder buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1)
@@ -126,10 +126,10 @@ public class GuiHelper
 		int g = col.greeni();
 		int b = col.bluei();
 		int a = col.alphai();
-		buffer.vertex(x, y + h, 0D).color(r, g, b, a).texture(u0, v1).endVertex();
-		buffer.vertex(x + w, y + h, 0D).color(r, g, b, a).texture(u1, v1).endVertex();
-		buffer.vertex(x + w, y, 0D).color(r, g, b, a).texture(u1, v0).endVertex();
-		buffer.vertex(x, y, 0D).color(r, g, b, a).texture(u0, v0).endVertex();
+		buffer.pos(x, y + h, 0D).color(r, g, b, a).tex(u0, v1).endVertex();
+		buffer.pos(x + w, y + h, 0D).color(r, g, b, a).tex(u1, v1).endVertex();
+		buffer.pos(x + w, y, 0D).color(r, g, b, a).tex(u1, v0).endVertex();
+		buffer.pos(x, y, 0D).color(r, g, b, a).tex(u0, v0).endVertex();
 	}
 
 	public static void drawHollowRect(int x, int y, int w, int h, Color4I col, boolean roundEdges)

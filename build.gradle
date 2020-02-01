@@ -67,7 +67,6 @@ minecraft {
 
 repositories {
 	mavenLocal()
-	maven { url "https://maven.tterrag.com/" } //Yarn2MCP
 }
 
 dependencies {

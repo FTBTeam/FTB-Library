@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -45,7 +45,7 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 
 	private void textureStitch(TextureStitchEvent.Pre event)
 	{
-		if (!event.getMap().getId().equals(PlayerContainer.BLOCK_ATLAS_TEXTURE))
+		if (!event.getMap().getBasePath().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
 		{
 			return;
 		}

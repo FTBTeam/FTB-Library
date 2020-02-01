@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -421,15 +420,15 @@ public class Color4I extends Icon
 			return;
 		}
 
-		GlStateManager.disableTexture();
-		GlStateManager.enableBlend();
+		RenderSystem.disableTexture();
+		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		GuiHelper.addRectToBuffer(buffer, x, y, w, h, this);
 		tessellator.draw();
-		GlStateManager.enableTexture();
+		RenderSystem.enableTexture();
 	}
 
 	@Override

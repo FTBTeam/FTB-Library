@@ -63,7 +63,7 @@ public class SimpleToast implements IToast
 			playSound(mc.getSoundHandler());
 		}
 
-		RenderHelper.disableGuiDepthLighting();
+		RenderHelper.enableStandardItemLighting();
 		getIcon().draw(8, 8, 16, 16);
 		return delta >= 5000L ? IToast.Visibility.HIDE : IToast.Visibility.SHOW;
 	}

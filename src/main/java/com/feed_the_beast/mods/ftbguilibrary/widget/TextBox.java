@@ -15,6 +15,7 @@ import net.minecraft.util.SharedConstants;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 
 public class TextBox extends Widget
 {
@@ -587,11 +588,11 @@ public class TextBox extends Widget
 			RenderSystem.disableTexture();
 			RenderSystem.enableColorLogicOp();
 			RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
-			vertexbuffer.begin(7, DefaultVertexFormats.POSITION);
-			vertexbuffer.vertex(startX, endY, 0).endVertex();
-			vertexbuffer.vertex(endX, endY, 0).endVertex();
-			vertexbuffer.vertex(endX, startY, 0).endVertex();
-			vertexbuffer.vertex(startX, startY, 0).endVertex();
+			vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+			vertexbuffer.pos(startX, endY, 0).endVertex();
+			vertexbuffer.pos(endX, endY, 0).endVertex();
+			vertexbuffer.pos(endX, startY, 0).endVertex();
+			vertexbuffer.pos(startX, startY, 0).endVertex();
 			tessellator.draw();
 			RenderSystem.disableColorLogicOp();
 			RenderSystem.enableTexture();
