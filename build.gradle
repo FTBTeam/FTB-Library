@@ -67,10 +67,17 @@ minecraft {
 
 repositories {
 	mavenLocal()
+	maven { url "https://maven.latmod.com/" } //Item Filters, FTB Quests
 }
 
 dependencies {
 	minecraft "net.minecraftforge:forge:${forge_version}"
+	runtimeOnly(fg.deobf(project.dependencies.create("com.feed_the_beast.mods:ftb-quests:2.+") {
+		transitive = false
+	}))
+	runtimeOnly(fg.deobf(project.dependencies.create("dev.latvian.mods:item-filters:2.+") {
+		transitive = false
+	}))
 }
 
 jar {

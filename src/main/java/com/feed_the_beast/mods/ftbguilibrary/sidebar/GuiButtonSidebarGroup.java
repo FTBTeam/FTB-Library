@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.sidebar;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -96,7 +97,9 @@ public class GuiButtonSidebarGroup extends AbstractButton
 		height = maxY - y;
 		//zLevel = 0F;
 
-		RenderSystem.pushMatrix();
+		MatrixStack matrixStack = new MatrixStack();
+		matrixStack.translate(0, 0, 500);
+
 		RenderSystem.translatef(0, 0, 500);
 
 		FontRenderer font = gui.getMinecraft().fontRenderer;
@@ -149,8 +152,8 @@ public class GuiButtonSidebarGroup extends AbstractButton
 				tw = Math.max(tw, font.getStringWidth(s));
 			}
 
-			RenderSystem.pushMatrix();
-			RenderSystem.translatef(0, 0, 500);
+			matrixStack.translate(0, 0, 500);
+
 			RenderSystem.enableBlend();
 			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			Color4I.DARK_GRAY.draw(mx1 - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
@@ -161,11 +164,9 @@ public class GuiButtonSidebarGroup extends AbstractButton
 			}
 
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
-			RenderSystem.popMatrix();
 		}
 
 		RenderSystem.color4f(1F, 1F, 1F, 1F);
-		RenderSystem.popMatrix();
 		//zLevel = 0F;
 
 		lastDrawnArea = new Rectangle(x, y, width, height);
