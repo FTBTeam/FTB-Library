@@ -22,7 +22,6 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.Theme;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Widget;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetLayout;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetType;
-import com.feed_the_beast.mods.ftbguilibrary.widget.WrappedIngredient;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -58,7 +57,7 @@ public class GuiSelectItemStack extends GuiBase
 			setSize(18, 18);
 			stack = is;
 			title = null;
-			icon = null;
+			icon = ItemIcon.getItemIcon(is);
 		}
 
 		public boolean shouldAdd(String search, String mod)
@@ -105,22 +104,10 @@ public class GuiSelectItemStack extends GuiBase
 		}
 
 		@Override
-		public void drawIcon(Theme theme, int x, int y, int w, int h)
-		{
-			GuiHelper.drawItem(stack, x, y, w / 16D, h / 16D, true);
-		}
-
-		@Override
 		public void onClicked(MouseButton button)
 		{
 			playClickSound();
 			current = stack.copy();
-		}
-
-		@Override
-		public Object getIngredientUnderMouse()
-		{
-			return new WrappedIngredient(stack).tooltip();
 		}
 	}
 

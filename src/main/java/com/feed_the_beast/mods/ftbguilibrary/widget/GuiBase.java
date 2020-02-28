@@ -8,21 +8,16 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -453,72 +448,7 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 	@Override
 	public boolean handleClick(String scheme, String path)
 	{
-		switch (scheme)
-		{
-			case "http":
-			case "https":
-			{
-				try
-				{
-					final URI uri = new URI(scheme + ':' + path);
-					if (Minecraft.getInstance().gameSettings.chatLinksPrompt)
-					{
-						final Screen currentScreen = Minecraft.getInstance().currentScreen;
-
-						Minecraft.getInstance().displayGuiScreen(new ConfirmOpenLinkScreen(result ->
-						{
-							if (result)
-							{
-								try
-								{
-									Util.getOSType().openURI(uri);
-								}
-								catch (Exception ex)
-								{
-									ex.printStackTrace();
-								}
-							}
-							Minecraft.getInstance().displayGuiScreen(currentScreen);
-						}, scheme + ':' + path, false));
-					}
-					else
-					{
-						Util.getOSType().openURI(uri);
-					}
-
-					return true;
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-				}
-
-				return false;
-			}
-			case "file":
-			{
-				try
-				{
-					Util.getOSType().openURI(new URI("file:" + path));
-					return true;
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
-				}
-
-				return false;
-			}
-			case "command":
-			{
-				ClientUtils.execClientCommand(path, false);
-				return true;
-			}
-			case "custom":
-				return MinecraftForge.EVENT_BUS.post(new CustomClickEvent(new ResourceLocation(path)));
-			default:
-				return MinecraftForge.EVENT_BUS.post(new CustomClickEvent(new ResourceLocation(scheme, path)));
-		}
+		return ClientUtils.handleClick(scheme, path);
 	}
 
 	public void openYesNoFull(ITextComponent title, ITextComponent desc, BooleanConsumer callback)

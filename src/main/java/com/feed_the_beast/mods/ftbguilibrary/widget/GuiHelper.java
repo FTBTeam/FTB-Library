@@ -181,7 +181,7 @@ public class GuiHelper
 		RenderSystem.enableTexture();
 	}
 
-	public static boolean drawItem(ItemStack stack, double x, double y, double scaleX, double scaleY, boolean renderOverlay)
+	public static boolean drawItem(ItemStack stack, int x, int y, double scaleX, double scaleY, boolean renderOverlay)
 	{
 		if (stack.isEmpty())
 		{
@@ -255,9 +255,9 @@ public class GuiHelper
 		return true;
 	}
 
-	public static boolean drawItem(ItemStack stack, double x, double y, boolean renderOverlay)
+	public static boolean drawItem(ItemStack stack, int x, int y, boolean renderOverlay)
 	{
-		return drawItem(stack, x, y, 1D, 1D, renderOverlay);
+		return drawItem(stack, x, y, 1, 1, renderOverlay);
 	}
 
 	public static void pushScissor(MainWindow screen, int x, int y, int w, int h)
