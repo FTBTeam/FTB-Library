@@ -1,7 +1,9 @@
 package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -52,19 +54,19 @@ public class ConfigString extends ConfigFromString<String>
 	}
 
 	@Override
-	public String getStringForGUI(@Nullable String v)
+	public ITextComponent getStringForGUI(@Nullable String v)
 	{
-		return v == null ? "null" : ('"' + v + '"');
+		return v == null ? NULL_TEXT : new StringTextComponent('"' + v + '"');
 	}
 
 	@Override
-	public void addInfo(List<String> list)
+	public void addInfo(List<ITextProperties> list)
 	{
 		super.addInfo(list);
 
 		if (pattern != null)
 		{
-			list.add(TextFormatting.AQUA + "Regex: " + TextFormatting.RESET + pattern.pattern());
+			list.add(info("Regex", pattern.pattern()));
 		}
 	}
 }

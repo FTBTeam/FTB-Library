@@ -1,7 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextProperties;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -18,18 +18,18 @@ public class ConfigDouble extends ConfigNumber<Double>
 	}
 
 	@Override
-	public void addInfo(List<String> list)
+	public void addInfo(List<ITextProperties> list)
 	{
 		super.addInfo(list);
 
 		if (min != Double.NEGATIVE_INFINITY)
 		{
-			list.add(TextFormatting.AQUA + "Min: " + TextFormatting.RESET + StringUtils.formatDouble(min));
+			list.add(info("Min", StringUtils.formatDouble(min)));
 		}
 
 		if (max != Double.POSITIVE_INFINITY)
 		{
-			list.add(TextFormatting.AQUA + "Max: " + TextFormatting.RESET + StringUtils.formatDouble(max));
+			list.add(info("Max", StringUtils.formatDouble(max)));
 		}
 	}
 

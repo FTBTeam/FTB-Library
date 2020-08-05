@@ -3,10 +3,14 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -102,9 +106,9 @@ public class Widget implements IGuiWrapper
 		return true;
 	}
 
-	public String getTitle()
+	public ITextComponent getTitle()
 	{
-		return "";
+		return StringTextComponent.EMPTY;
 	}
 
 	public WidgetType getWidgetType()
@@ -112,11 +116,11 @@ public class Widget implements IGuiWrapper
 		return WidgetType.mouseOver(isMouseOver());
 	}
 
-	public void addMouseOverText(List<String> list)
+	public void addMouseOverText(List<ITextProperties> list)
 	{
-		String title = getTitle();
+		ITextComponent title = getTitle();
 
-		if (!title.isEmpty())
+		if (title != StringTextComponent.EMPTY)
 		{
 			list.add(title);
 		}
@@ -153,7 +157,7 @@ public class Widget implements IGuiWrapper
 		return isEnabled() && isMouseOver();
 	}
 
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 	}
 

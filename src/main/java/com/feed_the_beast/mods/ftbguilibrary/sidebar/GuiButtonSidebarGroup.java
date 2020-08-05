@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -27,13 +28,13 @@ public class GuiButtonSidebarGroup extends AbstractButton
 
 	public GuiButtonSidebarGroup(ContainerScreen g)
 	{
-		super(0, 0, 0, 0, "");
+		super(0, 0, 0, 0, StringTextComponent.EMPTY);
 		gui = g;
 		buttons = new ArrayList<>();
 	}
 
 	@Override
-	public void render(int mx, int my, float partialTicks)
+	public void render(MatrixStack matrixStack, int mx, int my, float partialTicks)
 	{
 		buttons.clear();
 		mouseOver = null;
@@ -97,10 +98,8 @@ public class GuiButtonSidebarGroup extends AbstractButton
 		height = maxY - y;
 		//zLevel = 0F;
 
-		MatrixStack matrixStack = new MatrixStack();
+		matrixStack.push();
 		matrixStack.translate(0, 0, 500);
-
-		RenderSystem.translatef(0, 0, 500);
 
 		FontRenderer font = gui.getMinecraft().fontRenderer;
 
@@ -126,7 +125,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 					int nw = font.getStringWidth(text);
 					int width = 16;
 					Color4I.LIGHT_RED.draw(b.x + width - nw, b.y - 1, nw + 1, 9);
-					font.drawString(text, b.x + width - nw + 1, b.y, 0xFFFFFFFF);
+					font.drawString(matrixStack, text, b.x + width - nw + 1, b.y, 0xFFFFFFFF);
 					RenderSystem.color4f(1F, 1F, 1F, 1F);
 				}
 			}
@@ -160,7 +159,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 
 			for (int i = 0; i < list.size(); i++)
 			{
-				font.drawString(list.get(i), mx1, my1 + i * 10, 0xFFFFFFFF);
+				font.drawString(matrixStack, list.get(i), mx1, my1 + i * 10, 0xFFFFFFFF);
 			}
 
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
@@ -170,6 +169,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 		//zLevel = 0F;
 
 		lastDrawnArea = new Rectangle(x, y, width, height);
+		matrixStack.pop();
 	}
 
 	@Override

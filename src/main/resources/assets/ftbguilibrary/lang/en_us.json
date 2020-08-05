@@ -36,13 +36,20 @@
 	"delete_item": "Do you want to delete '%s'?",
 	"lat_support": "Like this mod? Click to support my projects!",
 	"ftbguilibrary.select_fluid.gui": "Select Fluid",
-	"ftbguilibrary.select_item.list_mode": "List Mode: %s",
+	"ftbguilibrary.select_item.list_mode": "List Mode",
 	"ftbguilibrary.select_item.list_mode.all": "All Items",
 	"ftbguilibrary.select_item.list_mode.inv": "Inventory",
 	"ftbguilibrary.select_item.count": "Set Size",
-	"ftbguilibrary.select_item.meta": "Set Metadata",
 	"ftbguilibrary.select_item.nbt": "Edit NBT",
 	"ftbguilibrary.select_item.caps": "Edit Capabilities",
 	"ftbguilibrary.select_item.display_name": "Set Display Name",
-	"config.group.value": "Value"
+	"config.group.value": "Value",
+	"sidebar_button.ftbguilibrary.toggle.gamemode": "Toggle Gamemode",
+	"sidebar_button.ftbguilibrary.toggle.gamemode.tooltip": "Toggles between survival and creative mode",
+	"sidebar_button.ftbguilibrary.toggle.rain": "Toggle Rain",
+	"sidebar_button.ftbguilibrary.toggle.rain.tooltip": "Toggles weather between clear and raining",
+	"sidebar_button.ftbguilibrary.toggle.day": "Set time to Day",
+	"sidebar_button.ftbguilibrary.toggle.day.tooltip": "Sets daytime",
+	"sidebar_button.ftbguilibrary.toggle.night": "Set time to Night",
+	"sidebar_button.ftbguilibrary.toggle.night.tooltip": "Sets nighttime"
 }

@@ -2,6 +2,8 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import com.feed_the_beast.mods.ftbguilibrary.config.gui.GuiEditConfigFromString;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -19,9 +21,9 @@ public abstract class ConfigFromString<T> extends ConfigValue<T>
 	}
 
 	@Override
-	public String getStringForGUI(@Nullable T v)
+	public ITextComponent getStringForGUI(@Nullable T v)
 	{
-		return getStringFromValue(v);
+		return new StringTextComponent(getStringFromValue(v));
 	}
 
 	@Override

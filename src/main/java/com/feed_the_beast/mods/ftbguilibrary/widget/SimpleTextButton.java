@@ -2,6 +2,9 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
 
 import java.util.List;
 
@@ -10,7 +13,7 @@ import java.util.List;
  */
 public abstract class SimpleTextButton extends Button
 {
-	public SimpleTextButton(Panel panel, String txt, Icon icon)
+	public SimpleTextButton(Panel panel, ITextComponent txt, Icon icon)
 	{
 		super(panel, txt, icon);
 		setWidth(panel.getGui().getTheme().getStringWidth(txt) + (hasIcon() ? 28 : 8));
@@ -18,7 +21,7 @@ public abstract class SimpleTextButton extends Button
 	}
 
 	@Override
-	public SimpleTextButton setTitle(String txt)
+	public SimpleTextButton setTitle(ITextComponent txt)
 	{
 		super.setTitle(txt);
 		setWidth(getGui().getTheme().getStringWidth(getTitle()) + (hasIcon() ? 28 : 8));
@@ -42,7 +45,7 @@ public abstract class SimpleTextButton extends Button
 	}
 
 	@Override
-	public void addMouseOverText(List<String> list)
+	public void addMouseOverText(List<ITextProperties> list)
 	{
 		if (getGui().getTheme().getStringWidth(getTitle()) + (hasIcon() ? 28 : 8) > width)
 		{
@@ -51,12 +54,12 @@ public abstract class SimpleTextButton extends Button
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		drawBackground(theme, x, y, w, h);
+		drawBackground(matrixStack, theme, x, y, w, h);
 		int s = h >= 16 ? 16 : 8;
 		int off = (h - s) / 2;
-		String title = getTitle();
+		ITextProperties title = getTitle();
 		int textX = x;
 		int textY = y + (h - theme.getFontHeight() + 1) / 2;
 
@@ -80,10 +83,10 @@ public abstract class SimpleTextButton extends Button
 
 		if (hasIcon())
 		{
-			drawIcon(theme, x + off, y + off, s, s);
+			drawIcon(matrixStack, theme, x + off, y + off, s, s);
 			textX += off + s;
 		}
 
-		theme.drawString(title, textX, textY, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+		theme.drawString(matrixStack, title, textX, textY, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 	}
 }

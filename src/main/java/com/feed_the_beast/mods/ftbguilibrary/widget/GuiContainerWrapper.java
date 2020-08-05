@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,6 +11,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.ArrayList;
@@ -20,9 +22,9 @@ import java.util.List;
  */
 public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 {
-	private GuiBase wrappedGui;
+	private final GuiBase wrappedGui;
 	private boolean drawSlots = true;
-	private List<String> tempTextList = new ArrayList<>();
+	private final List<ITextProperties> tempTextList = new ArrayList<>();
 
 	public GuiContainerWrapper(GuiBase g, Container c, PlayerInventory playerInventory, ITextComponent title)
 	{
@@ -129,7 +131,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my)
+	protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float f, int mx, int my)
 	{
 		if (wrappedGui.fixUnicode)
 		{
@@ -138,9 +140,9 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 
 		Theme theme = wrappedGui.getTheme();
 		GuiHelper.setupDrawing();
-		renderBackground();
+		renderBackground(matrixStack);
 		GuiHelper.setupDrawing();
-		wrappedGui.draw(theme, guiLeft, guiTop, xSize, ySize);
+		wrappedGui.draw(matrixStack, theme, guiLeft, guiTop, xSize, ySize);
 
 		if (drawSlots)
 		{
@@ -159,7 +161,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+	protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY)
 	{
 		if (wrappedGui.fixUnicode)
 		{
@@ -171,7 +173,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 		GuiHelper.setupDrawing();
 
 		Theme theme = wrappedGui.getTheme();
-		wrappedGui.drawForeground(theme, guiLeft, guiTop, xSize, ySize);
+		wrappedGui.drawForeground(matrixStack, theme, guiLeft, guiTop, xSize, ySize);
 
 		if (wrappedGui.contextMenu != null)
 		{
@@ -192,20 +194,20 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 
 				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty())
 				{
-					renderTooltip((ItemStack) ingredient, mouseX, mouseY);
+					renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
 				}
 			}
 		}
 		else
 		{
-			GuiUtils.drawHoveringText(tempTextList, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
+			GuiUtils.drawHoveringText(matrixStack, tempTextList, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
 		}
 
 		tempTextList.clear();
 
 		if (wrappedGui.contextMenu == null)
 		{
-			renderHoveredToolTip(mouseX, mouseY);
+			func_230459_a_(matrixStack, mouseX, mouseY);
 		}
 
 		RenderSystem.popMatrix();
@@ -217,20 +219,20 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 	}
 
 	@Override
-	public void renderBackground()
+	public void renderBackground(MatrixStack matrixStack)
 	{
-		if (wrappedGui.drawDefaultBackground())
+		if (wrappedGui.drawDefaultBackground(matrixStack))
 		{
-			super.renderBackground();
+			super.renderBackground(matrixStack);
 		}
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks)
+	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
 	{
-		renderBackground();
+		renderBackground(matrixStack);
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
-		super.render(mouseX, mouseY, partialTicks);
+		super.render(matrixStack, mouseX, mouseY, partialTicks);
 	}
 
 	@Override

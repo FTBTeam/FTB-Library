@@ -9,8 +9,8 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
@@ -37,7 +37,7 @@ public class SidebarButton implements Comparable<SidebarButton>
 	private boolean configValue = true;
 	private final List<String> clickEvents = new ArrayList<>();
 	private final List<String> shiftClickEvents = new ArrayList<>();
-	private boolean loadingScreen;
+	private final boolean loadingScreen;
 	private ChainedBooleanSupplier visible = ChainedBooleanSupplier.TRUE;
 	private Supplier<String> customTextHandler = null;
 	private Consumer<List<String>> tooltipHandler = null;
@@ -176,7 +176,7 @@ public class SidebarButton implements Comparable<SidebarButton>
 	{
 		if (loadingScreen)
 		{
-			new GuiLoading(I18n.format(getLangKey())).openGui();
+			new GuiLoading(new TranslationTextComponent(getLangKey())).openGui();
 		}
 
 		for (String event : (shift && !shiftClickEvents.isEmpty() ? shiftClickEvents : clickEvents))

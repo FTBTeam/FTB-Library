@@ -10,7 +10,6 @@ public class FTBGUILibrary
 
 	public FTBGUILibrary()
 	{
-		//noinspection Convert2MethodRef
-		DistExecutor.runForDist(() -> () -> new FTBGUILibraryClient(), () -> () -> new FTBGUILibraryCommon()).init();
+		DistExecutor.safeRunForDist(() -> FTBGUILibraryClient::new, () -> FTBGUILibraryCommon::new).init();
 	}
 }

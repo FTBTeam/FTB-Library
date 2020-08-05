@@ -5,11 +5,13 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Bits;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.event.HoverEvent;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -75,7 +77,10 @@ public class TextField extends Widget
 			}
 			else
 			{
-				text = theme.listFormattedStringToWidth(txt, maxWidth).toArray(StringUtils.EMPTY_ARRAY);
+				text = theme.listFormattedStringToWidth(new StringTextComponent(txt), maxWidth)
+						.stream()
+						.map(ITextProperties::getString)
+						.toArray(String[]::new);
 			}
 		}
 
@@ -107,20 +112,6 @@ public class TextField extends Widget
 		return this;
 	}
 
-	public TextField setText(ITextComponent component)
-	{
-		setText(component.getFormattedText());
-
-		textData = getGui().getTheme().createDataFrom(component, width);
-
-		if (textData.isEmpty())
-		{
-			textData = null;
-		}
-
-		return this;
-	}
-
 	@Nullable
 	private GuiBase.PositionedTextData getDataAtMouse()
 	{
@@ -144,13 +135,13 @@ public class TextField extends Widget
 	}
 
 	@Override
-	public void addMouseOverText(List<String> list)
+	public void addMouseOverText(List<ITextProperties> list)
 	{
 		GuiBase.PositionedTextData data = getDataAtMouse();
 
-		if (data != null && data.hoverEvent != null) //TODO: Special handling for each data.hoverEvent.getAction()
+		if (data != null && data.hoverEvent != null && data.hoverEvent.getAction() == HoverEvent.Action.SHOW_TEXT) //TODO: Special handling for each data.hoverEvent.getAction()
 		{
-			Collections.addAll(list, data.hoverEvent.getValue().getFormattedText().split("\n"));
+			list.addAll(getGui().getTheme().listFormattedStringToWidth(data.hoverEvent.getParameter(HoverEvent.Action.SHOW_TEXT), getGui().width - getX()));
 		}
 	}
 
@@ -171,14 +162,14 @@ public class TextField extends Widget
 		return false;
 	}
 
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		drawBackground(theme, x, y, w, h);
+		drawBackground(matrixStack, theme, x, y, w, h);
 
 		if (text.length == 0)
 		{
@@ -202,7 +193,7 @@ public class TextField extends Widget
 		{
 			for (int i = 0; i < text.length; i++)
 			{
-				theme.drawString(text[i], tx, ty + i * textSpacing, col, textFlags);
+				theme.drawString(matrixStack, text[i], tx, ty + i * textSpacing, col, textFlags);
 			}
 		}
 		else
@@ -213,7 +204,7 @@ public class TextField extends Widget
 
 			for (int i = 0; i < text.length; i++)
 			{
-				theme.drawString(text[i], 0, i * textSpacing, col, textFlags);
+				theme.drawString(matrixStack, text[i], 0, i * textSpacing, col, textFlags);
 			}
 
 			RenderSystem.popMatrix();

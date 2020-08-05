@@ -5,6 +5,9 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
@@ -17,6 +20,8 @@ import java.util.function.Consumer;
  */
 public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 {
+	public static final StringTextComponent NULL_TEXT = new StringTextComponent("null");
+
 	public ConfigGroup group;
 	public T value;
 	public Consumer<T> setter;
@@ -65,16 +70,27 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 		return Color4I.GRAY;
 	}
 
-	public void addInfo(List<String> list)
+	public void addInfo(List<ITextProperties> list)
 	{
-		list.add(TextFormatting.AQUA + "Default: " + TextFormatting.RESET + getStringForGUI(defaultValue));
+		list.add(info("Default", getStringForGUI(defaultValue)));
+	}
+
+	protected static ITextComponent info(String key)
+	{
+		return new StringTextComponent(key + ":").mergeStyle(TextFormatting.AQUA);
+	}
+
+	public static ITextComponent info(String key, Object value)
+	{
+		ITextComponent c = value instanceof ITextComponent ? (ITextComponent) value : new StringTextComponent(String.valueOf(value));
+		return new StringTextComponent("").append((new StringTextComponent(key + ": ").mergeStyle(TextFormatting.AQUA))).append(c);
 	}
 
 	public abstract void onClicked(MouseButton button, ConfigCallback callback);
 
-	public String getStringForGUI(@Nullable T v)
+	public ITextComponent getStringForGUI(@Nullable T v)
 	{
-		return String.valueOf(v);
+		return new StringTextComponent(String.valueOf(v));
 	}
 
 	public String getPath()

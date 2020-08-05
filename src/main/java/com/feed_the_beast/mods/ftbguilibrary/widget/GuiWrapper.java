@@ -3,9 +3,10 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
@@ -17,12 +18,12 @@ import java.util.List;
  */
 public class GuiWrapper extends Screen implements IGuiWrapper
 {
-	private GuiBase wrappedGui;
-	private List<String> tempTextList = new ArrayList<>();
+	private final GuiBase wrappedGui;
+	private final List<ITextProperties> tempTextList = new ArrayList<>();
 
 	public GuiWrapper(GuiBase g)
 	{
-		super(new StringTextComponent(g.getTitle()));
+		super(g.getTitle());
 		wrappedGui = g;
 	}
 
@@ -130,7 +131,7 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks)
+	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
 	{
 		if (wrappedGui.fixUnicode)
 		{
@@ -138,15 +139,15 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 		}
 
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
-		renderBackground();
+		renderBackground(matrixStack);
 		GuiHelper.setupDrawing();
 		int x = wrappedGui.getX();
 		int y = wrappedGui.getY();
 		int w = wrappedGui.width;
 		int h = wrappedGui.height;
 		Theme theme = wrappedGui.getTheme();
-		wrappedGui.draw(theme, x, y, w, h);
-		wrappedGui.drawForeground(theme, x, y, w, h);
+		wrappedGui.draw(matrixStack, theme, x, y, w, h);
+		wrappedGui.drawForeground(matrixStack, theme, x, y, w, h);
 
 		if (wrappedGui.contextMenu != null)
 		{
@@ -167,13 +168,13 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 
 				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty())
 				{
-					renderTooltip((ItemStack) ingredient, mouseX, mouseY);
+					renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
 				}
 			}
 		}
 		else
 		{
-			GuiUtils.drawHoveringText(tempTextList, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
+			GuiUtils.drawHoveringText(matrixStack, tempTextList, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
 		}
 
 		tempTextList.clear();
@@ -185,11 +186,11 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 	}
 
 	@Override
-	public void renderBackground()
+	public void renderBackground(MatrixStack matrixStack)
 	{
-		if (wrappedGui.drawDefaultBackground())
+		if (wrappedGui.drawDefaultBackground(matrixStack))
 		{
-			super.renderBackground();
+			super.renderBackground(matrixStack);
 		}
 	}
 

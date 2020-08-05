@@ -2,7 +2,8 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class ContextMenu extends Panel
 		}
 
 		@Override
-		public void addMouseOverText(List<String> list)
+		public void addMouseOverText(List<ITextProperties> list)
 		{
 			item.addMouseOverText(list);
 		}
@@ -38,22 +39,22 @@ public class ContextMenu extends Panel
 		}
 
 		@Override
-		public void drawIcon(Theme theme, int x, int y, int w, int h)
+		public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			item.drawIcon(theme, x, y, w, h);
 		}
 
 		@Override
-		public void draw(Theme theme, int x, int y, int w, int h)
+		public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			if (contextMenu.hasIcons)
 			{
-				drawIcon(theme, x + 1, y + 2, 8, 8);
-				theme.drawString(getTitle(), x + 11, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+				drawIcon(matrixStack, theme, x + 1, y + 2, 8, 8);
+				theme.drawString(matrixStack, getTitle(), x + 11, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 			}
 			else
 			{
-				theme.drawString(getTitle(), x + 2, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+				theme.drawString(matrixStack, getTitle(), x + 2, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 			}
 		}
 
@@ -82,7 +83,7 @@ public class ContextMenu extends Panel
 		}
 
 		@Override
-		public void draw(Theme theme, int x, int y, int w, int h)
+		public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			Color4I.WHITE.withAlpha(130).draw(x + 2, y + 2, parent.width - 10, 1);
 		}
@@ -157,17 +158,17 @@ public class ContextMenu extends Panel
 	}
 
 	@Override
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		theme.drawContextMenuBackground(x, y, w, h);
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		RenderSystem.pushMatrix();
-		RenderSystem.translatef(0F, 0F, 900F);
-		super.draw(theme, x, y, w, h);
-		RenderSystem.popMatrix();
+		matrixStack.push();
+		matrixStack.translate(0, 0, 900);
+		super.draw(matrixStack, theme, x, y, w, h);
+		matrixStack.pop();
 	}
 }

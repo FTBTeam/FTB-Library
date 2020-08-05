@@ -28,7 +28,7 @@ public enum EnumScreenPosition implements IStringSerializable
 	}
 
 	@Override
-	public String getName()
+	public String getString()
 	{
 		return name;
 	}

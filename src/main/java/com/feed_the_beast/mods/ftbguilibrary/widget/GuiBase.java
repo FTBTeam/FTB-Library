@@ -5,6 +5,7 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.BooleanConsumer;
 import com.feed_the_beast.mods.ftbguilibrary.utils.ClientUtils;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ChatScreen;
@@ -50,7 +51,7 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 	private boolean refreshWidgets;
 	private MainWindow screen;
 	public boolean fixUnicode;
-	private Screen prevScreen;
+	private final Screen prevScreen;
 	public Panel contextMenu = null;
 	public ItemRenderer itemRenderer;
 
@@ -265,9 +266,9 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 	}
 
 	@Override
-	public final void draw(Theme theme, int x, int y, int w, int h)
+	public final void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		super.draw(theme, x, y, w, h);
+		super.draw(matrixStack, theme, x, y, w, h);
 	}
 
 	@Override
@@ -334,17 +335,17 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 	}
 
 	@Override
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		theme.drawGui(x, y, w, h, WidgetType.NORMAL);
 	}
 
-	public boolean drawDefaultBackground()
+	public boolean drawDefaultBackground(MatrixStack matrixStack)
 	{
 		return true;
 	}
 
-	public void drawForeground(Theme theme, int x, int y, int w, int h)
+	public void drawForeground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 	}
 

@@ -3,7 +3,9 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.config.gui.GuiEditConfigList;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.List;
  */
 public class ConfigList<E, CV extends ConfigValue<E>> extends ConfigValue<List<E>>
 {
+	public static final StringTextComponent EMPTY_LIST = new StringTextComponent("[]");
+	public static final StringTextComponent NON_EMPTY_LIST = new StringTextComponent("[...]");
+
 	public static final Color4I COLOR = Color4I.rgb(0xFFAA49);
 	public final CV type;
 
@@ -41,11 +46,11 @@ public class ConfigList<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 	}
 
 	@Override
-	public void addInfo(List<String> l)
+	public void addInfo(List<ITextProperties> l)
 	{
 		if (!value.isEmpty())
 		{
-			l.add(TextFormatting.AQUA + "List:");
+			l.add(info("List"));
 
 			for (E value : value)
 			{
@@ -54,13 +59,13 @@ public class ConfigList<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 
 			if (!defaultValue.isEmpty())
 			{
-				l.add("");
+				l.add(StringTextComponent.EMPTY);
 			}
 		}
 
 		if (!defaultValue.isEmpty())
 		{
-			l.add(TextFormatting.AQUA + "Default:");
+			l.add(info("Default"));
 
 			for (E value : defaultValue)
 			{
@@ -76,8 +81,8 @@ public class ConfigList<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 	}
 
 	@Override
-	public String getStringForGUI(List<E> v)
+	public ITextComponent getStringForGUI(List<E> v)
 	{
-		return v.isEmpty() ? "[]" : "[...]";
+		return v == null ? NULL_TEXT : v.isEmpty() ? EMPTY_LIST : NON_EMPTY_LIST;
 	}
 }

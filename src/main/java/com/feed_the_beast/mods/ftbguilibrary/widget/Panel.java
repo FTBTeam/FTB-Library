@@ -4,7 +4,10 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
@@ -16,7 +19,6 @@ public abstract class Panel extends Widget
 	public final List<Widget> widgets;
 	private double scrollX = 0, scrollY = 0;
 	private int offsetX = 0, offsetY = 0;
-	private boolean unicode = false;
 	private boolean onlyRenderWidgetsInside = true;
 	private boolean onlyInteractWithWidgetsInside = true;
 	private double scrollStep = 20;
@@ -28,16 +30,6 @@ public abstract class Panel extends Widget
 	{
 		super(panel);
 		widgets = new ArrayList<>();
-	}
-
-	public boolean getUnicode()
-	{
-		return unicode;
-	}
-
-	public void setUnicode(boolean value)
-	{
-		unicode = value;
 	}
 
 	public boolean getOnlyRenderWidgetsInside()
@@ -74,7 +66,6 @@ public abstract class Panel extends Widget
 		contentWidth = contentHeight = -1;
 		clearWidgets();
 		Theme theme = getGui().getTheme();
-		theme.pushFontUnicode(getUnicode());
 
 		try
 		{
@@ -96,7 +87,6 @@ public abstract class Panel extends Widget
 		}
 
 		alignWidgets();
-		theme.popFontUnicode();
 	}
 
 	public void add(Widget widget)
@@ -226,12 +216,11 @@ public abstract class Panel extends Widget
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		boolean renderInside = getOnlyRenderWidgetsInside();
-		theme.pushFontUnicode(getUnicode());
 
-		drawBackground(theme, x, y, w, h);
+		drawBackground(matrixStack, theme, x, y, w, h);
 
 		if (renderInside)
 		{
@@ -239,7 +228,7 @@ public abstract class Panel extends Widget
 		}
 
 		setOffset(true);
-		drawOffsetBackground(theme, x + offsetX, y + offsetY, w, h);
+		drawOffsetBackground(matrixStack, theme, x + offsetX, y + offsetY, w, h);
 
 		for (int i = 0; i < widgets.size(); i++)
 		{
@@ -247,7 +236,7 @@ public abstract class Panel extends Widget
 
 			if (widget.shouldDraw() && (!renderInside || widget.collidesWith(x, y, w, h)))
 			{
-				drawWidget(theme, widget, i, x + offsetX, y + offsetY, w, h);
+				drawWidget(matrixStack, theme, widget, i, x + offsetX, y + offsetY, w, h);
 			}
 		}
 
@@ -257,26 +246,24 @@ public abstract class Panel extends Widget
 		{
 			GuiHelper.popScissor(getScreen());
 		}
-
-		theme.popFontUnicode();
 	}
 
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 	}
 
-	public void drawOffsetBackground(Theme theme, int x, int y, int w, int h)
+	public void drawOffsetBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 	}
 
-	public void drawWidget(Theme theme, Widget widget, int index, int x, int y, int w, int h)
+	public void drawWidget(MatrixStack matrixStack, Theme theme, Widget widget, int index, int x, int y, int w, int h)
 	{
 		int wx = widget.getX();
 		int wy = widget.getY();
 		int ww = widget.width;
 		int wh = widget.height;
 
-		widget.draw(theme, wx, wy, ww, wh);
+		widget.draw(matrixStack, theme, wx, wy, ww, wh);
 
 		if (Theme.renderDebugBoxes)
 		{
@@ -287,15 +274,13 @@ public abstract class Panel extends Widget
 	}
 
 	@Override
-	public void addMouseOverText(List<String> list)
+	public void addMouseOverText(List<ITextProperties> list)
 	{
 		if (!shouldAddMouseOverText() || getOnlyInteractWithWidgetsInside() && !isMouseOver())
 		{
 			return;
 		}
 
-		Theme theme = getGui().getTheme();
-		theme.pushFontUnicode(getUnicode());
 		setOffset(true);
 
 		for (int i = widgets.size() - 1; i >= 0; i--)
@@ -308,13 +293,12 @@ public abstract class Panel extends Widget
 
 				if (Theme.renderDebugBoxes)
 				{
-					list.add(TextFormatting.DARK_GRAY + widget.toString() + "#" + (i + 1) + ": " + widget.width + "x" + widget.height);
+					list.add(new StringTextComponent(widget.toString() + "#" + (i + 1) + ": " + widget.width + "x" + widget.height).mergeStyle(TextFormatting.DARK_GRAY));
 				}
 			}
 		}
 
 		setOffset(false);
-		theme.popFontUnicode();
 	}
 
 	@Override

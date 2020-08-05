@@ -5,6 +5,7 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.SharedConstants;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -496,7 +498,7 @@ public class TextBox extends Widget
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		drawTextBox(theme, x, y, w, h);
 		boolean drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
@@ -519,7 +521,7 @@ public class TextBox extends Widget
 		if (!s.isEmpty())
 		{
 			String s1 = j > 0 && j <= s.length() ? s.substring(0, j) : s;
-			textX1 = theme.drawString(s1, textX, textY, col, 0);
+			textX1 = theme.drawString(matrixStack, new StringTextComponent(s1), textX, textY, col, 0);
 		}
 
 		boolean drawCursor = cursorPosition < textToDraw.length() || textToDraw.length() >= charLimit;
@@ -537,7 +539,7 @@ public class TextBox extends Widget
 
 		if (j > 0 && j < s.length())
 		{
-			theme.drawString(s.substring(j), textX1, textY, col, 0);
+			theme.drawString(matrixStack, new StringTextComponent(s.substring(j)), textX1, textY, col, 0);
 		}
 
 		if (j >= 0 && j <= s.length() && isFocused() && System.currentTimeMillis() % 1000L > 500L)
@@ -554,7 +556,7 @@ public class TextBox extends Widget
 
 		if (k != j)
 		{
-			int l1 = textX + theme.getStringWidth(s.substring(0, k));
+			int l1 = textX + theme.getStringWidth(new StringTextComponent(s.substring(0, k)));
 
 			int startX = cursorX, startY = textY - 1, endX = l1 - 1, endY = textY + 1 + theme.getFontHeight();
 

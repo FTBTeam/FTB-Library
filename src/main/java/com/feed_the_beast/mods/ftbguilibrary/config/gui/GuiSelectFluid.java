@@ -10,10 +10,10 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Panel;
 import com.feed_the_beast.mods.ftbguilibrary.widget.SimpleTextButton;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Items;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,7 +28,7 @@ public class GuiSelectFluid extends GuiButtonListBase
 
 	public GuiSelectFluid(ConfigFluid c, ConfigCallback cb)
 	{
-		setTitle(I18n.format("ftbguilibrary.select_fluid.gui"));
+		setTitle(new TranslationTextComponent("ftbguilibrary.select_fluid.gui"));
 		setHasSearchBox(true);
 		config = c;
 		callback = cb;
@@ -41,7 +41,7 @@ public class GuiSelectFluid extends GuiButtonListBase
 		{
 			FluidStack fluidStack = new FluidStack(Fluids.EMPTY, FluidAttributes.BUCKET_VOLUME);
 
-			panel.add(new SimpleTextButton(panel, fluidStack.getDisplayName().getFormattedText(), ItemIcon.getItemIcon(Items.BUCKET))
+			panel.add(new SimpleTextButton(panel, fluidStack.getDisplayName(), ItemIcon.getItemIcon(Items.BUCKET))
 			{
 				@Override
 				public void onClicked(MouseButton button)
@@ -69,7 +69,7 @@ public class GuiSelectFluid extends GuiButtonListBase
 			FluidStack fluidStack = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
 			FluidAttributes attributes = fluidStack.getFluid().getAttributes();
 
-			panel.add(new SimpleTextButton(panel, fluidStack.getDisplayName().getFormattedText(), Icon.getIcon(attributes.getStillTexture(fluidStack)).withTint(Color4I.rgb(attributes.getColor(fluidStack))))
+			panel.add(new SimpleTextButton(panel, fluidStack.getDisplayName(), Icon.getIcon(attributes.getStillTexture(fluidStack)).withTint(Color4I.rgb(attributes.getColor(fluidStack))))
 			{
 				@Override
 				public void onClicked(MouseButton button)

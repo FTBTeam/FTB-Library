@@ -2,7 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.utils;
 
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -117,12 +117,12 @@ public class MathUtils
 		return min + (max - min) * value;
 	}
 
-	public static Vec3d lerp(double x1, double y1, double z1, double x2, double y2, double z2, double value)
+	public static Vector3d lerp(double x1, double y1, double z1, double x2, double y2, double z2, double value)
 	{
-		return new Vec3d(lerp(x1, x2, value), lerp(y1, y2, value), lerp(z1, z2, value));
+		return new Vector3d(lerp(x1, x2, value), lerp(y1, y2, value), lerp(z1, z2, value));
 	}
 
-	public static Vec3d lerp(Vec3d v1, Vec3d v2, double value)
+	public static Vector3d lerp(Vector3d v1, Vector3d v2, double value)
 	{
 		return lerp(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, value);
 	}

@@ -337,11 +337,11 @@ public class GuiHelper
 	public static void addStackTooltip(ItemStack stack, List<ITextComponent> list, @Nullable ITextComponent prefix)
 	{
 		List<ITextComponent> tooltip = stack.getTooltip(Minecraft.getInstance().player, Minecraft.getInstance().gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
-		list.add(prefix == null ? tooltip.get(0).deepCopy().applyTextStyle(stack.getRarity().color) : prefix.deepCopy().appendSibling(tooltip.get(0)));
+		list.add(prefix == null ? tooltip.get(0).deepCopy().mergeStyle(stack.getRarity().color) : prefix.deepCopy().append(tooltip.get(0)));
 
 		for (int i = 1; i < tooltip.size(); i++)
 		{
-			list.add(new StringTextComponent("").applyTextStyle(TextFormatting.GRAY).appendSibling(tooltip.get(i)));
+			list.add(new StringTextComponent("").mergeStyle(TextFormatting.GRAY).append(tooltip.get(i)));
 		}
 	}
 }

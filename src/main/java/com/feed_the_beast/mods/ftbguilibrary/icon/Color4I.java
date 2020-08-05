@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -271,7 +271,7 @@ public class Color4I extends Icon
 		return rgb(col >> 16, col >> 8, col);
 	}
 
-	public static Color4I rgb(Vec3d color)
+	public static Color4I rgb(Vector3d color)
 	{
 		return rgb((int) (color.x * 255D), (int) (color.y * 255D), (int) (color.z * 255D));
 	}

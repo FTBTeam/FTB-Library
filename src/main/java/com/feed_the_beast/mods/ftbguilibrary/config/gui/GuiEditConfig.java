@@ -17,9 +17,14 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.Theme;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Widget;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetLayout;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetType;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +51,7 @@ public class GuiEditConfig extends GuiBase
 	public class ButtonConfigGroup extends Button
 	{
 		public final ConfigGroup group;
-		public String title, info;
+		public ITextComponent title, info;
 		public boolean collapsed = false;
 
 		public ButtonConfigGroup(Panel panel, ConfigGroup g)
@@ -82,29 +87,29 @@ public class GuiEditConfig extends GuiBase
 					}
 				}
 
-				title = builder.toString();
+				title = new StringTextComponent(builder.toString());
 			}
 			else
 			{
-				title = I18n.format("stat.generalButton");
+				title = new TranslationTextComponent("stat.generalButton");
 			}
 
 			String infoKey = group.getPath() + ".info";
-			info = I18n.hasKey(infoKey) ? I18n.format(infoKey) : "";
+			info = I18n.hasKey(infoKey) ? new TranslationTextComponent(infoKey) : null;
 			setCollapsed(collapsed);
 		}
 
 		public void setCollapsed(boolean v)
 		{
 			collapsed = v;
-			setTitle((collapsed ? (TextFormatting.RED + "[-] ") : (TextFormatting.GREEN + "[v] ")) + TextFormatting.RESET + title);
+			setTitle(new StringTextComponent("").append(new StringTextComponent(collapsed ? "[-] " : "[v] ").mergeStyle(collapsed ? TextFormatting.RED : TextFormatting.GREEN)).append(title));
 		}
 
 		@Override
-		public void draw(Theme theme, int x, int y, int w, int h)
+		public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			COLOR_BACKGROUND.draw(x, y, w, h);
-			theme.drawString(getTitle(), x + 2, y + 2);
+			theme.drawString(matrixStack, getTitle(), x + 2, y + 2);
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
 
 			if (isMouseOver())
@@ -114,9 +119,9 @@ public class GuiEditConfig extends GuiBase
 		}
 
 		@Override
-		public void addMouseOverText(List<String> list)
+		public void addMouseOverText(List<ITextProperties> list)
 		{
-			if (!info.isEmpty())
+			if (info != null)
 			{
 				list.add(info);
 			}
@@ -134,7 +139,7 @@ public class GuiEditConfig extends GuiBase
 	{
 		public final ButtonConfigGroup group;
 		public final ConfigValue inst;
-		public String keyText;
+		public ITextComponent keyText;
 
 		public ButtonConfigEntry(Panel panel, ButtonConfigGroup g, ConfigValue i)
 		{
@@ -145,16 +150,16 @@ public class GuiEditConfig extends GuiBase
 
 			if (!inst.getCanEdit())
 			{
-				keyText = TextFormatting.GRAY + inst.getName();
+				keyText = new StringTextComponent(inst.getName()).mergeStyle(TextFormatting.GRAY);
 			}
 			else
 			{
-				keyText = inst.getName();
+				keyText = new StringTextComponent(inst.getName());
 			}
 		}
 
 		@Override
-		public void draw(Theme theme, int x, int y, int w, int h)
+		public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			boolean mouseOver = getMouseY() >= 20 && isMouseOver();
 
@@ -163,15 +168,15 @@ public class GuiEditConfig extends GuiBase
 				Color4I.WHITE.withAlpha(33).draw(x, y, w, h);
 			}
 
-			theme.drawString(keyText, x + 4, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
+			theme.drawString(matrixStack, keyText, x + 4, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
 
-			String s = inst.getStringForGUI(inst.value);
+			ITextProperties s = inst.getStringForGUI(inst.value);
 			int slen = theme.getStringWidth(s);
 
 			if (slen > 150)
 			{
-				s = theme.trimStringToWidth(s, 150) + "...";
+				s = new StringTextComponent(theme.trimStringToWidth(s, 150).getString().trim() + "...");
 				slen = 152;
 			}
 
@@ -188,7 +193,7 @@ public class GuiEditConfig extends GuiBase
 				}
 			}
 
-			theme.drawString(s, getGui().width - (slen + 20), y + 2, textCol, 0);
+			theme.drawString(matrixStack, s, getGui().width - (slen + 20), y + 2, textCol, 0);
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
 		}
 
@@ -203,22 +208,22 @@ public class GuiEditConfig extends GuiBase
 		}
 
 		@Override
-		public void addMouseOverText(List<String> list)
+		public void addMouseOverText(List<ITextProperties> list)
 		{
 			if (getMouseY() > 18)
 			{
-				list.add(TextFormatting.UNDERLINE + keyText);
+				list.add(keyText.deepCopy().mergeStyle(TextFormatting.UNDERLINE));
 				String tooltip = inst.getTooltip();
 
 				if (!tooltip.isEmpty())
 				{
 					for (String s : tooltip.split("\n"))
 					{
-						list.add(TextFormatting.GRAY.toString() + TextFormatting.ITALIC + s);
+						list.add(new StringTextComponent(s).mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
 					}
 				}
 
-				list.add("");
+				list.add(StringTextComponent.EMPTY);
 				inst.addInfo(list);
 			}
 		}
@@ -226,7 +231,7 @@ public class GuiEditConfig extends GuiBase
 
 	private final ConfigGroup group;
 
-	private final String title;
+	private final ITextComponent title;
 	private final List<Widget> configEntryButtons;
 	private final Panel configPanel;
 	private final Button buttonAccept, buttonCancel, buttonCollapseAll, buttonExpandAll;
@@ -236,7 +241,7 @@ public class GuiEditConfig extends GuiBase
 	public GuiEditConfig(ConfigGroup g)
 	{
 		group = g;
-		title = TextFormatting.BOLD + g.getName();
+		title = g.getName().deepCopy().mergeStyle(TextFormatting.BOLD);
 		configEntryButtons = new ArrayList<>();
 
 		configPanel = new Panel(this)
@@ -294,10 +299,10 @@ public class GuiEditConfig extends GuiBase
 
 		scroll = new PanelScrollBar(this, configPanel);
 
-		buttonAccept = new SimpleButton(this, I18n.format("gui.close"), GuiIcons.ACCEPT, (widget, button) -> group.save(true));
-		buttonCancel = new SimpleButton(this, I18n.format("gui.cancel"), GuiIcons.CANCEL, (widget, button) -> group.save(false));
+		buttonAccept = new SimpleButton(this, new TranslationTextComponent("gui.close"), GuiIcons.ACCEPT, (widget, button) -> group.save(true));
+		buttonCancel = new SimpleButton(this, new TranslationTextComponent("gui.cancel"), GuiIcons.CANCEL, (widget, button) -> group.save(false));
 
-		buttonExpandAll = new SimpleButton(this, I18n.format("gui.expand_all"), GuiIcons.ADD, (widget, button) ->
+		buttonExpandAll = new SimpleButton(this, new TranslationTextComponent("gui.expand_all"), GuiIcons.ADD, (widget, button) ->
 		{
 			for (Widget w : configEntryButtons)
 			{
@@ -311,7 +316,7 @@ public class GuiEditConfig extends GuiBase
 			widget.getGui().refreshWidgets();
 		});
 
-		buttonCollapseAll = new SimpleButton(this, I18n.format("gui.collapse_all"), GuiIcons.REMOVE, (widget, button) ->
+		buttonCollapseAll = new SimpleButton(this, new TranslationTextComponent("gui.collapse_all"), GuiIcons.REMOVE, (widget, button) ->
 		{
 			for (Widget w : configEntryButtons)
 			{
@@ -391,14 +396,14 @@ public class GuiEditConfig extends GuiBase
 	}
 
 	@Override
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		COLOR_BACKGROUND.draw(0, 0, w, 20);
-		theme.drawString(getTitle(), 6, 6, Theme.SHADOW);
+		theme.drawString(matrixStack, getTitle(), 6, 6, Theme.SHADOW);
 	}
 
 	@Override
-	public String getTitle()
+	public ITextComponent getTitle()
 	{
 		return title;
 	}

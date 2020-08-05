@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import javax.annotation.Nullable;
 
@@ -20,7 +21,7 @@ public class ColorWidget extends Widget
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		((mouseOverColor != null && isMouseOver()) ? mouseOverColor : color).draw(x, y, w, h);
 	}

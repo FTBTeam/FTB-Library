@@ -12,7 +12,7 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.SimpleTextButton;
 import com.feed_the_beast.mods.ftbguilibrary.widget.TextBox;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetType;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 
@@ -41,7 +41,7 @@ public class GuiEditConfigFromString<T> extends GuiBase
 
 		int bsize = width / 2 - 10;
 
-		buttonCancel = new SimpleTextButton(this, I18n.format("gui.cancel"), Icon.EMPTY)
+		buttonCancel = new SimpleTextButton(this, new TranslationTextComponent("gui.cancel"), Icon.EMPTY)
 		{
 			@Override
 			public void onClicked(MouseButton button)
@@ -59,7 +59,7 @@ public class GuiEditConfigFromString<T> extends GuiBase
 
 		buttonCancel.setPosAndSize(8, height - 24, bsize, 16);
 
-		buttonAccept = new SimpleTextButton(this, I18n.format("gui.accept"), Icon.EMPTY)
+		buttonAccept = new SimpleTextButton(this, new TranslationTextComponent("gui.accept"), Icon.EMPTY)
 		{
 			@Override
 			public void onClicked(MouseButton button)

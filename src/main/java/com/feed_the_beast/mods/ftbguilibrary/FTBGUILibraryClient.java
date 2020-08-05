@@ -44,7 +44,7 @@ public class FTBGUILibraryClient extends FTBGUILibraryCommon
 
 	private void textureStitch(TextureStitchEvent.Pre event)
 	{
-		if (!event.getMap().getBasePath().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
+		if (!event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
 		{
 			return;
 		}

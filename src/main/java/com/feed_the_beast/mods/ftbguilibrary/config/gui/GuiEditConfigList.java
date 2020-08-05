@@ -16,9 +16,13 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.SimpleButton;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Theme;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Widget;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetLayout;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
@@ -41,7 +45,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		}
 
 		@Override
-		public void draw(Theme theme, int x, int y, int w, int h)
+		public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			boolean mouseOver = getMouseY() >= 20 && isMouseOver();
 
@@ -60,11 +64,11 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 				}
 			}
 
-			theme.drawString(getGui().getTheme().trimStringToWidth(list.type.getStringForGUI(list.value.get(index)), width), x + 4, y + 2, textCol, 0);
+			theme.drawString(matrixStack, getGui().getTheme().trimStringToWidth(list.type.getStringForGUI(list.value.get(index)), width), x + 4, y + 2, textCol, 0);
 
 			if (mouseOver)
 			{
-				theme.drawString("[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
+				theme.drawString(matrixStack, "[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
 			}
 
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
@@ -98,11 +102,11 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		}
 
 		@Override
-		public void addMouseOverText(List<String> l)
+		public void addMouseOverText(List<ITextProperties> l)
 		{
 			if (getMouseX() >= getX() + width - 19)
 			{
-				l.add(I18n.format("selectServer.delete"));
+				l.add(new TranslationTextComponent("selectServer.delete"));
 			}
 			else
 			{
@@ -118,11 +122,11 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		{
 			super(panel);
 			setHeight(12);
-			setTitle("+ " + I18n.format("gui.add"));
+			setTitle(new StringTextComponent("+ ").append(new TranslationTextComponent("gui.add")));
 		}
 
 		@Override
-		public void draw(Theme theme, int x, int y, int w, int h)
+		public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			boolean mouseOver = getMouseY() >= 20 && isMouseOver();
 
@@ -131,7 +135,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 				Color4I.WHITE.withAlpha(33).draw(x, y, w, h);
 			}
 
-			theme.drawString(getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+			theme.drawString(matrixStack, getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
 		}
 
@@ -151,7 +155,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		}
 
 		@Override
-		public void addMouseOverText(List<String> list)
+		public void addMouseOverText(List<ITextProperties> list)
 		{
 		}
 	}
@@ -159,7 +163,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 	private final ConfigList<E, CV> list;
 	private final ConfigCallback callback;
 
-	private final String title;
+	private final ITextComponent title;
 	private final Panel configPanel;
 	private final Button buttonAccept, buttonCancel;
 	private final PanelScrollBar scroll;
@@ -169,7 +173,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		list = l;
 		callback = cb;
 
-		title = TextFormatting.BOLD + list.getName();
+		title = new StringTextComponent(list.getName()).mergeStyle(TextFormatting.BOLD);
 
 		configPanel = new Panel(this)
 		{
@@ -200,8 +204,8 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 		};
 
 		scroll = new PanelScrollBar(this, configPanel);
-		buttonAccept = new SimpleButton(this, I18n.format("gui.accept"), GuiIcons.ACCEPT, (widget, button) -> callback.save(true));
-		buttonCancel = new SimpleButton(this, I18n.format("gui.cancel"), GuiIcons.CANCEL, (widget, button) -> callback.save(false));
+		buttonAccept = new SimpleButton(this, new TranslationTextComponent("gui.accept"), GuiIcons.ACCEPT, (widget, button) -> callback.save(true));
+		buttonCancel = new SimpleButton(this, new TranslationTextComponent("gui.cancel"), GuiIcons.CANCEL, (widget, button) -> callback.save(false));
 	}
 
 	@Override
@@ -242,14 +246,14 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 	}
 
 	@Override
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		GuiEditConfig.COLOR_BACKGROUND.draw(0, 0, w, 20);
-		theme.drawString(getTitle(), 6, 6, Theme.SHADOW);
+		theme.drawString(matrixStack, getTitle(), 6, 6, Theme.SHADOW);
 	}
 
 	@Override
-	public String getTitle()
+	public ITextComponent getTitle()
 	{
 		return title;
 	}

@@ -1,7 +1,9 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.util.text.ITextProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,16 +90,16 @@ public class CheckBoxList extends Button
 	}
 
 	@Override
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 	}
 
-	public void drawCheckboxBackground(Theme theme, int x, int y, int w, int h)
+	public void drawCheckboxBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		theme.drawCheckboxBackground(x, y, w, h, radioButtons);
 	}
 
-	public void getCheckboxIcon(Theme theme, int x, int y, int w, int h, int index, int value)
+	public void getCheckboxIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h, int index, int value)
 	{
 		theme.drawCheckbox(x, y, w, h, WidgetType.mouseOver(isMouseOver()), value != 0, radioButtons);
 	}
@@ -136,22 +138,22 @@ public class CheckBoxList extends Button
 	}
 
 	@Override
-	public void addMouseOverText(List<String> list)
+	public void addMouseOverText(List<ITextProperties> list)
 	{
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		drawBackground(theme, x, y, w, h);
+		drawBackground(matrixStack, theme, x, y, w, h);
 
 		for (int i = 0; i < entries.size(); i++)
 		{
 			CheckBoxEntry entry = entries.get(i);
 			int ey = y + i * 11 + 1;
-			drawCheckboxBackground(theme, x, ey, 10, 10);
-			getCheckboxIcon(theme, x + 1, ey + 1, 8, 8, i, entry.value);
-			theme.drawString(entry.name, x + 12, ey + 1);
+			drawCheckboxBackground(matrixStack, theme, x, ey, 10, 10);
+			getCheckboxIcon(matrixStack, theme, x + 1, ey + 1, 8, 8, i, entry.value);
+			theme.drawString(matrixStack, entry.name, x + 12, ey + 1);
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
 		}
 	}

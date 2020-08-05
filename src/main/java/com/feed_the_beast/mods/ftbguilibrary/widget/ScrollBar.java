@@ -2,7 +2,11 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.utils.MathUtils;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
@@ -23,7 +27,7 @@ public class ScrollBar extends Widget
 	}
 
 	public final Plane plane;
-	private int scrollBarSize;
+	private final int scrollBarSize;
 	private double value = 0;
 	private double scrollStep = 20;
 	private double grab = -10000;
@@ -106,19 +110,19 @@ public class ScrollBar extends Widget
 	}
 
 	@Override
-	public void addMouseOverText(List<String> list)
+	public void addMouseOverText(List<ITextProperties> list)
 	{
 		if (showValueOnMouseOver())
 		{
-			String t = getTitle();
-			list.add(t.isEmpty() ? Double.toString(getValue()) : (t + ": " + getValue()));
+			ITextComponent t = getTitle();
+			list.add(t == StringTextComponent.EMPTY ? new StringTextComponent(Double.toString(getValue())) : new StringTextComponent(t + ": " + getValue()));
 		}
 
 		if (Theme.renderDebugBoxes)
 		{
-			list.add(TextFormatting.DARK_GRAY + "Size: " + getScrollBarSize());
-			list.add(TextFormatting.DARK_GRAY + "Max: " + getMaxValue());
-			list.add(TextFormatting.DARK_GRAY + "Value: " + getValue());
+			list.add(new StringTextComponent("Size: " + getScrollBarSize()).mergeStyle(TextFormatting.DARK_GRAY));
+			list.add(new StringTextComponent("Max: " + getMaxValue()).mergeStyle(TextFormatting.DARK_GRAY));
+			list.add(new StringTextComponent("Value: " + getValue()).mergeStyle(TextFormatting.DARK_GRAY));
 		}
 	}
 
@@ -128,7 +132,7 @@ public class ScrollBar extends Widget
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		int scrollBarSize = getScrollBarSize();
 

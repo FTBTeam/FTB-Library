@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.config.gui.GuiSelectItemStack;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
@@ -30,18 +31,18 @@ public class ConfigItemStack extends ConfigValue<ItemStack>
 	}
 
 	@Override
-	public String getStringForGUI(@Nullable ItemStack v)
+	public ITextComponent getStringForGUI(@Nullable ItemStack v)
 	{
 		if (v == null || v.isEmpty())
 		{
-			return ItemStack.EMPTY.getDisplayName().getFormattedText();
+			return ItemStack.EMPTY.getDisplayName();
 		}
 		else if (v.getCount() <= 1)
 		{
-			return v.getDisplayName().getFormattedText();
+			return v.getDisplayName();
 		}
 
-		return new StringTextComponent(v.getCount() + "x ").appendSibling(v.getDisplayName()).getFormattedText();
+		return new StringTextComponent(v.getCount() + "x ").append(v.getDisplayName());
 	}
 
 	@Override

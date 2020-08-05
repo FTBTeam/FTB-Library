@@ -7,6 +7,9 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiBase;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Panel;
 import com.feed_the_beast.mods.ftbguilibrary.widget.SimpleTextButton;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
@@ -27,9 +30,9 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 	}
 
 	@Override
-	public String getStringForGUI(E v)
+	public ITextComponent getStringForGUI(E v)
 	{
-		return nameMap.getDisplayName(v).getFormattedText();
+		return nameMap.getDisplayName(v);
 	}
 
 	@Override
@@ -40,17 +43,21 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 	}
 
 	@Override
-	public void addInfo(List<String> list)
+	public void addInfo(List<ITextProperties> list)
 	{
 		super.addInfo(list);
 
 		if (nameMap.size() > 0)
 		{
-			list.add("");
+			list.add(StringTextComponent.EMPTY);
 
 			for (E v : nameMap)
 			{
-				list.add((isEqual(v, value) ? (TextFormatting.AQUA + "+ ") : (TextFormatting.DARK_GRAY + "- ")) + nameMap.getDisplayName(v).getString());
+				boolean e = isEqual(v, value);
+				StringTextComponent c = new StringTextComponent(e ? "+ " : "- ");
+				c.mergeStyle(e ? TextFormatting.AQUA : TextFormatting.DARK_GRAY);
+				c.append(nameMap.getDisplayName(v));
+				list.add(c);
 			}
 		}
 	}
@@ -67,7 +74,7 @@ public class ConfigEnum<E> extends ConfigWithVariants<E>
 				{
 					for (E v : nameMap)
 					{
-						panel.add(new SimpleTextButton(panel, nameMap.getDisplayName(v).getString(), Icon.EMPTY)
+						panel.add(new SimpleTextButton(panel, nameMap.getDisplayName(v), Icon.EMPTY)
 						{
 							@Override
 							public void onClicked(MouseButton button)

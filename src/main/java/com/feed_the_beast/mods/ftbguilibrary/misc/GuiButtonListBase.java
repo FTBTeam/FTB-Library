@@ -7,7 +7,10 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.TextBox;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Theme;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Widget;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetLayout;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 /**
  * @author LatvianModder
@@ -16,8 +19,8 @@ public abstract class GuiButtonListBase extends GuiBase
 {
 	private final Panel panelButtons;
 	private final PanelScrollBar scrollBar;
-	private String title = "";
-	private TextBox searchBox;
+	private ITextComponent title = StringTextComponent.EMPTY;
+	private final TextBox searchBox;
 	private boolean hasSearchBox;
 	private int borderH, borderV, borderW;
 
@@ -86,7 +89,7 @@ public abstract class GuiButtonListBase extends GuiBase
 			}
 
 			@Override
-			public void drawBackground(Theme theme, int x, int y, int w, int h)
+			public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 			{
 				theme.drawPanelBackground(x, y, w, h);
 			}
@@ -122,7 +125,7 @@ public abstract class GuiButtonListBase extends GuiBase
 
 	public String getFilterText(Widget widget)
 	{
-		return widget.getTitle().toLowerCase();
+		return widget.getTitle().getString().toLowerCase();
 	}
 
 	@Override
@@ -145,13 +148,13 @@ public abstract class GuiButtonListBase extends GuiBase
 
 	public abstract void addButtons(Panel panel);
 
-	public void setTitle(String txt)
+	public void setTitle(ITextComponent txt)
 	{
 		title = txt;
 	}
 
 	@Override
-	public String getTitle()
+	public ITextComponent getTitle()
 	{
 		return title;
 	}
@@ -164,15 +167,15 @@ public abstract class GuiButtonListBase extends GuiBase
 	}
 
 	@Override
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		super.drawBackground(theme, x, y, w, h);
+		super.drawBackground(matrixStack, theme, x, y, w, h);
 
-		String title = getTitle();
+		ITextComponent title = getTitle();
 
-		if (!title.isEmpty())
+		if (title != StringTextComponent.EMPTY)
 		{
-			theme.drawString(title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);
+			theme.drawString(matrixStack, title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);
 		}
 	}
 

@@ -4,11 +4,13 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiBase;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Theme;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.text.ITextComponent;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -18,18 +20,19 @@ public class GuiLoading extends GuiBase
 {
 	private boolean startedLoading = false;
 	private boolean isLoading = true;
-	private String title;
+	private ITextComponent[] title;
 	public float timer;
 
 	public GuiLoading()
 	{
-		this("");
+		setSize(128, 128);
+		title = new ITextComponent[0];
 	}
 
-	public GuiLoading(String t)
+	public GuiLoading(ITextComponent t)
 	{
 		setSize(128, 128);
-		title = t;
+		title = new ITextComponent[] {t};
 	}
 
 	@Override
@@ -38,7 +41,7 @@ public class GuiLoading extends GuiBase
 	}
 
 	@Override
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		if (!startedLoading)
 		{
@@ -92,15 +95,13 @@ public class GuiLoading extends GuiBase
 			tessellator.draw();
 			GlStateManager.enableTexture();
 
-			String s = getTitle();
+			ITextComponent[] s = getText();
 
-			if (!s.isEmpty())
+			if (s.length > 0)
 			{
-				String[] s1 = s.split("\n");
-
-				for (int i = 0; i < s1.length; i++)
+				for (int i = 0; i < s.length; i++)
 				{
-					theme.drawString(s1[i], x + width / 2, y - 26 + i * 12, Theme.CENTERED);
+					theme.drawString(matrixStack, s[i], x + width / 2, y - 26 + i * 12, Theme.CENTERED);
 				}
 			}
 		}
@@ -111,13 +112,12 @@ public class GuiLoading extends GuiBase
 		}
 	}
 
-	@Override
-	public synchronized String getTitle()
+	public synchronized ITextComponent[] getText()
 	{
 		return title;
 	}
 
-	public synchronized void setTitle(String s)
+	public synchronized void setText(ITextComponent... s)
 	{
 		title = s;
 	}

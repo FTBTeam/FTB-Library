@@ -2,6 +2,8 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 
@@ -28,8 +30,8 @@ public abstract class ConfigNumber<T extends Number> extends ConfigFromString<T>
 	}
 
 	@Override
-	public String getStringForGUI(@Nullable T v)
+	public ITextComponent getStringForGUI(@Nullable T v)
 	{
-		return v == null ? "null" : StringUtils.formatDouble(v.doubleValue(), true);
+		return v == null ? NULL_TEXT : new StringTextComponent(StringUtils.formatDouble(v.doubleValue(), true));
 	}
 }

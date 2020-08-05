@@ -6,14 +6,16 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.icon.ImageIcon;
 import com.feed_the_beast.mods.ftbguilibrary.icon.PartIcon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Bits;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import it.unimi.dsi.fastutil.booleans.BooleanStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 
-import java.util.ArrayList;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -150,9 +152,14 @@ public class Theme
 		return Minecraft.getInstance().fontRenderer;
 	}
 
+	public final int getStringWidth(ITextProperties text)
+	{
+		return text == StringTextComponent.EMPTY ? 0 : getFont().func_238414_a_(text);
+	}
+
 	public final int getStringWidth(String text)
 	{
-		return getFont().getStringWidth(text);
+		return text.isEmpty() ? 0 : getFont().getStringWidth(text);
 	}
 
 	public final int getFontHeight()
@@ -162,74 +169,97 @@ public class Theme
 
 	public final String trimStringToWidth(String text, int width)
 	{
-		return text.isEmpty() ? "" : getFont().trimStringToWidth(text, width, false);
+		return text.isEmpty() || width <= 0 ? "" : getFont().func_238413_a_(text, width, false);
+	}
+
+	public final ITextProperties trimStringToWidth(ITextProperties text, int width)
+	{
+		return getFont().func_238417_a_(text, width);
 	}
 
 	public final String trimStringToWidthReverse(String text, int width)
 	{
-		return text.isEmpty() ? "" : getFont().trimStringToWidth(text, width, true);
+		return text.isEmpty() || width <= 0 ? "" : getFont().func_238413_a_(text, width, true);
 	}
 
-	public final List<String> listFormattedStringToWidth(String text, int width)
+	public final List<ITextProperties> listFormattedStringToWidth(ITextProperties text, int width)
 	{
-		if (width <= 0 || text.isEmpty())
+		if (width <= 0 || text == StringTextComponent.EMPTY)
 		{
 			return Collections.emptyList();
 		}
 
-		return getFont().listFormattedStringToWidth(text, width);
+		return getFont().func_238425_b_(text, width);
 	}
 
-	public final int drawString(String text, float x, float y, Color4I color, int flags)
+	public final int drawString(MatrixStack matrixStack, @Nullable Object text, float x, float y, Color4I color, int flags)
 	{
-		if (text.isEmpty() || color.isEmpty())
+		if (text == null || text == StringTextComponent.EMPTY || (text instanceof String && ((String) text).isEmpty()) || color.isEmpty())
 		{
 			return 0;
 		}
 
-		if (Bits.getFlag(flags, CENTERED))
+		if (text instanceof ITextProperties)
 		{
-			x -= getStringWidth(text) / 2F;
-		}
+			if (Bits.getFlag(flags, CENTERED))
+			{
+				x -= getFont().func_238414_a_((ITextProperties) text) / 2F;
+			}
 
-		int i;
+			int i;
 
-		if (Bits.getFlag(flags, SHADOW))
-		{
-			i = getFont().drawStringWithShadow(text, x, y, color.rgba());
+			if (Bits.getFlag(flags, SHADOW))
+			{
+				i = getFont().func_238407_a_(matrixStack, (ITextProperties) text, x, y, color.rgba());
+			}
+			else
+			{
+				i = getFont().func_238422_b_(matrixStack, (ITextProperties) text, x, y, color.rgba());
+			}
+
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.disableAlphaTest();
+			RenderSystem.enableBlend();
+			return i;
 		}
 		else
 		{
-			i = getFont().drawString(text, x, y, color.rgba());
+			String s = String.valueOf(text);
+
+			if (Bits.getFlag(flags, CENTERED))
+			{
+				x -= getFont().getStringWidth(s) / 2F;
+			}
+
+			int i;
+
+			if (Bits.getFlag(flags, SHADOW))
+			{
+				i = getFont().drawStringWithShadow(matrixStack, s, x, y, color.rgba());
+			}
+			else
+			{
+				i = getFont().drawString(matrixStack, s, x, y, color.rgba());
+			}
+
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.disableAlphaTest();
+			RenderSystem.enableBlend();
+			return i;
 		}
-
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
-		RenderSystem.disableAlphaTest();
-		RenderSystem.enableBlend();
-		return i;
 	}
 
-	public final int drawString(String text, int x, int y, int flags)
+	public final int drawString(MatrixStack matrixStack, @Nullable Object text, int x, int y, int flags)
 	{
-		return drawString(text, x, y, getContentColor(WidgetType.mouseOver(Bits.getFlag(flags, MOUSE_OVER))), flags);
+		return drawString(matrixStack, text, x, y, getContentColor(WidgetType.mouseOver(Bits.getFlag(flags, MOUSE_OVER))), flags);
 	}
 
-	public final int drawString(String text, int x, int y)
+	public final int drawString(MatrixStack matrixStack, @Nullable Object text, int x, int y)
 	{
-		return drawString(text, x, y, getContentColor(WidgetType.NORMAL), 0);
+		return drawString(matrixStack, text, x, y, getContentColor(WidgetType.NORMAL), 0);
 	}
 
-	public void pushFontUnicode(boolean flag)
-	{
-		//fontUnicode.push(getFont().getUnicodeFlag());
-		//getFont().setUnicodeFlag(flag);
-	}
-
-	public void popFontUnicode()
-	{
-		//getFont().setUnicodeFlag(fontUnicode.pop());
-	}
-
+	/*
 	public List<GuiBase.PositionedTextData> createDataFrom(ITextComponent component, int width)
 	{
 		if (width <= 0 || component.getString().isEmpty())
@@ -242,7 +272,7 @@ public class Theme
 		int line = 0;
 		int currentWidth = 0;
 
-		for (ITextComponent t : component.deepCopy())
+		for (IFormattableTextComponent t : component.deepCopy())
 		{
 			String text = t.getUnformattedComponentText();
 			int textWidth = getStringWidth(text);
@@ -270,4 +300,5 @@ public class Theme
 
 		return list;
 	}
+	 */
 }

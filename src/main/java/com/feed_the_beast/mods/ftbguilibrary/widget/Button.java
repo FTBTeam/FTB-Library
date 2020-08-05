@@ -2,15 +2,18 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 
 public abstract class Button extends Widget
 {
-	protected String title;
+	protected ITextComponent title;
 	protected Icon icon;
 
-	public Button(Panel panel, String t, Icon i)
+	public Button(Panel panel, ITextComponent t, Icon i)
 	{
 		super(panel);
 		setSize(16, 16);
@@ -20,16 +23,16 @@ public abstract class Button extends Widget
 
 	public Button(Panel panel)
 	{
-		this(panel, "", Icon.EMPTY);
+		this(panel, StringTextComponent.EMPTY, Icon.EMPTY);
 	}
 
 	@Override
-	public String getTitle()
+	public ITextComponent getTitle()
 	{
 		return title;
 	}
 
-	public Button setTitle(String s)
+	public Button setTitle(ITextComponent s)
 	{
 		title = s;
 		return this;
@@ -41,22 +44,22 @@ public abstract class Button extends Widget
 		return this;
 	}
 
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		theme.drawButton(x, y, w, h, getWidgetType());
 	}
 
-	public void drawIcon(Theme theme, int x, int y, int w, int h)
+	public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		icon.draw(x, y, w, h);
 	}
 
 	@Override
-	public void draw(Theme theme, int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
 		int s = h >= 16 ? 16 : 8;
-		drawBackground(theme, x, y, w, h);
-		drawIcon(theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
+		drawBackground(matrixStack, theme, x, y, w, h);
+		drawIcon(matrixStack, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
 	}
 
 	@Override

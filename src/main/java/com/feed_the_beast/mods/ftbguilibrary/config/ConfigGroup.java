@@ -2,6 +2,9 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -44,15 +47,15 @@ public class ConfigGroup
 		return this;
 	}
 
-	public String getName()
+	public ITextComponent getName()
 	{
-		return I18n.format(getNameKey());
+		return new TranslationTextComponent(getNameKey());
 	}
 
-	public String getTooltip()
+	public ITextComponent getTooltip()
 	{
 		String t = getNameKey() + ".tooltip";
-		return I18n.hasKey(t) ? I18n.format(t) : "";
+		return I18n.hasKey(t) ? new TranslationTextComponent(t) : StringTextComponent.EMPTY;
 	}
 
 	public ConfigGroup getGroup(String id)

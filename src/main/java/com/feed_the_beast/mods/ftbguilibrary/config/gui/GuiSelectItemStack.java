@@ -22,6 +22,7 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.Theme;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Widget;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetLayout;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetType;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -33,7 +34,11 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
@@ -53,7 +58,7 @@ public class GuiSelectItemStack extends GuiBase
 
 		private ItemStackButton(Panel panel, ItemStack is)
 		{
-			super(panel, "", GuiIcons.BARRIER);
+			super(panel, StringTextComponent.EMPTY, GuiIcons.BARRIER);
 			setSize(18, 18);
 			stack = is;
 			title = null;
@@ -76,18 +81,18 @@ public class GuiSelectItemStack extends GuiBase
 		}
 
 		@Override
-		public String getTitle()
+		public ITextComponent getTitle()
 		{
 			if (title == null)
 			{
-				title = stack.getDisplayName().getFormattedText();
+				title = stack.getDisplayName();
 			}
 
 			return title;
 		}
 
 		@Override
-		public void addMouseOverText(List<String> list)
+		public void addMouseOverText(List<ITextProperties> list)
 		{
 		}
 
@@ -98,7 +103,7 @@ public class GuiSelectItemStack extends GuiBase
 		}
 
 		@Override
-		public void drawBackground(Theme theme, int x, int y, int w, int h)
+		public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			(getWidgetType() == WidgetType.MOUSE_OVER ? Color4I.LIGHT_GREEN.withAlpha(70) : Color4I.BLACK.withAlpha(50)).draw(x, y, w, h);
 		}
@@ -122,15 +127,30 @@ public class GuiSelectItemStack extends GuiBase
 		}
 
 		@Override
-		public void drawIcon(Theme theme, int x, int y, int w, int h)
+		public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			(allItems ? ICON_ALL : ICON_INV).draw(x, y, w, h);
 		}
 
 		@Override
-		public String getTitle()
+		public ITextComponent getTitle()
 		{
-			return I18n.format("ftbguilibrary.select_item.list_mode", TextFormatting.GRAY + (allItems ? I18n.format("ftbguilibrary.select_item.list_mode.all") : I18n.format("ftbguilibrary.select_item.list_mode.inv"))) + TextFormatting.DARK_GRAY + " [" + (panelStacks.widgets.size() - 1) + "]";
+			return new TranslationTextComponent("ftbguilibrary.select_item.list_mode");
+		}
+
+		@Override
+		public void addMouseOverText(List<ITextProperties> list)
+		{
+			super.addMouseOverText(list);
+
+			if (allItems)
+			{
+				list.add(new TranslationTextComponent("ftbguilibrary.select_item.list_mode.all").mergeStyle(TextFormatting.GRAY).append(new StringTextComponent(" [" + (panelStacks.widgets.size() - 1) + "]").mergeStyle(TextFormatting.DARK_GRAY)));
+			}
+			else
+			{
+				list.add(new TranslationTextComponent("ftbguilibrary.select_item.list_mode.inv").mergeStyle(TextFormatting.GRAY).append(new StringTextComponent(" [" + (panelStacks.widgets.size() - 1) + "]").mergeStyle(TextFormatting.DARK_GRAY)));
+			}
 		}
 
 		@Override
@@ -144,7 +164,7 @@ public class GuiSelectItemStack extends GuiBase
 
 	private abstract class ButtonStackConfig extends Button
 	{
-		public ButtonStackConfig(Panel panel, String title, Icon icon)
+		public ButtonStackConfig(Panel panel, ITextComponent title, Icon icon)
 		{
 			super(panel, title, icon);
 		}
@@ -160,19 +180,19 @@ public class GuiSelectItemStack extends GuiBase
 	{
 		public ButtonEditData(Panel panel)
 		{
-			super(panel, "", GuiIcons.BUG);
+			super(panel, StringTextComponent.EMPTY, GuiIcons.BUG);
 		}
 
 		@Override
-		public void drawIcon(Theme theme, int x, int y, int w, int h)
+		public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
 			GuiHelper.drawItem(current, x, y, w / 16D, h / 16D, true);
 		}
 
 		@Override
-		public String getTitle()
+		public ITextComponent getTitle()
 		{
-			return current.getDisplayName().getFormattedText();
+			return current.getDisplayName();
 		}
 
 		@Override
@@ -195,7 +215,7 @@ public class GuiSelectItemStack extends GuiBase
 	{
 		public ButtonCount(Panel panel)
 		{
-			super(panel, I18n.format("ftbguilibrary.select_item.count"), ItemIcon.getItemIcon(Items.PAPER));
+			super(panel, new TranslationTextComponent("ftbguilibrary.select_item.count"), ItemIcon.getItemIcon(Items.PAPER));
 		}
 
 		@Override
@@ -218,7 +238,7 @@ public class GuiSelectItemStack extends GuiBase
 	{
 		public ButtonNBT(Panel panel)
 		{
-			super(panel, I18n.format("ftbguilibrary.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
+			super(panel, new TranslationTextComponent("ftbguilibrary.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
 		}
 
 		@Override
@@ -241,7 +261,7 @@ public class GuiSelectItemStack extends GuiBase
 	{
 		public ButtonCaps(Panel panel)
 		{
-			super(panel, I18n.format("ftbguilibrary.select_item.caps"), ItemIcon.getItemIcon(Blocks.ANVIL));
+			super(panel, new TranslationTextComponent("ftbguilibrary.select_item.caps"), ItemIcon.getItemIcon(Blocks.ANVIL));
 		}
 
 		@Override
@@ -355,7 +375,7 @@ public class GuiSelectItemStack extends GuiBase
 	private final Button buttonCancel, buttonAccept;
 	private final Panel panelStacks;
 	private final PanelScrollBar scrollBar;
-	private TextBox searchBox;
+	private final TextBox searchBox;
 	private final Panel tabs;
 	private ThreadItemList threadItemList;
 	private List<Widget> newStackWidgets;
@@ -370,7 +390,7 @@ public class GuiSelectItemStack extends GuiBase
 
 		int bsize = width / 2 - 10;
 
-		buttonCancel = new SimpleTextButton(this, I18n.format("gui.cancel"), Icon.EMPTY)
+		buttonCancel = new SimpleTextButton(this, new TranslationTextComponent("gui.cancel"), Icon.EMPTY)
 		{
 			@Override
 			public void onClicked(MouseButton button)
@@ -388,7 +408,7 @@ public class GuiSelectItemStack extends GuiBase
 
 		buttonCancel.setPosAndSize(8, height - 24, bsize, 16);
 
-		buttonAccept = new SimpleTextButton(this, I18n.format("gui.accept"), Icon.EMPTY)
+		buttonAccept = new SimpleTextButton(this, new TranslationTextComponent("gui.accept"), Icon.EMPTY)
 		{
 			@Override
 			public void onClicked(MouseButton button)
@@ -416,7 +436,7 @@ public class GuiSelectItemStack extends GuiBase
 			}
 
 			@Override
-			public void drawBackground(Theme theme, int x, int y, int w, int h)
+			public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 			{
 				theme.drawPanelBackground(x, y, w, h);
 			}
@@ -522,9 +542,9 @@ public class GuiSelectItemStack extends GuiBase
 	}
 
 	@Override
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		super.drawBackground(theme, x, y, w, h);
+		super.drawBackground(matrixStack, theme, x, y, w, h);
 
 		if (newStackWidgets != null)
 		{

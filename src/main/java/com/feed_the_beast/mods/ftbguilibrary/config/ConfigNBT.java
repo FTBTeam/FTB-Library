@@ -2,7 +2,9 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.function.Consumer;
  */
 public class ConfigNBT extends ConfigFromString<CompoundNBT>
 {
+	public static final StringTextComponent EMPTY_NBT = new StringTextComponent("{}");
+	public static final StringTextComponent NON_EMPTY_NBT = new StringTextComponent("{...}");
+
 	@Override
 	public CompoundNBT copy(CompoundNBT v)
 	{
@@ -26,9 +31,9 @@ public class ConfigNBT extends ConfigFromString<CompoundNBT>
 	}
 
 	@Override
-	public String getStringForGUI(@Nullable CompoundNBT v)
+	public ITextComponent getStringForGUI(@Nullable CompoundNBT v)
 	{
-		return v == null ? "null" : v.isEmpty() ? "{}" : "{...}";
+		return v == null ? NULL_TEXT : v.isEmpty() ? EMPTY_NBT : NON_EMPTY_NBT;
 	}
 
 	@Override
@@ -62,9 +67,9 @@ public class ConfigNBT extends ConfigFromString<CompoundNBT>
 	}
 
 	@Override
-	public void addInfo(List<String> list)
+	public void addInfo(List<ITextProperties> list)
 	{
-		list.add(TextFormatting.AQUA + "Value: " + TextFormatting.RESET + (value == null ? "null" : value.toFormattedComponent().getFormattedText()));
-		list.add(TextFormatting.AQUA + "Default: " + TextFormatting.RESET + (defaultValue == null ? "null" : defaultValue.toFormattedComponent().getFormattedText()));
+		list.add(info("Value", value == null ? "null" : value.toFormattedComponent()));
+		list.add(info("Default", defaultValue == null ? "null" : defaultValue.toFormattedComponent()));
 	}
 }

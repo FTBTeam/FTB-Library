@@ -2,8 +2,8 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
-import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
@@ -15,7 +15,7 @@ import java.util.function.BooleanSupplier;
  */
 public class ContextMenuItem implements Comparable<ContextMenuItem>
 {
-	public static final ContextMenuItem SEPARATOR = new ContextMenuItem("", Icon.EMPTY, () -> {})
+	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(StringTextComponent.EMPTY, Icon.EMPTY, () -> {})
 	{
 		@Override
 		public Widget createWidget(ContextMenu panel)
@@ -27,21 +27,21 @@ public class ContextMenuItem implements Comparable<ContextMenuItem>
 	public static final BooleanSupplier TRUE = () -> true;
 	public static final BooleanSupplier FALSE = () -> false;
 
-	public String title;
+	public ITextComponent title;
 	public Icon icon;
 	public Runnable callback;
 	public BooleanSupplier enabled = TRUE;
 	public ITextComponent yesNoText = new StringTextComponent("");
 	public boolean closeMenu = true;
 
-	public ContextMenuItem(String t, Icon i, @Nullable Runnable c)
+	public ContextMenuItem(ITextComponent t, Icon i, @Nullable Runnable c)
 	{
 		title = t;
 		icon = i;
 		callback = c;
 	}
 
-	public void addMouseOverText(List<String> list)
+	public void addMouseOverText(List<ITextProperties> list)
 	{
 	}
 
@@ -81,7 +81,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem>
 	@Override
 	public int compareTo(ContextMenuItem o)
 	{
-		return StringUtils.unformatted(title).compareToIgnoreCase(StringUtils.unformatted(o.title));
+		return title.getString().compareToIgnoreCase(o.title.getString());
 	}
 
 	public void onClicked(Panel panel, MouseButton button)
