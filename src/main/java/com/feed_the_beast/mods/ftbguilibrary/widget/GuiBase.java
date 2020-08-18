@@ -50,7 +50,6 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 	private float partialTicks;
 	private boolean refreshWidgets;
 	private MainWindow screen;
-	public boolean fixUnicode;
 	private final Screen prevScreen;
 	public Panel contextMenu = null;
 	public ItemRenderer itemRenderer;
@@ -90,7 +89,6 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 		if (onInit())
 		{
 			super.refreshWidgets();
-			fixUnicode = getScreen().getGuiScaleFactor() % 2 == 1;
 			alignWidgets();
 			onPostInit();
 		}
@@ -187,7 +185,7 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 		if (openPrevScreen)
 		{
 			mc.displayGuiScreen(getPrevScreen());
-			GLFW.glfwSetCursorPos(getScreen().getHandle(), my, my);
+			GLFW.glfwSetCursorPos(getScreen().getHandle(), mx, my);
 		}
 
 		onClosed();

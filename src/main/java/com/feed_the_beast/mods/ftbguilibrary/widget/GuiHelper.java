@@ -286,26 +286,6 @@ public class GuiHelper
 		}
 	}
 
-	public static void setFixUnicode(boolean enabled)
-	{
-		/*
-		TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-		int mode = enabled ? GL11.GL_LINEAR : GL11.GL_NEAREST;
-
-		for (int i = 0; i < 256; i++)
-		{
-			ResourceLocation loc = ClientATHelper.getFontUnicodePage(i);
-
-			if (loc != null)
-			{
-				textureManager.bindTexture(loc);
-				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mode);
-				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mode);
-			}
-		}
-		*/
-	}
-
 	public static String clickEventToString(@Nullable ClickEvent event)
 	{
 		if (event == null)

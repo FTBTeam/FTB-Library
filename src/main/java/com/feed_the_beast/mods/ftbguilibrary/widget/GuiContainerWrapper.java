@@ -4,7 +4,6 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -133,11 +132,6 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 	@Override
 	protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float f, int mx, int my)
 	{
-		if (wrappedGui.fixUnicode)
-		{
-			GuiHelper.setFixUnicode(true);
-		}
-
 		Theme theme = wrappedGui.getTheme();
 		GuiHelper.setupDrawing();
 		renderBackground(matrixStack);
@@ -153,23 +147,13 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 				theme.drawContainerSlot(guiLeft + slot.xPos, guiTop + slot.yPos, 16, 16);
 			}
 		}
-
-		if (wrappedGui.fixUnicode)
-		{
-			GuiHelper.setFixUnicode(false);
-		}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY)
 	{
-		if (wrappedGui.fixUnicode)
-		{
-			GuiHelper.setFixUnicode(true);
-		}
-
-		RenderSystem.pushMatrix();
-		RenderSystem.translatef(-guiLeft, -guiTop, 0F);
+		matrixStack.push();
+		matrixStack.translate(-guiLeft, -guiTop, 0);
 		GuiHelper.setupDrawing();
 
 		Theme theme = wrappedGui.getTheme();
@@ -210,12 +194,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 			func_230459_a_(matrixStack, mouseX, mouseY);
 		}
 
-		RenderSystem.popMatrix();
-
-		if (wrappedGui.fixUnicode)
-		{
-			GuiHelper.setFixUnicode(false);
-		}
+		matrixStack.pop();
 	}
 
 	@Override
@@ -246,5 +225,12 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 	public GuiBase getGui()
 	{
 		return wrappedGui;
+	}
+
+	@Override
+	public void onClose()
+	{
+		wrappedGui.onClosed();
+		super.onClose();
 	}
 }

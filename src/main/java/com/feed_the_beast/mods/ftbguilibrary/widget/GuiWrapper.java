@@ -133,11 +133,6 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
 	{
-		if (wrappedGui.fixUnicode)
-		{
-			GuiHelper.setFixUnicode(true);
-		}
-
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
 		renderBackground(matrixStack);
 		GuiHelper.setupDrawing();
@@ -178,11 +173,6 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 		}
 
 		tempTextList.clear();
-
-		if (wrappedGui.fixUnicode)
-		{
-			GuiHelper.setFixUnicode(false);
-		}
 	}
 
 	@Override
@@ -205,5 +195,12 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 	public GuiBase getGui()
 	{
 		return wrappedGui;
+	}
+
+	@Override
+	public void onClose()
+	{
+		wrappedGui.onClosed();
+		super.onClose();
 	}
 }

@@ -35,6 +35,11 @@ public class Panel extends Widget
 		return this;
 	}
 
+	public void remove(Widget widget)
+	{
+		widgets.remove(widget);
+	}
+
 	public Panel add(Widget widget)
 	{
 		return add("", widget);

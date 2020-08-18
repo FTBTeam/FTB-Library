@@ -18,5 +18,16 @@ public class TestScreen extends ScreenWrapper
 			panel.add("test_2", new Button());
 			panel.add("test_3", new Button());
 		});
+		
+		/*
+		<ui id="test" title="Test">
+			<button id="close">Close</button>
+			<panel>
+				<button id="test_1">Test 1</button>
+				<button id="test_2">Test 2</button>
+				<button id="test_3">Test 3</button>
+			</panel>
+		</ui>
+		 */
 	}
 }
