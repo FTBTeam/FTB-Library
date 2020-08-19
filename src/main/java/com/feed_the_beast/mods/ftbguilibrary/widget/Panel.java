@@ -4,10 +4,9 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextProperties;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
@@ -274,7 +273,7 @@ public abstract class Panel extends Widget
 	}
 
 	@Override
-	public void addMouseOverText(List<ITextProperties> list)
+	public void addMouseOverText(TooltipList list)
 	{
 		if (!shouldAddMouseOverText() || getOnlyInteractWithWidgetsInside() && !isMouseOver())
 		{
@@ -293,7 +292,7 @@ public abstract class Panel extends Widget
 
 				if (Theme.renderDebugBoxes)
 				{
-					list.add(new StringTextComponent(widget.toString() + "#" + (i + 1) + ": " + widget.width + "x" + widget.height).mergeStyle(TextFormatting.DARK_GRAY));
+					list.styledString(widget.toString() + "#" + (i + 1) + ": " + widget.width + "x" + widget.height, TextFormatting.DARK_GRAY);
 				}
 			}
 		}

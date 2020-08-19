@@ -3,18 +3,17 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class Widget implements IGuiWrapper
 {
@@ -116,7 +115,7 @@ public class Widget implements IGuiWrapper
 		return WidgetType.mouseOver(isMouseOver());
 	}
 
-	public void addMouseOverText(List<ITextProperties> list)
+	public void addMouseOverText(TooltipList list)
 	{
 		ITextComponent title = getTitle();
 

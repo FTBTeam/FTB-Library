@@ -10,9 +10,9 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.toasts.IToast;
 import net.minecraft.client.gui.toasts.ToastGui;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.util.List;
@@ -33,12 +33,12 @@ public class SimpleToast implements IToast
 		RenderSystem.color4f(1F, 1F, 1F, 1F);
 		gui.blit(matrixStack, 0, 0, 0, 0, 160, 32);
 
-		List<ITextProperties> list = mc.fontRenderer.func_238425_b_(getSubtitle(), 125);
+		List<IReorderingProcessor> list = mc.fontRenderer.func_238425_b_(getSubtitle(), 125);
 		int i = isImportant() ? 16746751 : 16776960;
 
 		if (list.size() == 1)
 		{
-			mc.fontRenderer.func_238407_a_(matrixStack, getTitle(), 30, 7, i | -16777216);
+			mc.fontRenderer.func_243246_a(matrixStack, getTitle(), 30, 7, i | -16777216);
 			mc.fontRenderer.func_238407_a_(matrixStack, list.get(0), 30, 18, -1);
 		}
 		else
@@ -46,14 +46,14 @@ public class SimpleToast implements IToast
 			if (delta < 1500L)
 			{
 				int k = MathHelper.floor(MathHelper.clamp((float) (1500L - delta) / 300F, 0F, 1F) * 255F) << 24 | 67108864;
-				mc.fontRenderer.func_238407_a_(matrixStack, getTitle(), 30, 11, i | k);
+				mc.fontRenderer.func_243246_a(matrixStack, getTitle(), 30, 11, i | k);
 			}
 			else
 			{
 				int i1 = MathHelper.floor(MathHelper.clamp((float) (delta - 1500L) / 300F, 0F, 1F) * 252F) << 24 | 67108864;
 				int l = 16 - list.size() * mc.fontRenderer.FONT_HEIGHT / 2;
 
-				for (ITextProperties s : list)
+				for (IReorderingProcessor s : list)
 				{
 					mc.fontRenderer.func_238407_a_(matrixStack, s, 30, l, 16777215 | i1);
 					l += mc.fontRenderer.FONT_HEIGHT;

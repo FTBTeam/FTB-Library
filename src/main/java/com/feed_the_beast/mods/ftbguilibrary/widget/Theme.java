@@ -12,8 +12,11 @@ import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import it.unimi.dsi.fastutil.booleans.BooleanStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -157,6 +160,11 @@ public class Theme
 		return text == StringTextComponent.EMPTY ? 0 : getFont().func_238414_a_(text);
 	}
 
+	public final int getStringWidth(IReorderingProcessor text)
+	{
+		return text == IReorderingProcessor.field_242232_a ? 0 : getFont().func_243245_a(text);
+	}
+
 	public final int getStringWidth(String text)
 	{
 		return text.isEmpty() ? 0 : getFont().getStringWidth(text);
@@ -189,32 +197,55 @@ public class Theme
 			return Collections.emptyList();
 		}
 
-		return getFont().func_238425_b_(text, width);
+		return getFont().func_238420_b_().func_238362_b_(text, width, Style.EMPTY);
 	}
 
 	public final int drawString(MatrixStack matrixStack, @Nullable Object text, float x, float y, Color4I color, int flags)
 	{
-		if (text == null || text == StringTextComponent.EMPTY || (text instanceof String && ((String) text).isEmpty()) || color.isEmpty())
+		if (text == null || text == IReorderingProcessor.field_242232_a || text == StringTextComponent.EMPTY || (text instanceof String && ((String) text).isEmpty()) || color.isEmpty())
 		{
 			return 0;
 		}
 
-		if (text instanceof ITextProperties)
+		if (text instanceof IReorderingProcessor)
 		{
 			if (Bits.getFlag(flags, CENTERED))
 			{
-				x -= getFont().func_238414_a_((ITextProperties) text) / 2F;
+				x -= getStringWidth((IReorderingProcessor) text) / 2F;
 			}
 
 			int i;
 
 			if (Bits.getFlag(flags, SHADOW))
 			{
-				i = getFont().func_238407_a_(matrixStack, (ITextProperties) text, x, y, color.rgba());
+				i = getFont().func_238407_a_(matrixStack, (IReorderingProcessor) text, x, y, color.rgba());
 			}
 			else
 			{
-				i = getFont().func_238422_b_(matrixStack, (ITextProperties) text, x, y, color.rgba());
+				i = getFont().func_238422_b_(matrixStack, (IReorderingProcessor) text, x, y, color.rgba());
+			}
+
+			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.disableAlphaTest();
+			RenderSystem.enableBlend();
+			return i;
+		}
+		else if (text instanceof ITextComponent)
+		{
+			if (Bits.getFlag(flags, CENTERED))
+			{
+				x -= getStringWidth((ITextComponent) text) / 2F;
+			}
+
+			int i;
+
+			if (Bits.getFlag(flags, SHADOW))
+			{
+				i = getFont().func_243246_a(matrixStack, (ITextComponent) text, x, y, color.rgba());
+			}
+			else
+			{
+				i = getFont().func_243248_b(matrixStack, (ITextComponent) text, x, y, color.rgba());
 			}
 
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
@@ -228,7 +259,7 @@ public class Theme
 
 			if (Bits.getFlag(flags, CENTERED))
 			{
-				x -= getFont().getStringWidth(s) / 2F;
+				x -= getStringWidth(s) / 2F;
 			}
 
 			int i;

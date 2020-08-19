@@ -1,14 +1,15 @@
 modLoader="javafml"
 loaderVersion="[30,)"
-issueTrackerURL="https://github.com/FTBTeam/FTB-GUI-Library/issues"
+issueTrackerURL = "https://github.com/FTBTeam/FTB-GUI-Library/issues"
+license = "All Rights Reserved"
 
 [[mods]]
 modId="ftbguilibrary"
 version="${file.jarVersion}"
 displayName="FTB GUI Library"
 authors="LatvianModder"
-description='''
-FTB GUI Library add nothing.
+description= '''
+FTB GUI Library adds nothing.
 '''
 
 [[dependencies.ftbguilibrary]]

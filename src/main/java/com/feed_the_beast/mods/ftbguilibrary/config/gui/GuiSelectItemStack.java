@@ -9,6 +9,7 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.icon.ItemIcon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.feed_the_beast.mods.ftbguilibrary.widget.BlankPanel;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Button;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiBase;
@@ -35,7 +36,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -92,7 +92,7 @@ public class GuiSelectItemStack extends GuiBase
 		}
 
 		@Override
-		public void addMouseOverText(List<ITextProperties> list)
+		public void addMouseOverText(TooltipList list)
 		{
 		}
 
@@ -139,7 +139,7 @@ public class GuiSelectItemStack extends GuiBase
 		}
 
 		@Override
-		public void addMouseOverText(List<ITextProperties> list)
+		public void addMouseOverText(TooltipList list)
 		{
 			super.addMouseOverText(list);
 

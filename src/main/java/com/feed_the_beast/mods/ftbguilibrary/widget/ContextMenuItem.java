@@ -2,12 +2,11 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -41,7 +40,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem>
 		callback = c;
 	}
 
-	public void addMouseOverText(List<ITextProperties> list)
+	public void addMouseOverText(TooltipList list)
 	{
 	}
 

@@ -3,16 +3,12 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Bits;
-import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.event.HoverEvent;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * @author LatvianModder
@@ -25,7 +21,6 @@ public class TextField extends Widget
 	public int textSpacing = 10;
 	public float scale = 1F;
 	public Color4I textColor = Icon.EMPTY;
-	private List<GuiBase.PositionedTextData> textData;
 
 	public TextField(Panel panel)
 	{
@@ -65,7 +60,6 @@ public class TextField extends Widget
 	public TextField setText(String txt)
 	{
 		text = null;
-		textData = null;
 		txt = txt.trim();
 		Theme theme = getGui().getTheme();
 
@@ -112,54 +106,9 @@ public class TextField extends Widget
 		return this;
 	}
 
-	@Nullable
-	private GuiBase.PositionedTextData getDataAtMouse()
-	{
-		if (textData == null)
-		{
-			return null;
-		}
-
-		int x = getX();
-		int y = getY();
-
-		for (GuiBase.PositionedTextData data : textData)
-		{
-			if (getGui().isMouseOver(data.posX + x, data.posY + y, data.width, data.height))
-			{
-				return data;
-			}
-		}
-
-		return null;
-	}
-
 	@Override
-	public void addMouseOverText(List<ITextProperties> list)
+	public void addMouseOverText(TooltipList list)
 	{
-		GuiBase.PositionedTextData data = getDataAtMouse();
-
-		if (data != null && data.hoverEvent != null && data.hoverEvent.getAction() == HoverEvent.Action.SHOW_TEXT) //TODO: Special handling for each data.hoverEvent.getAction()
-		{
-			list.addAll(getGui().getTheme().listFormattedStringToWidth(data.hoverEvent.getParameter(HoverEvent.Action.SHOW_TEXT), getGui().width - getX()));
-		}
-	}
-
-	@Override
-	public boolean mousePressed(MouseButton button)
-	{
-		if (isMouseOver())
-		{
-			GuiBase.PositionedTextData data = getDataAtMouse();
-
-			if (data != null && data.clickEvent != null && handleClick(GuiHelper.clickEventToString(data.clickEvent)))
-			{
-				playClickSound();
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)

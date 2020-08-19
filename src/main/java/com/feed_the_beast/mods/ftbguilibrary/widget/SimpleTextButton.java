@@ -2,11 +2,10 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
-
-import java.util.List;
 
 /**
  * @author LatvianModder
@@ -45,7 +44,7 @@ public abstract class SimpleTextButton extends Button
 	}
 
 	@Override
-	public void addMouseOverText(List<ITextProperties> list)
+	public void addMouseOverText(TooltipList list)
 	{
 		if (getGui().getTheme().getStringWidth(getTitle()) + (hasIcon() ? 28 : 8) > width)
 		{

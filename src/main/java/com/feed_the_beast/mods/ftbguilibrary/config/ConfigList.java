@@ -3,8 +3,8 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.config.gui.GuiEditConfigList;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class ConfigList<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 	}
 
 	@Override
-	public void addInfo(List<ITextProperties> l)
+	public void addInfo(TooltipList l)
 	{
 		if (!value.isEmpty())
 		{
@@ -59,7 +59,7 @@ public class ConfigList<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 
 			if (!defaultValue.isEmpty())
 			{
-				l.add(StringTextComponent.EMPTY);
+				l.blankLine();
 			}
 		}
 

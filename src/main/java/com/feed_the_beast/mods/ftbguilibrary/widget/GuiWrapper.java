@@ -3,15 +3,11 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.client.gui.GuiUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author LatvianModder
@@ -19,7 +15,7 @@ import java.util.List;
 public class GuiWrapper extends Screen implements IGuiWrapper
 {
 	private final GuiBase wrappedGui;
-	private final List<ITextProperties> tempTextList = new ArrayList<>();
+	private final TooltipList tooltipList = new TooltipList();
 
 	public GuiWrapper(GuiBase g)
 	{
@@ -146,14 +142,14 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 
 		if (wrappedGui.contextMenu != null)
 		{
-			wrappedGui.contextMenu.addMouseOverText(tempTextList);
+			wrappedGui.contextMenu.addMouseOverText(tooltipList);
 		}
 		else
 		{
-			wrappedGui.addMouseOverText(tempTextList);
+			wrappedGui.addMouseOverText(tooltipList);
 		}
 
-		if (tempTextList.isEmpty())
+		if (tooltipList.lines.isEmpty())
 		{
 			Object object = wrappedGui.getIngredientUnderMouse();
 
@@ -169,10 +165,10 @@ public class GuiWrapper extends Screen implements IGuiWrapper
 		}
 		else
 		{
-			GuiUtils.drawHoveringText(matrixStack, tempTextList, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
+			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
 		}
 
-		tempTextList.clear();
+		tooltipList.lines.clear();
 	}
 
 	@Override

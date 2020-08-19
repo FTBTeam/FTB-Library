@@ -1,9 +1,9 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.util.text.ITextProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +138,7 @@ public class CheckBoxList extends Button
 	}
 
 	@Override
-	public void addMouseOverText(List<ITextProperties> list)
+	public void addMouseOverText(TooltipList list)
 	{
 	}
 

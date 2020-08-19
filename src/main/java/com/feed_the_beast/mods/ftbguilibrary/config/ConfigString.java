@@ -1,12 +1,11 @@
 package com.feed_the_beast.mods.ftbguilibrary.config;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -60,7 +59,7 @@ public class ConfigString extends ConfigFromString<String>
 	}
 
 	@Override
-	public void addInfo(List<ITextProperties> list)
+	public void addInfo(TooltipList list)
 	{
 		super.addInfo(list);
 

@@ -3,15 +3,14 @@ package com.feed_the_beast.mods.ftbguilibrary.config;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -70,7 +69,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>>
 		return Color4I.GRAY;
 	}
 
-	public void addInfo(List<ITextProperties> list)
+	public void addInfo(TooltipList list)
 	{
 		list.add(info("Default", getStringForGUI(defaultValue)));
 	}

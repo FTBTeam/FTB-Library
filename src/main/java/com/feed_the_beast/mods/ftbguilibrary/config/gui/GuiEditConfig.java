@@ -7,6 +7,7 @@ import com.feed_the_beast.mods.ftbguilibrary.icon.MutableColor4I;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Bits;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.feed_the_beast.mods.ftbguilibrary.widget.Button;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiBase;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
@@ -20,9 +21,11 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -119,7 +122,7 @@ public class GuiEditConfig extends GuiBase
 		}
 
 		@Override
-		public void addMouseOverText(List<ITextProperties> list)
+		public void addMouseOverText(TooltipList list)
 		{
 			if (info != null)
 			{
@@ -208,7 +211,7 @@ public class GuiEditConfig extends GuiBase
 		}
 
 		@Override
-		public void addMouseOverText(List<ITextProperties> list)
+		public void addMouseOverText(TooltipList list)
 		{
 			if (getMouseY() > 18)
 			{
@@ -219,11 +222,11 @@ public class GuiEditConfig extends GuiBase
 				{
 					for (String s : tooltip.split("\n"))
 					{
-						list.add(new StringTextComponent(s).mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
+						list.styledString(s, Style.EMPTY.setItalic(true).setColor(Color.func_240744_a_(TextFormatting.GRAY)));
 					}
 				}
 
-				list.add(StringTextComponent.EMPTY);
+				list.blankLine();
 				inst.addInfo(list);
 			}
 		}

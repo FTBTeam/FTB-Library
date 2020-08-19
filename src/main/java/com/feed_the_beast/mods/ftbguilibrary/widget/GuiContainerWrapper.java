@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.utils.Key;
 import com.feed_the_beast.mods.ftbguilibrary.utils.KeyModifiers;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,11 +11,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
-import net.minecraftforge.fml.client.gui.GuiUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author LatvianModder
@@ -23,7 +19,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 {
 	private final GuiBase wrappedGui;
 	private boolean drawSlots = true;
-	private final List<ITextProperties> tempTextList = new ArrayList<>();
+	private final TooltipList tooltipList = new TooltipList();
 
 	public GuiContainerWrapper(GuiBase g, Container c, PlayerInventory playerInventory, ITextComponent title)
 	{
@@ -161,14 +157,14 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 
 		if (wrappedGui.contextMenu != null)
 		{
-			wrappedGui.contextMenu.addMouseOverText(tempTextList);
+			wrappedGui.contextMenu.addMouseOverText(tooltipList);
 		}
 		else
 		{
-			wrappedGui.addMouseOverText(tempTextList);
+			wrappedGui.addMouseOverText(tooltipList);
 		}
 
-		if (tempTextList.isEmpty())
+		if (tooltipList.lines.isEmpty())
 		{
 			Object object = wrappedGui.getIngredientUnderMouse();
 
@@ -184,10 +180,10 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 		}
 		else
 		{
-			GuiUtils.drawHoveringText(matrixStack, tempTextList, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
+			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
 		}
 
-		tempTextList.clear();
+		tooltipList.lines.clear();
 
 		if (wrappedGui.contextMenu == null)
 		{

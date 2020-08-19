@@ -2,14 +2,12 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.utils.MathUtils;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
+import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-
-import java.util.List;
 
 public class ScrollBar extends Widget
 {
@@ -110,19 +108,19 @@ public class ScrollBar extends Widget
 	}
 
 	@Override
-	public void addMouseOverText(List<ITextProperties> list)
+	public void addMouseOverText(TooltipList list)
 	{
 		if (showValueOnMouseOver())
 		{
 			ITextComponent t = getTitle();
-			list.add(t == StringTextComponent.EMPTY ? new StringTextComponent(Double.toString(getValue())) : new StringTextComponent(t + ": " + getValue()));
+			list.string(t == StringTextComponent.EMPTY ? (Double.toString(getValue())) : (t + ": " + getValue()));
 		}
 
 		if (Theme.renderDebugBoxes)
 		{
-			list.add(new StringTextComponent("Size: " + getScrollBarSize()).mergeStyle(TextFormatting.DARK_GRAY));
-			list.add(new StringTextComponent("Max: " + getMaxValue()).mergeStyle(TextFormatting.DARK_GRAY));
-			list.add(new StringTextComponent("Value: " + getValue()).mergeStyle(TextFormatting.DARK_GRAY));
+			list.styledString("Size: " + getScrollBarSize(), TextFormatting.DARK_GRAY);
+			list.styledString("Max: " + getMaxValue(), TextFormatting.DARK_GRAY);
+			list.styledString("Value: " + getValue(), TextFormatting.DARK_GRAY);
 		}
 	}
 
