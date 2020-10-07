@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -413,7 +414,7 @@ public class Color4I extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		if (w <= 0 || h <= 0)
 		{
@@ -426,7 +427,7 @@ public class Color4I extends Icon
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-		GuiHelper.addRectToBuffer(buffer, x, y, w, h, this);
+		GuiHelper.addRectToBuffer(matrixStack, buffer, x, y, w, h, this);
 		tessellator.draw();
 		RenderSystem.enableTexture();
 	}

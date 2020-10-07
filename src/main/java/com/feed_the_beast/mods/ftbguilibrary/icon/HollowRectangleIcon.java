@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -47,9 +48,9 @@ public class HollowRectangleIcon extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
-		GuiHelper.drawHollowRect(x, y, w, h, color, roundEdges);
+		GuiHelper.drawHollowRect(matrixStack, x, y, w, h, color, roundEdges);
 	}
 
 	@Override

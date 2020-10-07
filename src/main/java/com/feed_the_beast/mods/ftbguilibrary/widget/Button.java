@@ -46,12 +46,12 @@ public abstract class Button extends Widget
 
 	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		theme.drawButton(x, y, w, h, getWidgetType());
+		theme.drawButton(matrixStack, x, y, w, h, getWidgetType());
 	}
 
 	public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		icon.draw(x, y, w, h);
+		icon.draw(matrixStack, x, y, w, h);
 	}
 
 	@Override

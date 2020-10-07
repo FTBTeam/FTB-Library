@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -34,10 +35,10 @@ public class IconWithBorder extends IconWithParent
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
-		parent.draw(x + 1, y + 1, w - 2, h - 2);
-		GuiHelper.drawHollowRect(x, y, w, h, color, roundEdges);
+		parent.draw(matrixStack, x + 1, y + 1, w - 2, h - 2);
+		GuiHelper.drawHollowRect(matrixStack, x, y, w, h, color, roundEdges);
 		RenderSystem.color4f(1F, 1F, 1F, 1F);
 	}
 

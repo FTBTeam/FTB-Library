@@ -2,6 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -116,13 +117,13 @@ public class PartIcon extends IconWithParent
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		bindTexture();
 
 		if (w == width && h == height)
 		{
-			all.draw(x, y, w, h);
+			all.draw(matrixStack, x, y, w, h);
 			return;
 		}
 
@@ -130,17 +131,17 @@ public class PartIcon extends IconWithParent
 		int mw = w - c * 2;
 		int mh = h - c * 2;
 
-		middleU.draw(x + c, y, mw, c);
-		middleR.draw(x + w - c, y + c, c, mh);
-		middleD.draw(x + c, y + h - c, mw, c);
-		middleL.draw(x, y + c, c, mh);
+		middleU.draw(matrixStack, x + c, y, mw, c);
+		middleR.draw(matrixStack, x + w - c, y + c, c, mh);
+		middleD.draw(matrixStack, x + c, y + h - c, mw, c);
+		middleL.draw(matrixStack, x, y + c, c, mh);
 
-		cornerNN.draw(x, y, c, c);
-		cornerNP.draw(x, y + h - c, c, c);
-		cornerPN.draw(x + w - c, y, c, c);
-		cornerPP.draw(x + w - c, y + h - c, c, c);
+		cornerNN.draw(matrixStack, x, y, c, c);
+		cornerNP.draw(matrixStack, x, y + h - c, c, c);
+		cornerPN.draw(matrixStack, x + w - c, y, c, c);
+		cornerPP.draw(matrixStack, x + w - c, y + h - c, c, c);
 
-		center.draw(x + c, y + c, mw, mh);
+		center.draw(matrixStack, x + c, y + c, mw, mh);
 	}
 
 	@Override

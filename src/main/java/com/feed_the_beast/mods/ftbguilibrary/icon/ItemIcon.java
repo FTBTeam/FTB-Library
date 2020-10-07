@@ -25,7 +25,7 @@ public class ItemIcon extends Icon
 {
 	private static class LazyItemIcon extends ItemIcon
 	{
-		private String lazyStackString;
+		private final String lazyStackString;
 		private boolean createdStack;
 
 		private LazyItemIcon(String s)
@@ -116,18 +116,16 @@ public class ItemIcon extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
-		GuiHelper.drawItem(getStack(), x, y, w / 16D, h / 16D, true);
-		//GuiHelper.setupDrawing();
+		GuiHelper.drawItem(matrixStack, getStack(), x, y, w / 16F, h / 16F, true, null);
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void drawStatic(int x, int y, int w, int h)
+	public void drawStatic(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
-		GuiHelper.drawItem(getStack(), x, y, w / 16D, h / 16D, false);
-		//GuiHelper.setupDrawing();
+		GuiHelper.drawItem(matrixStack, getStack(), x, y, w / 16F, h / 16F, false, null);
 	}
 
 	@OnlyIn(Dist.CLIENT)

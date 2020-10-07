@@ -2,6 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -20,13 +21,13 @@ public class IconWithPadding extends IconWithParent
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		x += padding;
 		y += padding;
 		w -= padding * 2;
 		h -= padding * 2;
-		parent.draw(x, y, w, h);
+		parent.draw(matrixStack, x, y, w, h);
 	}
 
 	@Override

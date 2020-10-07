@@ -124,7 +124,7 @@ public class TooltipList
 			for (int i = 0; i < lines.size(); i++)
 			{
 				ITextComponent textLine = lines.get(i);
-				List<IReorderingProcessor> wrappedLine = font.func_238425_b_(textLine, tooltipTextWidth);
+				List<IReorderingProcessor> wrappedLine = font.trimStringToWidth(textLine, tooltipTextWidth);
 				if (i == 0)
 				{
 					titleLinesCount = wrappedLine.size();

@@ -5,6 +5,7 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.IPixelBuffer;
 import com.feed_the_beast.mods.ftbguilibrary.utils.PixelBuffer;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.google.common.base.Objects;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
@@ -84,13 +86,13 @@ public class ImageIcon extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		bindTexture();
 
 		if (tileSize <= 0D)
 		{
-			GuiHelper.drawTexturedRect(x, y, w, h, color, minU, minV, maxU, maxV);
+			GuiHelper.drawTexturedRect(matrixStack, x, y, w, h, color, minU, minV, maxU, maxV);
 		}
 		else
 		{
@@ -99,13 +101,14 @@ public class ImageIcon extends Icon
 			int b = color.bluei();
 			int a = color.alphai();
 
+			Matrix4f m = matrixStack.getLast().getMatrix();
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEX);
-			buffer.pos(x, y + h, 0).color(r, g, b, a).tex((float) (x / tileSize), (float) ((y + h) / tileSize)).endVertex();
-			buffer.pos(x + w, y + h, 0).color(r, g, b, a).tex((float) ((x + w) / tileSize), (float) ((y + h) / tileSize)).endVertex();
-			buffer.pos(x + w, y, 0).color(r, g, b, a).tex((float) ((x + w) / tileSize), (float) (y / tileSize)).endVertex();
-			buffer.pos(x, y, 0).color(r, g, b, a).tex((float) (x / tileSize), (float) (y / tileSize)).endVertex();
+			buffer.pos(m, x, y + h, 0).color(r, g, b, a).tex((float) (x / tileSize), (float) ((y + h) / tileSize)).endVertex();
+			buffer.pos(m, x + w, y + h, 0).color(r, g, b, a).tex((float) ((x + w) / tileSize), (float) ((y + h) / tileSize)).endVertex();
+			buffer.pos(m, x + w, y, 0).color(r, g, b, a).tex((float) ((x + w) / tileSize), (float) (y / tileSize)).endVertex();
+			buffer.pos(m, x, y, 0).color(r, g, b, a).tex((float) (x / tileSize), (float) (y / tileSize)).endVertex();
 			tessellator.draw();
 		}
 	}

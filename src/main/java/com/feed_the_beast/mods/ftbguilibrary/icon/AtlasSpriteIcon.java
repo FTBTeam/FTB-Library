@@ -2,6 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 
 import com.feed_the_beast.mods.ftbguilibrary.utils.IPixelBuffer;
 import com.feed_the_beast.mods.ftbguilibrary.utils.PixelBuffer;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -10,8 +11,10 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 
@@ -31,7 +34,7 @@ public class AtlasSpriteIcon extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlasTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).getSprite(id);
 
@@ -39,6 +42,8 @@ public class AtlasSpriteIcon extends Icon
 		{
 			return;
 		}
+
+		Matrix4f m = matrixStack.getLast().getMatrix();
 
 		int r = color.redi();
 		int g = color.greeni();
@@ -52,11 +57,11 @@ public class AtlasSpriteIcon extends Icon
 
 		sprite.getAtlasTexture().bindTexture();
 		BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-		buffer.begin(7, DefaultVertexFormats.POSITION_COLOR_TEX);
-		buffer.pos(x, y, 0D).color(r, g, b, a).tex(minU, minV).endVertex();
-		buffer.pos(x, y + h, 0D).color(r, g, b, a).tex(minU, maxV).endVertex();
-		buffer.pos(x + w, y + h, 0D).color(r, g, b, a).tex(maxU, maxV).endVertex();
-		buffer.pos(x + w, y, 0D).color(r, g, b, a).tex(maxU, minV).endVertex();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEX);
+		buffer.pos(m, x, y, 0F).color(r, g, b, a).tex(minU, minV).endVertex();
+		buffer.pos(m, x, y + h, 0F).color(r, g, b, a).tex(minU, maxV).endVertex();
+		buffer.pos(m, x + w, y + h, 0F).color(r, g, b, a).tex(maxU, maxV).endVertex();
+		buffer.pos(m, x + w, y, 0F).color(r, g, b, a).tex(maxU, minV).endVertex();
 		buffer.finishDrawing();
 		WorldVertexBufferUploader.draw(buffer);
 	}

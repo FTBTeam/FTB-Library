@@ -81,73 +81,73 @@ public class Theme
 		return CONTENT_COLOR_DARK;
 	}
 
-	public void drawGui(int x, int y, int w, int h, WidgetType type)
+	public void drawGui(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type)
 	{
-		(type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(x, y, w, h);
+		(type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(matrixStack, x, y, w, h);
 	}
 
-	public void drawWidget(int x, int y, int w, int h, WidgetType type)
+	public void drawWidget(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type)
 	{
-		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : type == WidgetType.DISABLED ? WIDGET_DISABLED : WIDGET).draw(x, y, w, h);
+		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : type == WidgetType.DISABLED ? WIDGET_DISABLED : WIDGET).draw(matrixStack, x, y, w, h);
 	}
 
-	public void drawSlot(int x, int y, int w, int h, WidgetType type)
+	public void drawSlot(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type)
 	{
-		(type == WidgetType.MOUSE_OVER ? SLOT_MOUSE_OVER : SLOT).draw(x, y, w, h);
+		(type == WidgetType.MOUSE_OVER ? SLOT_MOUSE_OVER : SLOT).draw(matrixStack, x, y, w, h);
 	}
 
-	public void drawContainerSlot(int x, int y, int w, int h)
+	public void drawContainerSlot(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
-		SLOT.draw(x - 1, y - 1, w + 2, h + 2);
+		SLOT.draw(matrixStack, x - 1, y - 1, w + 2, h + 2);
 	}
 
-	public void drawButton(int x, int y, int w, int h, WidgetType type)
+	public void drawButton(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type)
 	{
-		(type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON).draw(x, y, w, h);
+		(type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON).draw(matrixStack, x, y, w, h);
 	}
 
-	public void drawScrollBarBackground(int x, int y, int w, int h, WidgetType type)
+	public void drawScrollBarBackground(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type)
 	{
-		(type == WidgetType.DISABLED ? SCROLL_BAR_BG_DISABLED : SCROLL_BAR_BG).draw(x, y, w, h);
+		(type == WidgetType.DISABLED ? SCROLL_BAR_BG_DISABLED : SCROLL_BAR_BG).draw(matrixStack, x, y, w, h);
 	}
 
-	public void drawScrollBar(int x, int y, int w, int h, WidgetType type, boolean vertical)
+	public void drawScrollBar(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type, boolean vertical)
 	{
-		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : WIDGET).draw(x + 1, y + 1, w - 2, h - 2);
+		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : WIDGET).draw(matrixStack, x + 1, y + 1, w - 2, h - 2);
 	}
 
-	public void drawTextBox(int x, int y, int w, int h)
+	public void drawTextBox(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
-		TEXT_BOX.draw(x, y, w, h);
+		TEXT_BOX.draw(matrixStack, x, y, w, h);
 	}
 
-	public void drawCheckboxBackground(int x, int y, int w, int h, boolean radioButton)
+	public void drawCheckboxBackground(MatrixStack matrixStack, int x, int y, int w, int h, boolean radioButton)
 	{
-		drawSlot(x, y, w, h, WidgetType.NORMAL);
+		drawSlot(matrixStack, x, y, w, h, WidgetType.NORMAL);
 	}
 
-	public void drawCheckbox(int x, int y, int w, int h, WidgetType type, boolean selected, boolean radioButton)
+	public void drawCheckbox(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type, boolean selected, boolean radioButton)
 	{
 		if (selected)
 		{
-			drawWidget(x, y, w, h, type);
+			drawWidget(matrixStack, x, y, w, h, type);
 		}
 	}
 
-	public void drawPanelBackground(int x, int y, int w, int h)
+	public void drawPanelBackground(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
-		drawContainerSlot(x, y, w, h);
+		drawContainerSlot(matrixStack, x, y, w, h);
 	}
 
-	public void drawHorizontalTab(int x, int y, int w, int h, boolean selected)
+	public void drawHorizontalTab(MatrixStack matrixStack, int x, int y, int w, int h, boolean selected)
 	{
-		(selected ? TAB_H_SELECTED : TAB_H_UNSELECTED).draw(x, y, w, h);
+		(selected ? TAB_H_SELECTED : TAB_H_UNSELECTED).draw(matrixStack, x, y, w, h);
 	}
 
-	public void drawContextMenuBackground(int x, int y, int w, int h)
+	public void drawContextMenuBackground(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
-		drawGui(x, y, w, h, WidgetType.NORMAL);
-		Color4I.BLACK.withAlpha(90).draw(x, y, w, h);
+		drawGui(matrixStack, x, y, w, h, WidgetType.NORMAL);
+		Color4I.BLACK.withAlpha(90).draw(matrixStack, x, y, w, h);
 	}
 
 	public FontRenderer getFont()
@@ -157,7 +157,7 @@ public class Theme
 
 	public final int getStringWidth(ITextProperties text)
 	{
-		return text == StringTextComponent.EMPTY ? 0 : getFont().func_238414_a_(text);
+		return text == StringTextComponent.EMPTY ? 0 : getFont().getStringPropertyWidth(text);
 	}
 
 	public final int getStringWidth(IReorderingProcessor text)
@@ -197,7 +197,7 @@ public class Theme
 			return Collections.emptyList();
 		}
 
-		return getFont().func_238420_b_().func_238362_b_(text, width, Style.EMPTY);
+		return getFont().getCharacterManager().func_238362_b_(text, width, Style.EMPTY);
 	}
 
 	public final int drawString(MatrixStack matrixStack, @Nullable Object text, float x, float y, Color4I color, int flags)

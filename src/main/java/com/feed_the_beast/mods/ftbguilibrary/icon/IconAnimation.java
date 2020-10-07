@@ -65,21 +65,21 @@ public class IconAnimation extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		if (!list.isEmpty())
 		{
-			list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw(x, y, w, h);
+			list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw(matrixStack, x, y, w, h);
 		}
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void drawStatic(int x, int y, int w, int h)
+	public void drawStatic(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		if (!list.isEmpty())
 		{
-			list.get(0).drawStatic(x, y, w, h);
+			list.get(0).drawStatic(matrixStack, x, y, w, h);
 		}
 	}
 

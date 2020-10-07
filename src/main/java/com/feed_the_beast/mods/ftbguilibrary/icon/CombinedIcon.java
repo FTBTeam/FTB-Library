@@ -63,21 +63,21 @@ public class CombinedIcon extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		for (Icon icon : list)
 		{
-			icon.draw(x, y, w, h);
+			icon.draw(matrixStack, x, y, w, h);
 		}
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void drawStatic(int x, int y, int w, int h)
+	public void drawStatic(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		for (Icon icon : list)
 		{
-			icon.drawStatic(x, y, w, h);
+			icon.drawStatic(matrixStack, x, y, w, h);
 		}
 	}
 

@@ -96,12 +96,12 @@ public class CheckBoxList extends Button
 
 	public void drawCheckboxBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		theme.drawCheckboxBackground(x, y, w, h, radioButtons);
+		theme.drawCheckboxBackground(matrixStack, x, y, w, h, radioButtons);
 	}
 
 	public void getCheckboxIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h, int index, int value)
 	{
-		theme.drawCheckbox(x, y, w, h, WidgetType.mouseOver(isMouseOver()), value != 0, radioButtons);
+		theme.drawCheckbox(matrixStack, x, y, w, h, WidgetType.mouseOver(isMouseOver()), value != 0, radioButtons);
 	}
 
 	public void addBox(CheckBoxEntry checkBox)

@@ -2,6 +2,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 
 import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibraryClient;
 import com.feed_the_beast.mods.ftbguilibrary.utils.IPixelBuffer;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
@@ -152,6 +153,8 @@ public class IconRenderer
 		MainWindow res = mc.getMainWindow();
 		int size = Math.min(Math.min(res.getWidth(), res.getHeight()), 64);
 
+		//FIXME: Translate and scale the matrix?
+		MatrixStack matrixStack = new MatrixStack();
 		//FIXME: Check if its needed, used to be mc.entityRenderer.setupOverlayRendering();
 		//res.loadGUIRenderMatrix(Minecraft.IS_RUNNING_ON_MAC);
 		RenderHelper.enableStandardItemLighting();
@@ -181,7 +184,7 @@ public class IconRenderer
 			RenderSystem.pushMatrix();
 			RenderSystem.clearColor(0F, 0F, 0F, 0F);
 			RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, false);
-			pair.icon.drawStatic(0, 0, 16, 16);
+			pair.icon.drawStatic(matrixStack, 0, 0, 16, 16);
 			RenderSystem.popMatrix();
 
 			try

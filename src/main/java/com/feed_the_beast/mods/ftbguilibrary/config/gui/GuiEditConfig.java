@@ -39,15 +39,15 @@ public class GuiEditConfig extends GuiBase
 	public static Theme THEME = new Theme()
 	{
 		@Override
-		public void drawScrollBarBackground(int x, int y, int w, int h, WidgetType type)
+		public void drawScrollBarBackground(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type)
 		{
-			Color4I.BLACK.withAlpha(70).draw(x, y, w, h);
+			Color4I.BLACK.withAlpha(70).draw(matrixStack, x, y, w, h);
 		}
 
 		@Override
-		public void drawScrollBar(int x, int y, int w, int h, WidgetType type, boolean vertical)
+		public void drawScrollBar(MatrixStack matrixStack, int x, int y, int w, int h, WidgetType type, boolean vertical)
 		{
-			getContentColor(WidgetType.NORMAL).withAlpha(100).withBorder(Color4I.GRAY.withAlpha(100), false).draw(x, y, w, h);
+			getContentColor(WidgetType.NORMAL).withAlpha(100).withBorder(Color4I.GRAY.withAlpha(100), false).draw(matrixStack, x, y, w, h);
 		}
 	};
 
@@ -111,13 +111,13 @@ public class GuiEditConfig extends GuiBase
 		@Override
 		public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
-			COLOR_BACKGROUND.draw(x, y, w, h);
+			COLOR_BACKGROUND.draw(matrixStack, x, y, w, h);
 			theme.drawString(matrixStack, getTitle(), x + 2, y + 2);
 			RenderSystem.color4f(1F, 1F, 1F, 1F);
 
 			if (isMouseOver())
 			{
-				Color4I.WHITE.withAlpha(33).draw(x, y, w, h);
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
 			}
 		}
 
@@ -168,7 +168,7 @@ public class GuiEditConfig extends GuiBase
 
 			if (mouseOver)
 			{
-				Color4I.WHITE.withAlpha(33).draw(x, y, w, h);
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
 			}
 
 			theme.drawString(matrixStack, keyText, x + 4, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
@@ -192,7 +192,7 @@ public class GuiEditConfig extends GuiBase
 
 				if (getMouseX() > x + w - slen - 9)
 				{
-					Color4I.WHITE.withAlpha(33).draw(x + w - slen - 8, y, slen + 8, h);
+					Color4I.WHITE.withAlpha(33).draw(matrixStack, x + w - slen - 8, y, slen + 8, h);
 				}
 			}
 
@@ -222,7 +222,7 @@ public class GuiEditConfig extends GuiBase
 				{
 					for (String s : tooltip.split("\n"))
 					{
-						list.styledString(s, Style.EMPTY.setItalic(true).setColor(Color.func_240744_a_(TextFormatting.GRAY)));
+						list.styledString(s, Style.EMPTY.setItalic(true).setColor(Color.fromTextFormatting(TextFormatting.GRAY)));
 					}
 				}
 
@@ -401,7 +401,7 @@ public class GuiEditConfig extends GuiBase
 	@Override
 	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		COLOR_BACKGROUND.draw(0, 0, w, 20);
+		COLOR_BACKGROUND.draw(matrixStack, 0, 0, w, 20);
 		theme.drawString(matrixStack, getTitle(), 6, 6, Theme.SHADOW);
 	}
 

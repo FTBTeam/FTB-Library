@@ -500,7 +500,7 @@ public class TextBox extends Widget
 	@Override
 	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		drawTextBox(theme, x, y, w, h);
+		drawTextBox(matrixStack, theme, x, y, w, h);
 		boolean drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
 		String textToDraw = getFormattedText();
 		GuiHelper.pushScissor(getScreen(), x, y, w, h);
@@ -546,11 +546,11 @@ public class TextBox extends Widget
 		{
 			if (drawCursor)
 			{
-				col.draw(cursorX, textY - 1, 1, theme.getFontHeight() + 2);
+				col.draw(matrixStack, cursorX, textY - 1, 1, theme.getFontHeight() + 2);
 			}
 			else
 			{
-				col.draw(cursorX, textY + theme.getFontHeight() - 2, 5, 1);
+				col.draw(matrixStack, cursorX, textY + theme.getFontHeight() - 2, 5, 1);
 			}
 		}
 
@@ -604,9 +604,9 @@ public class TextBox extends Widget
 		RenderSystem.color4f(1F, 1F, 1F, 1F);
 	}
 
-	public void drawTextBox(Theme theme, int x, int y, int w, int h)
+	public void drawTextBox(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		theme.drawTextBox(x, y, w, h);
+		theme.drawTextBox(matrixStack, x, y, w, h);
 	}
 
 	public boolean isValid(String txt)

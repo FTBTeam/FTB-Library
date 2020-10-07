@@ -54,11 +54,11 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 			{
 				textCol.addBrightness(60);
 
-				Color4I.WHITE.withAlpha(33).draw(x, y, w, h);
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
 
 				if (getMouseX() >= x + w - 19)
 				{
-					Color4I.WHITE.withAlpha(33).draw(x + w - 19, y, 19, h);
+					Color4I.WHITE.withAlpha(33).draw(matrixStack, x + w - 19, y, 19, h);
 				}
 			}
 
@@ -130,7 +130,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 
 			if (mouseOver)
 			{
-				Color4I.WHITE.withAlpha(33).draw(x, y, w, h);
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
 			}
 
 			theme.drawString(matrixStack, getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
@@ -246,7 +246,7 @@ public class GuiEditConfigList<E, CV extends ConfigValue<E>> extends GuiBase
 	@Override
 	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		GuiEditConfig.COLOR_BACKGROUND.draw(0, 0, w, 20);
+		GuiEditConfig.COLOR_BACKGROUND.draw(matrixStack, 0, 0, w, 20);
 		theme.drawString(matrixStack, getTitle(), 6, 6, Theme.SHADOW);
 	}
 

@@ -109,11 +109,11 @@ public class GuiButtonSidebarGroup extends AbstractButton
 
 		for (GuiButtonSidebar b : buttons)
 		{
-			b.button.getIcon().draw(b.x, b.y, 16, 16);
+			b.button.getIcon().draw(matrixStack, b.x, b.y, 16, 16);
 
 			if (b == mouseOver)
 			{
-				Color4I.WHITE.withAlpha(33).draw(b.x, b.y, 16, 16);
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, b.x, b.y, 16, 16);
 			}
 
 			if (b.button.getCustomTextHandler() != null)
@@ -124,7 +124,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 				{
 					int nw = font.getStringWidth(text);
 					int width = 16;
-					Color4I.LIGHT_RED.draw(b.x + width - nw, b.y - 1, nw + 1, 9);
+					Color4I.LIGHT_RED.draw(matrixStack, b.x + width - nw, b.y - 1, nw + 1, 9);
 					font.drawString(matrixStack, text, b.x + width - nw + 1, b.y, 0xFFFFFFFF);
 					RenderSystem.color4f(1F, 1F, 1F, 1F);
 				}
@@ -155,7 +155,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 
 			RenderSystem.enableBlend();
 			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			Color4I.DARK_GRAY.draw(mx1 - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
+			Color4I.DARK_GRAY.draw(matrixStack, mx1 - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
 
 			for (int i = 0; i < list.size(); i++)
 			{

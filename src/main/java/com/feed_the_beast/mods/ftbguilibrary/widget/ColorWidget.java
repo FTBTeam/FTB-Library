@@ -23,6 +23,6 @@ public class ColorWidget extends Widget
 	@Override
 	public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		((mouseOverColor != null && isMouseOver()) ? mouseOverColor : color).draw(x, y, w, h);
+		((mouseOverColor != null && isMouseOver()) ? mouseOverColor : color).draw(matrixStack, x, y, w, h);
 	}
 }

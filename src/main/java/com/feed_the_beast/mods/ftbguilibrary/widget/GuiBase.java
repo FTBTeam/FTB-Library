@@ -335,7 +335,7 @@ public abstract class GuiBase extends Panel implements IOpenableGui
 	@Override
 	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		theme.drawGui(x, y, w, h, WidgetType.NORMAL);
+		theme.drawGui(matrixStack, x, y, w, h, WidgetType.NORMAL);
 	}
 
 	public boolean drawDefaultBackground(MatrixStack matrixStack)

@@ -160,29 +160,29 @@ public class ScrollBar extends Widget
 			setValue(v);
 		}
 
-		drawBackground(theme, x, y, width, height);
+		drawBackground(matrixStack, theme, x, y, width, height);
 
 		if (scrollBarSize > 0)
 		{
 			if (plane.isVertical)
 			{
-				drawScrollBar(theme, x, (int) (y + getMappedValue(height - scrollBarSize)), width, scrollBarSize);
+				drawScrollBar(matrixStack, theme, x, (int) (y + getMappedValue(height - scrollBarSize)), width, scrollBarSize);
 			}
 			else
 			{
-				drawScrollBar(theme, (int) (x + getMappedValue(width - scrollBarSize)), y, scrollBarSize, height);
+				drawScrollBar(matrixStack, theme, (int) (x + getMappedValue(width - scrollBarSize)), y, scrollBarSize, height);
 			}
 		}
 	}
 
-	public void drawBackground(Theme theme, int x, int y, int w, int h)
+	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		theme.drawScrollBarBackground(x, y, w, h, getWidgetType());
+		theme.drawScrollBarBackground(matrixStack, x, y, w, h, getWidgetType());
 	}
 
-	public void drawScrollBar(Theme theme, int x, int y, int w, int h)
+	public void drawScrollBar(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		theme.drawScrollBar(x, y, w, h, WidgetType.mouseOver(grab != -10000), plane.isVertical);
+		theme.drawScrollBar(matrixStack, x, y, w, h, WidgetType.mouseOver(grab != -10000), plane.isVertical);
 	}
 
 	public void onMoved()

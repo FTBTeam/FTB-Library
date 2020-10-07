@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MainWindow;
@@ -8,11 +9,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -88,14 +98,14 @@ public class GuiHelper
 		Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(event, pitch));
 	}
 
-	public static void drawTexturedRect(int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1)
+	public static void drawTexturedRect(MatrixStack matrixStack, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1)
 	{
 		if (u0 == u1 || v0 == v1)
 		{
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-			addRectToBuffer(buffer, x, y, w, h, col);
+			addRectToBuffer(matrixStack, buffer, x, y, w, h, col);
 			tessellator.draw();
 		}
 		else
@@ -103,40 +113,52 @@ public class GuiHelper
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEX);
-			addRectToBufferWithUV(buffer, x, y, w, h, col, u0, v0, u1, v1);
+			addRectToBufferWithUV(matrixStack, buffer, x, y, w, h, col, u0, v0, u1, v1);
 			tessellator.draw();
 		}
 	}
 
-	public static void addRectToBuffer(BufferBuilder buffer, int x, int y, int w, int h, Color4I col)
+	public static void addRectToBuffer(MatrixStack matrixStack, BufferBuilder buffer, int x, int y, int w, int h, Color4I col)
 	{
+		if (w <= 0 || h <= 0)
+		{
+			return;
+		}
+
+		Matrix4f m = matrixStack.getLast().getMatrix();
 		int r = col.redi();
 		int g = col.greeni();
 		int b = col.bluei();
 		int a = col.alphai();
-		buffer.pos(x, y + h, 0D).color(r, g, b, a).endVertex();
-		buffer.pos(x + w, y + h, 0D).color(r, g, b, a).endVertex();
-		buffer.pos(x + w, y, 0D).color(r, g, b, a).endVertex();
-		buffer.pos(x, y, 0D).color(r, g, b, a).endVertex();
+		buffer.pos(m, x, y + h, 0).color(r, g, b, a).endVertex();
+		buffer.pos(m, x + w, y + h, 0).color(r, g, b, a).endVertex();
+		buffer.pos(m, x + w, y, 0).color(r, g, b, a).endVertex();
+		buffer.pos(m, x, y, 0).color(r, g, b, a).endVertex();
 	}
 
-	public static void addRectToBufferWithUV(BufferBuilder buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1)
+	public static void addRectToBufferWithUV(MatrixStack matrixStack, BufferBuilder buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1)
 	{
+		if (w <= 0 || h <= 0)
+		{
+			return;
+		}
+
+		Matrix4f m = matrixStack.getLast().getMatrix();
 		int r = col.redi();
 		int g = col.greeni();
 		int b = col.bluei();
 		int a = col.alphai();
-		buffer.pos(x, y + h, 0D).color(r, g, b, a).tex(u0, v1).endVertex();
-		buffer.pos(x + w, y + h, 0D).color(r, g, b, a).tex(u1, v1).endVertex();
-		buffer.pos(x + w, y, 0D).color(r, g, b, a).tex(u1, v0).endVertex();
-		buffer.pos(x, y, 0D).color(r, g, b, a).tex(u0, v0).endVertex();
+		buffer.pos(m, x, y + h, 0).color(r, g, b, a).tex(u0, v1).endVertex();
+		buffer.pos(m, x + w, y + h, 0).color(r, g, b, a).tex(u1, v1).endVertex();
+		buffer.pos(m, x + w, y, 0).color(r, g, b, a).tex(u1, v0).endVertex();
+		buffer.pos(m, x, y, 0).color(r, g, b, a).tex(u0, v0).endVertex();
 	}
 
-	public static void drawHollowRect(int x, int y, int w, int h, Color4I col, boolean roundEdges)
+	public static void drawHollowRect(MatrixStack matrixStack, int x, int y, int w, int h, Color4I col, boolean roundEdges)
 	{
 		if (w <= 1 || h <= 1 || col.isEmpty())
 		{
-			col.draw(x, y, w, h);
+			col.draw(matrixStack, x, y, w, h);
 			return;
 		}
 
@@ -145,119 +167,158 @@ public class GuiHelper
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-		addRectToBuffer(buffer, x, y + 1, 1, h - 2, col);
-		addRectToBuffer(buffer, x + w - 1, y + 1, 1, h - 2, col);
+		addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 2, col);
+		addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, col);
 
 		if (roundEdges)
 		{
-			addRectToBuffer(buffer, x + 1, y, w - 2, 1, col);
-			addRectToBuffer(buffer, x + 1, y + h - 1, w - 2, 1, col);
+			addRectToBuffer(matrixStack, buffer, x + 1, y, w - 2, 1, col);
+			addRectToBuffer(matrixStack, buffer, x + 1, y + h - 1, w - 2, 1, col);
 		}
 		else
 		{
-			addRectToBuffer(buffer, x, y, w, 1, col);
-			addRectToBuffer(buffer, x, y + h - 1, w, 1, col);
+			addRectToBuffer(matrixStack, buffer, x, y, w, 1, col);
+			addRectToBuffer(matrixStack, buffer, x, y + h - 1, w, 1, col);
 		}
 
 		tessellator.draw();
 		RenderSystem.enableTexture();
 	}
 
-	public static void drawRectWithShade(int x, int y, int w, int h, Color4I col, int intensity)
+	public static void drawRectWithShade(MatrixStack matrixStack, int x, int y, int w, int h, Color4I col, int intensity)
 	{
 		RenderSystem.disableTexture();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-		addRectToBuffer(buffer, x, y, w - 1, 1, col);
-		addRectToBuffer(buffer, x, y + 1, 1, h - 1, col);
+		addRectToBuffer(matrixStack, buffer, x, y, w - 1, 1, col);
+		addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 1, col);
 		col = col.mutable().addBrightness(-intensity);
-		addRectToBuffer(buffer, x + w - 1, y, 1, 1, col);
-		addRectToBuffer(buffer, x, y + h - 1, 1, 1, col);
+		addRectToBuffer(matrixStack, buffer, x + w - 1, y, 1, 1, col);
+		addRectToBuffer(matrixStack, buffer, x, y + h - 1, 1, 1, col);
 		col = col.mutable().addBrightness(-intensity);
-		addRectToBuffer(buffer, x + w - 1, y + 1, 1, h - 2, col);
-		addRectToBuffer(buffer, x + 1, y + h - 1, w - 1, 1, col);
+		addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, col);
+		addRectToBuffer(matrixStack, buffer, x + 1, y + h - 1, w - 1, 1, col);
 		tessellator.draw();
 		RenderSystem.enableTexture();
 	}
 
-	public static boolean drawItem(ItemStack stack, int x, int y, double scaleX, double scaleY, boolean renderOverlay)
+	public static boolean drawItem(MatrixStack matrixStack, ItemStack stack, double x, double y, float scaleX, float scaleY, boolean renderOverlay, @Nullable String text)
 	{
-		if (stack.isEmpty())
+		if (stack.isEmpty() || scaleX == 0D || scaleY == 0D)
 		{
 			return false;
 		}
-		
-		/*
 
-		boolean result = true;
+		Minecraft mc = Minecraft.getInstance();
+		Tessellator tessellator = Tessellator.getInstance();
+		ItemRenderer itemRenderer = mc.getItemRenderer();
 
-		ItemRenderer renderItem = Minecraft.getInstance().getItemRenderer();
-		renderItem.zLevel = 180F;
-		RenderSystem.pushMatrix();
-		RenderSystem.translated(x, y, 32D);
+		matrixStack.push();
+		matrixStack.translate(x, y, 0);
+		matrixStack.scale(scaleX, scaleY, 1F);
 
-		if (scaleX != 1D || scaleY != 1D)
+		mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+		mc.getTextureManager().getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
+		RenderSystem.enableRescaleNormal();
+		RenderSystem.enableAlphaTest();
+		RenderSystem.defaultAlphaFunc();
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		matrixStack.translate(8, 8, 100 + itemRenderer.zLevel);
+		matrixStack.scale(1, -1, 1);
+		matrixStack.scale(16, 16, 16);
+		IRenderTypeBuffer.Impl renderTypeBufferImpl = mc.getRenderTypeBuffers().getBufferSource();
+
+		IBakedModel bakedModel = itemRenderer.getItemModelWithOverrides(stack, mc.world, mc.player);
+
+		boolean flatLight = !bakedModel.isSideLit();
+
+		if (flatLight)
 		{
-			RenderSystem.scaled(scaleX, scaleY, 1D);
+			RenderHelper.setupGuiFlatDiffuseLighting();
 		}
 
-		RenderHelper.disableGuiDepthLighting();
-		ClientUtils.pushMaxBrightness();
-		RenderSystem.enableTexture();
+		itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.GUI, false, matrixStack, renderTypeBufferImpl, 15728880, OverlayTexture.NO_OVERLAY, bakedModel);
+		renderTypeBufferImpl.finish();
+		RenderSystem.enableDepthTest();
 
-		try
+		if (flatLight)
 		{
-			renderItem.renderItemAndEffectIntoGUI(stack, 0, 0);
-
-			if (renderOverlay)
-			{
-				FontRenderer font = stack.getItem().getFontRenderer(stack);
-
-				if (font == null)
-				{
-					font = Minecraft.getInstance().fontRenderer;
-				}
-
-				renderItem.renderItemOverlayIntoGUI(font, stack, 0, 0, null);
-			}
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-			result = false;
+			RenderHelper.setupGui3DDiffuseLighting();
 		}
 
-		ClientUtils.popBrightness();
-		RenderSystem.popMatrix();
-		renderItem.zLevel = 0F;
-		return result;
-		 */
-
-		RenderSystem.pushMatrix();
-		RenderSystem.translated(x, y, 0D);
-		RenderSystem.scaled(scaleX, scaleY, 1D);
-		Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(stack, 0, 0);
+		RenderSystem.disableAlphaTest();
+		RenderSystem.disableRescaleNormal();
 
 		if (renderOverlay)
 		{
-			FontRenderer font = stack.getItem().getFontRenderer(stack);
+			FontRenderer fr = stack.getItem().getFontRenderer(stack);
 
-			if (font == null)
+			if (fr == null)
 			{
-				font = Minecraft.getInstance().fontRenderer;
+				fr = mc.fontRenderer;
 			}
 
-			Minecraft.getInstance().getItemRenderer().renderItemOverlayIntoGUI(font, stack, 0, 0, null);
+			if (stack.getCount() != 1 || text != null)
+			{
+				String s = text == null ? String.valueOf(stack.getCount()) : text;
+				matrixStack.translate(0.0D, 0.0D, itemRenderer.zLevel + 200.0F);
+				fr.renderString(s, (float) (19 - 2 - fr.getStringWidth(s)), (float) (6 + 3), 16777215, true, matrixStack.getLast().getMatrix(), renderTypeBufferImpl, false, 0, 15728880);
+				renderTypeBufferImpl.finish();
+			}
+
+			if (stack.getItem().showDurabilityBar(stack))
+			{
+				RenderSystem.disableDepthTest();
+				RenderSystem.disableTexture();
+				RenderSystem.disableAlphaTest();
+				RenderSystem.disableBlend();
+				double health = stack.getItem().getDurabilityForDisplay(stack);
+				int i = Math.round(13.0F - (float) health * 13.0F);
+				int j = stack.getItem().getRGBDurabilityForDisplay(stack);
+				draw(matrixStack, tessellator, 2, 13, 13, 2, 0, 0, 0, 255);
+				draw(matrixStack, tessellator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
+				RenderSystem.enableBlend();
+				RenderSystem.enableAlphaTest();
+				RenderSystem.enableTexture();
+				RenderSystem.enableDepthTest();
+			}
+
+			float f3 = mc.player == null ? 0.0F : mc.player.getCooldownTracker().getCooldown(stack.getItem(), mc.getRenderPartialTicks());
+
+			if (f3 > 0.0F)
+			{
+				RenderSystem.disableDepthTest();
+				RenderSystem.disableTexture();
+				RenderSystem.enableBlend();
+				RenderSystem.defaultBlendFunc();
+				draw(matrixStack, tessellator, 0, MathHelper.floor(16.0F * (1.0F - f3)), 16, MathHelper.ceil(16.0F * f3), 255, 255, 255, 127);
+				RenderSystem.enableTexture();
+				RenderSystem.enableDepthTest();
+			}
 		}
 
-		RenderSystem.popMatrix();
+		matrixStack.pop();
 		return true;
 	}
 
-	public static boolean drawItem(ItemStack stack, int x, int y, boolean renderOverlay)
+	private static void draw(MatrixStack matrixStack, Tessellator tessellator, int x, int y, int width, int height, int red, int green, int blue, int alpha)
 	{
-		return drawItem(stack, x, y, 1, 1, renderOverlay);
+		Matrix4f m = matrixStack.getLast().getMatrix();
+		BufferBuilder renderer = tessellator.getBuffer();
+		renderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		renderer.pos(m, x, y, 0).color(red, green, blue, alpha).endVertex();
+		renderer.pos(m, x, y + height, 0).color(red, green, blue, alpha).endVertex();
+		renderer.pos(m, x + width, y + height, 0).color(red, green, blue, alpha).endVertex();
+		renderer.pos(m, x + width, y, 0).color(red, green, blue, alpha).endVertex();
+		tessellator.draw();
+	}
+
+	public static boolean drawItem(MatrixStack matrixStack, ItemStack stack, int x, int y, boolean renderOverlay)
+	{
+		return drawItem(matrixStack, stack, x, y, 1, 1, renderOverlay, null);
 	}
 
 	public static void pushScissor(MainWindow screen, int x, int y, int w, int h)

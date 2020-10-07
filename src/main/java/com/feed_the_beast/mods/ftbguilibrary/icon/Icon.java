@@ -30,7 +30,7 @@ public abstract class Icon implements Drawable
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
-		public void draw(int x, int y, int w, int h)
+		public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 		{
 		}
 

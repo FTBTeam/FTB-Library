@@ -267,8 +267,8 @@ public abstract class Panel extends Widget
 		if (Theme.renderDebugBoxes)
 		{
 			Color4I col = Color4I.rgb(java.awt.Color.HSBtoRGB((widget.hashCode() & 255) / 255F, 1F, 1F));
-			GuiHelper.drawHollowRect(wx, wy, ww, wh, col.withAlpha(150), false);
-			col.withAlpha(30).draw(wx + 1, wy + 1, ww - 2, wh - 2);
+			GuiHelper.drawHollowRect(matrixStack, wx, wy, ww, wh, col.withAlpha(150), false);
+			col.withAlpha(30).draw(matrixStack, wx + 1, wy + 1, ww - 2, wh - 2);
 		}
 	}
 

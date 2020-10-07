@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.widget;
 import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
 import com.feed_the_beast.mods.ftbguilibrary.utils.MouseButton;
 import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -44,9 +45,9 @@ public class ContextMenuItem implements Comparable<ContextMenuItem>
 	{
 	}
 
-	public void drawIcon(Theme theme, int x, int y, int w, int h)
+	public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		icon.draw(x, y, w, h);
+		icon.draw(matrixStack, x, y, w, h);
 	}
 
 	public ContextMenuItem setEnabled(boolean v)

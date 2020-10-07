@@ -51,7 +51,7 @@ public class GuiLoading extends GuiBase
 
 		if (isLoading())
 		{
-			GuiHelper.drawHollowRect(x + width / 2 - 48, y + height / 2 - 8, 96, 16, Color4I.WHITE, true);
+			GuiHelper.drawHollowRect(matrixStack, x + width / 2 - 48, y + height / 2 - 8, 96, 16, Color4I.WHITE, true);
 
 			int x1 = x + width / 2 - 48;
 			int y1 = y + height / 2 - 8;
@@ -64,10 +64,10 @@ public class GuiLoading extends GuiBase
 			BufferBuilder buffer = tessellator.getBuffer();
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-			GuiHelper.addRectToBuffer(buffer, x1, y1 + 1, 1, h1 - 2, col);
-			GuiHelper.addRectToBuffer(buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
-			GuiHelper.addRectToBuffer(buffer, x1 + 1, y1, w1 - 2, 1, col);
-			GuiHelper.addRectToBuffer(buffer, x1 + 1, y1 + h1 - 1, w1 - 2, 1, col);
+			GuiHelper.addRectToBuffer(matrixStack, buffer, x1, y1 + 1, 1, h1 - 2, col);
+			GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
+			GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + 1, y1, w1 - 2, 1, col);
+			GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + 1, y1 + h1 - 1, w1 - 2, 1, col);
 
 			x1 += 1;
 			y1 += 1;
@@ -87,7 +87,7 @@ public class GuiLoading extends GuiBase
 					{
 						col = Color4I.WHITE.withAlpha(200 - (index % h1) * 9);
 
-						GuiHelper.addRectToBuffer(buffer, x1 + ox, y1 + oy, 1, 1, col);
+						GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + ox, y1 + oy, 1, 1, col);
 					}
 				}
 			}

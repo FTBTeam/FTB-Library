@@ -41,7 +41,7 @@ public class ContextMenu extends Panel
 		@Override
 		public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
-			item.drawIcon(theme, x, y, w, h);
+			item.drawIcon(matrixStack, theme, x, y, w, h);
 		}
 
 		@Override
@@ -85,7 +85,7 @@ public class ContextMenu extends Panel
 		@Override
 		public void draw(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
-			Color4I.WHITE.withAlpha(130).draw(x + 2, y + 2, parent.width - 10, 1);
+			Color4I.WHITE.withAlpha(130).draw(matrixStack, x + 2, y + 2, parent.width - 10, 1);
 		}
 
 		@Override
@@ -160,7 +160,7 @@ public class ContextMenu extends Panel
 	@Override
 	public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
-		theme.drawContextMenuBackground(x, y, w, h);
+		theme.drawContextMenuBackground(matrixStack, x, y, w, h);
 	}
 
 	@Override

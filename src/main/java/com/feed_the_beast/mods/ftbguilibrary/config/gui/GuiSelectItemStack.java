@@ -105,7 +105,7 @@ public class GuiSelectItemStack extends GuiBase
 		@Override
 		public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
-			(getWidgetType() == WidgetType.MOUSE_OVER ? Color4I.LIGHT_GREEN.withAlpha(70) : Color4I.BLACK.withAlpha(50)).draw(x, y, w, h);
+			(getWidgetType() == WidgetType.MOUSE_OVER ? Color4I.LIGHT_GREEN.withAlpha(70) : Color4I.BLACK.withAlpha(50)).draw(matrixStack, x, y, w, h);
 		}
 
 		@Override
@@ -129,7 +129,7 @@ public class GuiSelectItemStack extends GuiBase
 		@Override
 		public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
-			(allItems ? ICON_ALL : ICON_INV).draw(x, y, w, h);
+			(allItems ? ICON_ALL : ICON_INV).draw(matrixStack, x, y, w, h);
 		}
 
 		@Override
@@ -186,7 +186,7 @@ public class GuiSelectItemStack extends GuiBase
 		@Override
 		public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
-			GuiHelper.drawItem(current, x, y, w / 16D, h / 16D, true);
+			GuiHelper.drawItem(matrixStack, current, x, y, w / 16F, h / 16F, true, null);
 		}
 
 		@Override
@@ -438,7 +438,7 @@ public class GuiSelectItemStack extends GuiBase
 			@Override
 			public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 			{
-				theme.drawPanelBackground(x, y, w, h);
+				theme.drawPanelBackground(matrixStack, x, y, w, h);
 			}
 		};
 

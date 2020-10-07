@@ -140,7 +140,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 
 			for (Slot slot : container.inventorySlots)
 			{
-				theme.drawContainerSlot(guiLeft + slot.xPos, guiTop + slot.yPos, 16, 16);
+				theme.drawContainerSlot(matrixStack, guiLeft + slot.xPos, guiTop + slot.yPos, 16, 16);
 			}
 		}
 	}
@@ -187,7 +187,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 
 		if (wrappedGui.contextMenu == null)
 		{
-			func_230459_a_(matrixStack, mouseX, mouseY);
+			renderHoveredTooltip(matrixStack, mouseX, mouseY);
 		}
 
 		matrixStack.pop();

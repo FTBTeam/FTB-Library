@@ -33,7 +33,7 @@ public class SimpleToast implements IToast
 		RenderSystem.color4f(1F, 1F, 1F, 1F);
 		gui.blit(matrixStack, 0, 0, 0, 0, 160, 32);
 
-		List<IReorderingProcessor> list = mc.fontRenderer.func_238425_b_(getSubtitle(), 125);
+		List<IReorderingProcessor> list = mc.fontRenderer.trimStringToWidth(getSubtitle(), 125);
 		int i = isImportant() ? 16746751 : 16776960;
 
 		if (list.size() == 1)
@@ -68,7 +68,7 @@ public class SimpleToast implements IToast
 		}
 
 		RenderHelper.enableStandardItemLighting();
-		getIcon().draw(8, 8, 16, 16);
+		getIcon().draw(matrixStack, 8, 8, 16, 16);
 		return delta >= 5000L ? IToast.Visibility.HIDE : IToast.Visibility.SHOW;
 	}
 

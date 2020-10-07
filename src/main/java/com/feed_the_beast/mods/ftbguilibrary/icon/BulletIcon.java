@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.icon;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -87,7 +88,7 @@ public class BulletIcon extends Icon
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void draw(int x, int y, int w, int h)
+	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
 		Color4I c, cb, cd;
 
@@ -109,11 +110,11 @@ public class BulletIcon extends Icon
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-		GuiHelper.addRectToBuffer(buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
-		GuiHelper.addRectToBuffer(buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);
-		GuiHelper.addRectToBuffer(buffer, x + 1, y, w - 2, 1, inverse ? cd : cb);
-		GuiHelper.addRectToBuffer(buffer, x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd);
-		GuiHelper.addRectToBuffer(buffer, x + 1, y + 1, w - 2, h - 2, c);
+		GuiHelper.addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
+		GuiHelper.addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);
+		GuiHelper.addRectToBuffer(matrixStack, buffer, x + 1, y, w - 2, 1, inverse ? cd : cb);
+		GuiHelper.addRectToBuffer(matrixStack, buffer, x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd);
+		GuiHelper.addRectToBuffer(matrixStack, buffer, x + 1, y + 1, w - 2, h - 2, c);
 
 		tessellator.draw();
 		RenderSystem.enableTexture();

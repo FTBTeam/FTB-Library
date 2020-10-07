@@ -91,7 +91,7 @@ public abstract class GuiButtonListBase extends GuiBase
 			@Override
 			public void drawBackground(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 			{
-				theme.drawPanelBackground(x, y, w, h);
+				theme.drawPanelBackground(matrixStack, x, y, w, h);
 			}
 		};
 

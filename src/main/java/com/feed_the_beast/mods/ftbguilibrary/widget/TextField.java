@@ -6,7 +6,6 @@ import com.feed_the_beast.mods.ftbguilibrary.utils.Bits;
 import com.feed_the_beast.mods.ftbguilibrary.utils.StringUtils;
 import com.feed_the_beast.mods.ftbguilibrary.utils.TooltipList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -147,16 +146,16 @@ public class TextField extends Widget
 		}
 		else
 		{
-			RenderSystem.pushMatrix();
-			RenderSystem.translatef(tx, ty, 0);
-			RenderSystem.scalef(scale, scale, 1F);
+			matrixStack.push();
+			matrixStack.translate(tx, ty, 0);
+			matrixStack.scale(scale, scale, 1F);
 
 			for (int i = 0; i < text.length; i++)
 			{
 				theme.drawString(matrixStack, text[i], 0, i * textSpacing, col, textFlags);
 			}
 
-			RenderSystem.popMatrix();
+			matrixStack.pop();
 		}
 	}
 }
