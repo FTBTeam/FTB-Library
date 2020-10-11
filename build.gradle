@@ -146,6 +146,7 @@ if (ENV.CURSEFORGE_KEY) {
 			id = project.curseforge_id
 			releaseType = "release"
 			addGameVersion "1.16.2"
+			addGameVersion "1.16.3"
 			changelog = getGitChangelog
 			changelogType = 'markdown'
 		}

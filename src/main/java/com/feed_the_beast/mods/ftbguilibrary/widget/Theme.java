@@ -15,6 +15,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 
@@ -252,6 +253,10 @@ public class Theme
 			RenderSystem.disableAlphaTest();
 			RenderSystem.enableBlend();
 			return i;
+		}
+		else if (text instanceof ITextProperties)
+		{
+			return drawString(matrixStack, LanguageMap.getInstance().func_241870_a((ITextProperties) text), x, y, color, flags);
 		}
 		else
 		{
