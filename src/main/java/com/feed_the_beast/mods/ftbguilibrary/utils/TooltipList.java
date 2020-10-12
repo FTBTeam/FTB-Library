@@ -25,7 +25,7 @@ import java.util.List;
 public class TooltipList
 {
 	private final List<ITextComponent> lines = new ArrayList<>();
-	public int zOffset = 400;
+	public int zOffset = 950;
 	public int backgroundColor = 0xF0100010;
 	public int borderColorStart = 0x505000FF;
 	public int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
@@ -81,10 +81,6 @@ public class TooltipList
 
 	public void render(MatrixStack mStack, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
 	{
-		int backgroundColor = 0xF0100010;
-		int borderColorStart = 0x505000FF;
-		int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
-
 		List<IReorderingProcessor> textLines = new ArrayList<>(lines.size());
 
 		for (ITextComponent component : lines)
