@@ -7,11 +7,11 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
+import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class GuiButtonSidebarGroup extends AbstractButton
 {
-	public static Rectangle lastDrawnArea = new Rectangle();
+	public static Rectangle2d lastDrawnArea = new Rectangle2d(0, 0, 0, 0);
 
 	private final ContainerScreen gui;
 	public final List<GuiButtonSidebar> buttons;
@@ -168,7 +168,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 		RenderSystem.color4f(1F, 1F, 1F, 1F);
 		//zLevel = 0F;
 
-		lastDrawnArea = new Rectangle(x, y, width, height);
+		lastDrawnArea = new Rectangle2d(x, y, width, height);
 		matrixStack.pop();
 	}
 
