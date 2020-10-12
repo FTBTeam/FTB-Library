@@ -24,7 +24,25 @@ import java.util.List;
  */
 public class TooltipList
 {
-	public final List<ITextComponent> lines = new ArrayList<>();
+	private final List<ITextComponent> lines = new ArrayList<>();
+	public int zOffset = 400;
+	public int backgroundColor = 0xF0100010;
+	public int borderColorStart = 0x505000FF;
+	public int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
+
+	public boolean shouldRender()
+	{
+		return !lines.isEmpty();
+	}
+
+	public void reset()
+	{
+		lines.clear();
+		zOffset = 400;
+		backgroundColor = 0xF0100010;
+		borderColorStart = 0x505000FF;
+		borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
+	}
 
 	public void add(ITextComponent component)
 	{
@@ -63,11 +81,6 @@ public class TooltipList
 
 	public void render(MatrixStack mStack, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
 	{
-		if (lines.isEmpty())
-		{
-			return;
-		}
-
 		int backgroundColor = 0xF0100010;
 		int borderColorStart = 0x505000FF;
 		int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
@@ -176,10 +189,8 @@ public class TooltipList
 			tooltipY = screenHeight - tooltipHeight - 4;
 		}
 
-		final int zLevel = 400;
-
 		mStack.push();
-		mStack.translate(0.0D, 0.0D, zLevel);
+		mStack.translate(0, 0, zOffset);
 		Matrix4f mat = mStack.getLast().getMatrix();
 		RenderSystem.enableDepthTest();
 		RenderSystem.disableTexture();
@@ -189,6 +200,7 @@ public class TooltipList
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		drawGradientRect(mat, buffer, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
 		drawGradientRect(mat, buffer, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
 		drawGradientRect(mat, buffer, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
@@ -230,16 +242,15 @@ public class TooltipList
 
 	private static void drawGradientRect(Matrix4f mat, BufferBuilder buffer, int left, int top, int right, int bottom, int startColor, int endColor)
 	{
-		float startAlpha = (float) (startColor >> 24 & 255) / 255.0F;
-		float startRed = (float) (startColor >> 16 & 255) / 255.0F;
-		float startGreen = (float) (startColor >> 8 & 255) / 255.0F;
-		float startBlue = (float) (startColor & 255) / 255.0F;
-		float endAlpha = (float) (endColor >> 24 & 255) / 255.0F;
-		float endRed = (float) (endColor >> 16 & 255) / 255.0F;
-		float endGreen = (float) (endColor >> 8 & 255) / 255.0F;
-		float endBlue = (float) (endColor & 255) / 255.0F;
+		int startAlpha = (startColor >> 24) & 255;
+		int startRed = (startColor >> 16) & 255;
+		int startGreen = (startColor >> 8) & 255;
+		int startBlue = startColor & 255;
+		int endAlpha = (endColor >> 24) & 255;
+		int endRed = (endColor >> 16) & 255;
+		int endGreen = (endColor >> 8) & 255;
+		int endBlue = endColor & 255;
 
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		buffer.pos(mat, right, top, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
 		buffer.pos(mat, left, top, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
 		buffer.pos(mat, left, bottom, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();

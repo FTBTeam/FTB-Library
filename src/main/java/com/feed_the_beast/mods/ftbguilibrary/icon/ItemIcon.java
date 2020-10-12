@@ -118,14 +118,20 @@ public class ItemIcon extends Icon
 	@OnlyIn(Dist.CLIENT)
 	public void draw(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
+		matrixStack.push();
+		matrixStack.translate(0, 0, 100);
 		GuiHelper.drawItem(matrixStack, getStack(), x, y, w / 16F, h / 16F, true, null);
+		matrixStack.pop();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void drawStatic(MatrixStack matrixStack, int x, int y, int w, int h)
 	{
+		matrixStack.push();
+		matrixStack.translate(0, 0, 100);
 		GuiHelper.drawItem(matrixStack, getStack(), x, y, w / 16F, h / 16F, false, null);
+		matrixStack.pop();
 	}
 
 	@OnlyIn(Dist.CLIENT)

@@ -225,8 +225,8 @@ public class GuiHelper
 		RenderSystem.defaultAlphaFunc();
 		RenderSystem.enableBlend();
 		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		matrixStack.translate(8, 8, 100 + itemRenderer.zLevel);
+		RenderSystem.color4f(1F, 1F, 1F, 1F);
+		matrixStack.translate(8, 8, itemRenderer.zLevel);
 		matrixStack.scale(1, -1, 1);
 		matrixStack.scale(16, 16, 16);
 		IRenderTypeBuffer.Impl renderTypeBufferImpl = mc.getRenderTypeBuffers().getBufferSource();
@@ -264,7 +264,7 @@ public class GuiHelper
 			if (stack.getCount() != 1 || text != null)
 			{
 				String s = text == null ? String.valueOf(stack.getCount()) : text;
-				matrixStack.translate(0.0D, 0.0D, itemRenderer.zLevel + 200.0F);
+				matrixStack.translate(0, 0, itemRenderer.zLevel + 20);
 				fr.renderString(s, (float) (19 - 2 - fr.getStringWidth(s)), (float) (6 + 3), 16777215, true, matrixStack.getLast().getMatrix(), renderTypeBufferImpl, false, 0, 15728880);
 				renderTypeBufferImpl.finish();
 			}
@@ -314,11 +314,6 @@ public class GuiHelper
 		renderer.pos(m, x + width, y + height, 0).color(red, green, blue, alpha).endVertex();
 		renderer.pos(m, x + width, y, 0).color(red, green, blue, alpha).endVertex();
 		tessellator.draw();
-	}
-
-	public static boolean drawItem(MatrixStack matrixStack, ItemStack stack, int x, int y, boolean renderOverlay)
-	{
-		return drawItem(matrixStack, stack, x, y, 1, 1, renderOverlay, null);
 	}
 
 	public static void pushScissor(MainWindow screen, int x, int y, int w, int h)

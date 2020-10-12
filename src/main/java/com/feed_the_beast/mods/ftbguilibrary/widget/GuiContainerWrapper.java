@@ -164,7 +164,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 			wrappedGui.addMouseOverText(tooltipList);
 		}
 
-		if (tooltipList.lines.isEmpty())
+		if (!tooltipList.shouldRender())
 		{
 			Object object = wrappedGui.getIngredientUnderMouse();
 
@@ -183,7 +183,7 @@ public class GuiContainerWrapper extends ContainerScreen implements IGuiWrapper
 			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getScaledWidth(), wrappedGui.getScreen().getScaledHeight(), 0, theme.getFont());
 		}
 
-		tooltipList.lines.clear();
+		tooltipList.reset();
 
 		if (wrappedGui.contextMenu == null)
 		{

@@ -186,7 +186,10 @@ public class GuiSelectItemStack extends GuiBase
 		@Override
 		public void drawIcon(MatrixStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
+			matrixStack.push();
+			matrixStack.translate(0, 0, 100);
 			GuiHelper.drawItem(matrixStack, current, x, y, w / 16F, h / 16F, true, null);
+			matrixStack.pop();
 		}
 
 		@Override
