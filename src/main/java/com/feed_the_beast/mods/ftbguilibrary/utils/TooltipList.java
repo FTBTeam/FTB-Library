@@ -38,7 +38,7 @@ public class TooltipList
 	public void reset()
 	{
 		lines.clear();
-		zOffset = 400;
+		zOffset = 950;
 		backgroundColor = 0xF0100010;
 		borderColorStart = 0x505000FF;
 		borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
