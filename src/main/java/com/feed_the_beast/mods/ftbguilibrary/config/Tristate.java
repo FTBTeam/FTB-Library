@@ -6,7 +6,6 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -23,7 +22,7 @@ public enum Tristate
 
 	public static Tristate read(CompoundNBT nbt, String key)
 	{
-		return nbt.contains(key, Constants.NBT.TAG_BYTE) ? nbt.getBoolean(key) ? TRUE : FALSE : DEFAULT;
+		return nbt.contains(key) ? nbt.getBoolean(key) ? TRUE : FALSE : DEFAULT;
 	}
 
 	public static Tristate read(PacketBuffer buffer)
