@@ -4,7 +4,6 @@ plugins {
 
 loom {
     silentMojangMappingsLicense()
-    mixinConfig = "architectury.mixins.json"
 }
 
 configurations {
@@ -19,6 +18,8 @@ dependencies {
     minecraft("com.mojang:minecraft:${rootProject.architect.minecraft}")
     mappings(minecraft.officialMojangMappings())
     forge("net.minecraftforge:forge:${rootProject.architect.minecraft}-${rootProject.forge_version}")
+    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:forge")
+    modCompile("curse.maven:jei-238222:${rootProject.jei_file}")
 
     compileOnly(project(path: ":common")) {
         transitive = false
@@ -40,7 +41,6 @@ processResources {
 
 shadowJar {
     exclude "fabric.mod.json"
-    exclude "architectury-common.accessWidener"
 
     configurations = [project.configurations.shadow]
     classifier "shadow"

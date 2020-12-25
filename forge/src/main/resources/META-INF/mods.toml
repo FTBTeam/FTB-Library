@@ -1,34 +1,32 @@
 modLoader = "javafml"
 loaderVersion = "[35,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+issueTrackerURL = "https://github.com/FTBTeam/FTB-GUI-Library/issues"
+license = "All Rights Reserved"
 
 [[mods]]
-modId = "modid"
-version = "${file.jarVersion}"
-displayName = "Example Mod"
-#authors = ""
-description = '''
-This is an example description! Tell everyone what your mod is about!
+modId = "ftbguilibrary"
+version = "${version}"
+displayName="FTB GUI Library"
+authors="LatvianModder"
+description= '''
+FTB GUI Library adds nothing.
 '''
-#logoFile = ""
-license = "Insert License Here"
 
-[[dependencies.kubejs]]
+[[dependencies.ftbguilibrary]]
 modId = "forge"
 mandatory = true
 versionRange = "[35,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.kubejs]]
+[[dependencies.ftbguilibrary]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.16.2,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.kubejs]]
+[[dependencies.ftbguilibrary]]
 modId = "architectury"
 mandatory = true
 versionRange = "[1.1.53,)"

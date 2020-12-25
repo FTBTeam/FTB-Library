@@ -1,43 +1,25 @@
-// FIXME: again, ISelectiveResourceReloadListener
-/*package com.feed_the_beast.mods.ftbguilibrary.sidebar;
+package com.feed_the_beast.mods.ftbguilibrary.sidebar;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import me.shedaniel.architectury.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.resource.IResourceType;
-import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-*/
+
 /**
  * @author LatvianModder
  */
-/*public enum SidebarButtonManager implements ISelectiveResourceReloadListener
+public enum SidebarButtonManager implements ResourceManagerReloadListener
 {
 	INSTANCE;
-
-	public static final IResourceType RESOURCE_TYPE = new IResourceType()
-	{
-	};
 
 	public final List<SidebarButtonGroup> groups = new ArrayList<>();
 
@@ -68,13 +50,8 @@ import java.util.function.Predicate;
 	}
 
 	@Override
-	public void onResourceManagerReload(ResourceManager manager, Predicate<IResourceType> resourcePredicate)
+	public void onResourceManagerReload(ResourceManager manager)
 	{
-		if (!resourcePredicate.test(RESOURCE_TYPE))
-		{
-			return;
-		}
-
 		groups.clear();
 
 		JsonElement element = readJson(Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile());
@@ -147,7 +124,7 @@ import java.util.function.Predicate;
 									continue;
 								}
 
-								if (/*!FTBLibConfig.debugging.dev_sidebar_buttons && * /buttonJson.has("dev_only") && buttonJson.get("dev_only").getAsBoolean())
+								if (/*!FTBLibConfig.debugging.dev_sidebar_buttons && */buttonJson.has("dev_only") && buttonJson.get("dev_only").getAsBoolean())
 								{
 									continue;
 								}
@@ -205,7 +182,7 @@ import java.util.function.Predicate;
 		{
 			for (SidebarButton button : group.getButtons())
 			{
-				MinecraftForge.EVENT_BUS.post(new SidebarButtonCreatedEvent(button));
+                SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(button));
 			}
 		}
 
@@ -232,7 +209,7 @@ import java.util.function.Predicate;
 			}
 		}
 
-		File file = FMLPaths.CONFIGDIR.get().resolve("sidebar_buttons.json").toFile();
+		File file = Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile();
 
 		try (FileWriter writer = new FileWriter(file))
 		{
@@ -247,4 +224,3 @@ import java.util.function.Predicate;
 		}
 	}
 }
-*/

@@ -42,25 +42,27 @@ public class GuiButtonSidebarGroup extends AbstractButton
 		int rx, ry = 0;
 		boolean addedAny;
 
-		// FIXME: SidebarButtonManager
-        /*
-                for (SidebarButtonGroup group : SidebarButtonManager.INSTANCE.groups) {
-            rx = 0;
-            addedAny = false;
+		for (SidebarButtonGroup group : SidebarButtonManager.INSTANCE.groups)
+		{
+			rx = 0;
+			addedAny = false;
 
-            for (SidebarButton button : group.getButtons()) {
-                if (button.isActuallyVisible()) {
-                    buttons.add(new GuiButtonSidebar(rx, ry, button));
-                    rx++;
-                    addedAny = true;
-                }
-            }
+			for (SidebarButton button : group.getButtons())
+			{
+				if (button.isActuallyVisible())
+				{
+					buttons.add(new GuiButtonSidebar(rx, ry, button));
+					rx++;
+					addedAny = true;
+				}
+			}
 
-            if (addedAny) {
-                ry++;
-            }
-        }
-        */
+			if (addedAny)
+			{
+				ry++;
+			}
+		}
+                
 		for (GuiButtonSidebar button : buttons)
 		{
 			button.x = 1 + button.buttonX * 17;

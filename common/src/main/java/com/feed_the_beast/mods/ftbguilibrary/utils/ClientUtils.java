@@ -8,6 +8,8 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL13;
 
@@ -51,7 +53,15 @@ public class ClientUtils
 
 	public static void execClientCommand(String command, boolean printChat)
 	{
-		command = ClientChatEvent.CLIENT.invoker().process(command).getObject();
+		InteractionResultHolder<String> process = ClientChatEvent.CLIENT.invoker().process(command);
+		if (process.getResult() == InteractionResult.FAIL)
+		{
+			command = "";
+		}
+		else
+		{
+			command = process.getObject() != null ? process.getObject() : command;
+		}
 
 		if (command.isEmpty())
 		{

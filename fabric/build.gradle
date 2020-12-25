@@ -21,6 +21,14 @@ dependencies {
     modCompile("net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}")
     modCompile("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}")
     modCompileOnly("io.github.prospector:modmenu:${rootProject.mod_menu_version}")
+    modCompile "me.shedaniel:architectury:${rootProject.architectury_version}:fabric"
+
+    modImplementation("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modRuntime("me.shedaniel:RoughlyEnoughItems:${rootProject.rei_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 
     compileOnly(project(path: ":common")) {
         transitive = false

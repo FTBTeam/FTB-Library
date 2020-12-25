@@ -1,25 +1,30 @@
 package com.feed_the_beast.mods.ftbguilibrary;
 
-import com.feed_the_beast.mods.ftbguilibrary.event.GuiInitEvent;
-import com.feed_the_beast.mods.ftbguilibrary.event.RenderTickEvent;
 import com.feed_the_beast.mods.ftbguilibrary.icon.AtlasSpriteIcon;
 import com.feed_the_beast.mods.ftbguilibrary.icon.IconPresets;
 import com.feed_the_beast.mods.ftbguilibrary.icon.IconRenderer;
 import com.feed_the_beast.mods.ftbguilibrary.sidebar.GuiButtonSidebarGroup;
+import com.feed_the_beast.mods.ftbguilibrary.sidebar.SidebarButtonManager;
 import com.feed_the_beast.mods.ftbguilibrary.utils.ClientUtils;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
 import me.shedaniel.architectury.event.events.CommandRegistrationEvent;
+import me.shedaniel.architectury.event.events.GuiEvent;
 import me.shedaniel.architectury.event.events.TextureStitchEvent;
 import me.shedaniel.architectury.event.events.client.ClientTickEvent;
-import me.shedaniel.architectury.utils.Env;
+import me.shedaniel.architectury.hooks.ScreenHooks;
+import me.shedaniel.architectury.registry.ReloadListeners;
 import me.shedaniel.architectury.utils.EnvExecutor;
+import net.fabricmc.api.EnvType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.world.InteractionResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -33,7 +38,7 @@ public class FTBGUILibrary
 
 	public FTBGUILibrary()
 	{
-		EnvExecutor.runInEnv(Env.CLIENT, () -> this::init);
+		EnvExecutor.runInEnv(EnvType.CLIENT, () -> this::init);
 	}
 
 	public static boolean shouldRenderIcons = false;
@@ -42,12 +47,14 @@ public class FTBGUILibrary
 	public void init()
 	{
 		TextureStitchEvent.PRE.register(FTBGUILibrary::textureStitch);
-		RenderTickEvent.PRE.register(FTBGUILibrary::renderTick);
-		GuiInitEvent.POST.register(FTBGUILibrary::guiInit);
+		GuiEvent.INIT_POST.register(FTBGUILibrary::guiInit);
+		GuiEvent.RENDER_PRE.register((screen, matrices, mouseX, mouseY, delta) -> {
+			FTBGUILibrary.renderTick();
+			return InteractionResult.PASS;
+		});
 		ClientTickEvent.CLIENT_POST.register(FTBGUILibrary::clientTick);
 
-		/* FIXME: workaround for selective resource listener */
-		//((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(SidebarButtonManager.INSTANCE);
+		ReloadListeners.registerReloadListener(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
 
 		CommandRegistrationEvent.EVENT.register(FTBGUILibraryCommands::registerCommands);
 	}
@@ -93,11 +100,12 @@ public class FTBGUILibrary
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static void guiInit(Screen gui, List<AbstractWidget> list, Consumer<AbstractWidget> add)
+	private static void guiInit(Screen screen, List<AbstractWidget> abstractWidgets, List<GuiEventListener> guiEventListeners)
 	{
-		if (areButtonsVisible(gui))
+		if (areButtonsVisible(screen))
 		{
-			add.accept(new GuiButtonSidebarGroup((AbstractContainerScreen) gui));
+			GuiButtonSidebarGroup group = new GuiButtonSidebarGroup((AbstractContainerScreen) screen);
+			ScreenHooks.addButton(screen, group);
 		}
 	}
 
@@ -121,8 +129,7 @@ public class FTBGUILibrary
 			return false;
 		}
 
-		// FIXME: SidebarButtonManager
-		return gui instanceof AbstractContainerScreen /*&& !SidebarButtonManager.INSTANCE.groups.isEmpty()*/;
+		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.groups.isEmpty();
 	}
 
 }

@@ -1,21 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "ftbguilibrary",
   "version": "${version}",
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "FTB GUI Library",
+  "description": "FTB GUI Library adds nothing.",
   "authors": [
-    "Me!"
+    "LatvianModder"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/FTBTeam/FTB-GUI-Library",
+    "issues": "https://github.com/FTBTeam/FTB-GUI-Library/issues"
   },
-  "license": "Insert License Here",
-  "__notmyicon": "assets/modid/icon.png",
+  "license": "All Rights Reserved",
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "client": [
+      "com.feed_the_beast.mods.ftbguilibrary.fabric.FTBGUILibraryFabric"
+    ],
+    "rei_plugins": [
+      "com.feed_the_beast.mods.ftbguilibrary.fabric.REIIntegration"
     ]
   },
   "mixins": [
@@ -24,9 +27,6 @@
     "fabricloader": ">=0.7.4",
     "fabric": "*",
     "minecraft": ">=1.16.4",
-    "architectury": ">=1.1.53"
-  },
-  "suggests": {
-    "flamingo": "*"
+    "architectury": ">=1.2.60"
   }
 }

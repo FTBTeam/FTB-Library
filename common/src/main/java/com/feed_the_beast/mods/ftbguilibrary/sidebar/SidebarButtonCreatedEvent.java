@@ -1,11 +1,17 @@
 package com.feed_the_beast.mods.ftbguilibrary.sidebar;
 
+import me.shedaniel.architectury.ForgeEvent;
+import me.shedaniel.architectury.event.Event;
+import me.shedaniel.architectury.event.EventFactory;
+
+import java.util.function.Consumer;
+
 /**
  * @author LatvianModder
  */
-// FIXME: reimpl
-/*
-public class SidebarButtonCreatedEvent extends Event {
+@ForgeEvent
+public class SidebarButtonCreatedEvent {
+    public static final Event<Consumer<SidebarButtonCreatedEvent>> EVENT = EventFactory.createConsumerLoop(SidebarButtonCreatedEvent.class);
     private final SidebarButton button;
 
     public SidebarButtonCreatedEvent(SidebarButton b) {
@@ -16,4 +22,3 @@ public class SidebarButtonCreatedEvent extends Event {
         return button;
     }
 }
-*/
