@@ -13,13 +13,15 @@ public final class EventHandler
 
 	@ExpectPlatform
 	@Environment(EnvType.CLIENT)
-	private void registerRenderTickEvents() {
+	private void registerRenderTickEvents()
+	{
 		throw new PlatformExpectedError();
 	}
 
 	@ExpectPlatform
 	@Environment(EnvType.CLIENT)
-	private void registerGuiInitEvents() {
+	private void registerGuiInitEvents()
+	{
 		throw new PlatformExpectedError();
 	}
 }

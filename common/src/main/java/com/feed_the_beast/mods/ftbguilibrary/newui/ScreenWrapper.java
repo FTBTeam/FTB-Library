@@ -6,11 +6,13 @@ import net.minecraft.network.chat.Component;
 /**
  * @author LatvianModder
  */
-public class ScreenWrapper extends Screen {
-    public final UI ui;
+public class ScreenWrapper extends Screen
+{
+	public final UI ui;
 
-    public ScreenWrapper(String id, Component title) {
-        super(title);
-        ui = new UI(id, title);
-    }
+	public ScreenWrapper(String id, Component title)
+	{
+		super(title);
+		ui = new UI(id, title);
+	}
 }

@@ -6,66 +6,76 @@ import com.feed_the_beast.mods.ftbguilibrary.widget.WidgetLayout;
 /**
  * @author LatvianModder
  */
-public class CompactGridLayout implements WidgetLayout {
-    public static final int[][] LAYOUTS = {
-            {1},
-            {2},
-            {3},
-            {4},
-            {3, 2},
-            {3, 3},
-            {4, 3},
-            {4, 4},
-            {3, 3, 3},
-            {3, 4, 3},
-            {4, 3, 4},
-            {4, 4, 4},
-            {4, 3, 3, 3},
-            {3, 4, 4, 3},
-            {4, 4, 4, 3},
-            {4, 4, 4, 4}
-    };
+public class CompactGridLayout implements WidgetLayout
+{
+	public static final int[][] LAYOUTS = {
+			{1},
+			{2},
+			{3},
+			{4},
+			{3, 2},
+			{3, 3},
+			{4, 3},
+			{4, 4},
+			{3, 3, 3},
+			{3, 4, 3},
+			{4, 3, 4},
+			{4, 4, 4},
+			{4, 3, 3, 3},
+			{3, 4, 4, 3},
+			{4, 4, 4, 3},
+			{4, 4, 4, 4}
+	};
 
-    public final int size;
+	public final int size;
 
-    public CompactGridLayout(int s) {
-        size = s;
-    }
+	public CompactGridLayout(int s)
+	{
+		size = s;
+	}
 
-    @Override
-    public int align(Panel panel) {
-        int s = panel.widgets.size();
+	@Override
+	public int align(Panel panel)
+	{
+		int s = panel.widgets.size();
 
-        if (s <= 0) {
-            return 0;
-        } else if (s > LAYOUTS.length) {
-            for (int i = 0; i < s; i++) {
-                panel.widgets.get(i).setPosAndSize((i % 4) * size, (i / 4) * size, size, size);
-            }
+		if (s <= 0)
+		{
+			return 0;
+		}
+		else if (s > LAYOUTS.length)
+		{
+			for (int i = 0; i < s; i++)
+			{
+				panel.widgets.get(i).setPosAndSize((i % 4) * size, (i / 4) * size, size, size);
+			}
 
-            return (s / 4) * size;
-        }
+			return (s / 4) * size;
+		}
 
-        int[] layout = LAYOUTS[s - 1];
+		int[] layout = LAYOUTS[s - 1];
 
-        int m = 0;
+		int m = 0;
 
-        for (int v : layout) {
-            m = Math.max(m, v);
-        }
+		for (int v : layout)
+		{
+			m = Math.max(m, v);
+		}
 
-        int off = 0;
+		int off = 0;
 
-        for (int l = 0; l < layout.length; l++) {
-            int o = ((layout[l] % 2) == (m % 2)) ? 0 : size / 2;
+		for (int l = 0; l < layout.length; l++)
+		{
+			int o = ((layout[l] % 2) == (m % 2)) ? 0 : size / 2;
 
-            for (int i = 0; i < layout[l]; i++) {
-                panel.widgets.get(off + i).setPosAndSize(o + i * size, l * size, size, size);
-            }
+			for (int i = 0; i < layout[l]; i++)
+			{
+				panel.widgets.get(off + i).setPosAndSize(o + i * size, l * size, size, size);
+			}
 
-            off += layout[l];
-        }
+			off += layout[l];
+		}
 
-        return layout.length * size;
-    }
+		return layout.length * size;
+	}
 }
