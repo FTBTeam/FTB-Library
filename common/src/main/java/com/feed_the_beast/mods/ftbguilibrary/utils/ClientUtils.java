@@ -3,6 +3,7 @@ package com.feed_the_beast.mods.ftbguilibrary.utils;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiBase;
 import com.feed_the_beast.mods.ftbguilibrary.widget.IGuiWrapper;
 import com.mojang.blaze3d.systems.RenderSystem;
+import me.shedaniel.architectury.ExpectPlatform;
 import me.shedaniel.architectury.event.events.client.ClientChatEvent;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -33,11 +34,22 @@ public class ClientUtils
 	private static float lastBrightnessX, lastBrightnessY;
 	private static Boolean hasJavaFX = null;
 
+	@ExpectPlatform
+	public static float getLastBrightnessX()
+	{
+		throw new AssertionError();
+	}
+
+	@ExpectPlatform
+	public static float getLastBrightnessY()
+	{
+		throw new AssertionError();
+	}
+
 	public static void pushBrightness(float u, float t)
 	{
-		// FIXME: access widener, i'm tired
-		// lastBrightnessX = GlStateManager.lastBrightnessX;
-		// lastBrightnessY = GlStateManager.lastBrightnessY;
+		lastBrightnessX = getLastBrightnessX();
+		lastBrightnessY = getLastBrightnessY();
 		RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, u, t);
 	}
 

@@ -31,6 +31,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -203,15 +204,15 @@ public class GuiSelectItemStack extends GuiBase
 		{
 			playClickSound();
 			ConfigNBT c = new ConfigNBT();
-			/* FIXME: INBTSerializable? */
-			/*GuiEditConfigFromString.open(c, current.serializeNBT(), config.defaultValue.serializeNBT(), accepted -> {
+
+			GuiEditConfigFromString.open(c, current.save(new CompoundTag()), config.defaultValue.save(new CompoundTag()), accepted -> {
 				if (accepted)
 				{
 					current = ItemStack.of(c.value);
 				}
 
 				run();
-			});*/
+			});
 		}
 	}
 
@@ -273,11 +274,10 @@ public class GuiSelectItemStack extends GuiBase
 		{
 			playClickSound();
 
-			// FIXME: More INBTSerializable
-			/*final CompoundTag nbt = current.serializeNBT();
+			final CompoundTag nbt = current.save(new CompoundTag());
 			ConfigNBT c = new ConfigNBT();
 
-			GuiEditConfigFromString.open(c, (CompoundTag) nbt.get("ForgeCaps"), (CompoundTag) config.defaultValue.serializeNBT().get("ForgeCaps"), accepted -> {
+			GuiEditConfigFromString.open(c, (CompoundTag) nbt.get("ForgeCaps"), (CompoundTag) config.defaultValue.save(new CompoundTag()).get("ForgeCaps"), accepted -> {
 				if (accepted)
 				{
 					if (c.value == null || c.value.isEmpty())
@@ -294,7 +294,6 @@ public class GuiSelectItemStack extends GuiBase
 
 				GuiSelectItemStack.this.run();
 			});
-			 */
 		}
 	}
 
@@ -527,7 +526,7 @@ public class GuiSelectItemStack extends GuiBase
 			{
 				threadItemList.interrupt();
 			}
-			catch (Exception ex)
+			catch (Exception ignored)
 			{
 			}
 		}

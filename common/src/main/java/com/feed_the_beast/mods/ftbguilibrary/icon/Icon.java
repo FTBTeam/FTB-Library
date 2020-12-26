@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
@@ -165,7 +166,7 @@ public abstract class Icon implements Drawable
 
 	public static Icon getIcon(ResourceLocation id)
 	{
-		return getIcon(id.toString());
+		return getIcon(id == null ? Strings.EMPTY : id.toString());
 	}
 
 	public static Icon getIcon(String id)

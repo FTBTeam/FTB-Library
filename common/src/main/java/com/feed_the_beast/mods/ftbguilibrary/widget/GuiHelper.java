@@ -10,8 +10,10 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Matrix4f;
+import me.shedaniel.architectury.ExpectPlatform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -23,6 +25,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
@@ -201,6 +204,12 @@ public class GuiHelper
 		RenderSystem.enableTexture();
 	}
 
+	@ExpectPlatform
+	private static Font getFontRenderer(ItemStack stack)
+	{
+		throw new AssertionError();
+	}
+
 	public static boolean drawItem(PoseStack matrixStack, ItemStack stack, double x, double y, float scaleX, float scaleY, boolean renderOverlay, @Nullable String text)
 	{
 		if (stack.isEmpty() || scaleX == 0D || scaleY == 0D)
@@ -251,50 +260,56 @@ public class GuiHelper
 		RenderSystem.disableRescaleNormal();
 
 		// FIXME: fix itemstack extra methods
-        /*
-        if (renderOverlay) {
-            Font fr = stack.getItem().getFontRenderer(stack);
 
-            if (fr == null) {
-                fr = mc.font;
-            }
+		if (renderOverlay)
+		{
+			Font fr = getFontRenderer(stack);
 
-            if (stack.getCount() != 1 || text != null) {
-                String s = text == null ? String.valueOf(stack.getCount()) : text;
-                matrixStack.translate(0, 0, itemRenderer.blitOffset + 20);
-                fr.drawInBatch(s, (float) (19 - 2 - fr.width(s)), (float) (6 + 3), 16777215, true, matrixStack.last().pose(), renderTypeBufferImpl, false, 0, 15728880);
-                renderTypeBufferImpl.endBatch();
-            }
+			if (fr == null)
+			{
+				fr = mc.font;
+			}
 
-            if (stack.getItem().showDurabilityBar(stack)) {
-                RenderSystem.disableDepthTest();
-                RenderSystem.disableTexture();
-                RenderSystem.disableAlphaTest();
-                RenderSystem.disableBlend();
-                double health = stack.getItem().getDurabilityForDisplay(stack);
-                int i = Math.round(13.0F - (float) health * 13.0F);
-                int j = stack.getItem().getRGBDurabilityForDisplay(stack);
-                draw(matrixStack, tessellator, 2, 13, 13, 2, 0, 0, 0, 255);
-                draw(matrixStack, tessellator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
-                RenderSystem.enableBlend();
-                RenderSystem.enableAlphaTest();
-                RenderSystem.enableTexture();
-                RenderSystem.enableDepthTest();
-            }
+			if (stack.getCount() != 1 || text != null)
+			{
+				String s = text == null ? String.valueOf(stack.getCount()) : text;
+				matrixStack.translate(0, 0, itemRenderer.blitOffset + 20);
+				fr.drawInBatch(s, (float) (19 - 2 - fr.width(s)), (float) (6 + 3), 16777215, true, matrixStack.last().pose(), renderTypeBufferImpl, false, 0, 15728880);
+				renderTypeBufferImpl.endBatch();
+			}
 
-            float f3 = mc.player == null ? 0.0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
+			// FIXME: Render durability bar
+//			if (stack.getItem().showDurabilityBar(stack))
+//			{
+//				RenderSystem.disableDepthTest();
+//				RenderSystem.disableTexture();
+//				RenderSystem.disableAlphaTest();
+//				RenderSystem.disableBlend();
+//				double health = stack.getItem().getDurabilityForDisplay(stack);
+//				int i = Math.round(13.0F - (float) health * 13.0F);
+//				int j = stack.getItem().getRGBDurabilityForDisplay(stack);
+//				draw(matrixStack, tessellator, 2, 13, 13, 2, 0, 0, 0, 255);
+//				draw(matrixStack, tessellator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
+//				RenderSystem.enableBlend();
+//				RenderSystem.enableAlphaTest();
+//				RenderSystem.enableTexture();
+//				RenderSystem.enableDepthTest();
+//			}
 
-            if (f3 > 0.0F) {
-                RenderSystem.disableDepthTest();
-                RenderSystem.disableTexture();
-                RenderSystem.enableBlend();
-                RenderSystem.defaultBlendFunc();
-                draw(matrixStack, tessellator, 0, Mth.floor(16.0F * (1.0F - f3)), 16, Mth.ceil(16.0F * f3), 255, 255, 255, 127);
-                RenderSystem.enableTexture();
-                RenderSystem.enableDepthTest();
-            }
-        }
-        */
+			float f3 = mc.player == null ? 0.0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
+
+			if (f3 > 0.0F)
+			{
+				RenderSystem.disableDepthTest();
+				RenderSystem.disableTexture();
+				RenderSystem.enableBlend();
+				RenderSystem.defaultBlendFunc();
+				draw(matrixStack, tessellator, 0, Mth.floor(16.0F * (1.0F - f3)), 16, Mth.ceil(16.0F * f3), 255, 255, 255, 127);
+				RenderSystem.enableTexture();
+				RenderSystem.enableDepthTest();
+			}
+		}
+
 		matrixStack.popPose();
 		return true;
 	}
