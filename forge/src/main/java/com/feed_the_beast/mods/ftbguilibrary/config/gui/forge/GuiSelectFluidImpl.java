@@ -1,7 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.config.gui.forge;
 
 import me.shedaniel.architectury.fluid.FluidStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class GuiSelectFluidImpl
 {

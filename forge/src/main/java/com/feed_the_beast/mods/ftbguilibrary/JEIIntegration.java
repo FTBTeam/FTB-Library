@@ -8,9 +8,9 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -32,7 +32,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler
 	}
 
 	@Override
-	public Collection<Rectangle2d> getGuiExtraAreas()
+	public Collection<Rect2i> getGuiExtraAreas()
 	{
 		Screen currentScreen = Minecraft.getInstance().screen;
 
