@@ -1,5 +1,6 @@
 plugins {
-    id "architect-plugin" version "1.2.33"
+    id "architect-plugin" version "1.2.34"
+    id "forgified-fabric-loom" version "0.5.13" apply false
 }
 
 architectury {
@@ -8,6 +9,10 @@ architectury {
 
 subprojects {
     apply plugin: "forgified-fabric-loom"
+
+    loom {
+        silentMojangMappingsLicense()
+    }
 }
 
 allprojects {
@@ -19,6 +24,7 @@ allprojects {
     group = rootProject.maven_group
     
     repositories {
+        mavenLocal()
         maven {
             url "https://www.cursemaven.com"
             content {

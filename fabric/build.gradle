@@ -2,17 +2,16 @@ plugins {
     id "com.github.johnrengelman.shadow" version "5.0.0"
 }
 
-loom {
-    // accessWidener(file("src/main/resources/ftbguilib.accessWidener"))
-    silentMojangMappingsLicense()
-}
-
 configurations {
     shadow
 }
 
 architectury {
     platformSetupLoomIde()
+}
+
+minecraft {
+    accessWidener = file("src/main/resources/ftbguilibrary.accesswidener")
 }
 
 dependencies {

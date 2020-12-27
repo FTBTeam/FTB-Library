@@ -1,5 +1,6 @@
 package com.feed_the_beast.mods.ftbguilibrary.utils;
 
+import com.feed_the_beast.mods.ftbguilibrary.widget.CustomClickEvent;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiBase;
 import com.feed_the_beast.mods.ftbguilibrary.widget.IGuiWrapper;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -9,6 +10,7 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import org.jetbrains.annotations.Nullable;
@@ -235,13 +237,10 @@ public class ClientUtils
 
 				return false;
 			}
-			// FIXME: reimpl customclickevent
-			/*case "custom":
-				return MinecraftForge.EVENT_BUS.post(new CustomClickEvent(new ResourceLocation(path)));
+			case "custom":
+				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(path))) != InteractionResult.PASS;
 			default:
-				return MinecraftForge.EVENT_BUS.post(new CustomClickEvent(new ResourceLocation(scheme, path)));
-			 */
+				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(scheme, path))) != InteractionResult.PASS;
 		}
-		return false;
 	}
 }

@@ -1,5 +1,6 @@
-package com.feed_the_beast.mods.ftbguilibrary;
+package com.feed_the_beast.mods.ftbguilibrary.forge;
 
+import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibrary;
 import com.feed_the_beast.mods.ftbguilibrary.sidebar.GuiButtonSidebarGroup;
 import com.feed_the_beast.mods.ftbguilibrary.widget.IGuiWrapper;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WrappedIngredient;

@@ -205,7 +205,25 @@ public class GuiHelper
 	}
 
 	@ExpectPlatform
-	private static Font getFontRenderer(ItemStack stack)
+	private static Font getFont(ItemStack stack)
+	{
+		throw new AssertionError();
+	}
+
+	@ExpectPlatform
+	private static boolean shouldShowDurability(ItemStack stack)
+	{
+		throw new AssertionError();
+	}
+
+	@ExpectPlatform
+	private static double getDamageLevel(ItemStack stack)
+	{
+		throw new AssertionError();
+	}
+
+	@ExpectPlatform
+	private static int getDurabilityColor(ItemStack stack)
 	{
 		throw new AssertionError();
 	}
@@ -259,11 +277,9 @@ public class GuiHelper
 		RenderSystem.disableAlphaTest();
 		RenderSystem.disableRescaleNormal();
 
-		// FIXME: fix itemstack extra methods
-
 		if (renderOverlay)
 		{
-			Font fr = getFontRenderer(stack);
+			Font fr = getFont(stack);
 
 			if (fr == null)
 			{
@@ -278,23 +294,23 @@ public class GuiHelper
 				renderTypeBufferImpl.endBatch();
 			}
 
-			// FIXME: Render durability bar
-//			if (stack.getItem().showDurabilityBar(stack))
-//			{
-//				RenderSystem.disableDepthTest();
-//				RenderSystem.disableTexture();
-//				RenderSystem.disableAlphaTest();
-//				RenderSystem.disableBlend();
-//				double health = stack.getItem().getDurabilityForDisplay(stack);
-//				int i = Math.round(13.0F - (float) health * 13.0F);
-//				int j = stack.getItem().getRGBDurabilityForDisplay(stack);
-//				draw(matrixStack, tessellator, 2, 13, 13, 2, 0, 0, 0, 255);
-//				draw(matrixStack, tessellator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
-//				RenderSystem.enableBlend();
-//				RenderSystem.enableAlphaTest();
-//				RenderSystem.enableTexture();
-//				RenderSystem.enableDepthTest();
-//			}
+			// TODO: add extension point to arch
+			if (shouldShowDurability(stack))
+			{
+				RenderSystem.disableDepthTest();
+				RenderSystem.disableTexture();
+				RenderSystem.disableAlphaTest();
+				RenderSystem.disableBlend();
+				double health = getDamageLevel(stack);
+				int i = Math.round(13.0F - (float) health * 13.0F);
+				int j = getDurabilityColor(stack);
+				draw(matrixStack, tessellator, 2, 13, 13, 2, 0, 0, 0, 255);
+				draw(matrixStack, tessellator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
+				RenderSystem.enableBlend();
+				RenderSystem.enableAlphaTest();
+				RenderSystem.enableTexture();
+				RenderSystem.enableDepthTest();
+			}
 
 			float f3 = mc.player == null ? 0.0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
 

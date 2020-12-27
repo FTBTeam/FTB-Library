@@ -1,6 +1,9 @@
 package com.feed_the_beast.mods.ftbguilibrary.utils;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import me.shedaniel.architectury.ExpectPlatform;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -8,6 +11,11 @@ import org.lwjgl.glfw.GLFW;
  */
 public class Key
 {
+	@ExpectPlatform
+	private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
+		throw new AssertionError();
+	}
+
 	public final int keyCode, scanCode;
 	public final KeyModifiers modifiers;
 
@@ -35,9 +43,7 @@ public class Key
 
 	public boolean escOrInventory()
 	{
-		return esc();
-		/* FIXME: reimpl forge patch */
-		// return esc() || Minecraft.getInstance().options.keyInventory.isActiveAndMatches(getInputMapping());
+		return esc() || matchesWithoutConflicts(Minecraft.getInstance().options.keyInventory, getInputMapping());
 	}
 
 	public boolean enter()
