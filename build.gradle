@@ -1,6 +1,6 @@
 plugins {
     id "architect-plugin" version "1.2.34"
-    id "forgified-fabric-loom" version "0.5.13" apply false
+    id "forgified-fabric-loom" version "0.5.14" apply false
 }
 
 architectury {
