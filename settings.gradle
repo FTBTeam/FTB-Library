@@ -1,0 +1,18 @@
+pluginManagement {
+    repositories {
+        jcenter()
+        maven { url "https://maven.fabricmc.net/" }
+        maven { url "https://dl.bintray.com/shedaniel/cloth" }
+        maven { url "https://files.minecraftforge.net/maven/" }
+        gradlePluginPortal()
+        mavenLocal()
+    }
+}
+
+include("common")
+include("fabric")
+include("forge")
+
+rootProject.name = "FTB-GUI-Library"
+
+//includeBuild('../architect-plugin')
