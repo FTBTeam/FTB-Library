@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "com.feed_the_beast.mods.ftbguilibrary.fabric.mixin",
+	"minVersion": "0.7.11",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"GlStateManagerMixin"
+	],
+	"client": [
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
