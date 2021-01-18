@@ -1,49 +1,74 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+	id "com.github.johnrengelman.shadow" version "5.0.0"
+	id "com.matthewprenger.cursegradle"
 }
 
+def ENV = System.getenv()
+
 configurations {
-    shadow
+	shadow
 }
 
 architectury {
-    platformSetupLoomIde()
+	platformSetupLoomIde()
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${rootProject.architect.minecraft}")
-    mappings(minecraft.officialMojangMappings())
-    forge("net.minecraftforge:forge:${rootProject.architect.minecraft}-${rootProject.forge_version}")
-    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:forge")
-    modCompile("curse.maven:jei-238222:${rootProject.jei_file}")
+	minecraft("com.mojang:minecraft:${rootProject.architect.minecraft}")
+	mappings(minecraft.officialMojangMappings())
+	forge("net.minecraftforge:forge:${rootProject.architect.minecraft}-${rootProject.forge_version}")
+	modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:forge")
+	modCompile("curse.maven:jei-238222:${rootProject.jei_file}")
 
-    compileOnly(project(path: ":common")) {
-        transitive = false
-    }
-    runtimeOnly(project(path: ":common", configuration: "transformForgeFakeMod")) {
-        transitive = false
-    }
-    shadow(project(path: ":common", configuration: "transformForge")) {
-        transitive = false
-    }
+	compileOnly(project(path: ":common")) {
+		transitive = false
+	}
+	runtimeOnly(project(path: ":common", configuration: "transformForgeFakeMod")) {
+		transitive = false
+	}
+	shadow(project(path: ":common", configuration: "transformForge")) {
+		transitive = false
+	}
 }
 
 processResources {
-    filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
-    }
-    inputs.property "META-INF/mods.toml", project.version
+	filesMatching("META-INF/mods.toml") {
+		expand "version": project.version
+	}
+	inputs.property "META-INF/mods.toml", project.version
 }
 
 shadowJar {
-    exclude "fabric.mod.json"
+	exclude "fabric.mod.json"
 
-    configurations = [project.configurations.shadow]
-    classifier "shadow"
+	configurations = [project.configurations.shadow]
+	classifier "shadow"
 }
 
 remapJar {
-    dependsOn(shadowJar)
-    input.set(shadowJar.archivePath)
-    archiveClassifier = "forge"
+	dependsOn(shadowJar)
+	input.set(shadowJar.archivePath)
+	archiveClassifier = "forge"
+}
+
+if (ENV.CURSEFORGE_KEY) {
+	curseforge {
+		apiKey = ENV.CURSEFORGE_KEY
+		project {
+			id = project.curseforge_id_forge
+			releaseType = "release"
+			addGameVersion "Forge"
+			addGameVersion "1.16.2"
+			addGameVersion "1.16.3"
+			addGameVersion "1.16.4"
+			addGameVersion "1.16.5"
+			mainArtifact(remapJar.archivePath)
+			relations {
+				requiredDependency 'architectury-forge'
+				optionalDependency 'jei'
+			}
+			changelog = getGitChangelog
+			changelogType = 'markdown'
+		}
+	}
 }

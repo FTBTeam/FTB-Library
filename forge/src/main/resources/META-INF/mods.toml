@@ -6,9 +6,9 @@ license = "All Rights Reserved"
 [[mods]]
 modId = "ftbguilibrary"
 version = "${version}"
-displayName="FTB GUI Library"
-authors="LatvianModder"
-description= '''
+displayName = "FTB GUI Library"
+authors = "LatvianModder"
+description = '''
 FTB GUI Library adds nothing.
 '''
 

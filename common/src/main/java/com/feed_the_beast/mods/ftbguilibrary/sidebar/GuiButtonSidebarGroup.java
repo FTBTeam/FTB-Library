@@ -62,7 +62,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 				ry++;
 			}
 		}
-                
+
 		for (GuiButtonSidebar button : buttons)
 		{
 			button.x = 1 + button.buttonX * 17;

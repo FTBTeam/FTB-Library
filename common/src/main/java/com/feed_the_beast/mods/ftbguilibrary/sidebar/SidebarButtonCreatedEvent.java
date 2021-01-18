@@ -10,15 +10,18 @@ import java.util.function.Consumer;
  * @author LatvianModder
  */
 @ForgeEvent
-public class SidebarButtonCreatedEvent {
-    public static final Event<Consumer<SidebarButtonCreatedEvent>> EVENT = EventFactory.createConsumerLoop(SidebarButtonCreatedEvent.class);
-    private final SidebarButton button;
+public class SidebarButtonCreatedEvent
+{
+	public static final Event<Consumer<SidebarButtonCreatedEvent>> EVENT = EventFactory.createConsumerLoop(SidebarButtonCreatedEvent.class);
+	private final SidebarButton button;
 
-    public SidebarButtonCreatedEvent(SidebarButton b) {
-        button = b;
-    }
+	public SidebarButtonCreatedEvent(SidebarButton b)
+	{
+		button = b;
+	}
 
-    public SidebarButton getButton() {
-        return button;
-    }
+	public SidebarButton getButton()
+	{
+		return button;
+	}
 }

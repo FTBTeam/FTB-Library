@@ -12,7 +12,8 @@ import org.lwjgl.glfw.GLFW;
 public class Key
 {
 	@ExpectPlatform
-	private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
+	private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode)
+	{
 		throw new AssertionError();
 	}
 

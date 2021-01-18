@@ -1,6 +1,5 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget;
 
-import me.shedaniel.architectury.ForgeEvent;
 import me.shedaniel.architectury.ForgeEventCancellable;
 import me.shedaniel.architectury.event.Actor;
 import me.shedaniel.architectury.event.Event;

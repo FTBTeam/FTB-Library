@@ -1,34 +1,34 @@
 {
-  "schemaVersion": 1,
-  "id": "ftbguilibrary",
-  "version": "${version}",
-  "name": "FTB GUI Library",
-  "description": "FTB GUI Library adds nothing.",
-  "authors": [
-    "LatvianModder"
-  ],
-  "contact": {
-    "sources": "https://github.com/FTBTeam/FTB-GUI-Library",
-    "issues": "https://github.com/FTBTeam/FTB-GUI-Library/issues"
-  },
-  "license": "All Rights Reserved",
-  "environment": "*",
-  "entrypoints": {
-    "client": [
-      "com.feed_the_beast.mods.ftbguilibrary.fabric.FTBGUILibraryFabric"
-    ],
-    "rei_plugins": [
-      "com.feed_the_beast.mods.ftbguilibrary.fabric.REIIntegration"
-    ]
-  },
-  "mixins": [
-    "ftbguilibrary.mixins.json"
-  ],
-  "accessWidener": "ftbguilibrary.accesswidener",
-  "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": "*",
-    "minecraft": ">=1.16.4",
-    "architectury": ">=1.2.60"
-  }
+	"schemaVersion": 1,
+	"id": "ftbguilibrary",
+	"version": "${version}",
+	"name": "FTB GUI Library",
+	"description": "FTB GUI Library adds nothing.",
+	"authors": [
+		"LatvianModder"
+	],
+	"contact": {
+		"sources": "https://github.com/FTBTeam/FTB-GUI-Library",
+		"issues": "https://github.com/FTBTeam/FTB-GUI-Library/issues"
+	},
+	"license": "All Rights Reserved",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"com.feed_the_beast.mods.ftbguilibrary.fabric.FTBGUILibraryFabric"
+		],
+		"rei_plugins": [
+			"com.feed_the_beast.mods.ftbguilibrary.fabric.REIIntegration"
+		]
+	},
+	"mixins": [
+		"ftbguilibrary.mixins.json"
+	],
+	"accessWidener": "ftbguilibrary.accesswidener",
+	"depends": {
+		"fabricloader": ">=0.7.4",
+		"fabric": "*",
+		"minecraft": ">=1.16.4",
+		"architectury": ">=1.2.60"
+	}
 }

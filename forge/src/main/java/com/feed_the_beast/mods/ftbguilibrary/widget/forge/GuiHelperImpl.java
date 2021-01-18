@@ -1,6 +1,5 @@
 package com.feed_the_beast.mods.ftbguilibrary.widget.forge;
 
-import me.shedaniel.architectury.ExpectPlatform;
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.ItemStack;
 

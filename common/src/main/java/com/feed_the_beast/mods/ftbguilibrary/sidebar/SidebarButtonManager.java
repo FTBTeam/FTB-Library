@@ -1,6 +1,11 @@
 package com.feed_the_beast.mods.ftbguilibrary.sidebar;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 import me.shedaniel.architectury.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
@@ -8,7 +13,11 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -182,7 +191,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener
 		{
 			for (SidebarButton button : group.getButtons())
 			{
-                SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(button));
+				SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(button));
 			}
 		}
 
