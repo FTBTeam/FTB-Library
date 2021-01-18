@@ -19,9 +19,11 @@ subprojects {
 allprojects {
 	apply plugin: "java"
 	apply plugin: "architect-plugin"
+	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
 
 	archivesBaseName = rootProject.archives_base_name
-	version = rootProject.mod_version + "." + (System.getenv("BUILD_NUMBER") == null ? "custom" : System.getenv("BUILD_NUMBER"))
+	def ENV = System.getenv()
+	version = ENV.BUILD_NUMBER ? "${rootProject.mod_version}.${ENV.BUILD_NUMBER}" : "${rootProject.mod_version}.custom"
 	group = rootProject.maven_group
 
 	repositories {
