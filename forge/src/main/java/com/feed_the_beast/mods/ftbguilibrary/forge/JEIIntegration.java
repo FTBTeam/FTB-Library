@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.forge;
 
 import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibrary;
+import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibraryClient;
 import com.feed_the_beast.mods.ftbguilibrary.sidebar.GuiButtonSidebarGroup;
 import com.feed_the_beast.mods.ftbguilibrary.widget.IGuiWrapper;
 import com.feed_the_beast.mods.ftbguilibrary.widget.WrappedIngredient;
@@ -37,7 +38,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler
 	{
 		Screen currentScreen = Minecraft.getInstance().screen;
 
-		if (FTBGUILibrary.areButtonsVisible(currentScreen))
+		if (FTBGUILibraryClient.areButtonsVisible(currentScreen))
 		{
 			return Collections.singleton(GuiButtonSidebarGroup.lastDrawnArea);
 		}

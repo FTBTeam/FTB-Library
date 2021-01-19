@@ -1,6 +1,6 @@
 package com.feed_the_beast.mods.ftbguilibrary.icon;
 
-import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibrary;
+import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibraryClient;
 import com.feed_the_beast.mods.ftbguilibrary.utils.IPixelBuffer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -41,7 +41,7 @@ public class IconRenderer
 		public void run()
 		{
 			QUEUE.add(this);
-			FTBGUILibrary.shouldRenderIcons = true;
+			FTBGUILibraryClient.shouldRenderIcons = true;
 		}
 	}
 
