@@ -1,6 +1,9 @@
 plugins {
 	id "com.github.johnrengelman.shadow" version "5.0.0"
+	id "com.matthewprenger.cursegradle"
 }
+
+def ENV = System.getenv()
 
 configurations {
 	shadow
@@ -56,4 +59,27 @@ remapJar {
 	dependsOn(shadowJar)
 	input.set(shadowJar.archiveFile)
 	archiveClassifier = "fabric"
+}
+
+
+if (ENV.CURSEFORGE_KEY) {
+	curseforge {
+		apiKey = ENV.CURSEFORGE_KEY
+		project {
+			id = project.curseforge_id_fabric
+			releaseType = "release"
+			addGameVersion "Fabric"
+			addGameVersion "1.16.2"
+			addGameVersion "1.16.3"
+			addGameVersion "1.16.4"
+			addGameVersion "1.16.5"
+			mainArtifact(remapJar.archivePath)
+			relations {
+				requiredDependency 'architectury-fabric'
+				optionalDependency 'roughly-enough-items'
+			}
+			changelog = getGitChangelog
+			changelogType = 'markdown'
+		}
+	}
 }
