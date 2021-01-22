@@ -7,7 +7,6 @@ import com.feed_the_beast.mods.ftbguilibrary.sidebar.GuiButtonSidebarGroup;
 import com.feed_the_beast.mods.ftbguilibrary.sidebar.SidebarButtonManager;
 import com.feed_the_beast.mods.ftbguilibrary.utils.ClientUtils;
 import com.feed_the_beast.mods.ftbguilibrary.widget.GuiIcons;
-import me.shedaniel.architectury.event.events.CommandRegistrationEvent;
 import me.shedaniel.architectury.event.events.GuiEvent;
 import me.shedaniel.architectury.event.events.TextureStitchEvent;
 import me.shedaniel.architectury.event.events.client.ClientTickEvent;
@@ -49,8 +48,6 @@ public class FTBGUILibraryClient
 		ClientTickEvent.CLIENT_POST.register(this::clientTick);
 
 		ReloadListeners.registerReloadListener(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
-
-		CommandRegistrationEvent.EVENT.register(FTBGUILibraryCommands::registerCommands);
 	}
 
 	private void textureStitch(TextureAtlas atlas, Consumer<ResourceLocation> addSprite)
