@@ -1,12 +1,12 @@
 package com.feed_the_beast.mods.ftbguilibrary.fabric;
 
 import com.feed_the_beast.mods.ftbguilibrary.FTBGUILibrary;
-import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.ModInitializer;
 
-public class FTBGUILibraryFabric implements ClientModInitializer
+public class FTBGUILibraryFabric implements ModInitializer
 {
 	@Override
-	public void onInitializeClient()
+	public void onInitialize()
 	{
 		new FTBGUILibrary();
 	}
