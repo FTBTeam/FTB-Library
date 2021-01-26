@@ -26,6 +26,7 @@ logs/
 *.launch
 bin
 eclipse
+.vscode
 
 # Sekrit files
 private.properties

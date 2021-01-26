@@ -1,7 +1,8 @@
 plugins {
-	id "architect-plugin" version "1.2.34"
-	id "forgified-fabric-loom" version "0.5.14" apply false
+	id "architectury-plugin" version "2.0.57"
+	id "forgified-fabric-loom" version "0.6.49" apply false
 	id "com.matthewprenger.cursegradle" version "1.4.0" apply false
+	id "maven-publish"
 }
 
 architectury {
@@ -13,30 +14,33 @@ subprojects {
 
 	loom {
 		silentMojangMappingsLicense()
+		useFabricMixin = true
 	}
 }
 
 allprojects {
 	apply plugin: "java"
-	apply plugin: "architect-plugin"
+	apply plugin: "architectury-plugin"
 	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
 
-	archivesBaseName = rootProject.archives_base_name
+	archivesBaseName = rootProject.name
 	def ENV = System.getenv()
-	version = ENV.BUILD_NUMBER ? "${rootProject.mod_version}.${ENV.BUILD_NUMBER}" : "${rootProject.mod_version}.custom"
-	group = rootProject.maven_group
+	version = ENV.BUILD_NUMBER ? "${mod_version}.${ENV.BUILD_NUMBER}" : "${mod_version}.custom"
+	group = project.mod_package
+	archivesBaseName = project.mod_name
+
+	sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+	tasks.withType(JavaCompile) {
+		options.encoding = "UTF-8"
+	}
 
 	repositories {
-		mavenLocal()
 		maven {
 			url "https://www.cursemaven.com"
 			content {
 				includeGroup "curse.maven"
 			}
 		}
-	}
-
-	tasks.withType(JavaCompile) {
-		options.encoding = "UTF-8"
 	}
 }

@@ -18,12 +18,13 @@ minecraft {
 }
 
 dependencies {
-	minecraft("com.mojang:minecraft:${rootProject.architect.minecraft}")
-	mappings(minecraft.officialMojangMappings())
-	modCompile("net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}")
-	modCompile("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}")
-	modCompileOnly("io.github.prospector:modmenu:${rootProject.mod_menu_version}")
+	minecraft "com.mojang:minecraft:${rootProject.architectury.minecraft}"
+	mappings minecraft.officialMojangMappings()
+	modCompile "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+	modCompile "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 	modCompile "me.shedaniel:architectury:${rootProject.architectury_version}:fabric"
+
+	modCompileOnly("io.github.prospector:modmenu:${rootProject.mod_menu_version}")
 
 	modImplementation("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
@@ -35,10 +36,10 @@ dependencies {
 	compileOnly(project(path: ":common")) {
 		transitive = false
 	}
-	runtimeOnly(project(path: ":common", configuration: "transformed")) {
+	runtimeOnly(project(path: ":common", configuration: "transformDevelopmentFabric")) {
 		transitive = false
 	}
-	shadow(project(path: ":common", configuration: "transformed")) {
+	shadow(project(path: ":common", configuration: "transformProductionFabric")) {
 		transitive = false
 	}
 }
@@ -57,10 +58,9 @@ shadowJar {
 
 remapJar {
 	dependsOn(shadowJar)
-	input.set(shadowJar.archiveFile)
+	input.set(shadowJar.archivePath)
 	archiveClassifier = "fabric"
 }
-
 
 if (ENV.CURSEFORGE_KEY) {
 	curseforge {
