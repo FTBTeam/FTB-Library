@@ -67,6 +67,7 @@ public class SimpleToast implements Toast
 			playSound(mc.getSoundManager());
 		}
 
+		GuiHelper.setupDrawing();
 		Lighting.turnBackOn();
 		getIcon().draw(matrixStack, 8, 8, 16, 16);
 		return delta >= 5000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;

@@ -91,7 +91,9 @@ public class GuiHelper
 		RenderSystem.color4f(1F, 1F, 1F, 1F);
 		RenderSystem.disableLighting();
 		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.enableAlphaTest();
+		RenderSystem.defaultAlphaFunc();
 	}
 
 	public static void playSound(SoundEvent event, float pitch)
@@ -246,11 +248,7 @@ public class GuiHelper
 		mc.getTextureManager().bind(TextureAtlas.LOCATION_BLOCKS);
 		mc.getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
 		RenderSystem.enableRescaleNormal();
-		RenderSystem.enableAlphaTest();
-		RenderSystem.defaultAlphaFunc();
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
+		GuiHelper.setupDrawing();
 		matrixStack.translate(8, 8, itemRenderer.blitOffset);
 		matrixStack.scale(1, -1, 1);
 		matrixStack.scale(16, 16, 16);
