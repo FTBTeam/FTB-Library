@@ -24,6 +24,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
@@ -54,7 +55,7 @@ public class GuiEditConfig extends GuiBase
 	public class ButtonConfigGroup extends Button
 	{
 		public final ConfigGroup group;
-		public Component title, info;
+		public MutableComponent title, info;
 		public boolean collapsed = false;
 
 		public ButtonConfigGroup(Panel panel, ConfigGroup g)
@@ -78,19 +79,17 @@ public class GuiEditConfig extends GuiBase
 
 				groups.remove(groups.size() - 1);
 
-				StringBuilder builder = new StringBuilder();
+				title = new TextComponent("");
 
 				for (int i = groups.size() - 1; i >= 0; i--)
 				{
-					builder.append(groups.get(i).getName());
+					title.append(groups.get(i).getName());
 
 					if (i != 0)
 					{
-						builder.append(" > ");
+						title.append(" > ");
 					}
 				}
-
-				title = new TextComponent(builder.toString());
 			}
 			else
 			{
