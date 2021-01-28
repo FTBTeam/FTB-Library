@@ -1,6 +1,7 @@
 package com.feed_the_beast.mods.ftbguilibrary.sidebar;
 
 import com.feed_the_beast.mods.ftbguilibrary.icon.Color4I;
+import com.feed_the_beast.mods.ftbguilibrary.widget.GuiHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -11,7 +12,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.TextComponent;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,12 +104,9 @@ public class GuiButtonSidebarGroup extends AbstractButton
 
 		Font font = Minecraft.getInstance().font;
 
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
-
 		for (GuiButtonSidebar b : buttons)
 		{
+			GuiHelper.setupDrawing();
 			b.button.getIcon().draw(matrixStack, b.x, b.y, 16, 16);
 
 			if (b == mouseOver)
@@ -134,6 +131,7 @@ public class GuiButtonSidebarGroup extends AbstractButton
 
 		if (mouseOver != null)
 		{
+			GuiHelper.setupDrawing();
 			int mx1 = mx + 10;
 			int my1 = Math.max(3, my - 9);
 
@@ -154,19 +152,15 @@ public class GuiButtonSidebarGroup extends AbstractButton
 
 			matrixStack.translate(0, 0, 500);
 
-			RenderSystem.enableBlend();
-			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			Color4I.DARK_GRAY.draw(matrixStack, mx1 - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
 
 			for (int i = 0; i < list.size(); i++)
 			{
 				font.draw(matrixStack, list.get(i), mx1, my1 + i * 10, 0xFFFFFFFF);
 			}
-
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
 		}
 
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
+		GuiHelper.setupDrawing();
 		//zLevel = 0F;
 
 		lastDrawnArea = new Rect2i(x, y, width, height);
