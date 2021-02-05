@@ -47,6 +47,8 @@ public class ContextMenu extends Panel
 		@Override
 		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h)
 		{
+			GuiHelper.setupDrawing();
+
 			if (contextMenu.hasIcons)
 			{
 				drawIcon(matrixStack, theme, x + 1, y + 2, 8, 8);
@@ -166,6 +168,7 @@ public class ContextMenu extends Panel
 	@Override
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h)
 	{
+		GuiHelper.setupDrawing();
 		matrixStack.pushPose();
 		matrixStack.translate(0, 0, 900);
 		super.draw(matrixStack, theme, x, y, w, h);
