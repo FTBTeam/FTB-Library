@@ -43,9 +43,28 @@ public class TextComponentParser
 		CODE_TO_FORMATTING.put('r', ChatFormatting.RESET);
 	}
 
+	private static class BadFormatException extends IllegalArgumentException
+	{
+		private BadFormatException(String s)
+		{
+			super(s);
+		}
+	}
+
 	public static Component parse(String text, @Nullable Function<String, Component> substitutes)
 	{
-		return new TextComponentParser(text, substitutes).parse();
+		try
+		{
+			return new TextComponentParser(text, substitutes).parse();
+		}
+		catch (BadFormatException ex)
+		{
+			return new TextComponent(ex.getMessage()).withStyle(ChatFormatting.RED);
+		}
+		catch (Exception ex)
+		{
+			return new TextComponent(ex.toString()).withStyle(ChatFormatting.RED);
+		}
 	}
 
 	private final String text;
@@ -61,7 +80,7 @@ public class TextComponentParser
 		substitutes = sub;
 	}
 
-	private Component parse()
+	private Component parse() throws BadFormatException
 	{
 		if (text.isEmpty())
 		{
@@ -99,7 +118,7 @@ public class TextComponentParser
 			{
 				if (c[i] == '{')
 				{
-					throw new IllegalArgumentException("Invalid formatting! Can't nest multiple substitutes!");
+					throw new BadFormatException("Invalid formatting! Can't nest multiple substitutes!");
 				}
 
 				finishPart();
@@ -109,18 +128,13 @@ public class TextComponentParser
 
 			if (!escape)
 			{
-				if (c[i] == '\u00a7')
-				{
-					c[i] = '&';
-				}
-
-				if (c[i] == '&')
+				if (c[i] == '&' || c[i] == '\u00a7')
 				{
 					finishPart();
 
 					if (end)
 					{
-						throw new IllegalArgumentException("Invalid formatting! Can't end string with & or \u00a7!");
+						throw new BadFormatException("Invalid formatting! Can't end string with &!");
 					}
 
 					i++;
@@ -139,7 +153,7 @@ public class TextComponentParser
 
 						if (formatting == null)
 						{
-							throw new IllegalArgumentException("Illegal formatting! Unknown color code character: " + c[i] + "!");
+							throw new BadFormatException("Illegal formatting! Unknown color code character: " + c[i] + "!");
 						}
 
 						style = style.applyFormat(formatting);
@@ -153,7 +167,7 @@ public class TextComponentParser
 
 					if (end)
 					{
-						throw new IllegalArgumentException("Invalid formatting! Can't end string with {!");
+						throw new BadFormatException("Invalid formatting! Can't end string with {!");
 					}
 
 					sub = true;
@@ -170,7 +184,7 @@ public class TextComponentParser
 		return component;
 	}
 
-	private void finishPart()
+	private void finishPart() throws BadFormatException
 	{
 		String string = builder.toString();
 		builder.setLength(0);
@@ -200,7 +214,7 @@ public class TextComponentParser
 		}
 		else
 		{
-			throw new IllegalArgumentException("Invalid formatting! Unknown substitute: " + string.substring(1));
+			throw new BadFormatException("Invalid formatting! Unknown substitute: " + string.substring(1));
 		}
 
 		component.append(component1);
