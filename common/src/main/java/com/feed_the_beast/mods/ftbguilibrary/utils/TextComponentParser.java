@@ -149,11 +149,16 @@ public class TextComponentParser
 					}
 					else
 					{
+						if (c[i] == ' ')
+						{
+							throw new BadFormatException("Invalid formatting! You must escape whitespace after & with \\&!");
+						}
+
 						ChatFormatting formatting = CODE_TO_FORMATTING.get(c[i]);
 
 						if (formatting == null)
 						{
-							throw new BadFormatException("Illegal formatting! Unknown color code character: " + c[i] + "!");
+							throw new BadFormatException("Invalid formatting! Unknown formatting symbol after &: '" + c[i] + "'!");
 						}
 
 						style = style.applyFormat(formatting);
