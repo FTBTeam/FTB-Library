@@ -96,6 +96,11 @@ publishing {
 	}
 
 	repositories {
-		mavenLocal()
+		if (ENV.LOCAL_MAVEN) {
+			maven {
+				// upload to local maven repo
+				url = "file://${ENV.LOCAL_MAVEN}"
+			}
+		}
 	}
 }
