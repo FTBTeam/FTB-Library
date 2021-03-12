@@ -8,6 +8,8 @@ dependencies {
 	compileOnly "com.google.code.findbugs:jsr305:3.+"
 }
 
+def ENV = System.getenv()
+
 architectury {
 	common()
 }
