@@ -30,6 +30,9 @@ dependencies {
 	shadow(project(path: ":common", configuration: "transformProductionForge")) {
 		transitive = false
 	}
+
+	modCompile "curse.maven:ftb-quests-289412:3242959"
+	modCompile "curse.maven:item-filters-309674:3231742"
 }
 
 processResources {
