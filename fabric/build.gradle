@@ -6,60 +6,55 @@ plugins {
 def ENV = System.getenv()
 
 configurations {
-	shadow
+	shadowCommon
 }
 
 architectury {
 	platformSetupLoomIde()
-}
-
-minecraft {
-	accessWidener = file("src/main/resources/ftbguilibrary.accesswidener")
+	fabric()
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${rootProject.architectury.minecraft}"
 	mappings minecraft.officialMojangMappings()
-	modCompile "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-	modCompile "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-	modCompile "me.shedaniel:architectury:${rootProject.architectury_version}:fabric"
 
-	modCompileOnly("io.github.prospector:modmenu:${rootProject.mod_menu_version}")
+	modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-	modImplementation("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
-	modRuntime("me.shedaniel:RoughlyEnoughItems:${rootProject.rei_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+	modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+	modApi "me.shedaniel:architectury-fabric:${rootProject.architectury_version}"
 
-	compileOnly(project(path: ":common")) {
+	implementation(project(path: ":common")) {
 		transitive = false
 	}
-	runtimeOnly(project(path: ":common", configuration: "transformDevelopmentFabric")) {
+	developmentFabric(project(path: ":common")) {
 		transitive = false
 	}
-	shadow(project(path: ":common", configuration: "transformProductionFabric")) {
+	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
 		transitive = false
 	}
 }
 
 processResources {
+	inputs.property "version", project.version
+
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
-	inputs.property "version", project.version
 }
 
 shadowJar {
-	configurations = [project.configurations.shadow]
-	classifier "shadow"
+	configurations = [project.configurations.shadowCommon]
+	classifier "dev-shadow"
 }
 
 remapJar {
-	dependsOn(shadowJar)
-	input.set(shadowJar.archivePath)
-	archiveClassifier = "fabric"
+	input.set shadowJar.archiveFile
+	dependsOn shadowJar
+	classifier "fabric"
+}
+
+jar {
+	classifier "dev"
 }
 
 if (ENV.CURSEFORGE_KEY) {
@@ -69,8 +64,6 @@ if (ENV.CURSEFORGE_KEY) {
 			id = project.curseforge_id_fabric
 			releaseType = "release"
 			addGameVersion "Fabric"
-			addGameVersion "1.16.2"
-			addGameVersion "1.16.3"
 			addGameVersion "1.16.4"
 			addGameVersion "1.16.5"
 			mainArtifact(remapJar.archivePath)

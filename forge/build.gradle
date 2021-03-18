@@ -6,51 +6,76 @@ plugins {
 def ENV = System.getenv()
 
 configurations {
-	shadow
+	shadowCommon
 }
 
 architectury {
 	platformSetupLoomIde()
+	forge()
+}
+
+loom {
+	mixinConfigs = []
+	useFabricMixin = true
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${rootProject.architectury.minecraft}"
 	mappings minecraft.officialMojangMappings()
 	forge "net.minecraftforge:forge:${rootProject.forge_version}"
-	modCompile "me.shedaniel:architectury:${rootProject.architectury_version}:forge"
+	modApi "me.shedaniel:architectury-forge:${rootProject.architectury_version}"
 
 	modCompile "curse.maven:jei-238222:${rootProject.jei_file}"
 
-	compileOnly(project(path: ":common")) {
+	implementation(project(path: ":common")) {
 		transitive = false
 	}
-	runtimeOnly(project(path: ":common", configuration: "transformDevelopmentForge")) {
+	developmentForge(project(path: ":common")) {
 		transitive = false
 	}
-	shadow(project(path: ":common", configuration: "transformProductionForge")) {
+	shadowCommon(project(path: ":common", configuration: "transformProductionForge")) {
 		transitive = false
 	}
 
-	modCompile "curse.maven:ftb-quests-289412:3242959"
-	modCompile "curse.maven:item-filters-309674:3231742"
+	modRuntime "curse.maven:ftb-quests-289412:3242959"
+	modRuntime "curse.maven:item-filters-309674:3231742"
 }
 
 processResources {
+	inputs.property "version", project.version
+
 	filesMatching("META-INF/mods.toml") {
 		expand "version": project.version
 	}
-	inputs.property "version", project.version
 }
 
 shadowJar {
-	configurations = [project.configurations.shadow]
-	classifier "shadow"
+	exclude "fabric.mod.json"
+
+	configurations = [project.configurations.shadowCommon]
+	classifier "dev-shadow"
 }
 
 remapJar {
-	dependsOn(shadowJar)
-	input.set(shadowJar.archivePath)
-	archiveClassifier = "forge"
+	input.set shadowJar.archiveFile
+	dependsOn shadowJar
+	classifier "forge"
+}
+
+jar {
+	manifest {
+		attributes([
+				"Specification-Title"     : project.mod_id,
+				"Specification-Vendor"    : project.mod_author,
+				"Specification-Version"   : "1",
+				"Implementation-Title"    : project.name,
+				"Implementation-Version"  : version,
+				"Implementation-Vendor"   : project.mod_author,
+				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+		])
+	}
+
+	classifier "dev"
 }
 
 if (ENV.CURSEFORGE_KEY) {
@@ -60,8 +85,6 @@ if (ENV.CURSEFORGE_KEY) {
 			id = project.curseforge_id_forge
 			releaseType = "release"
 			addGameVersion "Forge"
-			addGameVersion "1.16.2"
-			addGameVersion "1.16.3"
 			addGameVersion "1.16.4"
 			addGameVersion "1.16.5"
 			mainArtifact(remapJar.archivePath)

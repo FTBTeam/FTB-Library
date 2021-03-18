@@ -1,6 +1,6 @@
 plugins {
-	id "architectury-plugin" version "2.0.66"
-	id "forgified-fabric-loom" version "0.6.64" apply false
+	id "architectury-plugin" version "3.0-SNAPSHOT"
+	id "forgified-fabric-loom" version "0.6-SNAPSHOT" apply false
 	id "com.matthewprenger.cursegradle" version "1.4.0" apply false
 	id "maven-publish"
 }
@@ -23,7 +23,6 @@ allprojects {
 	apply plugin: "architectury-plugin"
 	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
 
-	archivesBaseName = rootProject.name
 	def ENV = System.getenv()
 	version = "${mod_version}-build.${ENV.BUILD_NUMBER ?: 9999}"
 	group = project.mod_package
@@ -36,6 +35,8 @@ allprojects {
 	}
 
 	repositories {
+		mavenLocal()
+		maven { url "https://maven.shedaniel.me/" }
 		maven {
 			url "https://www.cursemaven.com"
 			content {
