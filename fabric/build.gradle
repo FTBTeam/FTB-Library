@@ -23,6 +23,8 @@ dependencies {
 	modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 	modApi "me.shedaniel:architectury-fabric:${rootProject.architectury_version}"
 
+	modImplementation "me.shedaniel:RoughlyEnoughItems:${rootProject.rei_version}"
+
 	implementation(project(path: ":common")) {
 		transitive = false
 	}

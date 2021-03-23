@@ -15,16 +15,15 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.feed_the_beast.mods.ftbguilibrary.fabric.FTBGUILibraryFabric"
+			"dev.ftb.mods.ftbguilibrary.fabric.FTBGUILibraryFabric"
 		],
 		"rei_plugins": [
-			"com.feed_the_beast.mods.ftbguilibrary.fabric.REIIntegration"
+			"dev.ftb.mods.ftbguilibrary.fabric.REIIntegration"
 		]
 	},
 	"mixins": [
 		"ftbguilibrary.mixins.json"
 	],
-	"accessWidener": "ftbguilibrary.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.7.4",
 		"fabric": "*",
