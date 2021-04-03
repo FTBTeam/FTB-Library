@@ -79,13 +79,12 @@ public class GuiHelper {
 
 	public static void setupDrawing() {
 		RenderSystem.color4f(1F, 1F, 1F, 1F);
-		RenderSystem.disableLighting();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.enableAlphaTest();
 		RenderSystem.defaultAlphaFunc();
 		RenderSystem.enableDepthTest();
-		Lighting.turnBackOn();
+		Lighting.turnOff();
 	}
 
 	public static void playSound(SoundEvent event, float pitch) {
