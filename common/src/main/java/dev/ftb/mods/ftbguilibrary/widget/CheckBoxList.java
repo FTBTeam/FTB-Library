@@ -62,7 +62,7 @@ public class CheckBoxList extends Button {
 	public final boolean radioButtons;
 	private final List<CheckBoxEntry> entries;
 
-	public CheckBoxList(GuiBase gui, boolean radiobutton) {
+	public CheckBoxList(BaseScreen gui, boolean radiobutton) {
 		super(gui);
 		setSize(10, 2);
 		radioButtons = radiobutton;

@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftbguilibrary.utils;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.ftb.mods.ftbguilibrary.widget.BaseScreen;
 import dev.ftb.mods.ftbguilibrary.widget.CustomClickEvent;
-import dev.ftb.mods.ftbguilibrary.widget.GuiBase;
-import dev.ftb.mods.ftbguilibrary.widget.IGuiWrapper;
+import dev.ftb.mods.ftbguilibrary.widget.IScreenWrapper;
 import me.shedaniel.architectury.annotations.ExpectPlatform;
 import me.shedaniel.architectury.event.events.client.ClientChatEvent;
 import net.minecraft.Util;
@@ -85,8 +85,8 @@ public class ClientUtils {
 	@Nullable
 	@SuppressWarnings("unchecked")
 	public static <T> T getGuiAs(Screen gui, Class<T> clazz) {
-		if (gui instanceof IGuiWrapper) {
-			GuiBase guiBase = ((IGuiWrapper) gui).getGui();
+		if (gui instanceof IScreenWrapper) {
+			BaseScreen guiBase = ((IScreenWrapper) gui).getGui();
 
 			if (clazz.isAssignableFrom(guiBase.getClass())) {
 				return (T) guiBase;

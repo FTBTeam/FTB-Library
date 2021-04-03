@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.ftb.mods.ftbguilibrary.FTBGUILibraryClient;
 import dev.ftb.mods.ftbguilibrary.icon.Icon;
-import dev.ftb.mods.ftbguilibrary.misc.GuiLoading;
+import dev.ftb.mods.ftbguilibrary.misc.LoadingScreen;
 import dev.ftb.mods.ftbguilibrary.utils.ChainedBooleanSupplier;
 import dev.ftb.mods.ftbguilibrary.utils.ClientUtils;
 import dev.ftb.mods.ftbguilibrary.widget.GuiHelper;
@@ -147,7 +147,7 @@ public class SidebarButton implements Comparable<SidebarButton> {
 
 	public void onClicked(boolean shift) {
 		if (loadingScreen) {
-			new GuiLoading(new TranslatableComponent(getLangKey())).openGui();
+			new LoadingScreen(new TranslatableComponent(getLangKey())).openGui();
 		}
 
 		for (String event : (shift && !shiftClickEvents.isEmpty() ? shiftClickEvents : clickEvents)) {

@@ -58,7 +58,7 @@ public class SimpleToast implements Toast {
 		}
 
 		GuiHelper.setupDrawing();
-		Lighting.turnBackOn();
+		Lighting.setupFor3DItems();
 		getIcon().draw(matrixStack, 8, 8, 16, 16);
 		return delta >= 5000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
 	}

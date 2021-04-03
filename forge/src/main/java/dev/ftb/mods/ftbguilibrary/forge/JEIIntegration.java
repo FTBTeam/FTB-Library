@@ -2,8 +2,8 @@ package dev.ftb.mods.ftbguilibrary.forge;
 
 import dev.ftb.mods.ftbguilibrary.FTBGUILibrary;
 import dev.ftb.mods.ftbguilibrary.FTBGUILibraryClient;
-import dev.ftb.mods.ftbguilibrary.sidebar.GuiButtonSidebarGroup;
-import dev.ftb.mods.ftbguilibrary.widget.IGuiWrapper;
+import dev.ftb.mods.ftbguilibrary.sidebar.SidebarGroupGuiButton;
+import dev.ftb.mods.ftbguilibrary.widget.IScreenWrapper;
 import dev.ftb.mods.ftbguilibrary.widget.WrappedIngredient;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -38,7 +38,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 		Screen currentScreen = Minecraft.getInstance().screen;
 
 		if (FTBGUILibraryClient.areButtonsVisible(currentScreen)) {
-			return Collections.singleton(GuiButtonSidebarGroup.lastDrawnArea);
+			return Collections.singleton(SidebarGroupGuiButton.lastDrawnArea);
 		}
 
 		return Collections.emptySet();
@@ -49,8 +49,8 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 	public Object getIngredientUnderMouse(double mouseX, double mouseY) {
 		Screen currentScreen = Minecraft.getInstance().screen;
 
-		if (currentScreen instanceof IGuiWrapper) {
-			return WrappedIngredient.unwrap(((IGuiWrapper) currentScreen).getGui().getIngredientUnderMouse());
+		if (currentScreen instanceof IScreenWrapper) {
+			return WrappedIngredient.unwrap(((IScreenWrapper) currentScreen).getGui().getIngredientUnderMouse());
 		}
 
 		return null;

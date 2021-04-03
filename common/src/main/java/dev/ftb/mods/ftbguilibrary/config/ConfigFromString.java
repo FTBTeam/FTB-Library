@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftbguilibrary.config;
 
-import dev.ftb.mods.ftbguilibrary.config.gui.GuiEditConfigFromString;
+import dev.ftb.mods.ftbguilibrary.config.gui.EditConfigFromStringScreen;
 import dev.ftb.mods.ftbguilibrary.utils.MouseButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -25,6 +25,6 @@ public abstract class ConfigFromString<T> extends ConfigValue<T> {
 
 	@Override
 	public void onClicked(MouseButton button, ConfigCallback callback) {
-		new GuiEditConfigFromString<>(this, callback).openGui();
+		new EditConfigFromStringScreen<>(this, callback).openGui();
 	}
 }

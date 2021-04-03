@@ -67,7 +67,7 @@ public class GuiHelper {
 
 	private static final Stack<Scissor> SCISSOR = new Stack<>();
 
-	public static final GuiBase BLANK_GUI = new GuiBase() {
+	public static final BaseScreen BLANK_GUI = new BaseScreen() {
 		@Override
 		public void addWidgets() {
 		}
@@ -84,6 +84,8 @@ public class GuiHelper {
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.enableAlphaTest();
 		RenderSystem.defaultAlphaFunc();
+		RenderSystem.enableDepthTest();
+		Lighting.turnBackOn();
 	}
 
 	public static void playSound(SoundEvent event, float pitch) {
@@ -182,22 +184,22 @@ public class GuiHelper {
 	}
 
 	@ExpectPlatform
-	private static Font getFont(ItemStack stack) {
+	public static Font getFont(ItemStack stack) {
 		throw new AssertionError();
 	}
 
 	@ExpectPlatform
-	private static boolean shouldShowDurability(ItemStack stack) {
+	public static boolean shouldShowDurability(ItemStack stack) {
 		throw new AssertionError();
 	}
 
 	@ExpectPlatform
-	private static double getDamageLevel(ItemStack stack) {
+	public static double getDamageLevel(ItemStack stack) {
 		throw new AssertionError();
 	}
 
 	@ExpectPlatform
-	private static int getDurabilityColor(ItemStack stack) {
+	public static int getDurabilityColor(ItemStack stack) {
 		throw new AssertionError();
 	}
 

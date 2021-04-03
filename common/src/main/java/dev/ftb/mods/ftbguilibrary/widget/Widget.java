@@ -14,7 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-public class Widget implements IGuiWrapper {
+public class Widget implements IScreenWrapper {
 	public Panel parent;
 	public int posX, posY, width, height;
 	protected boolean isMouseOver;
@@ -24,7 +24,7 @@ public class Widget implements IGuiWrapper {
 	}
 
 	@Override
-	public GuiBase getGui() {
+	public BaseScreen getGui() {
 		return parent.getGui();
 	}
 

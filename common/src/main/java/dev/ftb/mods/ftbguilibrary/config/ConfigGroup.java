@@ -76,56 +76,56 @@ public class ConfigGroup {
 		return type;
 	}
 
-	public ConfigBoolean addBool(String id, boolean value, Consumer<Boolean> setter, boolean def) {
-		return add(id, new ConfigBoolean(), value, setter, def);
+	public BooleanConfig addBool(String id, boolean value, Consumer<Boolean> setter, boolean def) {
+		return add(id, new BooleanConfig(), value, setter, def);
 	}
 
-	public ConfigInt addInt(String id, int value, Consumer<Integer> setter, int def, int min, int max) {
-		return add(id, new ConfigInt(min, max), value, setter, def);
+	public IntConfig addInt(String id, int value, Consumer<Integer> setter, int def, int min, int max) {
+		return add(id, new IntConfig(min, max), value, setter, def);
 	}
 
-	public ConfigLong addLong(String id, long value, Consumer<Long> setter, long def, long min, long max) {
-		return add(id, new ConfigLong(min, max), value, setter, def);
+	public LongConfig addLong(String id, long value, Consumer<Long> setter, long def, long min, long max) {
+		return add(id, new LongConfig(min, max), value, setter, def);
 	}
 
-	public ConfigDouble addDouble(String id, double value, Consumer<Double> setter, double def, double min, double max) {
-		return add(id, new ConfigDouble(min, max), value, setter, def);
+	public DoubleConfig addDouble(String id, double value, Consumer<Double> setter, double def, double min, double max) {
+		return add(id, new DoubleConfig(min, max), value, setter, def);
 	}
 
-	public ConfigString addString(String id, String value, Consumer<String> setter, String def, @Nullable Pattern pattern) {
-		return add(id, new ConfigString(pattern), value, setter, def);
+	public StringConfig addString(String id, String value, Consumer<String> setter, String def, @Nullable Pattern pattern) {
+		return add(id, new StringConfig(pattern), value, setter, def);
 	}
 
-	public ConfigString addString(String id, String value, Consumer<String> setter, String def) {
+	public StringConfig addString(String id, String value, Consumer<String> setter, String def) {
 		return addString(id, value, setter, def, null);
 	}
 
-	public <E> ConfigEnum<E> addEnum(String id, E value, Consumer<E> setter, NameMap<E> nameMap, E def) {
-		return add(id, new ConfigEnum<>(nameMap), value, setter, def);
+	public <E> EnumConfig<E> addEnum(String id, E value, Consumer<E> setter, NameMap<E> nameMap, E def) {
+		return add(id, new EnumConfig<>(nameMap), value, setter, def);
 	}
 
-	public <E> ConfigEnum<E> addEnum(String id, E value, Consumer<E> setter, NameMap<E> nameMap) {
+	public <E> EnumConfig<E> addEnum(String id, E value, Consumer<E> setter, NameMap<E> nameMap) {
 		return addEnum(id, value, setter, nameMap, nameMap.defaultValue);
 	}
 
-	public <E, CV extends ConfigValue<E>> ConfigList<E, CV> addList(String id, List<E> c, CV type, E def) {
+	public <E, CV extends ConfigValue<E>> ListConfig<E, CV> addList(String id, List<E> c, CV type, E def) {
 		type.defaultValue = def;
-		return add(id, new ConfigList<>(type), c, t -> {
+		return add(id, new ListConfig<>(type), c, t -> {
 			c.clear();
 			c.addAll(t);
 		}, Collections.emptyList());
 	}
 
-	public ConfigEnum<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter, Tristate def) {
+	public EnumConfig<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter, Tristate def) {
 		return addEnum(id, value, setter, Tristate.NAME_MAP, def);
 	}
 
-	public ConfigEnum<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter) {
+	public EnumConfig<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter) {
 		return addTristate(id, value, setter, Tristate.DEFAULT);
 	}
 
-	public ConfigItemStack addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, boolean singleItemOnly, boolean allowEmpty) {
-		return add(id, new ConfigItemStack(singleItemOnly, allowEmpty), value, setter, def);
+	public ItemStackConfig addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, boolean singleItemOnly, boolean allowEmpty) {
+		return add(id, new ItemStackConfig(singleItemOnly, allowEmpty), value, setter, def);
 	}
 
 	public final Collection<ConfigValue> getValues() {

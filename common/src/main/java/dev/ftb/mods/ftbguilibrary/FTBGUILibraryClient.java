@@ -3,8 +3,8 @@ package dev.ftb.mods.ftbguilibrary;
 import dev.ftb.mods.ftbguilibrary.icon.AtlasSpriteIcon;
 import dev.ftb.mods.ftbguilibrary.icon.IconPresets;
 import dev.ftb.mods.ftbguilibrary.icon.IconRenderer;
-import dev.ftb.mods.ftbguilibrary.sidebar.GuiButtonSidebarGroup;
 import dev.ftb.mods.ftbguilibrary.sidebar.SidebarButtonManager;
+import dev.ftb.mods.ftbguilibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftbguilibrary.utils.ClientUtils;
 import dev.ftb.mods.ftbguilibrary.widget.GuiIcons;
 import me.shedaniel.architectury.event.events.GuiEvent;
@@ -81,7 +81,7 @@ public class FTBGUILibraryClient {
 	@SuppressWarnings("rawtypes")
 	private void guiInit(Screen screen, List<AbstractWidget> abstractWidgets, List<GuiEventListener> guiEventListeners) {
 		if (areButtonsVisible(screen)) {
-			GuiButtonSidebarGroup group = new GuiButtonSidebarGroup((AbstractContainerScreen) screen);
+			SidebarGroupGuiButton group = new SidebarGroupGuiButton((AbstractContainerScreen) screen);
 			ScreenHooks.addButton(screen, group);
 		}
 	}

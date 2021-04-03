@@ -2,7 +2,7 @@ package dev.ftb.mods.ftbguilibrary.fabric;
 
 import dev.ftb.mods.ftbguilibrary.FTBGUILibrary;
 import dev.ftb.mods.ftbguilibrary.FTBGUILibraryClient;
-import dev.ftb.mods.ftbguilibrary.sidebar.GuiButtonSidebarGroup;
+import dev.ftb.mods.ftbguilibrary.sidebar.SidebarGroupGuiButton;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.DisplayHelper;
 import me.shedaniel.rei.api.plugins.REIPluginV0;
@@ -25,7 +25,7 @@ public class REIIntegration implements REIPluginV0 {
 			Screen currentScreen = Minecraft.getInstance().screen;
 
 			if (FTBGUILibraryClient.areButtonsVisible(currentScreen)) {
-				Rect2i area = GuiButtonSidebarGroup.lastDrawnArea;
+				Rect2i area = SidebarGroupGuiButton.lastDrawnArea;
 				return Collections.singletonList(new Rectangle(area.getX(), area.getY(), area.getWidth(), area.getHeight()));
 			}
 
