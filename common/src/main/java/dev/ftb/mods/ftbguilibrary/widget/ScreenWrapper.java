@@ -129,7 +129,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
 				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty()) {
 					matrixStack.pushPose();
-					matrixStack.translate(0, 0, tooltipList.zOffset);
+					matrixStack.translate(0, 0, tooltipList.zOffsetItemTooltip);
 					renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
 					matrixStack.popPose();
 				}

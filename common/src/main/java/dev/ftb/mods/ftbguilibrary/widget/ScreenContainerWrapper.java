@@ -144,7 +144,7 @@ public class ScreenContainerWrapper extends AbstractContainerScreen implements I
 
 				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty()) {
 					matrixStack.pushPose();
-					matrixStack.translate(0, 0, tooltipList.zOffset);
+					matrixStack.translate(0, 0, tooltipList.zOffsetItemTooltip);
 					renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
 					matrixStack.popPose();
 				}
