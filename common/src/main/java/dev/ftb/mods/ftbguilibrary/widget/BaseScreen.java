@@ -303,7 +303,7 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 	public boolean keyPressed(Key key) {
 		if (super.keyPressed(key)) {
 			return true;
-		} else if (Minecraft.getInstance().options.advancedItemTooltips && key.is(GLFW.GLFW_KEY_B)) {
+		} else if (GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS && key.is(GLFW.GLFW_KEY_B)) {
 			Theme.renderDebugBoxes = !Theme.renderDebugBoxes;
 			return true;
 		}
