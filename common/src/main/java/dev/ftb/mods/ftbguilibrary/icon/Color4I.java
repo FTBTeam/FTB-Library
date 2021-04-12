@@ -18,6 +18,8 @@ import dev.ftb.mods.ftbguilibrary.widget.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -403,5 +405,9 @@ public class Color4I extends Icon {
 		IPixelBuffer buffer = new PixelBuffer(1, 1);
 		buffer.setRGB(0, 0, rgba());
 		return buffer;
+	}
+
+	public Style toStyle() {
+		return Style.EMPTY.withColor(TextColor.fromRgb(rgb()));
 	}
 }
