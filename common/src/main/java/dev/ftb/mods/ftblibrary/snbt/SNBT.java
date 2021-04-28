@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.util;
+package dev.ftb.mods.ftblibrary.snbt;
 
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CollectionTag;
@@ -14,8 +14,6 @@ import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -26,30 +24,6 @@ public class SNBT {
 
 	public static String handleEscape(String string) {
 		return SIMPLE_VALUE.matcher(string).matches() ? string : StringTag.quoteAndEscape(string);
-	}
-
-	private static class SNBTBuilder {
-		private String indent = "";
-		private final List<String> lines = new ArrayList<>();
-		private final StringBuilder line = new StringBuilder();
-
-		private void print(Object string) {
-			line.append(string);
-		}
-
-		private void println() {
-			line.insert(0, indent);
-			lines.add(line.toString());
-			line.setLength(0);
-		}
-
-		private void push() {
-			indent += "\t";
-		}
-
-		private void pop() {
-			indent = indent.substring(1);
-		}
 	}
 
 	@Nullable
