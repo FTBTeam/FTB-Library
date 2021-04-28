@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftbguilibrary.utils;
+package dev.ftb.mods.ftblibrary.util;
 
 import net.minecraft.nbt.CompoundTag;
 
