@@ -10,9 +10,11 @@ import java.util.LinkedHashMap;
  */
 public class OrderedCompoundTag extends CompoundTag {
 	public HashSet<String> booleanKeys;
+	public boolean singleLine;
 
 	public OrderedCompoundTag() {
 		super(new LinkedHashMap<>());
+		singleLine = false;
 	}
 
 	@Override

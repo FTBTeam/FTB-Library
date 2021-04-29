@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -26,16 +27,18 @@ public class SNBT {
 		return SIMPLE_VALUE.matcher(string).matches() ? string : StringTag.quoteAndEscape(string);
 	}
 
-	@Nullable
-	public static CompoundTag read(Path path) {
-		if (Files.notExists(path)) {
-			return null;
-		}
+	public static boolean getSingleLine(Tag tag) {
+		return tag instanceof OrderedCompoundTag && ((OrderedCompoundTag) tag).singleLine;
 
+		// TODO: Check lists and other collections somehow, possibly a mixin
+	}
+
+	@Nullable
+	public static CompoundTag readLines(List<String> lines) {
 		StringBuilder s = new StringBuilder();
 
 		try {
-			for (String line : Files.readAllLines(path, StandardCharsets.UTF_8)) {
+			for (String line : lines) {
 				s.append(line.trim());
 			}
 
@@ -46,17 +49,36 @@ public class SNBT {
 		return null;
 	}
 
-	public static void write(Path path, CompoundTag nbt) {
+	@Nullable
+	public static CompoundTag read(Path path) {
+		if (Files.notExists(path)) {
+			return null;
+		}
+
+		try {
+			return readLines(Files.readAllLines(path, StandardCharsets.UTF_8));
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
+	public static List<String> writeLines(CompoundTag nbt) {
+		SNBTBuilder builder = new SNBTBuilder();
+		append(builder, nbt);
+		builder.println();
+		return builder.lines;
+	}
+
+	public static boolean write(Path path, CompoundTag nbt) {
 		try {
 			if (Files.notExists(path.getParent())) {
 				Files.createDirectories(path.getParent());
 			}
 
-			SNBTBuilder builder = new SNBTBuilder();
-			append(builder, nbt);
-			builder.println();
-			Files.write(path, builder.lines);
+			Files.write(path, writeLines(nbt));
+			return true;
 		} catch (Exception ex) {
+			return false;
 		}
 	}
 
@@ -67,13 +89,21 @@ public class SNBT {
 			CompoundTag compound = (CompoundTag) nbt;
 
 			if (compound.isEmpty()) {
-				builder.print("{}");
+				builder.print("{ }");
 				return;
 			}
 
+			boolean singleLine = getSingleLine(nbt);
+
 			builder.print("{");
-			builder.println();
-			builder.push();
+
+			if (singleLine) {
+				builder.print(" ");
+			} else {
+				builder.println();
+				builder.push();
+			}
+
 			int index = 0;
 
 			for (String key : compound.getAllKeys()) {
@@ -91,10 +121,17 @@ public class SNBT {
 					builder.print(",");
 				}
 
-				builder.println();
+				if (singleLine) {
+					builder.print(" ");
+				} else {
+					builder.println();
+				}
 			}
 
-			builder.pop();
+			if (!singleLine) {
+				builder.pop();
+			}
+
 			builder.print("}");
 		} else if (nbt instanceof CollectionTag) {
 			if (nbt instanceof ByteArrayTag) {
@@ -115,7 +152,7 @@ public class SNBT {
 		if (nbt.isEmpty()) {
 			builder.print("[");
 			builder.print(opening);
-			builder.print("]");
+			builder.print(" ]");
 			return;
 		} else if (nbt.size() == 1) {
 			builder.print("[");
@@ -125,10 +162,18 @@ public class SNBT {
 			return;
 		}
 
+		boolean singleLine = getSingleLine(nbt);
+
 		builder.print("[");
 		builder.print(opening);
-		builder.println();
-		builder.push();
+
+		if (singleLine) {
+			builder.print(" ");
+		} else {
+			builder.println();
+			builder.push();
+		}
+
 		int index = 0;
 
 		for (Tag value : nbt) {
@@ -139,10 +184,17 @@ public class SNBT {
 				builder.print(",");
 			}
 
-			builder.println();
+			if (singleLine) {
+				builder.print(" ");
+			} else {
+				builder.println();
+			}
 		}
 
-		builder.pop();
+		if (!singleLine) {
+			builder.pop();
+		}
+
 		builder.print("]");
 	}
 }
