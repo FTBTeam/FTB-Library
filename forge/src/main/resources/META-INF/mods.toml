@@ -1,34 +1,34 @@
 modLoader = "javafml"
 loaderVersion = "[35,)"
-issueTrackerURL = "https://github.com/FTBTeam/FTB-GUI-Library/issues"
+issueTrackerURL = "https://github.com/FTBTeam/FTB-Library/issues"
 license = "All Rights Reserved"
 
 [[mods]]
-modId = "ftbguilibrary"
+modId = "ftblibrary"
 version = "${version}"
-displayName = "FTB GUI Library"
+displayName = "FTB Library"
 authors = "LatvianModder"
 description = '''
-FTB GUI Library adds nothing.
+FTB Library adds nothing.
 '''
 
-[[dependencies.ftbguilibrary]]
+[[dependencies.ftblibrary]]
 modId = "forge"
 mandatory = true
 versionRange = "[35,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.ftbguilibrary]]
+[[dependencies.ftblibrary]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.16.5,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.ftbguilibrary]]
+[[dependencies.ftblibrary]]
 modId = "architectury"
 mandatory = true
-versionRange = "[1.1.53,)"
+versionRange = "[1,)"
 ordering = "AFTER"
 side = "BOTH"

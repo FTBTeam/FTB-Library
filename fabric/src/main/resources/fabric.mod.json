@@ -1,28 +1,29 @@
 {
 	"schemaVersion": 1,
-	"id": "ftbguilibrary",
+	"id": "ftblibrary",
 	"version": "${version}",
-	"name": "FTB GUI Library",
-	"description": "FTB GUI Library adds nothing.",
+	"name": "FTB Library",
+	"description": "FTB Library adds nothing.",
 	"authors": [
+		"FTB",
 		"LatvianModder"
 	],
 	"contact": {
-		"sources": "https://github.com/FTBTeam/FTB-GUI-Library",
-		"issues": "https://github.com/FTBTeam/FTB-GUI-Library/issues"
+		"sources": "https://github.com/FTBTeam/FTB-Library",
+		"issues": "https://github.com/FTBTeam/FTB-Library/issues"
 	},
 	"license": "All Rights Reserved",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"dev.ftb.mods.ftbguilibrary.fabric.FTBGUILibraryFabric"
+			"dev.ftb.mods.ftblibrary.fabric.FTBGUILibraryFabric"
 		],
 		"rei_plugins": [
-			"dev.ftb.mods.ftbguilibrary.fabric.REIIntegration"
+			"dev.ftb.mods.ftblibrary.fabric.REIIntegration"
 		]
 	},
 	"mixins": [
-		"ftbguilibrary.mixins.json"
+		"ftblibrary.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.7.4",

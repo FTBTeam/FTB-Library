@@ -1,0 +1,53 @@
+{
+	"toggle.gamemode": {
+		"group": "ftblibrary:cheat",
+		"icon": [
+			"ftblibrary:icons/blue_button",
+			"ftblibrary:textures/icons/toggle_gamemode.png"
+		],
+		"x": 100,
+		"click": "command:/ftblibrary gamemode",
+		"hide_with_nei": true,
+		"requires_op": true
+	},
+	"toggle.rain": {
+		"group": "ftblibrary:cheat",
+		"icon": [
+			"ftblibrary:icons/blue_button",
+			"ftblibrary:textures/icons/toggle_rain.png"
+		],
+		"x": 110,
+		"click": "command:/ftblibrary rain",
+		"config": true,
+		"hide_with_nei": true,
+		"requires_op": true
+	},
+	"toggle.day": {
+		"group": "ftblibrary:cheat",
+		"icon": [
+			"ftblibrary:icons/blue_button",
+			"ftblibrary:textures/icons/toggle_day.png"
+		],
+		"x": 120,
+		"click": "command:/ftblibrary day",
+		"required_server_mods": [
+			"ftblibrary"
+		],
+		"hide_with_nei": true,
+		"requires_op": true
+	},
+	"toggle.night": {
+		"group": "ftblibrary:cheat",
+		"icon": [
+			"ftblibrary:icons/blue_button",
+			"ftblibrary:textures/icons/toggle_night.png"
+		],
+		"x": 130,
+		"click": "command:/ftblibrary night",
+		"required_server_mods": [
+			"ftblibrary"
+		],
+		"hide_with_nei": true,
+		"requires_op": true
+	}
+}
