@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -18,7 +17,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import java.util.Objects;
 
 public abstract class BasePacket {
-	public abstract ResourceLocation getId();
+	public abstract PacketID getId();
 
 	public abstract void write(FriendlyByteBuf buffer);
 
@@ -27,7 +26,7 @@ public abstract class BasePacket {
 	public final <T> Packet<?> toPacket(NetworkManager.Side side) {
 		FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
 		write(buf);
-		return NetworkManager.toPacket(side, getId(), buf);
+		return NetworkManager.toPacket(side, getId().id, buf);
 	}
 
 	@Environment(EnvType.CLIENT)
