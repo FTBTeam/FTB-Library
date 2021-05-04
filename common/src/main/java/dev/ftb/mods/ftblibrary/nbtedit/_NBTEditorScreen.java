@@ -58,7 +58,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-public class NBTEditorScreen extends BaseScreen {
+public class _NBTEditorScreen extends BaseScreen {
 	private static Icon getIcon(String name) {
 		return Icon.getIcon(FTBLibrary.MOD_ID + ":textures/icons/nbt/" + name + ".png");
 	}
@@ -246,7 +246,7 @@ public class NBTEditorScreen extends BaseScreen {
 				updateTitle();
 			}
 
-			NBTEditorScreen.this.openGui();
+			_NBTEditorScreen.this.openGui();
 		}
 
 		@Override
@@ -635,7 +635,7 @@ public class NBTEditorScreen extends BaseScreen {
 						panelNbt.refreshWidgets();
 					}
 
-					NBTEditorScreen.this.openGui();
+					_NBTEditorScreen.this.openGui();
 				});
 			} else if (selected instanceof ButtonNBTCollection) {
 				((ButtonNBTCollection) selected).setTag("-1", supplier.get());
@@ -657,7 +657,7 @@ public class NBTEditorScreen extends BaseScreen {
 	public final PanelScrollBar scroll;
 	private int shouldClose = 0;
 
-	public NBTEditorScreen(CompoundTag i, CompoundTag nbt) {
+	public _NBTEditorScreen(CompoundTag i, CompoundTag nbt) {
 		info = i;
 
 		panelTopLeft = new Panel(this) {
