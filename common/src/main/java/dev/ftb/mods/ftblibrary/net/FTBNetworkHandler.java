@@ -28,4 +28,18 @@ public class FTBNetworkHandler {
 
 		return packetID;
 	}
+
+	public PacketID registerS2C(String id, PacketDecoder decoder) {
+		PacketID packetID = new PacketID(this, new ResourceLocation(modid, id));
+		NetworkManager.NetworkReceiver receiver = decoder.createReceiver();
+		NetworkManager.registerReceiver(NetworkManager.s2c(), packetID.id, receiver);
+		return packetID;
+	}
+
+	public PacketID registerC2S(String id, PacketDecoder decoder) {
+		PacketID packetID = new PacketID(this, new ResourceLocation(modid, id));
+		NetworkManager.NetworkReceiver receiver = decoder.createReceiver();
+		NetworkManager.registerReceiver(NetworkManager.c2s(), packetID.id, receiver);
+		return packetID;
+	}
 }

@@ -19,7 +19,7 @@ import java.util.Objects;
 public abstract class BasePacket {
 	public abstract PacketID getId();
 
-	public abstract void write(FriendlyByteBuf buffer);
+	public abstract void write(FriendlyByteBuf buf);
 
 	public abstract void handle(NetworkManager.PacketContext context);
 
