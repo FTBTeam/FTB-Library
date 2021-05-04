@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.ftb.mods.ftblibrary.nbtedit._NBTEditorScreen;
+import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
 import me.shedaniel.architectury.networking.NetworkManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -32,6 +32,6 @@ public class EditNBTPacket extends BasePacket {
 
 	@Override
 	public void handle(NetworkManager.PacketContext context) {
-		new _NBTEditorScreen(info, tag).openGui();
+		new NBTEditorScreen(info, tag).openGui();
 	}
 }
