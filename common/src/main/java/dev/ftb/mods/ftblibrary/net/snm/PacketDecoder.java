@@ -1,11 +1,11 @@
-package dev.ftb.mods.ftblibrary.net;
+package dev.ftb.mods.ftblibrary.net.snm;
 
 import me.shedaniel.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 
 @FunctionalInterface
-public interface PacketDecoder {
-	BasePacket decode(FriendlyByteBuf buf);
+public interface PacketDecoder<T extends BasePacket> {
+	T decode(FriendlyByteBuf buf);
 
 	default NetworkManager.NetworkReceiver createReceiver() {
 		return (buf, context) -> {

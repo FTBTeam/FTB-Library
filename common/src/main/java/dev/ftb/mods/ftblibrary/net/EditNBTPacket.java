@@ -1,11 +1,13 @@
 package dev.ftb.mods.ftblibrary.net;
 
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
+import dev.ftb.mods.ftblibrary.net.snm.BaseS2CPacket;
+import dev.ftb.mods.ftblibrary.net.snm.PacketID;
 import me.shedaniel.architectury.networking.NetworkManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class EditNBTPacket extends BasePacket {
+public class EditNBTPacket extends BaseS2CPacket {
 	private final CompoundTag info;
 	private final CompoundTag tag;
 

@@ -1,6 +1,8 @@
 package dev.ftb.mods.ftblibrary.net;
 
 import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
+import dev.ftb.mods.ftblibrary.net.snm.BaseC2SPacket;
+import dev.ftb.mods.ftblibrary.net.snm.PacketID;
 import me.shedaniel.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -13,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.UUID;
 
-public class EditNBTResponsePacket extends BasePacket {
+public class EditNBTResponsePacket extends BaseC2SPacket {
 	private final CompoundTag info;
 	private final CompoundTag tag;
 
