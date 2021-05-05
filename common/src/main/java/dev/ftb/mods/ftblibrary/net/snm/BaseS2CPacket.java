@@ -6,12 +6,15 @@ import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.chunk.LevelChunk;
-
-import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseS2CPacket extends BasePacket {
-	private void sendTo(ServerPlayer player, Packet<?> packet) {
-		Objects.requireNonNull(player, "Unable to send packet to a 'null' player!").connection.send(packet);
+	private void sendTo(@Nullable ServerPlayer player, Packet<?> packet) {
+		if (player == null) {
+			System.err.println("Unable to send packet '" + getId().getId() + "' to a 'null' player!");
+		} else {
+			player.connection.send(packet);
+		}
 	}
 
 	public final void sendTo(ServerPlayer player) {
