@@ -4,8 +4,8 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(FTBLibrary.MOD_ID)
-public class FTBGUILibraryForge {
-	public FTBGUILibraryForge() {
+public class FTBLibraryForge {
+	public FTBLibraryForge() {
 		new FTBLibrary();
 	}
 }

@@ -9,4 +9,4 @@ pluginManagement {
 
 include "common", "fabric", "forge"
 
-rootProject.name = 'FTB-GUI-Library-1.16.5'
+rootProject.name = 'FTB-Library-1.16.5'

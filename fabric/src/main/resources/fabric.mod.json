@@ -16,7 +16,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"dev.ftb.mods.ftblibrary.fabric.FTBGUILibraryFabric"
+			"dev.ftb.mods.ftblibrary.fabric.FTBLibraryFabric"
 		],
 		"rei_plugins": [
 			"dev.ftb.mods.ftblibrary.fabric.REIIntegration"

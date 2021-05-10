@@ -32,11 +32,17 @@ import java.util.function.Consumer;
 /**
  * @author LatvianModder
  */
-public class FTBLibraryClient {
+public class FTBLibraryClient extends FTBLibraryCommon {
 	public static final List<IconRenderer<?>> ICON_RENDERERS = new ArrayList<>();
 	public static int showButtons = 1;
 
+	@Override
 	public void init() {
+		// Datagens hahayes
+		if (Minecraft.getInstance() == null) {
+			return;
+		}
+
 		TextureStitchEvent.PRE.register(this::textureStitch);
 		GuiEvent.INIT_POST.register(this::guiInit);
 		GuiEvent.RENDER_PRE.register((screen, matrices, mouseX, mouseY, delta) -> {
