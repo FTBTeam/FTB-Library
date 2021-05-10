@@ -286,6 +286,9 @@ public class TextBox extends Widget {
 			return true;
 		} else {
 			switch (key.keyCode) {
+				case GLFW.GLFW_KEY_ESCAPE:
+					setFocused(false);
+					return true;
 				case GLFW.GLFW_KEY_BACKSPACE:
 					if (key.modifiers.control()) {
 						deleteWords(-1);
