@@ -7,6 +7,7 @@ class SNBTBuilder {
 	public String indent = "";
 	public final List<String> lines = new ArrayList<>();
 	public final StringBuilder line = new StringBuilder();
+	public int singleLine = 0;
 
 	public void print(Object string) {
 		line.append(string);
