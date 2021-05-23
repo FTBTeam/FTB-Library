@@ -78,6 +78,10 @@ jar {
     classifier "dev"
 }
 
+java {
+    withSourcesJar()
+}
+
 if (ENV.CURSEFORGE_KEY) {
     curseforge {
         apiKey = ENV.CURSEFORGE_KEY
@@ -100,22 +104,17 @@ if (ENV.CURSEFORGE_KEY) {
 publishing {
     publications {
         mavenForge(MavenPublication) {
-            artifactId = rootProject.archivesBaseName + "-forge"
-            artifact(remapJar.archivePath) {
-                builtBy build
+            artifactId = rootProject.archivesBaseName + "-" + project.name
+            artifact(remapJar) {
                 classifier null
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
             }
         }
     }
 
     repositories {
-        if (ENV.LOCAL_MAVEN) {
-            maven {
-                // upload to local maven repo
-                url = "file://${ENV.LOCAL_MAVEN}"
-            }
-        }
-
         if (ENV.SAPS_TOKEN) {
             maven {
                 url "https://maven.saps.dev/minecraft"
