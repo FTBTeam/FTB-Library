@@ -132,8 +132,13 @@ public class SNBT {
 				builder.print(handleEscape(key));
 				builder.print(": ");
 
-				if (properties.booleanKey) {
-					builder.print(compound.getBoolean(key) ? "true" : "false");
+				if (properties.valueType == TagProperties.TYPE_FALSE) {
+					builder.print("false");
+				} else if (properties.valueType == TagProperties.TYPE_TRUE) {
+					builder.print("true");
+				} else if (properties.valueType == TagProperties.TYPE_UUID) {
+					builder.print("@");
+					builder.print(compound.getUUID(key));
 				} else {
 					if (properties.singleLine) {
 						builder.singleLine++;
@@ -177,7 +182,7 @@ public class SNBT {
 				appendCollection(builder, (CollectionTag<?>) nbt, "");
 			}
 		} else {
-			builder.print(nbt.toString());
+			builder.print(nbt.toString().replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r").replace("\b", "\\b").replace("\\", "\\\\"));
 		}
 	}
 

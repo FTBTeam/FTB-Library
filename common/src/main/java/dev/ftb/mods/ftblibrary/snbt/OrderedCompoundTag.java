@@ -72,7 +72,7 @@ public class OrderedCompoundTag extends CompoundTag {
 
 	@Override
 	public void putBoolean(String key, boolean value) {
-		getOrCreateProperties(key).booleanKey = true;
+		getOrCreateProperties(key).valueType = value ? TagProperties.TYPE_TRUE : TagProperties.TYPE_FALSE;
 		super.putBoolean(key, value);
 	}
 }
