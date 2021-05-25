@@ -3,6 +3,10 @@ package dev.ftb.mods.ftblibrary.snbt;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class SNBTTest {
@@ -43,5 +47,23 @@ public class SNBTTest {
 		CompoundTag reverseTag = SNBT.readLines(lines);
 
 		System.out.println("Reverse tag test: " + (reverseTag != null ? "success" : "fail"));
+
+		try (InputStream stream = SNBTTest.class.getResourceAsStream("/snbt_test.snbt")) {
+			CompoundTag newParserTest = SNBTParser.read(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
+
+			System.out.println("New parser test: " + newParserTest);
+
+			System.out.println();
+			System.out.println();
+
+			List<String> lines2 = SNBT.writeLines(newParserTest);
+
+			for (String s : lines2) {
+				System.out.println(s);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.out.println("New parser test: failed");
+		}
 	}
 }

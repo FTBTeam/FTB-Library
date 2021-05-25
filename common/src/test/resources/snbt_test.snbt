@@ -1,0 +1,68 @@
+// A completely fucked version of this config file:
+//  - too many commas
+//  - not enough commas
+//  - too many spaces/newlines
+//  - mixed " and ' in lists
+
+
+    {
+
+	  test_string: "value"
+	 "test string key": 'value "2"'
+	testInt = 1234
+	testLong: 304993938434993L,
+	,,  ,,
+	,
+	testBool: true,
+	testFloat: 40402.4F
+
+	testDouble: 4949949433030D
+	testShort: 49S
+	// comment
+	testByte: -124B
+	intArray: [I;-94 49,29]
+	byteArray: [   B       ;     -94B,    49b   , 29B,,,]
+	longArray: [L;
+	  404049L
+	  -34348L ]
+	"another test string": "he\nll\\o",
+	testList: [
+    	  "a@+0- \"string\" 1"
+    	  'b $%*& string 2'
+    	  "c $##@! string 3"
+    	]
+}
+
+// Normalized version of the same file:
+
+{
+	test_string: "value",
+	"test string key": 'value "2"',
+	testInt: 1234,
+	testLong: 304993938434993L,
+	testBool: 1b,
+	testFloat: 40402.4f,
+	testDouble: 4.94994943303E12d,
+	testShort: 49s,
+	testByte: -124b,
+	intArray: [I;
+		-94,
+		49,
+		29
+	],
+	byteArray: [B;
+		-94b,
+		49b,
+		29b
+	],
+	longArray: [L;
+		404049L,
+		-34348L
+	],
+	"another test string": "he\\nll\\\\o",
+	testList: [
+		'a@+0- "string" 1',
+		"b $%*& string 2",
+		"c $##@! string 3"
+	]
+}

@@ -58,6 +58,7 @@ remapJar {
 	archiveBaseName.set "${rootProject.mod_name}-${project.name}"
 	archiveClassifier.set null
 }
+
 jar {
 	manifest {
 		attributes([
