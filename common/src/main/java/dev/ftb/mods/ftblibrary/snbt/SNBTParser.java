@@ -16,30 +16,22 @@ import net.minecraft.nbt.ShortTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SNBTParser {
-	public static OrderedCompoundTag read(BufferedReader reader) throws IOException {
-		SNBTParser parser = new SNBTParser(reader);
+class SNBTParser {
+	static OrderedCompoundTag read(List<String> lines) {
+		SNBTParser parser = new SNBTParser(lines);
 		return (OrderedCompoundTag) parser.readTag(parser.nextNS());
-	}
-
-	private static boolean isDigit(char c) {
-		return c >= '0' && c <= '9';
 	}
 
 	private final char[] buffer;
 	private int position;
 
-	private SNBTParser(BufferedReader r) throws IOException {
+	private SNBTParser(List<String> lines) {
 		StringBuilder bufferBuilder = new StringBuilder();
 
-		String line;
-
-		while ((line = r.readLine()) != null) {
+		for (String line : lines) {
 			String tline = line.trim();
 
 			if (!tline.startsWith("//") && !tline.startsWith("#")) {
@@ -102,100 +94,6 @@ public class SNBTParser {
 		}
 	}
 
-	private int getNumberType(String s) {
-		if (s.length() == 0) {
-			return 0;
-		}
-
-		char last = s.charAt(s.length() - 1);
-
-		if (isDigit(last)) {
-			return NbtType.INT;
-		} else if (last == 'B' || last == 'b') {
-			if (isInt(s, 1)) {
-				return NbtType.BYTE;
-			}
-		} else if (last == 'S' || last == 's') {
-			if (isInt(s, 1)) {
-				return NbtType.SHORT;
-			}
-		} else if (last == 'L' || last == 'l') {
-			if (isInt(s, 1)) {
-				return NbtType.LONG;
-			}
-		} else if (last == 'F' || last == 'f') {
-			if (isFloat(s, 1)) {
-				return NbtType.FLOAT;
-			}
-		} else if (last == 'D' || last == 'd') {
-			if (isFloat(s, 1)) {
-				return NbtType.DOUBLE;
-			}
-		} else if (isInt(s, 0)) {
-			return NbtType.INT;
-		} else if (isFloat(s, 0)) {
-			return -NbtType.DOUBLE;
-		}
-
-		return 0;
-	}
-
-	private boolean isInt(String s, int off) {
-		int len = s.length() - off;
-
-		if (len <= 0) {
-			return false;
-		}
-
-		for (int i = 0; i < len; i++) {
-			char c = s.charAt(i);
-
-			if (c == '-') {
-				if (i != 0) {
-					return false;
-				}
-			} else if (!isDigit(c)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private boolean isFloat(String s, int off) {
-		int len = s.length() - off;
-
-		if (len <= 0) {
-			return false;
-		}
-
-		int p = 0;
-
-		for (int i = 0; i < len; i++) {
-			char c = s.charAt(i);
-
-			if (c == '-') {
-				if (i != 0) {
-					return false;
-				}
-			} else if (c == '.') {
-				if (i == 0 || i == len - 1) {
-					return false;
-				}
-
-				p++;
-
-				if (p >= 2) {
-					return false;
-				}
-			} else if (!isDigit(c)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	private Tag readTag(char first) {
 		int pos = position - 1;
 
@@ -228,7 +126,7 @@ public class SNBTParser {
 				return DoubleTag.valueOf(Double.NaN);
 		}
 
-		switch (getNumberType(s)) {
+		switch (SNBTUtils.getNumberType(s)) {
 			case NbtType.BYTE:
 				return ByteTag.valueOf(Byte.parseByte(s.substring(0, s.length() - 1)));
 			case NbtType.SHORT:
@@ -371,7 +269,7 @@ public class SNBTParser {
 		while (true) {
 			char c = next();
 
-			if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || isDigit(c) || c == '.' || c == '_' || c == '-' || c == '+') {
+			if (SNBTUtils.isSimpleCharacter(c)) {
 				sb.append(c);
 			} else {
 				position--;
@@ -390,23 +288,11 @@ public class SNBTParser {
 			if (c == '\n') {
 				throw new SNBTSyntaxException("New line without closing string with " + stop + " @ " + posString(position - 1) + "!");
 			} else if (escape) {
-				switch (c) {
-					case 'n':
-						sb.append('\n');
-						break;
-					case 'r':
-						sb.append('\r');
-						break;
-					case 't':
-						sb.append('\t');
-						break;
-					case 'b':
-						sb.append('\b');
-						break;
-					default:
-						sb.append(c);
-				}
 				escape = false;
+
+				if (SNBTUtils.REVERSE_ESCAPE_CHARS[c] != 0) {
+					sb.append(SNBTUtils.REVERSE_ESCAPE_CHARS[c]);
+				}
 			} else if (c == '\\') {
 				escape = true;
 			} else if (c == stop) {

@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
+import me.shedaniel.architectury.platform.Platform;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;
@@ -8,54 +10,35 @@ import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.LongArrayTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagParser;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * @author LatvianModder
  */
 public class SNBT {
-	private static final Pattern SIMPLE_VALUE = Pattern.compile("[A-Za-z0-9._+-]+");
-
-	public static String handleEscape(String string) {
-		return SIMPLE_VALUE.matcher(string).matches() ? string : StringTag.quoteAndEscape(string);
+	public static OrderedCompoundTag readLines(List<String> lines) {
+		return SNBTParser.read(lines);
 	}
 
 	@Nullable
-	public static CompoundTag readLines(List<String> lines) {
-		StringBuilder s = new StringBuilder();
-
-		try {
-			for (String line : lines) {
-				String s1 = line.trim();
-
-				if (!s1.startsWith("//")) {
-					s.append(s1);
-				}
-			}
-
-			return TagParser.parseTag(s.toString());
-		} catch (Exception ex) {
-		}
-
-		return null;
-	}
-
-	@Nullable
-	public static CompoundTag read(Path path) {
-		if (Files.notExists(path)) {
+	public static OrderedCompoundTag read(Path path) {
+		if (Files.notExists(path) || Files.isDirectory(path) || !Files.isReadable(path)) {
 			return null;
 		}
 
 		try {
 			return readLines(Files.readAllLines(path, StandardCharsets.UTF_8));
+		} catch (SNBTSyntaxException ex) {
+			FTBLibrary.LOGGER.error("Failed to read " + Platform.getGameFolder().relativize(path) + ": " + ex.getMessage());
+			return null;
 		} catch (Exception ex) {
+			FTBLibrary.LOGGER.error("Failed to read " + Platform.getGameFolder().relativize(path) + ": " + ex);
+			ex.printStackTrace();
 			return null;
 		}
 	}
@@ -123,13 +106,13 @@ public class SNBT {
 					}
 
 					for (String s : properties.comment.split("\n")) {
-						builder.print("// ");
+						builder.print("# ");
 						builder.print(s);
 						builder.println();
 					}
 				}
 
-				builder.print(handleEscape(key));
+				builder.print(SNBTUtils.handleEscape(key));
 				builder.print(": ");
 
 				if (properties.valueType == TagProperties.TYPE_FALSE) {
@@ -151,7 +134,7 @@ public class SNBT {
 					}
 				}
 
-				if (index != compound.size()) {
+				if (singleLine && index != compound.size()) {
 					builder.print(",");
 				}
 
@@ -181,8 +164,10 @@ public class SNBT {
 			} else {
 				appendCollection(builder, (CollectionTag<?>) nbt, "");
 			}
+		} else if (nbt instanceof StringTag) {
+			builder.print(SNBTUtils.quoteAndEscape(nbt.getAsString()));
 		} else {
-			builder.print(nbt.toString().replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r").replace("\b", "\\b").replace("\\", "\\\\"));
+			builder.print(nbt.toString());
 		}
 	}
 
@@ -218,7 +203,7 @@ public class SNBT {
 			index++;
 			append(builder, value);
 
-			if (index != nbt.size()) {
+			if (singleLine && index != nbt.size()) {
 				builder.print(",");
 			}
 

@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SNBTTest {
 	public static void main(String[] args) {
@@ -21,7 +23,7 @@ public class SNBTTest {
 			OrderedCompoundTag message = new OrderedCompoundTag();
 			message.singleLine();
 			message.putString("sender", "LatvianModder");
-			message.putString("content", "Hello");
+			message.putString("content", "Hello\nMy name is\tLat! Here's a slash: \\");
 			message.putLong("date", System.currentTimeMillis());
 			messages.add(message);
 		}
@@ -47,11 +49,14 @@ public class SNBTTest {
 		CompoundTag reverseTag = SNBT.readLines(lines);
 
 		System.out.println("Reverse tag test: " + (reverseTag != null ? "success" : "fail"));
+		System.out.println();
+		System.out.println();
 
 		try (InputStream stream = SNBTTest.class.getResourceAsStream("/snbt_test.snbt")) {
-			CompoundTag newParserTest = SNBTParser.read(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
+			CompoundTag newParserTest = SNBT.readLines(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.toList()));
 
-			System.out.println("New parser test: " + newParserTest);
+			System.out.println("New parser test: ");
+			System.out.println(newParserTest);
 
 			System.out.println();
 			System.out.println();
@@ -61,9 +66,19 @@ public class SNBTTest {
 			for (String s : lines2) {
 				System.out.println(s);
 			}
+
+			CompoundTag newParserTest2 = SNBT.readLines(lines2);
+
+			System.out.println();
+			System.out.println();
+			System.out.println("New parser [1]: " + newParserTest);
+			System.out.println("New parser [2]: " + newParserTest2);
+			System.out.println("New parser reverse tag test: " + (Objects.equals(newParserTest, newParserTest2) ? "success" : "fail"));
+		} catch (SNBTSyntaxException ex) {
+			System.out.println("New parser test: failed: " + ex.getMessage());
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.out.println("New parser test: failed");
+			System.out.println("New parser test: failed: " + ex);
 		}
 	}
 }

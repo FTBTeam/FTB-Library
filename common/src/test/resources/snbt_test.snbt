@@ -1,8 +1,8 @@
-// A completely fucked version of this config file:
-//  - too many commas
-//  - not enough commas
-//  - too many spaces/newlines
-//  - mixed " and ' in lists
+# A completely fucked version of this config file:
+#  - too many commas
+#  - not enough commas
+#  - too many spaces/newlines
+#  - mixed " and ' in lists
 
 
     {
@@ -27,17 +27,17 @@
 	  -34348L ]
 	"another test string": "he\nll\\o",
 	testList: [
-    	  "a@+0- \"string\" 1"
-    	  'b $%*& string 2'
-    	  "c $##@! string 3"
+    	  "a@+0- \"string\" Lat's 1"
+    	  'b $%*& "string" 2'
+    	  "c $##@! 'string' 3"
     	]
 }
 
-// Normalized version of the same file:
+# Normalized version of the same file:
 
 {
 	test_string: "value",
-	"test string key": 'value "2"',
+	"test string key": "value \"2\"",
 	testInt: 1234,
 	testLong: 304993938434993L,
 	testBool: 1b,
@@ -59,10 +59,10 @@
 		404049L,
 		-34348L
 	],
-	"another test string": "he\\nll\\\\o",
+	"another test string": "he\nll\\o",
 	testList: [
-		'a@+0- "string" 1',
-		"b $%*& string 2",
-		"c $##@! string 3"
+		"a@+0- \"string\" Lat's 1",
+		"b $%*& \"string\" 2",
+		"c $##@! 'string' 3"
 	]
 }
