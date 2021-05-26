@@ -21,12 +21,12 @@ import java.util.List;
  * @author LatvianModder
  */
 public class SNBT {
-	public static OrderedCompoundTag readLines(List<String> lines) {
+	public static CompoundTag readLines(List<String> lines) {
 		return SNBTParser.read(lines);
 	}
 
 	@Nullable
-	public static OrderedCompoundTag read(Path path) {
+	public static CompoundTag read(Path path) {
 		if (Files.notExists(path) || Files.isDirectory(path) || !Files.isReadable(path)) {
 			return null;
 		}
