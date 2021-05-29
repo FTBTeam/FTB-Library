@@ -15,8 +15,7 @@ architectury {
 }
 
 loom {
-	mixinConfigs = []
-	useFabricMixin = true
+	mixinConfigs = [/*"ftblibrary-forge.mixins.json", */ "ftblibrary-common.mixins.json"]
 }
 
 dependencies {

@@ -48,6 +48,20 @@ public class TextComponentParser {
 	}
 
 	public static Component parse(String text, @Nullable Function<String, Component> substitutes) {
+		Component c = parse0(text, substitutes);
+
+		if (c == TextComponent.EMPTY) {
+			return c;
+		}
+
+		while (c.getContents().isEmpty() && c.getStyle().equals(Style.EMPTY) && c.getSiblings().size() == 1) {
+			c = c.getSiblings().get(0);
+		}
+
+		return c;
+	}
+
+	private static Component parse0(String text, @Nullable Function<String, Component> substitutes) {
 		try {
 			return new TextComponentParser(text, substitutes).parse();
 		} catch (BadFormatException ex) {

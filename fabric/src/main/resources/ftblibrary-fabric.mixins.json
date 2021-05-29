@@ -1,7 +1,6 @@
 {
 	"required": true,
-	"package": "dev.ftb.mods.ftblibrary.fabric.mixin",
-	"minVersion": "0.7.11",
+	"package": "dev.ftb.mods.ftblibrary.core.mixin.fabric",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
 		"GlStateManagerMixin",
@@ -11,5 +10,6 @@
 	],
 	"injectors": {
 		"defaultRequire": 1
-	}
+	},
+	"minVersion": "0.8"
 }

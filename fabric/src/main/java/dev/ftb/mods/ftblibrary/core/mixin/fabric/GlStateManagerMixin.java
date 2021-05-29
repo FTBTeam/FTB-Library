@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.fabric.mixin;
+package dev.ftb.mods.ftblibrary.core.mixin.fabric;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import dev.ftb.mods.ftblibrary.fabric.Variables;

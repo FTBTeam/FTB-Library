@@ -9,6 +9,7 @@ public interface FTBLibraryNet {
 
 	PacketID EDIT_NBT = NET.registerS2C("edit_nbt", EditNBTPacket::new);
 	PacketID EDIT_NBT_RESPONSE = NET.registerC2S("edit_nbt_response", EditNBTResponsePacket::new);
+	PacketID SYNC_KNOWN_SERVER_REGISTRIES = NET.registerS2C("sync_known_server_registries", SyncKnownServerRegistriesPacket::new);
 
 	static void init() {
 	}

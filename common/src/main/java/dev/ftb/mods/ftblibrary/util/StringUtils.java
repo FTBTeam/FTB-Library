@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -340,5 +341,18 @@ public class StringUtils {
 		}
 
 		return builder.toString();
+	}
+
+	public static Map<String, String> splitProperties(String s) {
+		Map<String, String> map = new LinkedHashMap<>();
+
+		for (String s1 : s.split(" ")) {
+			if (!s1.isEmpty()) {
+				String[] s2 = s1.split(":", 2);
+				map.put(s2[0], s2.length == 2 ? s2[1].replace("%20", " ") : "");
+			}
+		}
+
+		return map;
 	}
 }
