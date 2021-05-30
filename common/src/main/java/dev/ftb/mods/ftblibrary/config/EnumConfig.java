@@ -60,7 +60,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 				@Override
 				public void addButtons(Panel panel) {
 					for (E v : nameMap) {
-						panel.add(new SimpleTextButton(panel, nameMap.getDisplayName(v), Icon.EMPTY) {
+						panel.add(new SimpleTextButton(panel, nameMap.getDisplayName(v), nameMap.getIcon(v)) {
 							@Override
 							public void onClicked(MouseButton button) {
 								playClickSound();

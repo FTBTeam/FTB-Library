@@ -188,6 +188,6 @@ public final class NameMap<E> implements Iterable<E> {
 	}
 
 	public Icon getIcon(E v) {
-		return Icon.EMPTY;
+		return builder.iconProvider.apply(v);
 	}
 }
