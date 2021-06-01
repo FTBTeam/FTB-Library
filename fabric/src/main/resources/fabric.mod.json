@@ -30,6 +30,6 @@
 		"fabricloader": ">=0.7.4",
 		"fabric": "*",
 		"minecraft": ">=1.16.4",
-		"architectury": ">=1.2.60"
+		"architectury": ">=1.17.20"
 	}
 }
