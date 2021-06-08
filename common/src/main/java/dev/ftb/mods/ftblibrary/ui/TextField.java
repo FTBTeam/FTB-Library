@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.math.Bits;
-import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
@@ -14,13 +14,15 @@ import net.minecraft.util.Mth;
  * @author LatvianModder
  */
 public class TextField extends Widget {
-	public String[] text;
+	public Component component = TextComponent.EMPTY;
+	private FormattedText[] formattedText = new FormattedText[0];
 	public int textFlags = 0;
 	public int minWidth = 0;
 	public int maxWidth = 5000;
 	public int textSpacing = 10;
-	public float scale = 1F;
+	public float scale = 1.0F;
 	public Color4I textColor = Icon.EMPTY;
+	public boolean trim = false;
 
 	public TextField(Panel panel) {
 		super(panel);
@@ -56,42 +58,36 @@ public class TextField extends Widget {
 		return this;
 	}
 
-	public TextField setText(String txt) {
-		text = null;
-		txt = txt.trim();
+	public TextField setTrim() {
+		trim = true;
+		return this;
+	}
+
+	public TextField setText(Component txt) {
 		Theme theme = getGui().getTheme();
 
-		if (!txt.isEmpty()) {
-			if (maxWidth == 0) {
-				text = txt.split("\n");
-			} else {
-				text = theme.listFormattedStringToWidth(new TextComponent(txt), maxWidth)
-						.stream()
-						.map(FormattedText::getString)
-						.toArray(String[]::new);
-			}
-		}
-
-		if (text == null || text.length == 0) {
-			text = StringUtils.EMPTY_ARRAY;
+		if (trim) {
+			formattedText = new FormattedText[]{theme.trimStringToWidth(new TextComponent("").append(txt), maxWidth)};
+		} else {
+			formattedText = theme.listFormattedStringToWidth(new TextComponent("").append(txt), maxWidth).toArray(new FormattedText[0]);
 		}
 
 		return resize(theme);
 	}
 
-	public TextField resize(Theme theme) {
-		if (maxWidth == 0) {
-			setWidth(0);
+	public TextField setText(String txt) {
+		return setText(new TextComponent(txt));
+	}
 
-			for (String s : text) {
-				setWidth(Math.max(width, (int) (theme.getStringWidth(s) * scale)));
-			}
-		} else {
-			setWidth(maxWidth);
+	public TextField resize(Theme theme) {
+		setWidth(0);
+
+		for (FormattedText s : formattedText) {
+			setWidth(Math.max(width, (int) ((float) theme.getStringWidth(s) * scale)));
 		}
 
 		setWidth(Mth.clamp(width, minWidth, maxWidth));
-		setHeight((int) ((Math.max(1, text.length) * textSpacing - (textSpacing - theme.getFontHeight() + 1)) * scale));
+		setHeight((int) ((float) (Math.max(1, formattedText.length) * textSpacing - (textSpacing - theme.getFontHeight() + 1)) * scale));
 		return this;
 	}
 
@@ -106,36 +102,33 @@ public class TextField extends Widget {
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		drawBackground(matrixStack, theme, x, y, w, h);
 
-		if (text.length == 0) {
-			return;
-		}
-
-		boolean centered = Bits.getFlag(textFlags, Theme.CENTERED);
-		boolean centeredV = Bits.getFlag(textFlags, Theme.CENTERED_V);
-
-		Color4I col = textColor;
-
-		if (col.isEmpty()) {
-			col = theme.getContentColor(WidgetType.mouseOver(Bits.getFlag(textFlags, Theme.MOUSE_OVER)));
-		}
-
-		int tx = x + (centered ? (w / 2) : 0);
-		int ty = y + (centeredV ? ((h - theme.getFontHeight()) / 2) : 0);
-
-		if (scale == 1F) {
-			for (int i = 0; i < text.length; i++) {
-				theme.drawString(matrixStack, text[i], tx, ty + i * textSpacing, col, textFlags);
-			}
-		} else {
-			matrixStack.pushPose();
-			matrixStack.translate(tx, ty, 0);
-			matrixStack.scale(scale, scale, 1F);
-
-			for (int i = 0; i < text.length; i++) {
-				theme.drawString(matrixStack, text[i], 0, i * textSpacing, col, textFlags);
+		if (formattedText.length != 0) {
+			boolean centered = Bits.getFlag(textFlags, 4);
+			boolean centeredV = Bits.getFlag(textFlags, 32);
+			Color4I col = textColor;
+			if (col.isEmpty()) {
+				col = theme.getContentColor(WidgetType.mouseOver(Bits.getFlag(textFlags, 16)));
 			}
 
-			matrixStack.popPose();
+			int tx = x + (centered ? w / 2 : 0);
+			int ty = y + (centeredV ? (h - theme.getFontHeight()) / 2 : 0);
+			int i;
+			if (scale == 1.0F) {
+				for (i = 0; i < formattedText.length; ++i) {
+					theme.drawString(matrixStack, formattedText[i], (float) tx, (float) (ty + i * textSpacing), col, textFlags);
+				}
+			} else {
+				matrixStack.pushPose();
+				matrixStack.translate(tx, ty, 0.0D);
+				matrixStack.scale(scale, scale, 1.0F);
+
+				for (i = 0; i < formattedText.length; ++i) {
+					theme.drawString(matrixStack, formattedText[i], 0.0F, (float) (i * textSpacing), col, textFlags);
+				}
+
+				matrixStack.popPose();
+			}
+
 		}
 	}
 }
