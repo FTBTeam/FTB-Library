@@ -8,6 +8,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.Mth;
 
 /**
  * @author LatvianModder
@@ -16,7 +17,8 @@ public class ComponentTextField extends Widget {
 	public Component component = TextComponent.EMPTY;
 	private FormattedText[] formattedText = new FormattedText[0];
 	public int textFlags = 0;
-	public int maxWidth = 0;
+	public int minWidth = 0;
+	public int maxWidth = 5000;
 	public int textSpacing = 10;
 	public float scale = 1.0F;
 	public Color4I textColor;
@@ -28,6 +30,11 @@ public class ComponentTextField extends Widget {
 
 	public ComponentTextField addFlags(int flags) {
 		textFlags |= flags;
+		return this;
+	}
+
+	public ComponentTextField setMinWidth(int width) {
+		minWidth = width;
 		return this;
 	}
 
@@ -58,16 +65,13 @@ public class ComponentTextField extends Widget {
 	}
 
 	public ComponentTextField resize(Theme theme) {
-		if (maxWidth == 0) {
-			setWidth(0);
+		setWidth(0);
 
-			for (FormattedText s : formattedText) {
-				setWidth(Math.max(width, (int) ((float) theme.getStringWidth(s) * scale)));
-			}
-		} else {
-			setWidth(maxWidth);
+		for (FormattedText s : formattedText) {
+			setWidth(Math.max(width, (int) ((float) theme.getStringWidth(s) * scale)));
 		}
 
+		setWidth(Mth.clamp(width, minWidth, maxWidth));
 		setHeight((int) ((float) (Math.max(1, formattedText.length) * textSpacing - (textSpacing - theme.getFontHeight() + 1)) * scale));
 		return this;
 	}

@@ -8,6 +8,7 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.Mth;
 
 /**
  * @author LatvianModder
@@ -15,7 +16,8 @@ import net.minecraft.network.chat.TextComponent;
 public class TextField extends Widget {
 	public String[] text;
 	public int textFlags = 0;
-	public int maxWidth = 0;
+	public int minWidth = 0;
+	public int maxWidth = 5000;
 	public int textSpacing = 10;
 	public float scale = 1F;
 	public Color4I textColor = Icon.EMPTY;
@@ -26,6 +28,11 @@ public class TextField extends Widget {
 
 	public TextField addFlags(int flags) {
 		textFlags |= flags;
+		return this;
+	}
+
+	public TextField setMinWidth(int width) {
+		minWidth = width;
 		return this;
 	}
 
@@ -83,6 +90,7 @@ public class TextField extends Widget {
 			setWidth(maxWidth);
 		}
 
+		setWidth(Mth.clamp(width, minWidth, maxWidth));
 		setHeight((int) ((Math.max(1, text.length) * textSpacing - (textSpacing - theme.getFontHeight() + 1)) * scale));
 		return this;
 	}
