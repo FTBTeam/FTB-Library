@@ -238,4 +238,8 @@ public class Widget implements IScreenWrapper {
 	public void playClickSound() {
 		GuiHelper.playSound(SoundEvents.UI_BUTTON_CLICK, 1F);
 	}
+
+	public CursorType getCursor() {
+		return CursorType.ARROW;
+	}
 }

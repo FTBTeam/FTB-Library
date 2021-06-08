@@ -128,7 +128,6 @@ public class TextField extends Widget {
 
 				matrixStack.popPose();
 			}
-
 		}
 	}
 }

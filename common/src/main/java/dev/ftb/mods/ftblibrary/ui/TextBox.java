@@ -489,4 +489,9 @@ public class TextBox extends Widget {
 	public final boolean isTextValid() {
 		return validText;
 	}
+
+	@Override
+	public CursorType getCursor() {
+		return CursorType.IBEAM;
+	}
 }

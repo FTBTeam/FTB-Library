@@ -239,7 +239,7 @@ public abstract class Panel extends Widget {
 				widget.addMouseOverText(list);
 
 				if (Theme.renderDebugBoxes) {
-					list.styledString(widget.toString() + "#" + (i + 1) + ": " + widget.width + "x" + widget.height, ChatFormatting.DARK_GRAY);
+					list.styledString(widget + "#" + (i + 1) + ": " + widget.width + "x" + widget.height, ChatFormatting.DARK_GRAY);
 				}
 			}
 		}
@@ -480,5 +480,23 @@ public abstract class Panel extends Widget {
 		}
 
 		return false;
+	}
+
+	@Override
+	public CursorType getCursor() {
+		setOffset(true);
+
+		for (int i = widgets.size() - 1; i >= 0; i--) {
+			Widget widget = widgets.get(i);
+
+			if (widget.isEnabled() && widget.isMouseOver()) {
+				CursorType t = widget.getCursor();
+				setOffset(false);
+				return t;
+			}
+		}
+
+		setOffset(false);
+		return super.getCursor();
 	}
 }

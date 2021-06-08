@@ -200,6 +200,7 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 		}
 
 		updateMouseOver(mouseX, mouseY);
+		GLFW.glfwSetCursor(Minecraft.getInstance().getWindow().getWindow(), getCursor().cursor);
 	}
 
 	@Override
@@ -276,6 +277,7 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 	public void onClosed() {
 		super.onClosed();
 		closeContextMenu();
+		GLFW.glfwSetCursor(Minecraft.getInstance().getWindow().getWindow(), CursorType.ARROW.cursor);
 	}
 
 	@Override
