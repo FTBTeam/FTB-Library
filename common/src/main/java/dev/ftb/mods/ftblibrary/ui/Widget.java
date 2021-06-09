@@ -239,7 +239,8 @@ public class Widget implements IScreenWrapper {
 		GuiHelper.playSound(SoundEvents.UI_BUTTON_CLICK, 1F);
 	}
 
+	@Nullable
 	public CursorType getCursor() {
-		return CursorType.ARROW;
+		return null;
 	}
 }

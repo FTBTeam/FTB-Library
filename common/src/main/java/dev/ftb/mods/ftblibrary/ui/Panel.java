@@ -483,6 +483,7 @@ public abstract class Panel extends Widget {
 	}
 
 	@Override
+	@Nullable
 	public CursorType getCursor() {
 		setOffset(true);
 
@@ -490,13 +491,16 @@ public abstract class Panel extends Widget {
 			Widget widget = widgets.get(i);
 
 			if (widget.isEnabled() && widget.isMouseOver()) {
-				CursorType t = widget.getCursor();
-				setOffset(false);
-				return t;
+				CursorType cursor = widget.getCursor();
+
+				if (cursor != null) {
+					setOffset(false);
+					return cursor;
+				}
 			}
 		}
 
 		setOffset(false);
-		return super.getCursor();
+		return null;
 	}
 }
