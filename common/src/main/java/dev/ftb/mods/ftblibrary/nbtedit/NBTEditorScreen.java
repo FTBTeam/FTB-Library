@@ -624,8 +624,7 @@ public class NBTEditorScreen extends BaseScreen {
 	}
 
 	public SimpleButton newTag(Panel panel, String t, Icon icon, Supplier<Tag> supplier) {
-		return new SimpleButton(panel, new TextComponent(t), icon, (gui, button) ->
-		{
+		return new SimpleButton(panel, new TextComponent(t), icon, (gui, button) -> {
 			if (selected instanceof ButtonNBTMap) {
 				StringConfig value = new StringConfig(Pattern.compile("^.+$"));
 				EditConfigFromStringScreen.open(value, "", "", set -> {
@@ -757,8 +756,7 @@ public class NBTEditorScreen extends BaseScreen {
 			public void addWidgets() {
 				add(new SimpleButton(this, new TranslatableComponent("gui.copy"), ItemIcon.getItemIcon(Items.PAPER), (widget, button) -> setClipboardString(selected.copy().toString())));
 
-				add(new SimpleButton(this, new TranslatableComponent("gui.collapse_all"), Icons.REMOVE, (widget, button) ->
-				{
+				add(new SimpleButton(this, new TranslatableComponent("gui.collapse_all"), Icons.REMOVE, (widget, button) -> {
 					for (Widget w : panelNbt.widgets) {
 						if (w instanceof ButtonNBTCollection) {
 							((ButtonNBTCollection) w).setCollapsed(true);
@@ -769,8 +767,7 @@ public class NBTEditorScreen extends BaseScreen {
 					panelNbt.refreshWidgets();
 				}));
 
-				add(new SimpleButton(this, new TranslatableComponent("gui.expand_all"), Icons.ADD, (widget, button) ->
-				{
+				add(new SimpleButton(this, new TranslatableComponent("gui.expand_all"), Icons.ADD, (widget, button) -> {
 					for (Widget w : panelNbt.widgets) {
 						if (w instanceof ButtonNBTCollection) {
 							((ButtonNBTCollection) w).setCollapsed(false);
@@ -781,14 +778,12 @@ public class NBTEditorScreen extends BaseScreen {
 					panelNbt.refreshWidgets();
 				}));
 
-				add(new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) ->
-				{
+				add(new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> {
 					shouldClose = 2;
 					widget.getGui().closeGui();
 				}));
 
-				add(new SimpleButton(this, new TranslatableComponent("gui.accept"), Icons.ACCEPT, (widget, button) ->
-				{
+				add(new SimpleButton(this, new TranslatableComponent("gui.accept"), Icons.ACCEPT, (widget, button) -> {
 					shouldClose = 1;
 					widget.getGui().closeGui();
 				}));
