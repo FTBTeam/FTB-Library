@@ -226,6 +226,7 @@ public abstract class Icon implements Drawable {
 					try {
 						return new URLImageIcon(new URI(id));
 					} catch (Exception ex) {
+						return new ImageIcon(ImageIcon.MISSING_IMAGE);
 					}
 				case "hollow_rectangle":
 					return new HollowRectangleIcon(Color4I.fromString(ida[1]), false);
