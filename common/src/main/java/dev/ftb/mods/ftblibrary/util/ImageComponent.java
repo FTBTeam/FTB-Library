@@ -7,6 +7,8 @@ public class ImageComponent extends TextComponent {
 	public Icon image;
 	public int width;
 	public int height;
+	public int align;
+	public boolean fit;
 
 	public ImageComponent() {
 		super("[Image]");

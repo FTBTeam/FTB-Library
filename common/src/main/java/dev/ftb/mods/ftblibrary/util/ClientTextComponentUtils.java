@@ -48,6 +48,20 @@ public class ClientTextComponentUtils {
 				c.width = Integer.parseInt(map.getOrDefault("width", "100"));
 				c.height = Integer.parseInt(map.getOrDefault("height", "100"));
 
+				switch (map.getOrDefault("align", "center").toLowerCase()) {
+					case "left":
+						c.align = 0;
+						break;
+					case "center":
+						c.align = 1;
+						break;
+					case "right":
+						c.align = 2;
+						break;
+				}
+
+				c.fit = map.getOrDefault("fit", "false").equals("true");
+
 				if (map.containsKey("text")) {
 					c.withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, parse(map.get("text")))));
 				}
