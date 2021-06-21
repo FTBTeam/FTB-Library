@@ -283,6 +283,29 @@ public abstract class Panel extends Widget {
 	}
 
 	@Override
+	public boolean mouseDoubleClicked(MouseButton button) {
+		if (getOnlyInteractWithWidgetsInside() && !isMouseOver()) {
+			return false;
+		}
+
+		setOffset(true);
+
+		for (int i = widgets.size() - 1; i >= 0; i--) {
+			Widget widget = widgets.get(i);
+
+			if (widget.isEnabled()) {
+				if (widget.mouseDoubleClicked(button)) {
+					setOffset(false);
+					return true;
+				}
+			}
+		}
+
+		setOffset(false);
+		return false;
+	}
+
+	@Override
 	public void mouseReleased(MouseButton button) {
 		setOffset(true);
 

@@ -6,6 +6,8 @@ import dev.ftb.mods.ftblibrary.icon.IconRenderer;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
+import dev.ftb.mods.ftblibrary.ui.CursorType;
+import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.util.ClientUtils;
 import me.shedaniel.architectury.event.events.GuiEvent;
 import me.shedaniel.architectury.event.events.TextureStitchEvent;
@@ -35,6 +37,7 @@ import java.util.function.Consumer;
 public class FTBLibraryClient extends FTBLibraryCommon {
 	public static final List<IconRenderer<?>> ICON_RENDERERS = new ArrayList<>();
 	public static int showButtons = 1;
+	public CursorType lastCursorType = null;
 
 	@Override
 	public void init() {
@@ -91,6 +94,13 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	}
 
 	private void clientTick(Minecraft client) {
+		CursorType t = client.screen instanceof IScreenWrapper ? ((IScreenWrapper) client.screen).getGui().getCursor() : null;
+
+		if (lastCursorType != t) {
+			lastCursorType = t;
+			CursorType.set(t);
+		}
+
 		if (!ClientUtils.RUN_LATER.isEmpty()) {
 			for (Runnable runnable : new ArrayList<>(ClientUtils.RUN_LATER)) {
 				runnable.run();

@@ -200,7 +200,6 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 		}
 
 		updateMouseOver(mouseX, mouseY);
-		CursorType.set(getCursor());
 	}
 
 	@Override
