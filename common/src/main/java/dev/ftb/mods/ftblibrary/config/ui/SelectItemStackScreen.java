@@ -120,7 +120,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		@Override
 		public Component getTitle() {
-			return new TranslatableComponent("ftbguilibrary.select_item.list_mode");
+			return new TranslatableComponent("ftblibrary.select_item.list_mode");
 		}
 
 		@Override
@@ -128,9 +128,9 @@ public class SelectItemStackScreen extends BaseScreen {
 			super.addMouseOverText(list);
 
 			if (allItems) {
-				list.add(new TranslatableComponent("ftbguilibrary.select_item.list_mode.all").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + (panelStacks.widgets.size() - 1) + "]").withStyle(ChatFormatting.DARK_GRAY)));
+				list.add(new TranslatableComponent("ftblibrary.select_item.list_mode.all").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + (panelStacks.widgets.size() - 1) + "]").withStyle(ChatFormatting.DARK_GRAY)));
 			} else {
-				list.add(new TranslatableComponent("ftbguilibrary.select_item.list_mode.inv").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + (panelStacks.widgets.size() - 1) + "]").withStyle(ChatFormatting.DARK_GRAY)));
+				list.add(new TranslatableComponent("ftblibrary.select_item.list_mode.inv").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + (panelStacks.widgets.size() - 1) + "]").withStyle(ChatFormatting.DARK_GRAY)));
 			}
 		}
 
@@ -188,7 +188,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 	private class ButtonCount extends ButtonStackConfig {
 		public ButtonCount(Panel panel) {
-			super(panel, new TranslatableComponent("ftbguilibrary.select_item.count"), ItemIcon.getItemIcon(Items.PAPER));
+			super(panel, new TranslatableComponent("ftblibrary.select_item.count"), ItemIcon.getItemIcon(Items.PAPER));
 		}
 
 		@Override
@@ -207,7 +207,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 	private class ButtonNBT extends ButtonStackConfig {
 		public ButtonNBT(Panel panel) {
-			super(panel, new TranslatableComponent("ftbguilibrary.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
+			super(panel, new TranslatableComponent("ftblibrary.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
 		}
 
 		@Override
@@ -226,7 +226,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 	private class ButtonCaps extends ButtonStackConfig {
 		public ButtonCaps(Panel panel) {
-			super(panel, new TranslatableComponent("ftbguilibrary.select_item.caps"), ItemIcon.getItemIcon(Items.ANVIL));
+			super(panel, new TranslatableComponent("ftblibrary.select_item.caps"), ItemIcon.getItemIcon(Items.ANVIL));
 		}
 
 		@Override

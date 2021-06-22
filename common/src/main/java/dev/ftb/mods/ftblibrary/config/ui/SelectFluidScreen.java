@@ -27,7 +27,7 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 	private final ConfigCallback callback;
 
 	public SelectFluidScreen(FluidConfig c, ConfigCallback cb) {
-		setTitle(new TranslatableComponent("ftbguilibrary.select_fluid.gui"));
+		setTitle(new TranslatableComponent("ftblibrary.select_fluid.gui"));
 		setHasSearchBox(true);
 		config = c;
 		callback = cb;
