@@ -45,8 +45,14 @@ public class ClientTextComponentUtils {
 			if (map.containsKey("image")) {
 				ImageComponent c = new ImageComponent();
 				c.image = Icon.getIcon(map.get("image"));
-				c.width = Integer.parseInt(map.getOrDefault("width", "100"));
-				c.height = Integer.parseInt(map.getOrDefault("height", "100"));
+
+				if (map.containsKey("width")) {
+					c.width = Integer.parseInt(map.get("width"));
+				}
+
+				if (map.containsKey("height")) {
+					c.height = Integer.parseInt(map.get("height"));
+				}
 
 				switch (map.getOrDefault("align", "center").toLowerCase()) {
 					case "left":
