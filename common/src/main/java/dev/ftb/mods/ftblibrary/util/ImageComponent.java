@@ -13,4 +13,21 @@ public class ImageComponent extends TextComponent {
 	public ImageComponent() {
 		super("[Image]");
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("{image:");
+		sb.append(image);
+
+		sb.append(" width:").append(width);
+		sb.append(" height:").append(height);
+		sb.append(" align:").append(align);
+
+		if (fit) {
+			sb.append(" fit:true");
+		}
+
+		sb.append('}');
+		return sb.toString();
+	}
 }
