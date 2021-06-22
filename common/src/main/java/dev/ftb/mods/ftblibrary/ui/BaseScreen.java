@@ -50,6 +50,7 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 	private final Screen prevScreen;
 	public Panel contextMenu = null;
 	public ItemRenderer itemRenderer;
+	private long lastClickTime = 0L;
 
 	public BaseScreen() {
 		super(null);
@@ -295,6 +296,22 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 	public boolean mousePressed(MouseButton button) {
 		if (button == MouseButton.BACK) {
 			closeGui(true);
+			return true;
+		}
+
+		long now = System.currentTimeMillis();
+
+		if (lastClickTime == 0L) {
+			lastClickTime = now;
+		} else {
+			if ((now - lastClickTime) <= 300L) {
+				if (mouseDoubleClicked(button)) {
+					lastClickTime = 0L;
+					return true;
+				}
+			}
+
+			lastClickTime = 0L;
 		}
 
 		return super.mousePressed(button);

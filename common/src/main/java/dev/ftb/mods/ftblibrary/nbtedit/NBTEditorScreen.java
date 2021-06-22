@@ -124,10 +124,10 @@ public class NBTEditorScreen extends BaseScreen {
 		}
 	}
 
-	public class ButtonNumericTag extends ButtonNBT {
+	public class ButtonBasicTag extends ButtonNBT {
 		private Tag nbt;
 
-		public ButtonNumericTag(Panel panel, ButtonNBTCollection b, String k, Tag n) {
+		public ButtonBasicTag(Panel panel, ButtonNBTCollection b, String k, Tag n) {
 			super(panel, b, k);
 			nbt = n;
 
@@ -194,6 +194,16 @@ public class NBTEditorScreen extends BaseScreen {
 			if (button.isRight()) {
 				edit();
 			}
+		}
+
+		@Override
+		public boolean mouseDoubleClicked(MouseButton button) {
+			if (isMouseOver()) {
+				edit();
+				return true;
+			}
+
+			return false;
 		}
 
 		public void edit() {
@@ -290,6 +300,17 @@ public class NBTEditorScreen extends BaseScreen {
 				selected = this;
 				panelTopLeft.refreshWidgets();
 			}
+		}
+
+		@Override
+		public boolean mouseDoubleClicked(MouseButton button) {
+			if (isMouseOver()) {
+				setCollapsed(!collapsed);
+				panelNbt.refreshWidgets();
+				return true;
+			}
+
+			return false;
 		}
 
 		public void setCollapsed(boolean c) {
@@ -619,7 +640,7 @@ public class NBTEditorScreen extends BaseScreen {
 			case NbtType.INT_ARRAY:
 				return new ButtonNBTIntArray(panelNbt, b, key, (IntArrayTag) nbt);
 			default:
-				return new ButtonNumericTag(panelNbt, b, key, nbt);
+				return new ButtonBasicTag(panelNbt, b, key, nbt);
 		}
 	}
 
@@ -694,8 +715,8 @@ public class NBTEditorScreen extends BaseScreen {
 					}
 				}));
 
-				if (selected instanceof ButtonNumericTag) {
-					add(new SimpleButton(this, new TranslatableComponent("selectServer.edit"), Icons.FEATHER, (widget, button) -> ((ButtonNumericTag) selected).edit()));
+				if (selected instanceof ButtonBasicTag) {
+					add(new SimpleButton(this, new TranslatableComponent("selectServer.edit"), Icons.FEATHER, (widget, button) -> ((ButtonBasicTag) selected).edit()));
 				}
 
 				if (selected.canCreateNew(NbtType.COMPOUND)) {

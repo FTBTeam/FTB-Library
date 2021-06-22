@@ -18,7 +18,6 @@ public class Widget implements IScreenWrapper {
 	public Panel parent;
 	public int posX, posY, width, height;
 	protected boolean isMouseOver;
-	public long lastClickTime = 0L;
 
 	public Widget(Panel p) {
 		parent = p;
@@ -130,25 +129,6 @@ public class Widget implements IScreenWrapper {
 	}
 
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-	}
-
-	public boolean handleMousePressed(MouseButton button) {
-		long now = System.currentTimeMillis();
-
-		if (lastClickTime == 0L) {
-			lastClickTime = now;
-		} else {
-			if ((now - lastClickTime) >= 250L) {
-				if (mouseDoubleClicked(button)) {
-					lastClickTime = 0L;
-					return true;
-				}
-			}
-
-			lastClickTime = 0L;
-		}
-
-		return mousePressed(button);
 	}
 
 	public boolean mousePressed(MouseButton button) {

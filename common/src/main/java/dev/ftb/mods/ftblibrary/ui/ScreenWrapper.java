@@ -42,7 +42,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 			wrappedGui.onBack();
 			return true;
 		} else {
-			wrappedGui.handleMousePressed(MouseButton.get(button));
+			wrappedGui.mousePressed(MouseButton.get(button));
 			return super.mouseClicked(x, y, button);
 		}
 	}
