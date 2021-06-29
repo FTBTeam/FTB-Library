@@ -6,6 +6,8 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Matrix4f;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -71,6 +73,7 @@ public class TooltipList {
 		styledTranslate(key, Style.EMPTY, objects);
 	}
 
+	@Environment(EnvType.CLIENT)
 	public void render(PoseStack mStack, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, Font font) {
 		List<FormattedCharSequence> textLines = new ArrayList<>(lines.size());
 
@@ -203,6 +206,7 @@ public class TooltipList {
 		RenderSystem.enableRescaleNormal();
 	}
 
+	@Environment(EnvType.CLIENT)
 	private static void drawGradientRect(Matrix4f mat, BufferBuilder buffer, int left, int top, int right, int bottom, int startColor, int endColor) {
 		int startAlpha = (startColor >> 24) & 255;
 		int startRed = (startColor >> 16) & 255;

@@ -21,12 +21,12 @@ import java.util.List;
  * @author LatvianModder
  */
 public class SNBT {
-	public static CompoundTag readLines(List<String> lines) {
+	public static SNBTCompoundTag readLines(List<String> lines) {
 		return SNBTParser.read(lines);
 	}
 
 	@Nullable
-	public static CompoundTag read(Path path) {
+	public static SNBTCompoundTag read(Path path) {
 		if (Files.notExists(path) || Files.isDirectory(path) || !Files.isReadable(path)) {
 			return null;
 		}
@@ -68,7 +68,7 @@ public class SNBT {
 			builder.print("null");
 		} else if (nbt instanceof CompoundTag) {
 			CompoundTag compound = (CompoundTag) nbt;
-			OrderedCompoundTag ocompound = compound instanceof OrderedCompoundTag ? (OrderedCompoundTag) compound : null;
+			SNBTCompoundTag ocompound = compound instanceof SNBTCompoundTag ? (SNBTCompoundTag) compound : null;
 
 			if (compound.isEmpty()) {
 				builder.print("{ }");
@@ -94,7 +94,7 @@ public class SNBT {
 
 			for (String key : compound.getAllKeys()) {
 				index++;
-				TagProperties properties = ocompound == null ? TagProperties.DEFAULT : ocompound.getProperties(key);
+				SNBTTagProperties properties = ocompound == null ? SNBTTagProperties.DEFAULT : ocompound.getProperties(key);
 
 				if (!properties.comment.isEmpty()) {
 					if (singleLine) {
@@ -115,13 +115,10 @@ public class SNBT {
 				builder.print(SNBTUtils.handleEscape(key));
 				builder.print(": ");
 
-				if (properties.valueType == TagProperties.TYPE_FALSE) {
+				if (properties.valueType == SNBTTagProperties.TYPE_FALSE) {
 					builder.print("false");
-				} else if (properties.valueType == TagProperties.TYPE_TRUE) {
+				} else if (properties.valueType == SNBTTagProperties.TYPE_TRUE) {
 					builder.print("true");
-				} else if (properties.valueType == TagProperties.TYPE_UUID) {
-					builder.print("@");
-					builder.print(compound.getUUID(key));
 				} else {
 					if (properties.singleLine) {
 						builder.singleLine++;

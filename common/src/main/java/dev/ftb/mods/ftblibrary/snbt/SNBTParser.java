@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 class SNBTParser {
-	static OrderedCompoundTag read(List<String> lines) {
+	static SNBTCompoundTag read(List<String> lines) {
 		SNBTParser parser = new SNBTParser(lines);
-		return (OrderedCompoundTag) parser.readTag(parser.nextNS());
+		return (SNBTCompoundTag) parser.readTag(parser.nextNS());
 	}
 
 	private final char[] buffer;
@@ -146,8 +146,8 @@ class SNBTParser {
 		}
 	}
 
-	private OrderedCompoundTag readCompound() {
-		OrderedCompoundTag tag = new OrderedCompoundTag();
+	private SNBTCompoundTag readCompound() {
+		SNBTCompoundTag tag = new SNBTCompoundTag();
 
 		while (true) {
 			char c = nextNS();
