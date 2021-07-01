@@ -6,8 +6,11 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author LatvianModder
@@ -134,5 +137,32 @@ public class SNBTCompoundTag extends CompoundTag {
 	public ListTag getNullableList(String key, byte type) {
 		Tag tag = get(key);
 		return tag instanceof ListTag && (((ListTag) tag).isEmpty() || type == 0 || ((ListTag) tag).getElementType() == type) ? (ListTag) tag : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends Tag> List<T> getList(String key, Class<T> type) {
+		Tag tag = get(key);
+
+		if (!(tag instanceof ListTag)) {
+			return Collections.emptyList();
+		}
+
+		ListTag l = (ListTag) tag;
+
+		if (l.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<T> list = new ArrayList<>(l.size());
+
+		for (int i = 0; i < l.size(); i++) {
+			Tag t = l.get(i);
+
+			if (type.isAssignableFrom(t.getClass())) {
+				list.add((T) t);
+			}
+		}
+
+		return list;
 	}
 }
