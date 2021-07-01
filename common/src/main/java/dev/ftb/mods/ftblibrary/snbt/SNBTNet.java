@@ -5,6 +5,7 @@ import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.EndTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.IntTag;
@@ -124,6 +125,8 @@ public class SNBTNet {
 	@Nullable
 	public static Tag read(byte type, FriendlyByteBuf buf) {
 		switch (type) {
+			case NbtType.END:
+				return EndTag.INSTANCE;
 			case NbtType.BYTE:
 				return ByteTag.valueOf(buf.readByte());
 			case NbtType.SHORT:

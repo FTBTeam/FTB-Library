@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,5 +98,29 @@ public class SNBTCompoundTag extends CompoundTag {
 	@Override
 	public SNBTCompoundTag getCompound(String string) {
 		return of(get(string));
+	}
+
+	public void putNumber(String key, Number number) {
+		if (number instanceof Double) {
+			putDouble(key, number.doubleValue());
+		} else if (number instanceof Float) {
+			putFloat(key, number.floatValue());
+		} else if (number instanceof Long) {
+			putLong(key, number.longValue());
+		} else if (number instanceof Integer) {
+			putInt(key, number.intValue());
+		} else if (number instanceof Short) {
+			putShort(key, number.shortValue());
+		} else if (number instanceof Byte) {
+			putByte(key, number.byteValue());
+		} else if (number.toString().contains(".")) {
+			putDouble(key, number.doubleValue());
+		} else {
+			putInt(key, number.intValue());
+		}
+	}
+
+	public void putNull(String key) {
+		put(key, EndTag.INSTANCE);
 	}
 }

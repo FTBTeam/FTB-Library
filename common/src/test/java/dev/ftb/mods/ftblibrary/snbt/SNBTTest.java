@@ -35,6 +35,7 @@ public class SNBTTest {
 
 		tag.comment("test_int", "Just an integer");
 		tag.putInt("test_int", 30);
+		tag.putNull("test_null");
 
 		List<String> lines = SNBT.writeLines(tag);
 		CompoundTag reverseTag = SNBT.readLines(lines);

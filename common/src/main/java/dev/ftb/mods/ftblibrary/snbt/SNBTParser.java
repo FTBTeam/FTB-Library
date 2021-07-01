@@ -5,6 +5,7 @@ import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.EndTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.IntTag;
@@ -95,8 +96,6 @@ class SNBTParser {
 	}
 
 	private Tag readTag(char first) {
-		int pos = position - 1;
-
 		switch (first) {
 			case '{':
 				return readCompound();
@@ -116,11 +115,16 @@ class SNBTParser {
 			case "false":
 				return ByteTag.valueOf(false);
 			case "null":
-				throw new SNBTSyntaxException("null @ " + posString(pos) + " isn't supported!");
+			case "end":
+			case "END":
+				return EndTag.INSTANCE;
 			case "Infinity":
 			case "+Infinity":
+			case "∞":
+			case "+∞":
 				return DoubleTag.valueOf(Double.POSITIVE_INFINITY);
 			case "-Infinity":
+			case "-∞":
 				return DoubleTag.valueOf(Double.NEGATIVE_INFINITY);
 			case "NaN":
 				return DoubleTag.valueOf(Double.NaN);
