@@ -16,7 +16,7 @@
 	testBool: true,
 	testFloat: 40402.4F
 
-	testDouble: 4949949433030D
+	testDouble: -∞
 	testShort: 49S
 	// comment
 	testByte: -124B

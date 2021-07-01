@@ -23,7 +23,7 @@ import java.util.List;
 class SNBTParser {
 	static SNBTCompoundTag read(List<String> lines) {
 		SNBTParser parser = new SNBTParser(lines);
-		return (SNBTCompoundTag) parser.readTag(parser.nextNS());
+		return (SNBTCompoundTag) SpecialTag.unwrap(parser.readTag(parser.nextNS()));
 	}
 
 	private final char[] buffer;
@@ -111,23 +111,40 @@ class SNBTParser {
 
 		switch (s) {
 			case "true":
-				return ByteTag.valueOf(true);
+				return SpecialTag.TRUE;
 			case "false":
-				return ByteTag.valueOf(false);
+				return SpecialTag.FALSE;
 			case "null":
 			case "end":
 			case "END":
 				return EndTag.INSTANCE;
 			case "Infinity":
+			case "Infinityd":
 			case "+Infinity":
+			case "+Infinityd":
 			case "∞":
+			case "∞d":
 			case "+∞":
-				return DoubleTag.valueOf(Double.POSITIVE_INFINITY);
+			case "+∞d":
+				return SpecialTag.POS_INFINITY_D;
 			case "-Infinity":
+			case "-Infinityd":
 			case "-∞":
-				return DoubleTag.valueOf(Double.NEGATIVE_INFINITY);
+			case "-∞d":
+				return SpecialTag.NEG_INFINITY_D;
 			case "NaN":
-				return DoubleTag.valueOf(Double.NaN);
+			case "NaNd":
+				return SpecialTag.NAN_D;
+			case "Infinityf":
+			case "+Infinityf":
+			case "∞f":
+			case "+∞f":
+				return SpecialTag.POS_INFINITY_F;
+			case "-Infinityf":
+			case "-∞f":
+				return SpecialTag.NEG_INFINITY_F;
+			case "NaNf":
+				return SpecialTag.NAN_F;
 		}
 
 		switch (SNBTUtils.getNumberType(s)) {
@@ -176,7 +193,14 @@ class SNBTParser {
 
 			if (n == ':' || n == '=') {
 				Tag t = readTag(nextNS());
-				tag.put(key, t);
+
+				if (t == SpecialTag.TRUE) {
+					tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_TRUE;
+				} else if (t == SpecialTag.FALSE) {
+					tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_FALSE;
+				}
+
+				tag.put(key, SpecialTag.unwrap(t));
 			} else {
 				throw new SNBTSyntaxException("Expected ':', got '" + n + "' @ " + posString());
 			}
@@ -209,7 +233,7 @@ class SNBTParser {
 				continue;
 			}
 
-			Tag t = readTag(c);
+			Tag t = SpecialTag.unwrap(readTag(c));
 
 			try {
 				tag.add(t);
@@ -243,7 +267,7 @@ class SNBTParser {
 				continue;
 			}
 
-			Tag t = readTag(c);
+			Tag t = SpecialTag.unwrap(readTag(c));
 
 			if (t instanceof NumericTag) {
 				switch (type) {

@@ -27,7 +27,7 @@ public class SNBTUtils {
 	}
 
 	public static boolean isSimpleCharacter(char c) {
-		return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || isDigit(c) || c == '.' || c == '_' || c == '-' || c == '+';
+		return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || isDigit(c) || c == '.' || c == '_' || c == '-' || c == '+' || c == '∞';
 	}
 
 	public static boolean isSimpleString(String string) {

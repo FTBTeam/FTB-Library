@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.snbt;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.EndTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +37,7 @@ public class SNBTCompoundTag extends CompoundTag {
 		singleLine = false;
 	}
 
-	private SNBTTagProperties getOrCreateProperties(String key) {
+	SNBTTagProperties getOrCreateProperties(String key) {
 		if (properties == null) {
 			properties = new HashMap<>();
 		}
@@ -95,6 +96,11 @@ public class SNBTCompoundTag extends CompoundTag {
 		super.putBoolean(key, value);
 	}
 
+	public boolean isBoolean(String key) {
+		int t = getProperties(key).valueType;
+		return t == SNBTTagProperties.TYPE_TRUE || t == SNBTTagProperties.TYPE_FALSE;
+	}
+
 	@Override
 	public SNBTCompoundTag getCompound(String string) {
 		return of(get(string));
@@ -122,5 +128,11 @@ public class SNBTCompoundTag extends CompoundTag {
 
 	public void putNull(String key) {
 		put(key, EndTag.INSTANCE);
+	}
+
+	@Nullable
+	public ListTag getNullableList(String key, byte type) {
+		Tag tag = get(key);
+		return tag instanceof ListTag && (((ListTag) tag).isEmpty() || type == 0 || ((ListTag) tag).getElementType() == type) ? (ListTag) tag : null;
 	}
 }
