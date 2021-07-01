@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
+import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.EndTag;
 import net.minecraft.nbt.ListTag;
@@ -143,11 +144,11 @@ public class SNBTCompoundTag extends CompoundTag {
 	public <T extends Tag> List<T> getList(String key, Class<T> type) {
 		Tag tag = get(key);
 
-		if (!(tag instanceof ListTag)) {
+		if (!(tag instanceof CollectionTag)) {
 			return Collections.emptyList();
 		}
 
-		ListTag l = (ListTag) tag;
+		CollectionTag<?> l = (CollectionTag<?>) tag;
 
 		if (l.isEmpty()) {
 			return Collections.emptyList();
@@ -155,9 +156,7 @@ public class SNBTCompoundTag extends CompoundTag {
 
 		List<T> list = new ArrayList<>(l.size());
 
-		for (int i = 0; i < l.size(); i++) {
-			Tag t = l.get(i);
-
+		for (Tag t : l) {
 			if (type.isAssignableFrom(t.getClass())) {
 				list.add((T) t);
 			}
