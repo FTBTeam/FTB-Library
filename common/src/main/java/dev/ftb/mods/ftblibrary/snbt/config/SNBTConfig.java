@@ -77,13 +77,17 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	public void createClientConfig(ConfigGroup group) {
 		if (parent == null) {
 			for (BaseValue<?> value : defaultValue) {
-				value.createClientConfig(group);
+				if (!value.excluded) {
+					value.createClientConfig(group);
+				}
 			}
 		} else {
 			ConfigGroup g = group.getGroup(key);
 
 			for (BaseValue<?> value : defaultValue) {
-				value.createClientConfig(g);
+				if (!value.excluded) {
+					value.createClientConfig(g);
+				}
 			}
 		}
 	}

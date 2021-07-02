@@ -14,6 +14,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 	public final SNBTConfig parent;
 	public final String key;
 	public final T defaultValue;
+	boolean excluded;
 
 	List<String> comment = new ArrayList<>(0);
 
@@ -34,6 +35,11 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 
 	public <E extends BaseValue<T>> E comment(String... s) {
 		comment.addAll(Arrays.asList(s));
+		return (E) this;
+	}
+
+	public <E extends BaseValue<T>> E excluded() {
+		excluded = true;
 		return (E) this;
 	}
 
