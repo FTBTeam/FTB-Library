@@ -9,33 +9,33 @@ import net.minecraft.util.Mth;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntValue extends BaseValue<Integer> {
-	private int minValue = Integer.MIN_VALUE;
-	private int maxValue = Integer.MAX_VALUE;
-	private int value;
+public class LongValue extends BaseValue<Long> {
+	private long minValue = Long.MIN_VALUE;
+	private long maxValue = Long.MAX_VALUE;
+	private long value;
 	private boolean fader;
 
-	IntValue(SNBTConfig c, String n, int def) {
+	LongValue(SNBTConfig c, String n, long def) {
 		super(c, n, def);
 		value = def;
 	}
 
-	public IntValue range(int min, int max) {
+	public LongValue range(long min, long max) {
 		minValue = min;
 		maxValue = max;
 		return this;
 	}
 
-	public IntValue range(int max) {
-		return range(0, max);
+	public LongValue range(long max) {
+		return range(0L, max);
 	}
 
-	public IntValue fader() {
+	public LongValue fader() {
 		fader = true;
 		return this;
 	}
 
-	public int get() {
+	public long get() {
 		return value;
 	}
 
@@ -43,19 +43,19 @@ public class IntValue extends BaseValue<Integer> {
 	public void write(SNBTCompoundTag tag) {
 		List<String> c = new ArrayList<>(comment);
 		c.add("Default: " + defaultValue);
-		c.add("Range: " + (minValue == Integer.MIN_VALUE ? "-∞" : minValue) + " ~ " + (maxValue == Integer.MAX_VALUE ? "+∞" : maxValue));
+		c.add("Range: " + (minValue == Long.MIN_VALUE ? "-∞" : minValue) + " ~ " + (maxValue == Long.MAX_VALUE ? "+∞" : maxValue));
 		tag.comment(key, String.join("\n", c));
-		tag.putInt(key, value);
+		tag.putLong(key, value);
 	}
 
 	@Override
 	public void read(SNBTCompoundTag tag) {
-		value = Mth.clamp(tag.getInt(key), minValue, maxValue);
+		value = Mth.clamp(tag.getLong(key), minValue, maxValue);
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addInt(key, value, v -> value = v, defaultValue, minValue, maxValue);
+		group.addLong(key, value, v -> value = v, defaultValue, minValue, maxValue);
 	}
 }

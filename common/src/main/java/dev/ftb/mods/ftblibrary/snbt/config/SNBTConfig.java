@@ -1,10 +1,13 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
+import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.SNBTNet;
 import me.shedaniel.architectury.utils.NbtType;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -69,6 +72,22 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		}
 	}
 
+	@Override
+	@Environment(EnvType.CLIENT)
+	public void createClientConfig(ConfigGroup group) {
+		if (parent == null) {
+			for (BaseValue<?> value : defaultValue) {
+				value.createClientConfig(group);
+			}
+		} else {
+			ConfigGroup g = group.getGroup(key);
+
+			for (BaseValue<?> value : defaultValue) {
+				value.createClientConfig(g);
+			}
+		}
+	}
+
 	public void write(FriendlyByteBuf buf) {
 		SNBTCompoundTag tag = new SNBTCompoundTag();
 		write(tag);
@@ -118,8 +137,24 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		return add(new IntValue(this, key, def));
 	}
 
+	public IntValue getInt(String key, int def, int min, int max) {
+		return getInt(key, def).range(min, max);
+	}
+
+	public LongValue getLong(String key, long def) {
+		return add(new LongValue(this, key, def));
+	}
+
+	public LongValue getLong(String key, long def, long min, long max) {
+		return getLong(key, def).range(min, max);
+	}
+
 	public DoubleValue getDouble(String key, double def) {
 		return add(new DoubleValue(this, key, def));
+	}
+
+	public DoubleValue getDouble(String key, double def, double min, double max) {
+		return getDouble(key, def).range(min, max);
 	}
 
 	public StringValue getString(String key, String def) {

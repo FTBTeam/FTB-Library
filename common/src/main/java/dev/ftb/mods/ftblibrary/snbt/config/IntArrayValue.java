@@ -1,6 +1,9 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
+import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,5 +32,11 @@ public class IntArrayValue extends BaseValue<int[]> {
 	@Override
 	public void read(SNBTCompoundTag tag) {
 		value = tag.getIntArray(key);
+	}
+
+	@Override
+	@Environment(EnvType.CLIENT)
+	public void createClientConfig(ConfigGroup group) {
+		// group.addList(key, value, new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), 0);
 	}
 }

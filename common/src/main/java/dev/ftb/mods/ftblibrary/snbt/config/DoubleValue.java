@@ -1,6 +1,9 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
+import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
@@ -10,6 +13,7 @@ public class DoubleValue extends BaseValue<Double> {
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double value;
+	private boolean fader;
 
 	DoubleValue(SNBTConfig c, String n, double def) {
 		super(c, n, def);
@@ -24,6 +28,11 @@ public class DoubleValue extends BaseValue<Double> {
 
 	public DoubleValue range(double max) {
 		return range(0D, max);
+	}
+
+	public DoubleValue fader() {
+		fader = true;
+		return this;
 	}
 
 	public double get() {
@@ -42,5 +51,11 @@ public class DoubleValue extends BaseValue<Double> {
 	@Override
 	public void read(SNBTCompoundTag tag) {
 		value = Mth.clamp(tag.getDouble(key), minValue, maxValue);
+	}
+
+	@Override
+	@Environment(EnvType.CLIENT)
+	public void createClientConfig(ConfigGroup group) {
+		group.addDouble(key, value, v -> value = v, defaultValue, minValue, maxValue);
 	}
 }
