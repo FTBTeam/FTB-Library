@@ -124,7 +124,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		}
 	}
 
-	private <T extends BaseValue<?>> T add(T value) {
+	public <T extends BaseValue<?>> T add(T value) {
 		defaultValue.add(value);
 		return value;
 	}

@@ -14,14 +14,16 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 	public final SNBTConfig parent;
 	public final String key;
 	public final T defaultValue;
+	private T value;
 	boolean excluded;
 
 	List<String> comment = new ArrayList<>(0);
 
-	BaseValue(@Nullable SNBTConfig c, String n, T def) {
+	public BaseValue(@Nullable SNBTConfig c, String n, T def) {
 		parent = c;
 		key = n;
 		defaultValue = def;
+		value = defaultValue;
 	}
 
 	@Override
@@ -33,11 +35,21 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 		return parent + "/" + key;
 	}
 
+	public T get() {
+		return value;
+	}
+
+	public void set(T v) {
+		value = v;
+	}
+
+	@SuppressWarnings("unchecked")
 	public <E extends BaseValue<T>> E comment(String... s) {
 		comment.addAll(Arrays.asList(s));
 		return (E) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <E extends BaseValue<T>> E excluded() {
 		excluded = true;
 		return (E) this;

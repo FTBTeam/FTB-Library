@@ -13,16 +13,19 @@ import java.util.stream.Collectors;
 
 public class EnumValue<T> extends BaseValue<T> {
 	private final NameMap<T> nameMap;
-	private T value;
 
 	EnumValue(SNBTConfig c, String n, NameMap<T> nm) {
 		super(c, n, nm.defaultValue);
 		nameMap = nm;
-		value = nameMap.defaultValue;
 	}
 
-	public T get() {
-		return value;
+	@Override
+	public void set(T v) {
+		if (nameMap.values.contains(v)) {
+			super.set(v);
+		} else {
+			super.set(defaultValue);
+		}
 	}
 
 	@Override
@@ -31,17 +34,17 @@ public class EnumValue<T> extends BaseValue<T> {
 		s.add("Default: \"" + nameMap.getName(defaultValue) + "\"");
 		s.add("Valid values: " + nameMap.keys.stream().map(StringTag::quoteAndEscape).collect(Collectors.joining(", ")));
 		tag.comment(key, String.join("\n", s));
-		tag.putString(key, nameMap.getName(value));
+		tag.putString(key, nameMap.getName(get()));
 	}
 
 	@Override
 	public void read(SNBTCompoundTag tag) {
-		value = nameMap.get(tag.getString(key));
+		set(nameMap.get(tag.getString(key)));
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addEnum(key, value, v -> value = v, nameMap);
+		group.addEnum(key, get(), this::set, nameMap);
 	}
 }

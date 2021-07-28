@@ -9,15 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BooleanValue extends BaseValue<Boolean> {
-	private boolean value;
 
 	BooleanValue(SNBTConfig c, String n, boolean def) {
 		super(c, n, def);
-		value = def;
 	}
 
-	public boolean get() {
-		return value;
+	public void toggle() {
+		set(!get());
 	}
 
 	@Override
@@ -25,17 +23,17 @@ public class BooleanValue extends BaseValue<Boolean> {
 		List<String> s = new ArrayList<>(comment);
 		s.add("Default: " + defaultValue);
 		tag.comment(key, String.join("\n", s));
-		tag.putBoolean(key, value);
+		tag.putBoolean(key, get());
 	}
 
 	@Override
 	public void read(SNBTCompoundTag tag) {
-		value = tag.getBoolean(key);
+		set(tag.getBoolean(key));
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addBool(key, value, v -> value = v, defaultValue);
+		group.addBool(key, get(), this::set, defaultValue);
 	}
 }

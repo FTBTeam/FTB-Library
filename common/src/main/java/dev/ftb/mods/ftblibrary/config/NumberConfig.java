@@ -14,6 +14,7 @@ public abstract class NumberConfig<T extends Number> extends ConfigFromString<T>
 
 	public final T min;
 	public final T max;
+	public boolean fader;
 
 	public NumberConfig(T mn, T mx) {
 		min = mn;
@@ -23,6 +24,11 @@ public abstract class NumberConfig<T extends Number> extends ConfigFromString<T>
 	@Override
 	public Color4I getColor(@Nullable T v) {
 		return COLOR;
+	}
+
+	public NumberConfig<T> fader(boolean v) {
+		fader = v;
+		return this;
 	}
 
 	@Override

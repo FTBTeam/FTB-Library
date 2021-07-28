@@ -15,15 +15,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StringListValue extends BaseValue<List<String>> {
-	private final List<String> value;
-
 	StringListValue(SNBTConfig c, String n, List<String> def) {
 		super(c, n, def);
-		value = new ArrayList<>(def);
+		super.set(new ArrayList<>(def));
 	}
 
-	public List<String> get() {
-		return value;
+	@Override
+	public void set(List<String> v) {
+		get().clear();
+		get().addAll(v);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class StringListValue extends BaseValue<List<String>> {
 
 		ListTag stag = new ListTag();
 
-		for (String s1 : value) {
+		for (String s1 : get()) {
 			stag.add(StringTag.valueOf(s1));
 		}
 
@@ -46,10 +46,10 @@ public class StringListValue extends BaseValue<List<String>> {
 		Tag stag = tag.get(key);
 
 		if (stag instanceof ListTag && (((ListTag) stag).isEmpty() || ((ListTag) stag).getElementType() == NbtType.STRING)) {
-			value.clear();
+			get().clear();
 
 			for (int i = 0; i < ((ListTag) stag).size(); i++) {
-				value.add(((ListTag) stag).getString(i));
+				get().add(((ListTag) stag).getString(i));
 			}
 		}
 	}
@@ -57,6 +57,6 @@ public class StringListValue extends BaseValue<List<String>> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addList(key, value, new StringConfig(null), "");
+		group.addList(key, get(), new StringConfig(null), "");
 	}
 }

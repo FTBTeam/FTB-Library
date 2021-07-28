@@ -6,56 +6,34 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Mth;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class IntValue extends BaseValue<Integer> {
-	private int minValue = Integer.MIN_VALUE;
-	private int maxValue = Integer.MAX_VALUE;
-	private int value;
-	private boolean fader;
-
+public class IntValue extends NumberValue<Integer> {
 	IntValue(SNBTConfig c, String n, int def) {
 		super(c, n, def);
-		value = def;
 	}
 
-	public IntValue range(int min, int max) {
-		minValue = min;
-		maxValue = max;
-		return this;
-	}
-
-	public IntValue range(int max) {
+	public NumberValue<Integer> range(int max) {
 		return range(0, max);
 	}
 
-	public IntValue fader() {
-		fader = true;
-		return this;
-	}
-
-	public int get() {
-		return value;
+	@Override
+	public void set(Integer v) {
+		super.set(Mth.clamp(v, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue));
 	}
 
 	@Override
 	public void write(SNBTCompoundTag tag) {
-		List<String> c = new ArrayList<>(comment);
-		c.add("Default: " + defaultValue);
-		c.add("Range: " + (minValue == Integer.MIN_VALUE ? "-∞" : minValue) + " ~ " + (maxValue == Integer.MAX_VALUE ? "+∞" : maxValue));
-		tag.comment(key, String.join("\n", c));
-		tag.putInt(key, value);
+		super.write(tag);
+		tag.putInt(key, get());
 	}
 
 	@Override
 	public void read(SNBTCompoundTag tag) {
-		value = Mth.clamp(tag.getInt(key), minValue, maxValue);
+		set(tag.getInt(key));
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addInt(key, value, v -> value = v, defaultValue, minValue, maxValue);
+		group.addInt(key, get(), this::set, defaultValue, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue).fader(fader);
 	}
 }
