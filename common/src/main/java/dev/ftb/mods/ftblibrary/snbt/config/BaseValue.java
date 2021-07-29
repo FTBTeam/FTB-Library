@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
+import dev.ftb.mods.ftblibrary.snbt.SNBTUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 	public final SNBTConfig parent;
@@ -16,6 +18,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 	public final T defaultValue;
 	private T value;
 	boolean excluded;
+	BooleanSupplier enabled = SNBTUtils.ALWAYS_TRUE;
 
 	List<String> comment = new ArrayList<>(0);
 
@@ -52,6 +55,12 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 	@SuppressWarnings("unchecked")
 	public <E extends BaseValue<T>> E excluded() {
 		excluded = true;
+		return (E) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <E extends BaseValue<T>> E enabled(BooleanSupplier e) {
+		enabled = e;
 		return (E) this;
 	}
 

@@ -45,6 +45,8 @@ public class EnumValue<T> extends BaseValue<T> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addEnum(key, get(), this::set, nameMap);
+		group.addEnum(key, get(), this::set, nameMap)
+				.setCanEdit(enabled.getAsBoolean())
+		;
 	}
 }

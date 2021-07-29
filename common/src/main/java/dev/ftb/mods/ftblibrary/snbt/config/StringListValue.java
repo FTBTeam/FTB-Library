@@ -57,6 +57,8 @@ public class StringListValue extends BaseValue<List<String>> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addList(key, get(), new StringConfig(null), "");
+		group.addList(key, get(), new StringConfig(null), "")
+				.setCanEdit(enabled.getAsBoolean())
+		;
 	}
 }

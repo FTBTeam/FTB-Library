@@ -2,7 +2,10 @@ package dev.ftb.mods.ftblibrary.snbt;
 
 import me.shedaniel.architectury.utils.NbtType;
 
+import java.util.function.BooleanSupplier;
+
 public class SNBTUtils {
+	public static final BooleanSupplier ALWAYS_TRUE = () -> true;
 	public static final char[] ESCAPE_CHARS = new char[128];
 	public static final char[] REVERSE_ESCAPE_CHARS = new char[128];
 

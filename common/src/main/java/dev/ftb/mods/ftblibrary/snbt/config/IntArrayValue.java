@@ -32,6 +32,6 @@ public class IntArrayValue extends BaseValue<int[]> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		// group.addList(key, value, new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), 0);
+		// group.addList(key, value, new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), 0).setCanEdit(enabled.getAsBoolean());
 	}
 }

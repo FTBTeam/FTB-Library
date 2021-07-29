@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BooleanValue extends BaseValue<Boolean> {
-
 	BooleanValue(SNBTConfig c, String n, boolean def) {
 		super(c, n, def);
 	}
@@ -34,6 +33,8 @@ public class BooleanValue extends BaseValue<Boolean> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addBool(key, get(), this::set, defaultValue);
+		group.addBool(key, get(), this::set, defaultValue)
+				.setCanEdit(enabled.getAsBoolean())
+		;
 	}
 }

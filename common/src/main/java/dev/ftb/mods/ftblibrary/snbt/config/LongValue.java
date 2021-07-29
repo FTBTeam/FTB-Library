@@ -34,6 +34,9 @@ public class LongValue extends NumberValue<Long> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addLong(key, get(), this::set, defaultValue, minValue == null ? Long.MIN_VALUE : minValue, maxValue == null ? Long.MAX_VALUE : maxValue).fader(fader);
+		group.addLong(key, get(), this::set, defaultValue, minValue == null ? Long.MIN_VALUE : minValue, maxValue == null ? Long.MAX_VALUE : maxValue)
+				.fader(fader)
+				.setCanEdit(enabled.getAsBoolean())
+		;
 	}
 }

@@ -46,6 +46,8 @@ public class StringValue extends BaseValue<String> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addString(key, get(), this::set, defaultValue, pattern);
+		group.addString(key, get(), this::set, defaultValue, pattern)
+				.setCanEdit(enabled.getAsBoolean())
+		;
 	}
 }

@@ -34,6 +34,9 @@ public class IntValue extends NumberValue<Integer> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		group.addInt(key, get(), this::set, defaultValue, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue).fader(fader);
+		group.addInt(key, get(), this::set, defaultValue, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue)
+				.fader(fader)
+				.setCanEdit(enabled.getAsBoolean())
+		;
 	}
 }
