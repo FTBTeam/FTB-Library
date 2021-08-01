@@ -41,6 +41,8 @@ public class StringUtils {
 	private static final Pattern REPEATING_UNDERSCORE_PATTERN = Pattern.compile("_{2,}");
 	private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)[\\&\u00a7]([0-9A-FK-OR])");
 
+	public static boolean ignoreResourceLocationErrors = false;
+
 	static {
 		DOUBLE_FORMATTER_00.setRoundingMode(RoundingMode.DOWN);
 		DOUBLE_FORMATTER_0.setRoundingMode(RoundingMode.DOWN);
