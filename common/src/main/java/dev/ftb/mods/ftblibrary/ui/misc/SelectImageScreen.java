@@ -41,7 +41,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 			for (ResourceLocation rl : Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.endsWith(".png"))) {
 				if (!ResourceLocation.isValidResourceLocation(rl.toString())) {
 					FTBLibrary.LOGGER.warn("Image " + rl + " has invalid path! Report this to author of '" + rl.getNamespace() + "'!");
-				} else {
+				} else if (isValidImage(rl)) {
 					images.add(rl);
 				}
 			}
@@ -54,22 +54,28 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		images.sort(null);
 	}
 
+	public boolean allowNone() {
+		return true;
+	}
+
+	public boolean isValidImage(ResourceLocation id) {
+		return !id.getPath().startsWith("textures/font/");
+	}
+
 	@Override
 	public void addButtons(Panel panel) {
-		panel.add(new SimpleTextButton(panel, new TextComponent("None"), Icon.EMPTY) {
-			@Override
-			public void onClicked(MouseButton mouseButton) {
-				playClickSound();
-				imageConfig.setCurrentValue("");
-				callback.save(true);
-			}
-		});
+		if (allowNone()) {
+			panel.add(new SimpleTextButton(panel, new TextComponent("None"), Icon.EMPTY) {
+				@Override
+				public void onClicked(MouseButton mouseButton) {
+					playClickSound();
+					imageConfig.setCurrentValue("");
+					callback.save(true);
+				}
+			});
+		}
 
 		for (ResourceLocation res : images) {
-			if (res.getPath().startsWith("textures/font/")) {
-				continue;
-			}
-
 			panel.add(new SimpleTextButton(panel, new TextComponent("").append(new TextComponent(res.getNamespace()).withStyle(ChatFormatting.GOLD)).append(":").append(new TextComponent(res.getPath().substring(9, res.getPath().length() - 4)).withStyle(ChatFormatting.YELLOW)), Icon.getIcon(res.toString())) {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
