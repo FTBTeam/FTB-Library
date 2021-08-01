@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
@@ -45,7 +46,7 @@ public class FTBLibraryCommands {
 	}
 
 	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection type) {
-		dispatcher.register(Commands.literal("ftblibrary")
+		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("ftblibrary")
 				.requires(commandSource -> commandSource.hasPermission(2))
 				.then(Commands.literal("gamemode")
 						.executes(context -> {
@@ -185,8 +186,18 @@ public class FTBLibraryCommands {
 									player.getItemInHand(InteractionHand.MAIN_HAND).save(tag);
 								}))
 						)
-				)
-		);
+				);
+
+		if (Platform.isDevelopmentEnvironment()) {
+			command.then(Commands.literal("test_screen")
+					.executes(context -> {
+						FTBLibrary.PROXY.testScreen();
+						return 1;
+					})
+			);
+		}
+
+		dispatcher.register(command);
 	}
 
 	private static void addInfo(ListTag list, Component key, Component value) {

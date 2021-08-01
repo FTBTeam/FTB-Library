@@ -1,5 +1,9 @@
 package dev.ftb.mods.ftblibrary;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.config.ImageConfig;
+import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.icon.AtlasSpriteIcon;
 import dev.ftb.mods.ftblibrary.icon.IconPresets;
 import dev.ftb.mods.ftblibrary.icon.IconRenderer;
@@ -48,10 +52,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 
 		TextureStitchEvent.PRE.register(this::textureStitch);
 		GuiEvent.INIT_POST.register(this::guiInit);
-		GuiEvent.RENDER_PRE.register((screen, matrices, mouseX, mouseY, delta) -> {
-			renderTick();
-			return InteractionResult.PASS;
-		});
+		GuiEvent.RENDER_PRE.register(this::renderTick);
 		ClientTickEvent.CLIENT_POST.register(this::clientTick);
 
 		ReloadListeners.registerReloadListener(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
@@ -77,12 +78,14 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		}
 	}
 
-	private void renderTick() {
+	private InteractionResult renderTick(Screen screen, PoseStack matrices, int mouseX, int mouseY, float delta) {
 		if (!ICON_RENDERERS.isEmpty()) {
 			for (IconRenderer<?> iconRenderer : ICON_RENDERERS) {
 				iconRenderer.render();
 			}
 		}
+
+		return InteractionResult.PASS;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -116,5 +119,14 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		}
 
 		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.groups.isEmpty();
+	}
+
+	@Override
+	public void testScreen() {
+		ConfigGroup group = new ConfigGroup("");
+		group.add("image", new ImageConfig(), "", v -> {
+		}, "");
+
+		new EditConfigScreen(group).openGuiLater();
 	}
 }

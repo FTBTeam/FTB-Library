@@ -15,6 +15,8 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,20 +38,23 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		images = new ArrayList<>();
 
 		StringUtils.ignoreResourceLocationErrors = true;
+		Collection<ResourceLocation> textures = Collections.emptyList();
 
 		try {
-			for (ResourceLocation rl : Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.endsWith(".png"))) {
-				if (!ResourceLocation.isValidResourceLocation(rl.toString())) {
-					FTBLibrary.LOGGER.warn("Image " + rl + " has invalid path! Report this to author of '" + rl.getNamespace() + "'!");
-				} else if (isValidImage(rl)) {
-					images.add(rl);
-				}
-			}
+			textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.endsWith(".png"));
 		} catch (Exception ex) {
 			FTBLibrary.LOGGER.error("A mod has broken resource preventing this list from loading: " + ex);
 		}
 
 		StringUtils.ignoreResourceLocationErrors = false;
+
+		for (ResourceLocation rl : textures) {
+			if (!ResourceLocation.isValidResourceLocation(rl.toString())) {
+				FTBLibrary.LOGGER.warn("Image " + rl + " has invalid path! Report this to author of '" + rl.getNamespace() + "'!");
+			} else if (isValidImage(rl)) {
+				images.add(rl);
+			}
+		}
 
 		images.sort(null);
 	}
