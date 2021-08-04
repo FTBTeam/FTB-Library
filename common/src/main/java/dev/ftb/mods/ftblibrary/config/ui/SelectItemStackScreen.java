@@ -257,6 +257,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		public ThreadItemList() {
 			super("Item Search Thread");
+			setContextClassLoader(SelectItemStackScreen.class.getClassLoader());
 			setDaemon(true);
 			search = searchBox.getText().toLowerCase();
 		}
