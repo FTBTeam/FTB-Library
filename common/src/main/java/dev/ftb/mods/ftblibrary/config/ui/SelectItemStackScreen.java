@@ -1,6 +1,9 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Stopwatch;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.IntConfig;
 import dev.ftb.mods.ftblibrary.config.ItemStackConfig;
@@ -40,17 +43,29 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author LatvianModder
  */
 public class SelectItemStackScreen extends BaseScreen {
+
+	public static final ExecutorService ITEM_SEARCH = Executors.newSingleThreadExecutor(task -> {
+		Thread thread = new Thread(task, "FTBLibrary-ItemSearch");
+		thread.setDaemon(true);
+		return thread;
+	});
+
 	private static boolean allItems = true;
+	private static List<ItemStack> allItemsCache = null;
 
 	private class ItemStackButton extends Button {
 		private final ItemStack stack;
@@ -128,9 +143,9 @@ public class SelectItemStackScreen extends BaseScreen {
 			super.addMouseOverText(list);
 
 			if (allItems) {
-				list.add(new TranslatableComponent("ftblibrary.select_item.list_mode.all").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + (panelStacks.widgets.size() - 1) + "]").withStyle(ChatFormatting.DARK_GRAY)));
+				list.add(new TranslatableComponent("ftblibrary.select_item.list_mode.all").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + panelStacks.widgets.size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
 			} else {
-				list.add(new TranslatableComponent("ftblibrary.select_item.list_mode.inv").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + (panelStacks.widgets.size() - 1) + "]").withStyle(ChatFormatting.DARK_GRAY)));
+				list.add(new TranslatableComponent("ftblibrary.select_item.list_mode.inv").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + panelStacks.widgets.size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
 			}
 		}
 
@@ -252,67 +267,67 @@ public class SelectItemStackScreen extends BaseScreen {
 		}
 	}
 
-	private class ThreadItemList extends Thread {
-		private final String search;
+	public List<Widget> getItems(String search, Panel panel) {
+		List<ItemStack> items;
+		Stopwatch timer = Stopwatch.createStarted();
 
-		public ThreadItemList() {
-			super("Item Search Thread");
-			setContextClassLoader(SelectItemStackScreen.class.getClassLoader());
-			setDaemon(true);
-			search = searchBox.getText().toLowerCase();
-		}
-
-		@Override
-		public void run() {
-			List<Widget> widgets = new ArrayList<>();
-			NonNullList<ItemStack> list = NonNullList.create();
-
-			if (allItems) {
+		if (allItems) {
+			if (allItemsCache == null) {
+				items = new ArrayList<>(Registry.ITEM.keySet().size() + 100);
 				for (Item item : Registry.ITEM) {
-					item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+					NonNullList<ItemStack> list = NonNullList.create();
+					CreativeModeTab category = item.getItemCategory();
+					item.fillItemCategory(MoreObjects.firstNonNull(category, CreativeModeTab.TAB_SEARCH), list);
+					if (list.isEmpty()) {
+						allItemsCache.add(item.getDefaultInstance());
+						continue;
+					}
+					items.addAll(list);
 				}
-
-				list.add(new ItemStack(Blocks.COMMAND_BLOCK));
-				list.add(new ItemStack(Blocks.BARRIER));
-				list.add(new ItemStack(Blocks.STRUCTURE_VOID));
+				allItemsCache = items;
 			} else {
-				for (int i = 0; i < Minecraft.getInstance().player.inventory.getContainerSize(); i++) {
-					ItemStack stack = Minecraft.getInstance().player.inventory.getItem(i);
-
-					if (!stack.isEmpty()) {
-						list.add(stack);
-					}
-				}
+				items = allItemsCache;
 			}
+		} else {
+			int inv = Minecraft.getInstance().player.inventory.getContainerSize();
+			items = new ArrayList<>(inv);
+			for (int i = 0; i < inv; i++) {
+				ItemStack stack = Minecraft.getInstance().player.inventory.getItem(i);
 
-			String mod = "";
-
-			if (search.startsWith("@")) {
-				mod = search.substring(1);
-			}
-
-			ItemStackButton button = new ItemStackButton(panelStacks, ItemStack.EMPTY);
-
-			if (config.allowEmpty && button.shouldAdd(search, mod)) {
-				widgets.add(new ItemStackButton(panelStacks, ItemStack.EMPTY));
-			}
-
-			for (ItemStack stack : list) {
 				if (!stack.isEmpty()) {
-					button = new ItemStackButton(panelStacks, stack);
-
-					if (button.shouldAdd(search, mod)) {
-						widgets.add(button);
-					}
+					items.add(stack);
 				}
 			}
-
-			for (int i = 0; i < widgets.size(); i++) {
-				widgets.get(i).setPos(1 + (i % 9) * 19, 1 + (i / 9) * 19);
-			}
-
-			newStackWidgets = widgets;
 		}
+
+		List<Widget> widgets = new ArrayList<>(search.isEmpty() ? items.size() + 1 : 64);
+
+		String mod = "";
+
+		if (search.startsWith("@")) {
+			mod = search.substring(1);
+		}
+
+		ItemStackButton button = new ItemStackButton(panel, ItemStack.EMPTY);
+
+		if (config.allowEmpty && button.shouldAdd(search, mod)) {
+			widgets.add(new ItemStackButton(panel, ItemStack.EMPTY));
+		}
+
+		for (ItemStack stack : items) {
+			if (!stack.isEmpty()) {
+				button = new ItemStackButton(panel, stack);
+
+				if (button.shouldAdd(search, mod)) {
+					widgets.add(button);
+					int j = widgets.size() - 1;
+					button.setPos(1 + (j % 9) * 19, 1 + (j / 9) * 19);
+				}
+			}
+		}
+
+		FTBLibrary.LOGGER.info("Done updating item list in {}μs!", timer.stop().elapsed(TimeUnit.MICROSECONDS));
+		return widgets;
 	}
 
 	private final ItemStackConfig config;
@@ -323,8 +338,6 @@ public class SelectItemStackScreen extends BaseScreen {
 	private final PanelScrollBar scrollBar;
 	private final TextBox searchBox;
 	private final Panel tabs;
-	private ThreadItemList threadItemList;
-	private List<Widget> newStackWidgets;
 	public long update = Long.MAX_VALUE;
 
 	public SelectItemStackScreen(ItemStackConfig c, ConfigCallback cb) {
@@ -369,7 +382,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		panelStacks = new BlankPanel(this) {
 			@Override
 			public void addWidgets() {
-				update = System.currentTimeMillis() + 200L;
+				update = System.currentTimeMillis() + 100L;
 			}
 
 			@Override
@@ -420,8 +433,16 @@ public class SelectItemStackScreen extends BaseScreen {
 		};
 
 		tabs.setPosAndSize(-19, 8, 20, 0);
-		threadItemList = new ThreadItemList();
-		threadItemList.start();
+
+		updateItemWidgets(Collections.emptyList());
+	}
+
+	private void updateItemWidgets(List<Widget> items) {
+		panelStacks.widgets.clear();
+		panelStacks.addAll(items);
+		scrollBar.setPosAndSize(panelStacks.posX + panelStacks.width + 6, panelStacks.posY - 1, 16, panelStacks.height + 2);
+		scrollBar.setValue(0);
+		scrollBar.setMaxValue(1 + Mth.ceil(panelStacks.widgets.size() / 9F) * 19);
 	}
 
 	@Override
@@ -437,18 +458,6 @@ public class SelectItemStackScreen extends BaseScreen {
 	@Override
 	public void onClosed() {
 		super.onClosed();
-		stopSearch();
-	}
-
-	private void stopSearch() {
-		if (threadItemList != null) {
-			try {
-				threadItemList.interrupt();
-			} catch (Exception ignored) {
-			}
-		}
-
-		threadItemList = null;
 	}
 
 	@Override
@@ -465,22 +474,12 @@ public class SelectItemStackScreen extends BaseScreen {
 	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		super.drawBackground(matrixStack, theme, x, y, w, h);
 
-		if (newStackWidgets != null) {
-			panelStacks.widgets.clear();
-			panelStacks.addAll(newStackWidgets);
-			scrollBar.setPosAndSize(panelStacks.posX + panelStacks.width + 6, panelStacks.posY - 1, 16, panelStacks.height + 2);
-			scrollBar.setValue(0);
-			scrollBar.setMaxValue(1 + Mth.ceil(panelStacks.widgets.size() / 9F) * 19);
-			newStackWidgets = null;
-		}
-
 		long now = System.currentTimeMillis();
 
 		if (now >= update) {
 			update = Long.MAX_VALUE;
-			stopSearch();
-			threadItemList = new ThreadItemList();
-			threadItemList.start();
+			CompletableFuture.supplyAsync(() -> this.getItems(searchBox.getText().toLowerCase(), panelStacks), ITEM_SEARCH)
+					.thenAcceptAsync(this::updateItemWidgets, Minecraft.getInstance());
 		}
 	}
 
