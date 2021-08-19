@@ -70,6 +70,6 @@ public class REIIntegration implements REIPluginV0 {
 	};
 
 	static {
-		SelectItemStackScreen.modes.add(1, REI_ITEMS);
+		SelectItemStackScreen.modes.add(0, REI_ITEMS);
 	}
 }

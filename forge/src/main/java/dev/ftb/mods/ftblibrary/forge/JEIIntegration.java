@@ -96,6 +96,6 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 	};
 
 	static {
-		SelectItemStackScreen.modes.add(1, JEI_ITEMS);
+		SelectItemStackScreen.modes.add(0, JEI_ITEMS);
 	}
 }
