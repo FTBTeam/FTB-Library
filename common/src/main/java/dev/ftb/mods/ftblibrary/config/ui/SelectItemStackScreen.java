@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Iterators;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
@@ -32,20 +32,19 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -64,8 +63,14 @@ public class SelectItemStackScreen extends BaseScreen {
 		return thread;
 	});
 
-	private static boolean allItems = true;
-	private static List<ItemStack> allItemsCache = null;
+	public static final List<ItemSearchMode> modes = new ArrayList<>();
+
+	static {
+		modes.add(ItemSearchMode.ALL_ITEMS);
+		modes.add(ItemSearchMode.INVENTORY);
+	}
+
+	private static ItemSearchMode activeMode = null;
 
 	private class ItemStackButton extends Button {
 		private final ItemStack stack;
@@ -121,16 +126,16 @@ public class SelectItemStackScreen extends BaseScreen {
 	}
 
 	private class ButtonSwitchMode extends Button {
-		private final Icon ICON_ALL = ItemIcon.getItemIcon(Items.COMPASS);
-		private final Icon ICON_INV = ItemIcon.getItemIcon(Items.CHEST);
+		private final Iterator<ItemSearchMode> modeIterator = Iterators.cycle(modes);
 
 		public ButtonSwitchMode(Panel panel) {
 			super(panel);
+			activeMode = modeIterator.next();
 		}
 
 		@Override
 		public void drawIcon(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			(allItems ? ICON_ALL : ICON_INV).draw(matrixStack, x, y, w, h);
+			activeMode.getIcon().draw(matrixStack, x, y, w, h);
 		}
 
 		@Override
@@ -141,18 +146,13 @@ public class SelectItemStackScreen extends BaseScreen {
 		@Override
 		public void addMouseOverText(TooltipList list) {
 			super.addMouseOverText(list);
-
-			if (allItems) {
-				list.add(new TranslatableComponent("ftblibrary.select_item.list_mode.all").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + panelStacks.widgets.size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
-			} else {
-				list.add(new TranslatableComponent("ftblibrary.select_item.list_mode.inv").withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + panelStacks.widgets.size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
-			}
+			list.add(activeMode.getDisplayName().withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + panelStacks.widgets.size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
 		}
 
 		@Override
 		public void onClicked(MouseButton button) {
 			playClickSound();
-			allItems = !allItems;
+			activeMode = modeIterator.next();
 			panelStacks.refreshWidgets();
 		}
 	}
@@ -268,38 +268,14 @@ public class SelectItemStackScreen extends BaseScreen {
 	}
 
 	public List<Widget> getItems(String search, Panel panel) {
-		List<ItemStack> items;
 		Stopwatch timer = Stopwatch.createStarted();
 
-		if (allItems) {
-			if (allItemsCache == null) {
-				items = new ArrayList<>(Registry.ITEM.keySet().size() + 100);
-				for (Item item : Registry.ITEM) {
-					NonNullList<ItemStack> list = NonNullList.create();
-					CreativeModeTab category = item.getItemCategory();
-					item.fillItemCategory(MoreObjects.firstNonNull(category, CreativeModeTab.TAB_SEARCH), list);
-					if (list.isEmpty()) {
-						items.add(item.getDefaultInstance());
-						continue;
-					}
-					items.addAll(list);
-				}
-				allItemsCache = items;
-			} else {
-				items = allItemsCache;
-			}
-		} else {
-			int inv = Minecraft.getInstance().player.inventory.getContainerSize();
-			items = new ArrayList<>(inv);
-			for (int i = 0; i < inv; i++) {
-				ItemStack stack = Minecraft.getInstance().player.inventory.getItem(i);
-
-				if (!stack.isEmpty()) {
-					items.add(stack);
-				}
-			}
+		// sanity check, just in case
+		if (activeMode == null) {
+			return Collections.emptyList();
 		}
 
+		Collection<ItemStack> items = activeMode.getAllItems();
 		List<Widget> widgets = new ArrayList<>(search.isEmpty() ? items.size() + 1 : 64);
 
 		String mod = "";
