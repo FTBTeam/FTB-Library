@@ -279,7 +279,7 @@ public class SelectItemStackScreen extends BaseScreen {
 					CreativeModeTab category = item.getItemCategory();
 					item.fillItemCategory(MoreObjects.firstNonNull(category, CreativeModeTab.TAB_SEARCH), list);
 					if (list.isEmpty()) {
-						allItemsCache.add(item.getDefaultInstance());
+						items.add(item.getDefaultInstance());
 						continue;
 					}
 					items.addAll(list);
