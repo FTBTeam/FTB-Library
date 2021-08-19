@@ -15,14 +15,17 @@ import me.shedaniel.rei.api.plugins.REIPluginV0;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -62,7 +65,7 @@ public class REIIntegration implements REIPluginV0 {
 			return EntryRegistry.getInstance().getEntryStacks()
 					.map(EntryStack::getItemStack)
 					.filter(Objects::nonNull)
-					.collect(Collectors.toSet());
+					.collect(Collectors.toCollection(LinkedHashSet::new));
 		}
 	};
 
