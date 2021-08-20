@@ -16,17 +16,17 @@ import net.minecraft.world.item.ItemStack;
 /**
  * @author LatvianModder
  */
-public class ScreenContainerWrapper extends AbstractContainerScreen implements IScreenWrapper {
+public class MenuScreenWrapper<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements IScreenWrapper {
 	private final BaseScreen wrappedGui;
 	private boolean drawSlots = true;
 	private final TooltipList tooltipList = new TooltipList();
 
-	public ScreenContainerWrapper(BaseScreen g, AbstractContainerMenu c, Inventory playerInventory, Component title) {
+	public MenuScreenWrapper(BaseScreen g, T c, Inventory playerInventory, Component title) {
 		super(c, playerInventory, title);
 		wrappedGui = g;
 	}
 
-	public ScreenContainerWrapper disableSlotDrawing() {
+	public MenuScreenWrapper<T> disableSlotDrawing() {
 		drawSlots = false;
 		return this;
 	}

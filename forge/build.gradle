@@ -25,6 +25,16 @@ dependencies {
 
 	modImplementation("curse.maven:jei-238222:${rootProject.jei_file}")
 
+	/*modImplementation("dev.ftb.mods:ftb-teams-forge:1605.2.1-build.13") {
+		transitive = false
+	}
+	modImplementation("dev.latvian.mods:item-filters-forge:1605.2.5-build.4") {
+		transitive = false
+	}
+	modImplementation("dev.ftb.mods:ftb-quests-forge:1605.3.3-build.49") {
+		transitive = false
+	}*/
+
 	implementation(project(path: ":common")) {
 		transitive = false
 	}

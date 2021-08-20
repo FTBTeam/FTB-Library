@@ -334,14 +334,10 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 		return contextMenu == null;
 	}
 
-	public Screen getWrapper() {
-		return new ScreenWrapper(this);
-	}
-
 	@Override
 	public final void openGui() {
 		openContextMenu((Panel) null);
-		Minecraft.getInstance().setScreen(getWrapper());
+		Minecraft.getInstance().setScreen(new ScreenWrapper(this));
 	}
 
 	@Override
