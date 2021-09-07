@@ -151,7 +151,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 				}
 			}
 		} else {
-			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), 0, theme.getFont());
+			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}
 
 		tooltipList.reset();
