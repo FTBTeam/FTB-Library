@@ -31,6 +31,9 @@ public class TooltipList {
 	public int backgroundColor = 0xF0100010;
 	public int borderColorStart = 0x505000FF;
 	public int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
+	public int maxWidth = 0;
+	public int xOffset = 0;
+	public int yOffset = 0;
 
 	public boolean shouldRender() {
 		return !lines.isEmpty();
@@ -43,6 +46,9 @@ public class TooltipList {
 		backgroundColor = 0xF0100010;
 		borderColorStart = 0x505000FF;
 		borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
+		maxWidth = 0;
+		xOffset = 0;
+		yOffset = 0;
 	}
 
 	public void add(Component component) {
@@ -74,7 +80,10 @@ public class TooltipList {
 	}
 
 	@Environment(EnvType.CLIENT)
-	public void render(PoseStack mStack, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, Font font) {
+	public void render(PoseStack mStack, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font) {
+		mouseX += xOffset;
+		mouseY += yOffset;
+
 		List<FormattedCharSequence> textLines = new ArrayList<>(lines.size());
 
 		for (Component component : lines) {
@@ -109,8 +118,8 @@ public class TooltipList {
 			}
 		}
 
-		if (maxTextWidth > 0 && tooltipTextWidth > maxTextWidth) {
-			tooltipTextWidth = maxTextWidth;
+		if (maxWidth > 0 && tooltipTextWidth > maxWidth) {
+			tooltipTextWidth = maxWidth;
 			needsWrap = true;
 		}
 
