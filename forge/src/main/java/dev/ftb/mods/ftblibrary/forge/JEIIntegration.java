@@ -6,6 +6,8 @@ import dev.ftb.mods.ftblibrary.config.ui.ItemSearchMode;
 import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
+import dev.ftb.mods.ftblibrary.item.FTBLibraryItems;
+import dev.ftb.mods.ftblibrary.item.forge.FluidContainerItem;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
@@ -14,6 +16,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
+import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,18 +34,22 @@ import java.util.Collections;
 
 @JeiPlugin
 public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
-
 	public static IJeiRuntime runtime = null;
 
 	@Override
-	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
-		runtime = jeiRuntime;
+	public void onRuntimeAvailable(IJeiRuntime r) {
+		runtime = r;
 	}
 
 	@Override
 	@NotNull
 	public ResourceLocation getPluginUid() {
 		return new ResourceLocation(FTBLibrary.MOD_ID, "jei");
+	}
+
+	@Override
+	public void registerItemSubtypes(ISubtypeRegistration registration) {
+		registration.registerSubtypeInterpreter(FTBLibraryItems.FLUID_CONTAINER.get(), FluidContainerItem::getFluidStackHash);
 	}
 
 	@Override
