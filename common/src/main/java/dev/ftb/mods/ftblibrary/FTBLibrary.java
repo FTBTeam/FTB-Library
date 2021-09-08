@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary;
 
+import dev.ftb.mods.ftblibrary.item.FTBLibraryItems;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
@@ -22,10 +23,11 @@ public class FTBLibrary {
 		PROXY = EnvExecutor.getEnvSpecific(() -> FTBLibraryClient::new, () -> FTBLibraryCommon::new);
 		CommandRegistrationEvent.EVENT.register(FTBLibraryCommands::registerCommands);
 		FTBLibraryNet.init();
-		PROXY.init();
 		LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
 		LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
 		PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
+		FTBLibraryItems.init();
+		PROXY.init();
 	}
 
 	private void serverStarted(MinecraftServer server) {

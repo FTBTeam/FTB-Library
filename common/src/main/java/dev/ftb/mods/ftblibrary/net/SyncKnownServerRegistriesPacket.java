@@ -1,12 +1,12 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.ftb.mods.ftblibrary.net.snm.BaseS2CPacket;
-import dev.ftb.mods.ftblibrary.net.snm.PacketID;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
 import me.shedaniel.architectury.networking.NetworkManager;
+import me.shedaniel.architectury.networking.simple.BaseS2CMessage;
+import me.shedaniel.architectury.networking.simple.MessageType;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class SyncKnownServerRegistriesPacket extends BaseS2CPacket {
+public class SyncKnownServerRegistriesPacket extends BaseS2CMessage {
 	private final KnownServerRegistries knownServerRegistries;
 
 	public SyncKnownServerRegistriesPacket(FriendlyByteBuf buf) {
@@ -18,7 +18,7 @@ public class SyncKnownServerRegistriesPacket extends BaseS2CPacket {
 	}
 
 	@Override
-	public PacketID getId() {
+	public MessageType getType() {
 		return FTBLibraryNet.SYNC_KNOWN_SERVER_REGISTRIES;
 	}
 

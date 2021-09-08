@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "ftblibrary:item/fluid_container_base",
+		"layer1": "ftblibrary:item/fluid_container_overlay"
+	}
+}
