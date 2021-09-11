@@ -52,6 +52,10 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 					}
 				}
 
+				if (width > ButtonListBaseScreen.this.width - 40) {
+					width = ButtonListBaseScreen.this.width - 40;
+				}
+
 				if (hasSearchBox) {
 					setWidth(Math.max(width, prevWidth));
 				}
