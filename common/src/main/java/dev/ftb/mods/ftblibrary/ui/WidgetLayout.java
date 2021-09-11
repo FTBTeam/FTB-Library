@@ -29,6 +29,7 @@ public interface WidgetLayout {
 				i -= spacing;
 			}
 
+			panel.contentHeightExtra = pre + post;
 			return i + post;
 		}
 	}
@@ -55,6 +56,7 @@ public interface WidgetLayout {
 				i -= spacing;
 			}
 
+			panel.contentWidthExtra = pre + post;
 			return i + post;
 		}
 	}
