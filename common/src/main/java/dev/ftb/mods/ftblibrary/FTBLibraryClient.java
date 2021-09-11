@@ -123,7 +123,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 
 	@Override
 	public void testScreen() {
-		ConfigGroup group = new ConfigGroup("");
+		ConfigGroup group = new ConfigGroup("test");
 		group.add("image", new ImageConfig(), "", v -> {
 		}, "");
 
