@@ -28,6 +28,7 @@ public abstract class NordButton extends SimpleTextButton {
 		int s = h >= 20 ? 16 : 8;
 		int off = (h - s) / 2;
 		FormattedText title = getTitle();
+		int textX = x;
 		int textY = y + (h - theme.getFontHeight() + 1) / 2;
 		int sw = theme.getStringWidth(title);
 		int mw = w - (hasIcon() ? off + s : 0) - 6;
@@ -37,7 +38,11 @@ public abstract class NordButton extends SimpleTextButton {
 			title = theme.trimStringToWidth(title, mw);
 		}
 
-		int textX = x + 4;
+		if (renderTitleInCenter()) {
+			textX += (mw - sw + 6) / 2;
+		} else {
+			textX += 4;
+		}
 
 		if (hasIcon()) {
 			drawIcon(matrixStack, theme, x + off, y + off, s, s);
