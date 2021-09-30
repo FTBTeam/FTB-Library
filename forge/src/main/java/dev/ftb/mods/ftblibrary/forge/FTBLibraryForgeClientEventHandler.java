@@ -32,7 +32,13 @@ public class FTBLibraryForgeClientEventHandler {
 				Integer c = fluidColorCache.get(new FluidKey(fluidStack));
 
 				if (c == null) {
-					c = calculateFluidColor(fluidStack);
+					try {
+						c = calculateFluidColor(fluidStack);
+					} catch (Exception ex) {
+						FTBLibrary.LOGGER.warn("Failed to get color from fluid " + fluidStack.getDisplayName().getString());
+						c = 0xFFFF00FF;
+					}
+
 					fluidColorCache.put(new FluidKey(fluidStack.copy()), c);
 				}
 
