@@ -27,6 +27,8 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	@Override
 	public void write(SNBTCompoundTag tag) {
 		if (parent == null) {
+			tag.comment("", String.join("\n", comment));
+
 			defaultValue.sort(null);
 
 			for (BaseValue<?> value : defaultValue) {
@@ -113,14 +115,16 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	}
 
 	public void save(Path path) {
+		Util.ioPool().execute(() -> saveNow(path));
+	}
+
+	public void saveNow(Path path) {
 		if (parent != null) {
-			parent.save(path);
+			parent.saveNow(path);
 		} else {
-			Util.ioPool().execute(() -> {
-				SNBTCompoundTag tag = new SNBTCompoundTag();
-				write(tag);
-				SNBT.write(path, tag);
-			});
+			SNBTCompoundTag tag = new SNBTCompoundTag();
+			write(tag);
+			SNBT.write(path, tag);
 		}
 	}
 

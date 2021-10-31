@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class SNBTConfigTest {
 	public interface General {
-		SNBTConfig CONFIG = SNBTConfig.create("ftblibrary");
+		SNBTConfig CONFIG = SNBTConfig.create("ftblibrary").comment("Config test", "Line two");
 		BooleanValue TEST_1 = CONFIG.getBoolean("test_1", true);
 		BooleanValue TEST_2 = CONFIG.getBoolean("test_2", true).comment("Boolean test 2");
 		BooleanValue TEST_3 = CONFIG.getBoolean("test 3", false).comment("Boolean test 3");
