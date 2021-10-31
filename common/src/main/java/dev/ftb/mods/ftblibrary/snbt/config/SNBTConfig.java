@@ -11,9 +11,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 import net.minecraft.network.FriendlyByteBuf;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	public static SNBTConfig create(String name) {
@@ -126,6 +129,24 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 			write(tag);
 			SNBT.write(path, tag);
 		}
+	}
+
+	public void load(Path path, Path defaultPath, Supplier<String[]> comment) {
+		if (Files.exists(defaultPath)) {
+			if (!Files.exists(path)) {
+				try {
+					Files.copy(defaultPath, path);
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+		} else {
+			SNBTConfig defaultConfigFile = SNBTConfig.create(key);
+			defaultConfigFile.comment(comment.get());
+			defaultConfigFile.save(defaultPath);
+		}
+
+		load(path);
 	}
 
 	public <T extends BaseValue<?>> T add(T value) {
