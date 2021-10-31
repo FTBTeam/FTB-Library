@@ -45,6 +45,19 @@ public class SNBT {
 
 	public static List<String> writeLines(CompoundTag nbt) {
 		SNBTBuilder builder = new SNBTBuilder();
+
+		SNBTTagProperties rootProperties = nbt instanceof SNBTCompoundTag ? ((SNBTCompoundTag) nbt).getProperties("") : SNBTTagProperties.DEFAULT;
+
+		if (!rootProperties.comment.isEmpty()) {
+			for (String s : rootProperties.comment.split("\n")) {
+				builder.print("# ");
+				builder.print(s);
+				builder.println();
+			}
+
+			builder.println();
+		}
+
 		append(builder, nbt);
 		builder.println();
 		return builder.lines;
