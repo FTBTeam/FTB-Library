@@ -38,7 +38,7 @@ public class FaceIcon extends Icon {
 			if (type == MinecraftProfileTexture.Type.SKIN) {
 				skin = new ImageIcon(resourceLocation);
 				head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
-				hat = skin.withUV(8F, 40F, 8F, 8F, 64F, 64F);
+				hat = skin.withUV(40F, 8F, 8F, 8F, 64F, 64F);
 			}
 		}, true);
 	}
