@@ -26,6 +26,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +55,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+		if (ModList.get().isLoaded("roughlyenoughitems")) return;
 		registration.addGlobalGuiHandler(this);
 	}
 
