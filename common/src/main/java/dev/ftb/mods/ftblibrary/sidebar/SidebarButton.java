@@ -29,6 +29,7 @@ public class SidebarButton implements Comparable<SidebarButton> {
 	private static final BooleanSupplier NEI_NOT_LOADED = () -> !Platform.isModLoaded("notenoughitems");
 
 	public final ResourceLocation id;
+	public final JsonObject json;
 	public final SidebarButtonGroup group;
 	private Icon icon = Icon.EMPTY;
 	private int x = 0;
@@ -44,6 +45,7 @@ public class SidebarButton implements Comparable<SidebarButton> {
 	public SidebarButton(ResourceLocation _id, SidebarButtonGroup g, JsonObject json) {
 		group = g;
 		id = _id;
+		this.json = json;
 
 		if (json.has("icon")) {
 			icon = Icon.getIcon(json.get("icon"));

@@ -17,6 +17,7 @@ import me.shedaniel.architectury.event.events.GuiEvent;
 import me.shedaniel.architectury.event.events.TextureStitchEvent;
 import me.shedaniel.architectury.event.events.client.ClientTickEvent;
 import me.shedaniel.architectury.hooks.ScreenHooks;
+import me.shedaniel.architectury.platform.Platform;
 import me.shedaniel.architectury.registry.ReloadListeners;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -114,6 +115,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	}
 
 	public static boolean areButtonsVisible(@Nullable Screen gui) {
+		if (Platform.isForge() && Platform.isModLoaded("roughlyenoughitems")) return false;
 		if (showButtons == 0 || showButtons == 2 && !(gui instanceof EffectRenderingInventoryScreen)) {
 			return false;
 		}
