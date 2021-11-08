@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import me.shedaniel.architectury.annotations.ExpectPlatform;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.network.chat.Component;
 
 public class TextComponentUtils {

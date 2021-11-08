@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.item;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import me.shedaniel.architectury.annotations.ExpectPlatform;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.shedaniel.architectury.registry.Registries;
 import me.shedaniel.architectury.registry.Registry;
 import net.minecraft.resources.ResourceLocation;
