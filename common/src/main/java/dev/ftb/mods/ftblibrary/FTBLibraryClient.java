@@ -41,11 +41,21 @@ import java.util.function.Consumer;
  */
 public class FTBLibraryClient extends FTBLibraryCommon {
 	public static final List<IconRenderer<?>> ICON_RENDERERS = new ArrayList<>();
+	/**
+	 * Meaning of the different values: 0 = No, 1 = Yes, 2 = Only in inventory, 3 = Managed by integration
+	 * (should this be an enum instead at this point?)
+	 */
 	public static int showButtons = 1;
 	public CursorType lastCursorType = null;
 
 	@Override
 	public void init() {
+		// when using REI >= 6, disable the regular sidebar buttons,
+		// we'll be using REI's system favourites instead.
+		if (Platform.isModLoaded("roughlyenoughitems") && !Platform.getMod("roughlyenoughitems").getVersion().startsWith("5.")) {
+			showButtons = 3;
+		}
+
 		// Datagens hahayes
 		if (Minecraft.getInstance() == null) {
 			return;
@@ -115,8 +125,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	}
 
 	public static boolean areButtonsVisible(@Nullable Screen gui) {
-		if (Platform.isForge() && Platform.isModLoaded("roughlyenoughitems")) return false;
-		if (showButtons == 0 || showButtons == 2 && !(gui instanceof EffectRenderingInventoryScreen)) {
+		if (showButtons == 0 || showButtons == 2 && !(gui instanceof EffectRenderingInventoryScreen) || showButtons == 3) {
 			return false;
 		}
 

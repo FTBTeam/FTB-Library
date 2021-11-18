@@ -10,7 +10,7 @@ import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
-import me.shedaniel.architectury.annotations.ExpectPlatform;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.shedaniel.architectury.fluid.FluidStack;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TranslatableComponent;

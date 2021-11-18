@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import me.shedaniel.architectury.annotations.ExpectPlatform;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
