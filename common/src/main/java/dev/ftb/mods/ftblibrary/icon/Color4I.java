@@ -5,6 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -22,7 +25,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 /**
  * @author LatvianModder
@@ -339,10 +342,10 @@ public class Color4I extends Icon {
 
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
-		RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+		RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		GuiHelper.addRectToBuffer(matrixStack, buffer, x, y, w, h, this);
 		tesselator.end();
 		RenderSystem.enableTexture();

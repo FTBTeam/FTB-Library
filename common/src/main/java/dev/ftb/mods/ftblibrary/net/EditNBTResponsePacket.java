@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.net;
 
 import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
-import me.shedaniel.architectury.networking.NetworkManager;
-import me.shedaniel.architectury.networking.simple.BaseC2SMessage;
-import me.shedaniel.architectury.networking.simple.MessageType;
+import dev.architectury.networking.NetworkManager;
+import dev.architectury.networking.simple.BaseC2SMessage;
+import dev.architectury.networking.simple.MessageType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -57,7 +57,7 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 							tag.putInt("y", pos.getY());
 							tag.putInt("z", pos.getZ());
 							tag.putString("id", info.getString("id"));
-							blockEntity.load(blockEntity.getBlockState(), tag);
+							blockEntity.load(tag);
 							blockEntity.setChanged();
 							player.level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
 						}

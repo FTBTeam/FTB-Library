@@ -1,6 +1,13 @@
 package dev.ftb.mods.ftblibrary;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.client.ClientGuiEvent;
+import dev.architectury.event.events.client.ClientTextureStitchEvent;
+import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.hooks.client.screen.ScreenAccess;
+import dev.architectury.platform.Platform;
+import dev.architectury.registry.ReloadListenerRegistry;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.ImageConfig;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
@@ -13,22 +20,13 @@ import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.util.ClientUtils;
-import me.shedaniel.architectury.event.events.GuiEvent;
-import me.shedaniel.architectury.event.events.TextureStitchEvent;
-import me.shedaniel.architectury.event.events.client.ClientTickEvent;
-import me.shedaniel.architectury.hooks.ScreenHooks;
-import me.shedaniel.architectury.platform.Platform;
-import me.shedaniel.architectury.registry.ReloadListeners;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.InteractionResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -61,12 +59,12 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 			return;
 		}
 
-		TextureStitchEvent.PRE.register(this::textureStitch);
-		GuiEvent.INIT_POST.register(this::guiInit);
-		GuiEvent.RENDER_PRE.register(this::renderTick);
+		ClientTextureStitchEvent.PRE.register(this::textureStitch);
+		ClientGuiEvent.INIT_POST.register(this::guiInit);
+		ClientGuiEvent.RENDER_PRE.register(this::renderTick);
 		ClientTickEvent.CLIENT_POST.register(this::clientTick);
 
-		ReloadListeners.registerReloadListener(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
+		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
 	}
 
 	private void textureStitch(TextureAtlas atlas, Consumer<ResourceLocation> addSprite) {
@@ -89,21 +87,21 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		}
 	}
 
-	private InteractionResult renderTick(Screen screen, PoseStack matrices, int mouseX, int mouseY, float delta) {
+	private EventResult renderTick(Screen screen, PoseStack matrices, int mouseX, int mouseY, float delta) {
 		if (!ICON_RENDERERS.isEmpty()) {
 			for (IconRenderer<?> iconRenderer : ICON_RENDERERS) {
 				iconRenderer.render();
 			}
 		}
 
-		return InteractionResult.PASS;
+		return EventResult.pass();
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void guiInit(Screen screen, List<AbstractWidget> abstractWidgets, List<GuiEventListener> guiEventListeners) {
+	private void guiInit(Screen screen, ScreenAccess access) {
 		if (areButtonsVisible(screen)) {
 			SidebarGroupGuiButton group = new SidebarGroupGuiButton((AbstractContainerScreen) screen);
-			ScreenHooks.addButton(screen, group);
+			access.addRenderableWidget(group);
 		}
 	}
 

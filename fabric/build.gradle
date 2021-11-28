@@ -27,9 +27,9 @@ dependencies {
 	modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
 	modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-	modApi "me.shedaniel:architectury-fabric:${rootProject.architectury_version}"
+	modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-	modImplementation("me.shedaniel:RoughlyEnoughItems:${rootProject.rei_version}")
+	modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}")
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

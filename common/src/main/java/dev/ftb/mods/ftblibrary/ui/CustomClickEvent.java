@@ -1,15 +1,15 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import me.shedaniel.architectury.event.Actor;
-import me.shedaniel.architectury.event.Event;
-import me.shedaniel.architectury.event.EventFactory;
+import dev.architectury.event.Event;
+import dev.architectury.event.EventActor;
+import dev.architectury.event.EventFactory;
 import net.minecraft.resources.ResourceLocation;
 
 /**
  * @author LatvianModder
  */
 public class CustomClickEvent {
-	public static final Event<Actor<CustomClickEvent>> EVENT = EventFactory.createActorLoop(CustomClickEvent.class);
+	public static final Event<EventActor<CustomClickEvent>> EVENT = EventFactory.createEventActorLoop(CustomClickEvent.class);
 
 	private final ResourceLocation id;
 

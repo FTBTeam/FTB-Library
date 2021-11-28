@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.net;
 
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
-import me.shedaniel.architectury.networking.NetworkManager;
-import me.shedaniel.architectury.networking.simple.BaseS2CMessage;
-import me.shedaniel.architectury.networking.simple.MessageType;
+import dev.architectury.networking.NetworkManager;
+import dev.architectury.networking.simple.BaseS2CMessage;
+import dev.architectury.networking.simple.MessageType;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class SyncKnownServerRegistriesPacket extends BaseS2CMessage {

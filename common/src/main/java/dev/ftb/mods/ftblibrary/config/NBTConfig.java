@@ -56,7 +56,7 @@ public class NBTConfig extends ConfigFromString<CompoundTag> {
 
 	@Override
 	public void addInfo(TooltipList list) {
-		list.add(info("Value", value == null ? "null" : value.getPrettyDisplay()));
-		list.add(info("Default", defaultValue == null ? "null" : defaultValue.getPrettyDisplay()));
+		list.add(info("Value", value == null ? "null" : value));
+		list.add(info("Default", defaultValue == null ? "null" : defaultValue));
 	}
 }

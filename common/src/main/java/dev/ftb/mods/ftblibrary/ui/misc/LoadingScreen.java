@@ -11,7 +11,7 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 /**
  * @author LatvianModder
@@ -55,7 +55,7 @@ public class LoadingScreen extends BaseScreen {
 			GlStateManager._disableTexture();
 			Tesselator tesselator = Tesselator.getInstance();
 			BufferBuilder buffer = tesselator.getBuilder();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
+			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 			GuiHelper.addRectToBuffer(matrixStack, buffer, x1, y1 + 1, 1, h1 - 2, col);
 			GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);

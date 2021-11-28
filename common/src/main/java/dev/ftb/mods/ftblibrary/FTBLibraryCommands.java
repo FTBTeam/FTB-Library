@@ -4,10 +4,10 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.architectury.platform.Mod;
+import dev.architectury.platform.Platform;
+import dev.architectury.registry.registries.Registries;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
-import me.shedaniel.architectury.platform.Mod;
-import me.shedaniel.architectury.platform.Platform;
-import me.shedaniel.architectury.registry.Registries;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -29,7 +29,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.TickingBlockEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -95,7 +95,7 @@ public class FTBLibraryCommands {
 						.then(Commands.literal("block")
 								.then(Commands.argument("pos", BlockPosArgument.blockPos())
 										.executes(context -> editNBT(context, (info, tag) -> {
-											BlockPos pos = BlockPosArgument.getOrLoadBlockPos(context, "pos");
+											BlockPos pos = BlockPosArgument.getSpawnablePos(context, "pos");
 											BlockEntity blockEntity = context.getSource().getLevel().getBlockEntity(pos);
 
 											if (blockEntity == null) {
@@ -106,7 +106,7 @@ public class FTBLibraryCommands {
 											info.putInt("x", pos.getX());
 											info.putInt("y", pos.getY());
 											info.putInt("z", pos.getZ());
-											blockEntity.save(tag);
+											tag.merge(blockEntity.saveWithFullMetadata());
 											tag.remove("x");
 											tag.remove("y");
 											tag.remove("z");
@@ -121,7 +121,7 @@ public class FTBLibraryCommands {
 											addInfo(list, new TextComponent("Block Class"), new TextComponent(blockEntity.getBlockState().getBlock().getClass().getName()));
 											addInfo(list, new TextComponent("Position"), new TextComponent("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"));
 											addInfo(list, new TextComponent("Mod"), new TextComponent(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
-											addInfo(list, new TextComponent("Ticking"), new TextComponent(blockEntity instanceof TickableBlockEntity ? "true" : "false"));
+											addInfo(list, new TextComponent("Ticking"), new TextComponent(blockEntity instanceof TickingBlockEntity ? "true" : "false"));
 											info.put("text", list);
 
 											Component title = blockEntity instanceof Nameable ? ((Nameable) blockEntity).getDisplayName() : null;

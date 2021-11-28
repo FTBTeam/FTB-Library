@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.ui.fabric;
 
-import me.shedaniel.architectury.fluid.FluidStack;
+import dev.architectury.fluid.FluidStack;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.minecraft.client.Minecraft;

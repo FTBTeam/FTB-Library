@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 /**
  * @author LatvianModder
@@ -91,7 +91,7 @@ public class ImageIcon extends Icon {
 			Matrix4f m = matrixStack.last().pose();
 			Tesselator tesselator = Tesselator.getInstance();
 			BufferBuilder buffer = tesselator.getBuilder();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 			buffer.vertex(m, x, y + h, 0).color(r, g, b, a).uv((float) (x / tileSize), (float) ((y + h) / tileSize)).endVertex();
 			buffer.vertex(m, x + w, y + h, 0).color(r, g, b, a).uv((float) ((x + w) / tileSize), (float) ((y + h) / tileSize)).endVertex();
 			buffer.vertex(m, x + w, y, 0).color(r, g, b, a).uv((float) ((x + w) / tileSize), (float) (y / tileSize)).endVertex();

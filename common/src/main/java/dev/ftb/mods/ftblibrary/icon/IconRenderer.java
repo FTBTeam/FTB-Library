@@ -5,12 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import org.lwjgl.opengl.GL12;
 
 import java.awt.Graphics2D;

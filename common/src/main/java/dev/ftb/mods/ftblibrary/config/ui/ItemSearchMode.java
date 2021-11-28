@@ -88,10 +88,10 @@ public interface ItemSearchMode {
 				return Collections.emptySet();
 			}
 
-			int inv = player.inventory.getContainerSize();
+			int inv = player.getInventory().getContainerSize();
 			List<ItemStack> items = new ArrayList<>(inv);
 			for (int i = 0; i < inv; i++) {
-				ItemStack stack = Minecraft.getInstance().player.inventory.getItem(i);
+				ItemStack stack = Minecraft.getInstance().player.getInventory().getItem(i);
 
 				if (!stack.isEmpty()) {
 					items.add(stack);

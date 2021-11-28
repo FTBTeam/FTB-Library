@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import me.shedaniel.architectury.ForgeEvent;
-import me.shedaniel.architectury.event.Event;
-import me.shedaniel.architectury.event.EventFactory;
+import dev.architectury.annotations.ForgeEvent;
+import dev.architectury.event.Event;
+import dev.architectury.event.EventFactory;
 
 import java.util.function.Consumer;
 

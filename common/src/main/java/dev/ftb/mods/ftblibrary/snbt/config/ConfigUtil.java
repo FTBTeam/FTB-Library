@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import me.shedaniel.architectury.hooks.LevelResourceHooks;
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.hooks.LevelResourceHooks;
+import dev.architectury.platform.Platform;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.nio.file.Path;

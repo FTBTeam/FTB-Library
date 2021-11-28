@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.ui.forge;
 
-import me.shedaniel.architectury.fluid.FluidStack;
+import dev.architectury.fluid.FluidStack;
 import net.minecraft.resources.ResourceLocation;
 
 public class SelectFluidScreenImpl {

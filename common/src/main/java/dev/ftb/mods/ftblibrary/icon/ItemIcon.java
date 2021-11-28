@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import me.shedaniel.architectury.registry.Registries;
+import dev.architectury.registry.registries.Registries;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;

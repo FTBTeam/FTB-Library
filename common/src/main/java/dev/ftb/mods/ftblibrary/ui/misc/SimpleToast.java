@@ -9,6 +9,7 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -27,8 +28,10 @@ public class SimpleToast implements Toast {
 	public Visibility render(PoseStack matrixStack, ToastComponent gui, long delta) {
 		GuiHelper.setupDrawing();
 		Minecraft mc = gui.getMinecraft();
-		mc.getTextureManager().bind(TEXTURE);
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
+
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, TEXTURE);
+		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		gui.blit(matrixStack, 0, 0, 0, 0, 160, 32);
 
 		List<FormattedCharSequence> list = mc.font.split(getSubtitle(), 125);

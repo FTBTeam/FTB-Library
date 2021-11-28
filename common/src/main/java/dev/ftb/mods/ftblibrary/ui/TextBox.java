@@ -1,11 +1,14 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.shaders.Shader;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -14,10 +17,10 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 public class TextBox extends Widget {
 	private boolean isFocused = false;
@@ -458,24 +461,29 @@ public class TextBox extends Widget {
 				startX = x + w;
 			}
 
-			Tesselator tesselator = Tesselator.getInstance();
-			BufferBuilder vertexbuffer = tesselator.getBuilder();
-			RenderSystem.color4f(0F, 0F, 255F, 255F);
+			// (please help)
+			BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+			RenderSystem.enableBlend();
+			RenderSystem.defaultBlendFunc();
 			RenderSystem.disableTexture();
 			RenderSystem.enableColorLogicOp();
 			RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
-			vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
-			vertexbuffer.vertex(startX, endY, 0).endVertex();
-			vertexbuffer.vertex(endX, endY, 0).endVertex();
-			vertexbuffer.vertex(endX, startY, 0).endVertex();
-			vertexbuffer.vertex(startX, startY, 0).endVertex();
-			tesselator.end();
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
+			RenderSystem.setShaderColor(0F, 0F, 255F, 255F);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+			bufferBuilder.vertex(startX, endY, 0).endVertex();
+			bufferBuilder.vertex(endX, endY, 0).endVertex();
+			bufferBuilder.vertex(endX, startY, 0).endVertex();
+			bufferBuilder.vertex(startX, startY, 0).endVertex();
+			bufferBuilder.end();
+			BufferUploader.end(bufferBuilder);
 			RenderSystem.disableColorLogicOp();
 			RenderSystem.enableTexture();
+			RenderSystem.disableBlend();
 		}
 
 		GuiHelper.popScissor(getScreen());
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 	}
 
 	public void drawTextBox(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {

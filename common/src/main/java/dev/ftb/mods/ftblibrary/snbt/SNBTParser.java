@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import me.shedaniel.architectury.utils.NbtType;
+import dev.architectury.utils.NbtType;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CollectionTag;

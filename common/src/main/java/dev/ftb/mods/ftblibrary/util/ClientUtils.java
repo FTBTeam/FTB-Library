@@ -1,18 +1,18 @@
 package dev.ftb.mods.ftblibrary.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.architectury.event.CompoundEventResult;
+import dev.architectury.event.events.client.ClientChatEvent;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import me.shedaniel.architectury.event.events.client.ClientChatEvent;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL13;
 
@@ -59,11 +59,11 @@ public class ClientUtils {
 	}
 
 	public static void execClientCommand(String command, boolean printChat) {
-		InteractionResultHolder<String> process = ClientChatEvent.CLIENT.invoker().process(command);
-		if (process.getResult() == InteractionResult.FAIL) {
+		CompoundEventResult<String> process = ClientChatEvent.PROCESS.invoker().process(command);
+		if (process.isFalse()) {
 			command = "";
 		} else {
-			command = process.getObject() != null ? process.getObject() : command;
+			command = process.object() != null ? process.object() : command;
 		}
 
 		if (command.isEmpty()) {
@@ -175,9 +175,9 @@ public class ClientUtils {
 				return false;
 			}
 			case "custom":
-				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(path))) != InteractionResult.PASS;
+				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(path))).isPresent();
 			default:
-				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(scheme, path))) != InteractionResult.PASS;
+				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(scheme, path))).isPresent();
 		}
 	}
 }

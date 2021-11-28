@@ -178,8 +178,8 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	}
 
 	@Override
-	public void tick() {
-		super.tick();
+	public void containerTick() {
+		super.containerTick();
 		wrappedGui.tick();
 	}
 

@@ -28,7 +28,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 import java.util.List;
 import java.util.Stack;
@@ -95,13 +95,13 @@ public class GuiHelper {
 		if (u0 == u1 || v0 == v1) {
 			Tesselator tesselator = Tesselator.getInstance();
 			BufferBuilder buffer = tesselator.getBuilder();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
+			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 			addRectToBuffer(matrixStack, buffer, x, y, w, h, col);
 			tesselator.end();
 		} else {
 			Tesselator tesselator = Tesselator.getInstance();
 			BufferBuilder buffer = tesselator.getBuilder();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 			addRectToBufferWithUV(matrixStack, buffer, x, y, w, h, col, u0, v0, u1, v1);
 			tesselator.end();
 		}
@@ -148,7 +148,7 @@ public class GuiHelper {
 		RenderSystem.disableTexture();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 		addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 2, col);
 		addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, col);
@@ -169,7 +169,7 @@ public class GuiHelper {
 		RenderSystem.disableTexture();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		addRectToBuffer(matrixStack, buffer, x, y, w - 1, 1, col);
 		addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 1, col);
 		col = col.mutable().addBrightness(-intensity);

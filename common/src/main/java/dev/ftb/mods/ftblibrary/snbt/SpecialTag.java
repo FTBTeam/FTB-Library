@@ -3,9 +3,10 @@ package dev.ftb.mods.ftblibrary.snbt;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.FloatTag;
+import net.minecraft.nbt.StreamTagVisitor;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagType;
-import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.TagVisitor;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataOutput;
@@ -57,8 +58,18 @@ public class SpecialTag implements Tag {
 	}
 
 	@Override
-	public Component getPrettyDisplay(String string, int i) {
-		return wrappedTag.getPrettyDisplay(string, i);
+	public void accept(TagVisitor tagVisitor) {
+		wrappedTag.accept(tagVisitor);
+	}
+
+	@Override
+	public StreamTagVisitor.ValueResult accept(StreamTagVisitor streamTagVisitor) {
+		return wrappedTag.accept(streamTagVisitor);
+	}
+
+	@Override
+	public String getAsString() {
+		return wrappedTag.getAsString();
 	}
 
 	@Override

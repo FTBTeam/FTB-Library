@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.platform.Platform;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;

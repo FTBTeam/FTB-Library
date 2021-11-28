@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 /**
  * @author LatvianModder
@@ -95,7 +95,7 @@ public class BulletIcon extends Icon {
 		RenderSystem.disableTexture();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 		GuiHelper.addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
 		GuiHelper.addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);

@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 /**
  * @author LatvianModder
@@ -51,7 +51,7 @@ public class AtlasSpriteIcon extends Icon {
 
 		sprite.atlas().bind();
 		BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 		buffer.vertex(m, x, y, 0F).color(r, g, b, a).uv(minU, minV).endVertex();
 		buffer.vertex(m, x, y + h, 0F).color(r, g, b, a).uv(minU, maxV).endVertex();
 		buffer.vertex(m, x + w, y + h, 0F).color(r, g, b, a).uv(maxU, maxV).endVertex();
