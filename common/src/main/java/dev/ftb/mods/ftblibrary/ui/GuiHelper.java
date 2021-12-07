@@ -182,11 +182,6 @@ public class GuiHelper {
 	}
 
 	@ExpectPlatform
-	public static Font getFont(ItemStack stack) {
-		throw new AssertionError();
-	}
-
-	@ExpectPlatform
 	public static boolean shouldShowDurability(ItemStack stack) {
 		throw new AssertionError();
 	}
@@ -240,11 +235,7 @@ public class GuiHelper {
 		}
 
 		if (renderOverlay) {
-			Font fr = getFont(stack);
-
-			if (fr == null) {
-				fr = mc.font;
-			}
+			Font fr = mc.font;
 
 			if (stack.getCount() != 1 || text != null) {
 				String s = text == null ? String.valueOf(stack.getCount()) : text;

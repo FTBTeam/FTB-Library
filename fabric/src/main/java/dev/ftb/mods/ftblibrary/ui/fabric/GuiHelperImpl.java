@@ -1,13 +1,9 @@
 package dev.ftb.mods.ftblibrary.ui.fabric;
 
-import net.minecraft.client.gui.Font;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 public class GuiHelperImpl {
-	public static Font getFont(ItemStack stack) {
-		return null;
-	}
 
 	public static boolean shouldShowDurability(ItemStack stack) {
 		return stack.isDamaged();

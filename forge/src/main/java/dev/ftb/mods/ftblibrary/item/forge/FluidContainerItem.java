@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.item.forge;
 
 import dev.ftb.mods.ftblibrary.item.FTBLibraryItems;
 import dev.ftb.mods.ftblibrary.item.FluidContainerBaseItem;
+import mezz.jei.api.ingredients.subtypes.UidContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -35,7 +36,7 @@ public class FluidContainerItem extends FluidContainerBaseItem {
 		return FluidUtil.getFluidContained(item).orElse(FluidStack.EMPTY);
 	}
 
-	public static String getFluidStackHash(ItemStack item) {
+	public static String getFluidStackHash(ItemStack item, UidContext ctx) {
 		FluidStack fs = getFluidStack(item);
 
 		if (fs.isEmpty()) {
