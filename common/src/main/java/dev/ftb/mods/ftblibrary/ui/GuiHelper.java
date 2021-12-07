@@ -181,21 +181,6 @@ public class GuiHelper {
 		RenderSystem.enableTexture();
 	}
 
-	@ExpectPlatform
-	public static boolean shouldShowDurability(ItemStack stack) {
-		throw new AssertionError();
-	}
-
-	@ExpectPlatform
-	public static double getDamageLevel(ItemStack stack) {
-		throw new AssertionError();
-	}
-
-	@ExpectPlatform
-	public static int getDurabilityColor(ItemStack stack) {
-		throw new AssertionError();
-	}
-
 	public static boolean drawItem(PoseStack matrixStack, ItemStack stack, double x, double y, float scaleX, float scaleY, boolean renderOverlay, @Nullable String text) {
 		if (stack.isEmpty() || scaleX == 0D || scaleY == 0D) {
 			return false;
@@ -244,14 +229,12 @@ public class GuiHelper {
 				renderTypeBufferImpl.endBatch();
 			}
 
-			// TODO: add extension point to arch
-			if (shouldShowDurability(stack)) {
+			if (stack.isBarVisible()) {
 				RenderSystem.disableDepthTest();
 				RenderSystem.disableTexture();
 				RenderSystem.disableBlend();
-				double health = getDamageLevel(stack);
-				int i = Math.round(13.0F - (float) health * 13.0F);
-				int j = getDurabilityColor(stack);
+				int i = stack.getBarWidth();
+				int j = stack.getBarColor();
 				draw(matrixStack, tesselator, 2, 13, 13, 2, 0, 0, 0, 255);
 				draw(matrixStack, tesselator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
 				RenderSystem.enableBlend();
