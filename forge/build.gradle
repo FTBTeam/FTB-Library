@@ -32,12 +32,23 @@ artifacts {
 	dev(jar)
 }
 
+repositories {
+	maven {
+		name "ModMaven (JEI)"
+		url "https://modmaven.dev/"
+		content {
+			includeGroup "mezz.jei"
+		}
+	}
+}
+
 dependencies {
 	forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
 	modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-	//modRuntime "curse.maven:jei-238222:${rootProject.jei_file}"
+	modCompileOnly "mezz.jei:jei-1.18:${rootProject.forge_jei_version}"
+
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 	modRuntime "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 
