@@ -94,21 +94,14 @@ public class GuiHelper {
 	}
 
 	public static void drawTexturedRect(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
-		if (u0 == u1 || v0 == v1) {
-			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			Tesselator tesselator = Tesselator.getInstance();
-			BufferBuilder buffer = tesselator.getBuilder();
-			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			addRectToBuffer(matrixStack, buffer, x, y, w, h, col);
-			tesselator.end();
-		} else {
-			RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
-			Tesselator tesselator = Tesselator.getInstance();
-			BufferBuilder buffer = tesselator.getBuilder();
-			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-			addRectToBufferWithUV(matrixStack, buffer, x, y, w, h, col, u0, v0, u1, v1);
-			tesselator.end();
-		}
+		RenderSystem.enableTexture();
+		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder buffer = tesselator.getBuilder();
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+		addRectToBufferWithUV(matrixStack, buffer, x, y, w, h, col, u0, v0, u1, v1);
+		tesselator.end();
 	}
 
 	public static void addRectToBuffer(PoseStack matrixStack, BufferBuilder buffer, int x, int y, int w, int h, Color4I col) {

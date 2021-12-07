@@ -3,7 +3,6 @@
 	"package": "dev.ftb.mods.ftblibrary.core.mixin.fabric",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"GlStateManagerMixin",
 		"KeyMappingAccessor"
 	],
 	"client": [

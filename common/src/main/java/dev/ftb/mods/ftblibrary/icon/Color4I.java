@@ -341,6 +341,7 @@ public class Color4I extends Icon {
 		}
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);

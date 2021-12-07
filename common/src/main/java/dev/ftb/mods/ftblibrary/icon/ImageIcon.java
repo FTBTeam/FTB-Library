@@ -89,10 +89,12 @@ public class ImageIcon extends Icon {
 			int b = color.bluei();
 			int a = color.alphai();
 
+			RenderSystem.enableTexture();
 			Matrix4f m = matrixStack.last().pose();
 			Tesselator tesselator = Tesselator.getInstance();
 			BufferBuilder buffer = tesselator.getBuilder();
 			RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 			buffer.vertex(m, x, y + h, 0).color(r, g, b, a).uv((float) (x / tileSize), (float) ((y + h) / tileSize)).endVertex();
 			buffer.vertex(m, x + w, y + h, 0).color(r, g, b, a).uv((float) ((x + w) / tileSize), (float) ((y + h) / tileSize)).endVertex();
