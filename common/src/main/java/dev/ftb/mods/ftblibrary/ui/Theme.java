@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -192,9 +191,7 @@ public class Theme {
 				i = getFont().draw(matrixStack, (FormattedCharSequence) text, x, y, color.rgba());
 			}
 
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
-			RenderSystem.disableAlphaTest();
-			RenderSystem.enableBlend();
+			GuiHelper.setupDrawing();
 			return i;
 		} else if (text instanceof Component) {
 			if (Bits.getFlag(flags, CENTERED)) {
@@ -209,9 +206,7 @@ public class Theme {
 				i = getFont().draw(matrixStack, (Component) text, x, y, color.rgba());
 			}
 
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
-			RenderSystem.disableAlphaTest();
-			RenderSystem.enableBlend();
+			GuiHelper.setupDrawing();
 			return i;
 		} else if (text instanceof FormattedText) {
 			return drawString(matrixStack, Language.getInstance().getVisualOrder((FormattedText) text), x, y, color, flags);
@@ -230,9 +225,7 @@ public class Theme {
 				i = getFont().draw(matrixStack, s, x, y, color.rgba());
 			}
 
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
-			RenderSystem.disableAlphaTest();
-			RenderSystem.enableBlend();
+			GuiHelper.setupDrawing();
 			return i;
 		}
 	}

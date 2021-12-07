@@ -7,12 +7,14 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
-import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -28,7 +30,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.Stack;
@@ -78,13 +80,13 @@ public class GuiHelper {
 	};
 
 	public static void setupDrawing() {
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
+		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.enableAlphaTest();
-		RenderSystem.defaultAlphaFunc();
+		RenderSystem.blendFunc(770, 771);
 		RenderSystem.enableDepthTest();
-		Lighting.turnOff();
+		RenderSystem.enableBlend();
+		// Lighting.setupForFlatItems();
 	}
 
 	public static void playSound(SoundEvent event, float pitch) {
@@ -93,12 +95,14 @@ public class GuiHelper {
 
 	public static void drawTexturedRect(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
 		if (u0 == u1 || v0 == v1) {
+			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 			Tesselator tesselator = Tesselator.getInstance();
 			BufferBuilder buffer = tesselator.getBuilder();
 			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 			addRectToBuffer(matrixStack, buffer, x, y, w, h, col);
 			tesselator.end();
 		} else {
+			RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 			Tesselator tesselator = Tesselator.getInstance();
 			BufferBuilder buffer = tesselator.getBuilder();
 			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
@@ -145,6 +149,7 @@ public class GuiHelper {
 			return;
 		}
 
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.disableTexture();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
@@ -166,6 +171,7 @@ public class GuiHelper {
 	}
 
 	public static void drawRectWithShade(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, int intensity) {
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.disableTexture();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
@@ -215,16 +221,16 @@ public class GuiHelper {
 		matrixStack.translate(x, y, 0);
 		matrixStack.scale(scaleX, scaleY, 1F);
 
-		mc.getTextureManager().bind(TextureAtlas.LOCATION_BLOCKS);
 		mc.getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
-		RenderSystem.enableRescaleNormal();
+		RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+
 		GuiHelper.setupDrawing();
 		matrixStack.translate(8, 8, itemRenderer.blitOffset);
 		matrixStack.scale(1, -1, 1);
 		matrixStack.scale(16, 16, 16);
 		MultiBufferSource.BufferSource renderTypeBufferImpl = mc.renderBuffers().bufferSource();
 
-		BakedModel bakedModel = itemRenderer.getModel(stack, mc.level, mc.player);
+		BakedModel bakedModel = itemRenderer.getModel(stack, mc.level, mc.player, 0);
 
 		boolean flatLight = !bakedModel.usesBlockLight();
 
@@ -239,9 +245,6 @@ public class GuiHelper {
 		if (flatLight) {
 			Lighting.setupFor3DItems();
 		}
-
-		RenderSystem.disableAlphaTest();
-		RenderSystem.disableRescaleNormal();
 
 		if (renderOverlay) {
 			Font fr = getFont(stack);
@@ -261,7 +264,6 @@ public class GuiHelper {
 			if (shouldShowDurability(stack)) {
 				RenderSystem.disableDepthTest();
 				RenderSystem.disableTexture();
-				RenderSystem.disableAlphaTest();
 				RenderSystem.disableBlend();
 				double health = getDamageLevel(stack);
 				int i = Math.round(13.0F - (float) health * 13.0F);
@@ -269,7 +271,6 @@ public class GuiHelper {
 				draw(matrixStack, tesselator, 2, 13, 13, 2, 0, 0, 0, 255);
 				draw(matrixStack, tesselator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
 				RenderSystem.enableBlend();
-				RenderSystem.enableAlphaTest();
 				RenderSystem.enableTexture();
 				RenderSystem.enableDepthTest();
 			}
@@ -292,9 +293,10 @@ public class GuiHelper {
 	}
 
 	private static void draw(PoseStack matrixStack, Tesselator tesselator, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		Matrix4f m = matrixStack.last().pose();
 		BufferBuilder renderer = tesselator.getBuilder();
-		renderer.begin(7, DefaultVertexFormat.POSITION_COLOR);
+		renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		renderer.vertex(m, x, y, 0).color(red, green, blue, alpha).endVertex();
 		renderer.vertex(m, x, y + height, 0).color(red, green, blue, alpha).endVertex();
 		renderer.vertex(m, x + width, y + height, 0).color(red, green, blue, alpha).endVertex();
@@ -327,19 +329,13 @@ public class GuiHelper {
 			return "";
 		}
 
-		switch (event.getAction()) {
-			case OPEN_URL:
-			case CHANGE_PAGE:
-				return event.getValue();
-			case OPEN_FILE:
-				return "file:" + event.getValue();
-			case RUN_COMMAND:
-				return "command:" + event.getValue();
-			case SUGGEST_COMMAND:
-				return "suggest_command:" + event.getValue();
-			default:
-				return "";
-		}
+		return switch (event.getAction()) {
+			case OPEN_URL, CHANGE_PAGE -> event.getValue();
+			case OPEN_FILE -> "file:" + event.getValue();
+			case RUN_COMMAND -> "command:" + event.getValue();
+			case SUGGEST_COMMAND -> "suggest_command:" + event.getValue();
+			default -> "";
+		};
 	}
 
 	public static void addStackTooltip(ItemStack stack, List<Component> list) {

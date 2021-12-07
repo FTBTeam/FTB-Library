@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientTextureStitchEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
@@ -13,7 +11,6 @@ import dev.ftb.mods.ftblibrary.config.ImageConfig;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.icon.AtlasSpriteIcon;
 import dev.ftb.mods.ftblibrary.icon.IconPresets;
-import dev.ftb.mods.ftblibrary.icon.IconRenderer;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -31,14 +28,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
  * @author LatvianModder
  */
 public class FTBLibraryClient extends FTBLibraryCommon {
-	public static final List<IconRenderer<?>> ICON_RENDERERS = new ArrayList<>();
 	/**
 	 * Meaning of the different values: 0 = No, 1 = Yes, 2 = Only in inventory, 3 = Managed by integration
 	 * (should this be an enum instead at this point?)
@@ -61,7 +56,6 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 
 		ClientTextureStitchEvent.PRE.register(this::textureStitch);
 		ClientGuiEvent.INIT_POST.register(this::guiInit);
-		ClientGuiEvent.RENDER_PRE.register(this::renderTick);
 		ClientTickEvent.CLIENT_POST.register(this::clientTick);
 
 		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
@@ -85,16 +79,6 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 			}
 		} catch (Exception ignored) {
 		}
-	}
-
-	private EventResult renderTick(Screen screen, PoseStack matrices, int mouseX, int mouseY, float delta) {
-		if (!ICON_RENDERERS.isEmpty()) {
-			for (IconRenderer<?> iconRenderer : ICON_RENDERERS) {
-				iconRenderer.render();
-			}
-		}
-
-		return EventResult.pass();
 	}
 
 	@SuppressWarnings("rawtypes")

@@ -98,7 +98,7 @@ public class EditConfigScreen extends BaseScreen {
 		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 			COLOR_BACKGROUND.draw(matrixStack, x, y, w, h);
 			theme.drawString(matrixStack, getTitle(), x + 2, y + 2);
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
 			if (isMouseOver()) {
 				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
@@ -146,7 +146,7 @@ public class EditConfigScreen extends BaseScreen {
 			}
 
 			theme.drawString(matrixStack, keyText, x + 4, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
 			FormattedText s = inst.getStringForGUI(inst.value);
 			int slen = theme.getStringWidth(s);
@@ -168,7 +168,7 @@ public class EditConfigScreen extends BaseScreen {
 			}
 
 			theme.drawString(matrixStack, s, getGui().width - (slen + 20), y + 2, textCol, 0);
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}
 
 		@Override

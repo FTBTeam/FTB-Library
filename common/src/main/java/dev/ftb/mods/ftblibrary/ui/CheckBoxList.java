@@ -127,7 +127,7 @@ public class CheckBoxList extends Button {
 			drawCheckboxBackground(matrixStack, theme, x, ey, 10, 10);
 			getCheckboxIcon(matrixStack, theme, x + 1, ey + 1, 8, 8, i, entry.value);
 			theme.drawString(matrixStack, entry.name, x + 12, ey + 1);
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}
 	}
 }

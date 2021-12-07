@@ -62,7 +62,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 				theme.drawString(matrixStack, "[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
 			}
 
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}
 
 		@Override
@@ -113,7 +113,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 			}
 
 			theme.drawString(matrixStack, getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
-			RenderSystem.color4f(1F, 1F, 1F, 1F);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}
 
 		@Override

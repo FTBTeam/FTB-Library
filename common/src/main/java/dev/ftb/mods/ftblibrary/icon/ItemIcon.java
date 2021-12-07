@@ -2,8 +2,8 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.architectury.registry.registries.Registries;
+import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -109,7 +109,7 @@ public class ItemIcon extends Icon {
 	@Environment(EnvType.CLIENT)
 	public static void drawItem3D(PoseStack matrixStack, ItemStack stack) {
 		//FIXME: Draw flat 3D item
-		Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.FIXED, 240, OverlayTexture.NO_OVERLAY, matrixStack, Minecraft.getInstance().renderBuffers().bufferSource());
+		Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.FIXED, 240, OverlayTexture.NO_OVERLAY, matrixStack, Minecraft.getInstance().renderBuffers().bufferSource(), 0);
 	}
 
 	@Override

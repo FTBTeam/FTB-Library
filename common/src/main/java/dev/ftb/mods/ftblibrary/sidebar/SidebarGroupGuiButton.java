@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
@@ -109,7 +110,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 					int width = 16;
 					Color4I.LIGHT_RED.draw(matrixStack, b.x + width - nw, b.y - 1, nw + 1, 9);
 					font.draw(matrixStack, text, b.x + width - nw + 1, b.y, 0xFFFFFFFF);
-					RenderSystem.color4f(1F, 1F, 1F, 1F);
+					RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 				}
 			}
 		}
@@ -153,5 +154,10 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		if (mouseOver != null) {
 			mouseOver.button.onClicked(Screen.hasShiftDown());
 		}
+	}
+
+	@Override
+	public void updateNarration(NarrationElementOutput narrationElementOutput) {
+		defaultButtonNarrationText(narrationElementOutput);
 	}
 }

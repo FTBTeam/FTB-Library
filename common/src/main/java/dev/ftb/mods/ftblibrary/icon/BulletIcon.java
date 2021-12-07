@@ -7,10 +7,11 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.GameRenderer;
 
 /**
  * @author LatvianModder
@@ -92,6 +93,8 @@ public class BulletIcon extends Icon {
 			cd = colorD;
 		}
 
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		RenderSystem.disableTexture();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
@@ -105,7 +108,6 @@ public class BulletIcon extends Icon {
 
 		tesselator.end();
 		RenderSystem.enableTexture();
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
 	}
 
 	@Override

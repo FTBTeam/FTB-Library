@@ -35,8 +35,8 @@ public class IconWithBorder extends IconWithParent {
 	@Environment(EnvType.CLIENT)
 	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
 		parent.draw(matrixStack, x + 1, y + 1, w - 2, h - 2);
+		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		GuiHelper.drawHollowRect(matrixStack, x, y, w, h, color, roundEdges);
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
 	}
 
 	@Override

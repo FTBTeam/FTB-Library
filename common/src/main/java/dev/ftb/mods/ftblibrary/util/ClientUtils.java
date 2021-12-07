@@ -1,9 +1,7 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.architectury.event.CompoundEventResult;
 import dev.architectury.event.events.client.ClientChatEvent;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
@@ -12,9 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionResult;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL13;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -31,32 +27,6 @@ public class ClientUtils {
 	public static final List<Runnable> RUN_LATER = new ArrayList<>();
 	private static final MethodType EMPTY_METHOD_TYPE = MethodType.methodType(void.class);
 	private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
-
-	private static float lastBrightnessX, lastBrightnessY;
-
-	@ExpectPlatform
-	public static float getLastBrightnessX() {
-		throw new AssertionError();
-	}
-
-	@ExpectPlatform
-	public static float getLastBrightnessY() {
-		throw new AssertionError();
-	}
-
-	public static void pushBrightness(float u, float t) {
-		lastBrightnessX = getLastBrightnessX();
-		lastBrightnessY = getLastBrightnessY();
-		RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, u, t);
-	}
-
-	public static void pushMaxBrightness() {
-		pushBrightness(240F, 240F);
-	}
-
-	public static void popBrightness() {
-		RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, lastBrightnessX, lastBrightnessY);
-	}
 
 	public static void execClientCommand(String command, boolean printChat) {
 		CompoundEventResult<String> process = ClientChatEvent.PROCESS.invoker().process(command);
