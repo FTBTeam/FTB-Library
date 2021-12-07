@@ -132,28 +132,13 @@ public class NBTEditorScreen extends BaseScreen {
 			nbt = n;
 
 			switch (nbt.getId()) {
-				case NbtType.BYTE:
-					setIcon(NBT_BYTE);
-					break;
-				case NbtType.SHORT:
-					setIcon(NBT_SHORT);
-					break;
-				case NbtType.INT:
-					setIcon(NBT_INT);
-					break;
-				case NbtType.LONG:
-					setIcon(NBT_LONG);
-					break;
-				case NbtType.FLOAT:
-					setIcon(NBT_FLOAT);
-					break;
-				case NbtType.DOUBLE:
-				case NbtType.NUMBER:
-					setIcon(NBT_DOUBLE);
-					break;
-				case NbtType.STRING:
-					setIcon(NBT_STRING);
-					break;
+				case NbtType.BYTE -> setIcon(NBT_BYTE);
+				case NbtType.SHORT -> setIcon(NBT_SHORT);
+				case NbtType.INT -> setIcon(NBT_INT);
+				case NbtType.LONG -> setIcon(NBT_LONG);
+				case NbtType.FLOAT -> setIcon(NBT_FLOAT);
+				case NbtType.DOUBLE, NbtType.NUMBER -> setIcon(NBT_DOUBLE);
+				case NbtType.STRING -> setIcon(NBT_STRING);
 			}
 
 			parent.setTag(key, nbt);
@@ -161,26 +146,13 @@ public class NBTEditorScreen extends BaseScreen {
 		}
 
 		public void updateTitle() {
-			Object title = "";
-
-			switch (nbt.getId()) {
-				case NbtType.BYTE:
-				case NbtType.SHORT:
-				case NbtType.INT:
-					title = ((NumericTag) nbt).getAsInt();
-					break;
-				case NbtType.LONG:
-					title = ((NumericTag) nbt).getAsLong();
-					break;
-				case NbtType.FLOAT:
-				case NbtType.DOUBLE:
-				case NbtType.NUMBER:
-					title = ((NumericTag) nbt).getAsDouble();
-					break;
-				case NbtType.STRING:
-					title = nbt.getAsString();
-					break;
-			}
+			Object title = switch (nbt.getId()) {
+				case NbtType.BYTE, NbtType.SHORT, NbtType.INT -> ((NumericTag) nbt).getAsInt();
+				case NbtType.LONG -> ((NumericTag) nbt).getAsLong();
+				case NbtType.FLOAT, NbtType.DOUBLE, NbtType.NUMBER -> ((NumericTag) nbt).getAsDouble();
+				case NbtType.STRING -> nbt.getAsString();
+				default -> "";
+			};
 
 			setTitle(new TextComponent(key + ": " + title));
 			setWidth(12 + getTheme().getStringWidth(key + ": " + title));
@@ -208,48 +180,32 @@ public class NBTEditorScreen extends BaseScreen {
 
 		public void edit() {
 			switch (nbt.getId()) {
-				case NbtType.BYTE:
-				case NbtType.SHORT:
-				case NbtType.INT:
+				case NbtType.BYTE, NbtType.SHORT, NbtType.INT -> {
 					IntConfig intConfig = new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE);
 					EditConfigFromStringScreen.open(intConfig, ((NumericTag) nbt).getAsInt(), 0, accepted -> onCallback(intConfig, accepted));
-					break;
-				case NbtType.LONG:
+				}
+				case NbtType.LONG -> {
 					LongConfig longConfig = new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE);
 					EditConfigFromStringScreen.open(longConfig, ((NumericTag) nbt).getAsLong(), 0L, accepted -> onCallback(longConfig, accepted));
-					break;
-				case NbtType.FLOAT:
-				case NbtType.DOUBLE:
-				case NbtType.NUMBER:
+				}
+				case NbtType.FLOAT, NbtType.DOUBLE, NbtType.NUMBER -> {
 					DoubleConfig doubleConfig = new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 					EditConfigFromStringScreen.open(doubleConfig, ((NumericTag) nbt).getAsDouble(), 0D, accepted -> onCallback(doubleConfig, accepted));
-					break;
-				case NbtType.STRING:
+				}
+				case NbtType.STRING -> {
 					StringConfig stringConfig = new StringConfig();
 					EditConfigFromStringScreen.open(stringConfig, nbt.getAsString(), "", accepted -> onCallback(stringConfig, accepted));
-					break;
+				}
 			}
 		}
 
 		public void onCallback(ConfigValue<?> value, boolean set) {
 			if (set) {
 				switch (nbt.getId()) {
-					case NbtType.BYTE:
-					case NbtType.SHORT:
-					case NbtType.INT:
-						nbt = IntTag.valueOf(((Number) value.value).intValue());
-						break;
-					case NbtType.LONG:
-						nbt = LongTag.valueOf(((Number) value.value).longValue());
-						break;
-					case NbtType.FLOAT:
-					case NbtType.DOUBLE:
-					case NbtType.NUMBER:
-						nbt = DoubleTag.valueOf(((Number) value.value).doubleValue());
-						break;
-					case NbtType.STRING:
-						nbt = StringTag.valueOf(value.value.toString());
-						break;
+					case NbtType.BYTE, NbtType.SHORT, NbtType.INT -> nbt = IntTag.valueOf(((Number) value.value).intValue());
+					case NbtType.LONG -> nbt = LongTag.valueOf(((Number) value.value).longValue());
+					case NbtType.FLOAT, NbtType.DOUBLE, NbtType.NUMBER -> nbt = DoubleTag.valueOf(((Number) value.value).doubleValue());
+					case NbtType.STRING -> nbt = StringTag.valueOf(value.value.toString());
 				}
 
 				parent.setTag(key, nbt);
@@ -630,18 +586,13 @@ public class NBTEditorScreen extends BaseScreen {
 	private ButtonNBT getFrom(ButtonNBTCollection b, String key) {
 		Tag nbt = b.getTag(key);
 
-		switch (nbt.getId()) {
-			case NbtType.COMPOUND:
-				return new ButtonNBTMap(panelNbt, b, key, (CompoundTag) nbt);
-			case NbtType.LIST:
-				return new ButtonNBTList(panelNbt, b, key, (ListTag) nbt);
-			case NbtType.BYTE_ARRAY:
-				return new ButtonNBTByteArray(panelNbt, b, key, (ByteArrayTag) nbt);
-			case NbtType.INT_ARRAY:
-				return new ButtonNBTIntArray(panelNbt, b, key, (IntArrayTag) nbt);
-			default:
-				return new ButtonBasicTag(panelNbt, b, key, nbt);
-		}
+		return switch (nbt.getId()) {
+			case NbtType.COMPOUND -> new ButtonNBTMap(panelNbt, b, key, (CompoundTag) nbt);
+			case NbtType.LIST -> new ButtonNBTList(panelNbt, b, key, (ListTag) nbt);
+			case NbtType.BYTE_ARRAY -> new ButtonNBTByteArray(panelNbt, b, key, (ByteArrayTag) nbt);
+			case NbtType.INT_ARRAY -> new ButtonNBTIntArray(panelNbt, b, key, (IntArrayTag) nbt);
+			default -> new ButtonBasicTag(panelNbt, b, key, nbt);
+		};
 	}
 
 	public SimpleButton newTag(Panel panel, String t, Icon icon, Supplier<Tag> supplier) {

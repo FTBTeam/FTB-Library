@@ -31,24 +31,18 @@ public enum ScreenPosition implements StringRepresentable {
 	}
 
 	public int getX(int screenWidth, int width, int offset) {
-		switch (offsetX) {
-			case -1:
-				return offset;
-			case 1:
-				return (screenWidth - width) / 2;
-			default:
-				return screenWidth - width - offset;
-		}
+		return switch (offsetX) {
+			case -1 -> offset;
+			case 1 -> (screenWidth - width) / 2;
+			default -> screenWidth - width - offset;
+		};
 	}
 
 	public int getY(int screenHeight, int height, int offset) {
-		switch (offsetY) {
-			case -1:
-				return offset;
-			case 1:
-				return (screenHeight - height) / 2;
-			default:
-				return screenHeight - height - offset;
-		}
+		return switch (offsetY) {
+			case -1 -> offset;
+			case 1 -> (screenHeight - height) / 2;
+			default -> screenHeight - height - offset;
+		};
 	}
 }

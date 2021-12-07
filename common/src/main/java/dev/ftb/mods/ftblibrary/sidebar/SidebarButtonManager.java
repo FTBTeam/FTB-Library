@@ -33,7 +33,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 	private JsonElement readJson(Resource resource) {
 		try (InputStreamReader reader = new InputStreamReader(resource.getInputStream())) {
-			return new JsonParser().parse(reader);
+			return JsonParser.parseReader(reader);
 		} catch (Exception ex) {
 		}
 
@@ -42,7 +42,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 	private JsonElement readJson(File file) {
 		try (FileReader reader = new FileReader(file)) {
-			return new JsonParser().parse(reader);
+			return JsonParser.parseReader(reader);
 		} catch (Exception ex) {
 		}
 

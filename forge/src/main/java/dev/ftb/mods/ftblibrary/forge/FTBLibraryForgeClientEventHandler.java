@@ -58,7 +58,7 @@ public class FTBLibraryForgeClientEventHandler {
 
 		TextureAtlasSprite sprite = ((TextureAtlas) texture).getSprite(fluidStack.getFluid().getAttributes().getStillTexture(fluidStack));
 
-		if (sprite == null || sprite instanceof MissingTextureAtlasSprite || sprite.getFrameCount() == 0) {
+		if (sprite instanceof MissingTextureAtlasSprite || sprite.getFrameCount() == 0) {
 			return 0xFFFF00FF;
 		}
 

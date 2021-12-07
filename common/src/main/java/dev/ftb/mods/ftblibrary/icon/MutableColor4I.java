@@ -142,36 +142,42 @@ public class MutableColor4I extends Color4I {
 		float q = b * (1F - s * f);
 		float t = b * (1F - (s * (1F - f)));
 		switch ((int) h6) {
-			case 0:
+			case 0 -> {
 				red = toint(b);
 				green = toint(t);
 				blue = toint(p);
 				return this;
-			case 1:
+			}
+			case 1 -> {
 				red = toint(q);
 				green = toint(b);
 				blue = toint(p);
 				return this;
-			case 2:
+			}
+			case 2 -> {
 				red = toint(p);
 				green = toint(b);
 				blue = toint(t);
 				return this;
-			case 3:
+			}
+			case 3 -> {
 				red = toint(p);
 				green = toint(q);
 				blue = toint(b);
 				return this;
-			case 4:
+			}
+			case 4 -> {
 				red = toint(t);
 				green = toint(p);
 				blue = toint(b);
 				return this;
-			default:
+			}
+			default -> {
 				red = toint(b);
 				green = toint(p);
 				blue = toint(q);
 				return this;
+			}
 		}
 	}
 }

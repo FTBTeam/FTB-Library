@@ -144,11 +144,9 @@ public class SNBTCompoundTag extends CompoundTag {
 	public <T extends Tag> List<T> getList(String key, Class<T> type) {
 		Tag tag = get(key);
 
-		if (!(tag instanceof CollectionTag)) {
+		if (!(tag instanceof CollectionTag<?> l)) {
 			return Collections.emptyList();
 		}
-
-		CollectionTag<?> l = (CollectionTag<?>) tag;
 
 		if (l.isEmpty()) {
 			return Collections.emptyList();

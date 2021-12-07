@@ -288,24 +288,27 @@ public class TextBox extends Widget {
 			return true;
 		} else {
 			switch (key.keyCode) {
-				case GLFW.GLFW_KEY_ESCAPE:
+				case GLFW.GLFW_KEY_ESCAPE -> {
 					setFocused(false);
 					return true;
-				case GLFW.GLFW_KEY_BACKSPACE:
+				}
+				case GLFW.GLFW_KEY_BACKSPACE -> {
 					if (key.modifiers.control()) {
 						deleteWords(-1);
 					} else {
 						deleteFromCursor(-1);
 					}
 					return true;
-				case GLFW.GLFW_KEY_HOME:
+				}
+				case GLFW.GLFW_KEY_HOME -> {
 					if (key.modifiers.shift()) {
 						setSelectionPos(0);
 					} else {
 						setCursorPosition(0);
 					}
 					return true;
-				case GLFW.GLFW_KEY_LEFT:
+				}
+				case GLFW.GLFW_KEY_LEFT -> {
 					if (key.modifiers.shift()) {
 						if (key.modifiers.control()) {
 							setSelectionPos(getNthWordFromPos(-1, selectionEnd));
@@ -318,7 +321,8 @@ public class TextBox extends Widget {
 						moveCursorBy(-1);
 					}
 					return true;
-				case GLFW.GLFW_KEY_RIGHT:
+				}
+				case GLFW.GLFW_KEY_RIGHT -> {
 					if (key.modifiers.shift()) {
 						if (key.modifiers.control()) {
 							setSelectionPos(getNthWordFromPos(1, selectionEnd));
@@ -331,32 +335,37 @@ public class TextBox extends Widget {
 						moveCursorBy(1);
 					}
 					return true;
-				case GLFW.GLFW_KEY_END:
+				}
+				case GLFW.GLFW_KEY_END -> {
 					if (key.modifiers.shift()) {
 						setSelectionPos(text.length());
 					} else {
 						setCursorPosition(text.length());
 					}
 					return true;
-				case GLFW.GLFW_KEY_DELETE:
+				}
+				case GLFW.GLFW_KEY_DELETE -> {
 					if (key.modifiers.control()) {
 						deleteWords(1);
 					} else {
 						deleteFromCursor(1);
 					}
 					return true;
-				case GLFW.GLFW_KEY_ENTER:
+				}
+				case GLFW.GLFW_KEY_ENTER -> {
 					if (validText) {
 						setFocused(false);
 						onEnterPressed();
 					}
 					return true;
-				case GLFW.GLFW_KEY_TAB:
+				}
+				case GLFW.GLFW_KEY_TAB -> {
 					if (validText) {
 						setFocused(false);
 						onTabPressed();
 					}
 					return true;
+				}
 			}
 		}
 

@@ -23,7 +23,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -48,12 +47,7 @@ public class FluidContainerItem extends FluidContainerBaseItem {
 
 	public static ItemStack of(FluidStack fluidStack) {
 		ItemStack stack = new ItemStack(FTBLibraryItems.FLUID_CONTAINER.get());
-		IFluidHandlerItem handler = FluidUtil.getFluidHandler(stack).orElse(null);
-
-		if (handler != null) {
-			handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
-		}
-
+		FluidUtil.getFluidHandler(stack).ifPresent(handler -> handler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE));
 		return stack;
 	}
 

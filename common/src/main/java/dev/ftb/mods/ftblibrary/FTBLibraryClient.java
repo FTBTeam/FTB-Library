@@ -71,8 +71,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 				field.setAccessible(true);
 				Object o = field.get(null);
 
-				if (o instanceof AtlasSpriteIcon) {
-					AtlasSpriteIcon a = (AtlasSpriteIcon) o;
+				if (o instanceof AtlasSpriteIcon a) {
 					addSprite.accept(a.id);
 					IconPresets.MAP.put(a.id.toString(), a);
 				}

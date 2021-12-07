@@ -79,8 +79,7 @@ public class SNBT {
 	private static void append(SNBTBuilder builder, @Nullable Tag nbt) {
 		if (nbt == null || nbt instanceof EndTag) {
 			builder.print("null");
-		} else if (nbt instanceof CompoundTag) {
-			CompoundTag compound = (CompoundTag) nbt;
+		} else if (nbt instanceof CompoundTag compound) {
 			SNBTCompoundTag ocompound = compound instanceof SNBTCompoundTag ? (SNBTCompoundTag) compound : null;
 
 			if (compound.isEmpty()) {

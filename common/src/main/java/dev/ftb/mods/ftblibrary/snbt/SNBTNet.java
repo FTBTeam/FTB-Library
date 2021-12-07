@@ -124,36 +124,22 @@ public class SNBTNet {
 
 	@Nullable
 	public static Tag read(byte type, FriendlyByteBuf buf) {
-		switch (type) {
-			case NbtType.END:
-				return EndTag.INSTANCE;
-			case NbtType.BYTE:
-				return ByteTag.valueOf(buf.readByte());
-			case NbtType.SHORT:
-				return ShortTag.valueOf(buf.readShort());
-			case NbtType.INT:
-				return IntTag.valueOf(buf.readInt());
-			case NbtType.LONG:
-				return LongTag.valueOf(buf.readLong());
-			case NbtType.FLOAT:
-				return FloatTag.valueOf(buf.readFloat());
-			case NbtType.DOUBLE:
-				return DoubleTag.valueOf(buf.readDouble());
-			case NbtType.BYTE_ARRAY:
-				return readByteArray(buf);
-			case NbtType.STRING:
-				return StringTag.valueOf(buf.readUtf(Short.MAX_VALUE));
-			case NbtType.LIST:
-				return readList(buf);
-			case NbtType.COMPOUND:
-				return readCompound(buf);
-			case NbtType.INT_ARRAY:
-				return readIntArray(buf);
-			case NbtType.LONG_ARRAY:
-				return readLongArray(buf);
-			default:
-				return null;
-		}
+		return switch (type) {
+			case NbtType.END -> EndTag.INSTANCE;
+			case NbtType.BYTE -> ByteTag.valueOf(buf.readByte());
+			case NbtType.SHORT -> ShortTag.valueOf(buf.readShort());
+			case NbtType.INT -> IntTag.valueOf(buf.readInt());
+			case NbtType.LONG -> LongTag.valueOf(buf.readLong());
+			case NbtType.FLOAT -> FloatTag.valueOf(buf.readFloat());
+			case NbtType.DOUBLE -> DoubleTag.valueOf(buf.readDouble());
+			case NbtType.BYTE_ARRAY -> readByteArray(buf);
+			case NbtType.STRING -> StringTag.valueOf(buf.readUtf(Short.MAX_VALUE));
+			case NbtType.LIST -> readList(buf);
+			case NbtType.COMPOUND -> readCompound(buf);
+			case NbtType.INT_ARRAY -> readIntArray(buf);
+			case NbtType.LONG_ARRAY -> readLongArray(buf);
+			default -> null;
+		};
 	}
 
 	@Nullable

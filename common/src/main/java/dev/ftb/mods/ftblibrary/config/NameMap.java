@@ -96,7 +96,7 @@ public final class NameMap<E> implements Iterable<E> {
 		}
 
 		map = Collections.unmodifiableMap(map0);
-		keys = Collections.unmodifiableList(new ArrayList<>(map.keySet()));
+		keys = List.copyOf(map.keySet());
 		defaultValue = get(getName(builder.defaultValue));
 	}
 

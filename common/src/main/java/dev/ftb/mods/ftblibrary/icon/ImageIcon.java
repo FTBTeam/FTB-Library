@@ -113,8 +113,7 @@ public class ImageIcon extends Icon {
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
-		} else if (o instanceof ImageIcon) {
-			ImageIcon img = (ImageIcon) o;
+		} else if (o instanceof ImageIcon img) {
 			return texture.equals(img.texture) && minU == img.minU && minV == img.minV && maxU == img.maxU && maxV == img.maxV;
 		}
 		return false;

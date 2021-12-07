@@ -61,7 +61,7 @@ public abstract class BaseContainer extends AbstractContainerMenu {
 		ItemStack stack = ItemStack.EMPTY;
 		Slot slot = slots.get(index);
 
-		if (slot != null && slot.hasItem()) {
+		if (slot.hasItem()) {
 			ItemStack stack1 = slot.getItem();
 			stack = stack1.copy();
 

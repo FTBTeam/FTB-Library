@@ -37,7 +37,7 @@ public class REIIntegration implements REIClientPlugin {
 	@Override
 	public void registerFavorites(FavoriteEntryType.Registry registry) {
 		registry.register(ID, SidebarButtonType.INSTANCE);
-		registry.registerSystemFavorites(new SystemFavoriteEntryProvider<FavoriteEntry>() {
+		registry.registerSystemFavorites(new SystemFavoriteEntryProvider<>() {
 			@Override
 			public List<FavoriteEntry> provide() {
 				List<FavoriteEntry> entries = new ArrayList<>();
@@ -71,7 +71,7 @@ public class REIIntegration implements REIClientPlugin {
 		@Override
 		public DataResult<SidebarButtonEntry> read(CompoundTag object) {
 			ResourceLocation id = new ResourceLocation(object.getString("id"));
-			JsonObject json = (JsonObject) new JsonParser().parse(object.getString("json"));
+			JsonObject json = (JsonObject) JsonParser.parseString(object.getString("json"));
 			return DataResult.success(new SidebarButtonEntry(new SidebarButton(id, null, json)), Lifecycle.stable());
 		}
 

@@ -62,10 +62,9 @@ public class XZ {
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
-		} else if (!(o instanceof XZ)) {
+		} else if (!(o instanceof XZ p)) {
 			return false;
 		} else {
-			XZ p = (XZ) o;
 			return x == p.x && z == p.z;
 		}
 	}

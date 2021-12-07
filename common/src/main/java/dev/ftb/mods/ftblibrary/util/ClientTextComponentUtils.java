@@ -55,15 +55,9 @@ public class ClientTextComponentUtils {
 				}
 
 				switch (map.getOrDefault("align", "center").toLowerCase()) {
-					case "left":
-						c.align = 0;
-						break;
-					case "center":
-						c.align = 1;
-						break;
-					case "right":
-						c.align = 2;
-						break;
+					case "left" -> c.align = 0;
+					case "center" -> c.align = 1;
+					case "right" -> c.align = 2;
 				}
 
 				c.fit = map.getOrDefault("fit", "false").equals("true");

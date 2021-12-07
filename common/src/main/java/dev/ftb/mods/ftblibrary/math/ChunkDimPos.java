@@ -66,8 +66,7 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
-		} else if (obj instanceof ChunkDimPos) {
-			ChunkDimPos p = (ChunkDimPos) obj;
+		} else if (obj instanceof ChunkDimPos p) {
 			return dimension == p.dimension && x == p.x && z == p.z;
 		}
 

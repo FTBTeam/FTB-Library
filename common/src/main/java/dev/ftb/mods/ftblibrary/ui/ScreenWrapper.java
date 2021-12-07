@@ -10,6 +10,8 @@ import dev.architectury.platform.Platform;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Objects;
+
 /**
  * @author LatvianModder
  */
@@ -116,11 +118,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		wrappedGui.draw(matrixStack, theme, x, y, w, h);
 		wrappedGui.drawForeground(matrixStack, theme, x, y, w, h);
 
-		if (wrappedGui.contextMenu != null) {
-			wrappedGui.contextMenu.addMouseOverText(tooltipList);
-		} else {
-			wrappedGui.addMouseOverText(tooltipList);
-		}
+		Objects.requireNonNullElse(wrappedGui.contextMenu, wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			Object object = wrappedGui.getIngredientUnderMouse();

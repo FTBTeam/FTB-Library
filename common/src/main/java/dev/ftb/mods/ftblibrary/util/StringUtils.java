@@ -313,14 +313,8 @@ public class StringUtils {
 	public static String add0s(int number, int max) {
 		int size = stringSize(max);
 		int nsize = stringSize(number);
-		StringBuilder builder = new StringBuilder(size);
 
-		for (int i = 0; i < size - nsize; i++) {
-			builder.append('0');
-		}
-
-		builder.append(number);
-		return builder.toString();
+		return "0".repeat(Math.max(0, size - nsize)) + number;
 	}
 
 	public static String camelCaseToWords(String key) {

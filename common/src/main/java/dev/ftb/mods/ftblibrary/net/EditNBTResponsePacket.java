@@ -46,7 +46,7 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 
 		if (info.equals(FTBLibraryCommands.EDITING_NBT.remove(player.getUUID()))) {
 			switch (info.getString("type")) {
-				case "block": {
+				case "block" -> {
 					BlockPos pos = new BlockPos(info.getInt("x"), info.getInt("y"), info.getInt("z"));
 
 					if (player.level.isLoaded(pos)) {
@@ -62,10 +62,8 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 							player.level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
 						}
 					}
-
-					break;
 				}
-				case "entity": {
+				case "entity" -> {
 					Entity entity = player.level.getEntity(info.getInt("id"));
 
 					if (entity != null) {
@@ -73,10 +71,8 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 						entity.load(tag);
 						entity.setUUID(uUID);
 					}
-
-					break;
 				}
-				case "player": {
+				case "player" -> {
 					ServerPlayer player1 = player.level.getServer().getPlayerList().getPlayer(info.getUUID("id"));
 
 					if (player1 != null) {
@@ -85,13 +81,8 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 						player1.setUUID(uUID);
 						player1.moveTo(player1.getX(), player1.getY(), player1.getZ());
 					}
-
-					break;
 				}
-				case "item": {
-					player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.of(tag));
-					break;
-				}
+				case "item" -> player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.of(tag));
 			}
 		}
 	}

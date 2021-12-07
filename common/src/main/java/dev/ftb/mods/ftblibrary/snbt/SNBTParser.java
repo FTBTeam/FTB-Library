@@ -109,62 +109,28 @@ class SNBTParser {
 
 		String s = readWordString(first);
 
-		switch (s) {
-			case "true":
-				return SpecialTag.TRUE;
-			case "false":
-				return SpecialTag.FALSE;
-			case "null":
-			case "end":
-			case "END":
-				return EndTag.INSTANCE;
-			case "Infinity":
-			case "Infinityd":
-			case "+Infinity":
-			case "+Infinityd":
-			case "∞":
-			case "∞d":
-			case "+∞":
-			case "+∞d":
-				return SpecialTag.POS_INFINITY_D;
-			case "-Infinity":
-			case "-Infinityd":
-			case "-∞":
-			case "-∞d":
-				return SpecialTag.NEG_INFINITY_D;
-			case "NaN":
-			case "NaNd":
-				return SpecialTag.NAN_D;
-			case "Infinityf":
-			case "+Infinityf":
-			case "∞f":
-			case "+∞f":
-				return SpecialTag.POS_INFINITY_F;
-			case "-Infinityf":
-			case "-∞f":
-				return SpecialTag.NEG_INFINITY_F;
-			case "NaNf":
-				return SpecialTag.NAN_F;
-		}
+		return switch (s) {
+			case "true" -> SpecialTag.TRUE;
+			case "false" -> SpecialTag.FALSE;
+			case "null", "end", "END" -> EndTag.INSTANCE;
+			case "Infinity", "Infinityd", "+Infinity", "+Infinityd", "∞", "∞d", "+∞", "+∞d" -> SpecialTag.POS_INFINITY_D;
+			case "-Infinity", "-Infinityd", "-∞", "-∞d" -> SpecialTag.NEG_INFINITY_D;
+			case "NaN", "NaNd" -> SpecialTag.NAN_D;
+			case "Infinityf", "+Infinityf", "∞f", "+∞f" -> SpecialTag.POS_INFINITY_F;
+			case "-Infinityf", "-∞f" -> SpecialTag.NEG_INFINITY_F;
+			case "NaNf" -> SpecialTag.NAN_F;
+			default -> switch (SNBTUtils.getNumberType(s)) {
+				case NbtType.BYTE -> ByteTag.valueOf(Byte.parseByte(s.substring(0, s.length() - 1)));
+				case NbtType.SHORT -> ShortTag.valueOf(Short.parseShort(s.substring(0, s.length() - 1)));
+				case NbtType.INT -> IntTag.valueOf(Integer.parseInt(s));
+				case NbtType.LONG -> LongTag.valueOf(Long.parseLong(s.substring(0, s.length() - 1)));
+				case NbtType.FLOAT -> FloatTag.valueOf(Float.parseFloat(s.substring(0, s.length() - 1)));
+				case NbtType.DOUBLE -> DoubleTag.valueOf(Double.parseDouble(s.substring(0, s.length() - 1)));
+				case -NbtType.DOUBLE -> DoubleTag.valueOf(Double.parseDouble(s));
+				default -> StringTag.valueOf(s);
+			};
+		};
 
-		switch (SNBTUtils.getNumberType(s)) {
-			case NbtType.BYTE:
-				return ByteTag.valueOf(Byte.parseByte(s.substring(0, s.length() - 1)));
-			case NbtType.SHORT:
-				return ShortTag.valueOf(Short.parseShort(s.substring(0, s.length() - 1)));
-			case NbtType.INT:
-				return IntTag.valueOf(Integer.parseInt(s));
-			case NbtType.LONG:
-				return LongTag.valueOf(Long.parseLong(s.substring(0, s.length() - 1)));
-			case NbtType.FLOAT:
-				return FloatTag.valueOf(Float.parseFloat(s.substring(0, s.length() - 1)));
-			case NbtType.DOUBLE:
-				return DoubleTag.valueOf(Double.parseDouble(s.substring(0, s.length() - 1)));
-			case -NbtType.DOUBLE:
-				return DoubleTag.valueOf(Double.parseDouble(s));
-			default:
-				return StringTag.valueOf(s);
-		}
 	}
 
 	private SNBTCompoundTag readCompound() {
@@ -250,19 +216,12 @@ class SNBTParser {
 			char c = nextNS();
 
 			if (c == ']') {
-				switch (type) {
-					case 'i':
-					case 'I':
-						return new IntArrayTag((List<Integer>) (List) listOfNumbers);
-					case 'l':
-					case 'L':
-						return new LongArrayTag((List<Long>) (List) listOfNumbers);
-					case 'b':
-					case 'B':
-						return new ByteArrayTag((List<Byte>) (List) listOfNumbers);
-					default:
-						throw new SNBTSyntaxException("Unknown array type: " + type + " @ " + posString(pos));
-				}
+				return switch (type) {
+					case 'i', 'I' -> new IntArrayTag((List<Integer>) (List) listOfNumbers);
+					case 'l', 'L' -> new LongArrayTag((List<Long>) (List) listOfNumbers);
+					case 'b', 'B' -> new ByteArrayTag((List<Byte>) (List) listOfNumbers);
+					default -> throw new SNBTSyntaxException("Unknown array type: " + type + " @ " + posString(pos));
+				};
 			} else if (c == ',') {
 				continue;
 			}
@@ -271,18 +230,9 @@ class SNBTParser {
 
 			if (t instanceof NumericTag) {
 				switch (type) {
-					case 'i':
-					case 'I':
-						listOfNumbers.add(((NumericTag) t).getAsInt());
-						break;
-					case 'l':
-					case 'L':
-						listOfNumbers.add(((NumericTag) t).getAsLong());
-						break;
-					case 'b':
-					case 'B':
-						listOfNumbers.add(((NumericTag) t).getAsByte());
-						break;
+					case 'i', 'I' -> listOfNumbers.add(((NumericTag) t).getAsInt());
+					case 'l', 'L' -> listOfNumbers.add(((NumericTag) t).getAsLong());
+					case 'b', 'B' -> listOfNumbers.add(((NumericTag) t).getAsByte());
 				}
 			} else {
 				throw new SNBTSyntaxException("Unexpected tag '" + t + "' in list @ " + posString() + " - expected a numeric tag!");

@@ -13,6 +13,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Objects;
+
 /**
  * @author LatvianModder
  */
@@ -131,11 +133,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 		Theme theme = wrappedGui.getTheme();
 		wrappedGui.drawForeground(matrixStack, theme, leftPos, topPos, imageWidth, imageHeight);
 
-		if (wrappedGui.contextMenu != null) {
-			wrappedGui.contextMenu.addMouseOverText(tooltipList);
-		} else {
-			wrappedGui.addMouseOverText(tooltipList);
-		}
+		Objects.requireNonNullElse(wrappedGui.contextMenu, wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			Object object = wrappedGui.getIngredientUnderMouse();

@@ -21,9 +21,7 @@ public final class ContainerKey {
 
 		ContainerKey that = (ContainerKey) o;
 
-		if (container instanceof CompoundContainerFTBL && that.container instanceof CompoundContainerFTBL) {
-			CompoundContainerFTBL a = (CompoundContainerFTBL) container;
-			CompoundContainerFTBL b = (CompoundContainerFTBL) that.container;
+		if (container instanceof CompoundContainerFTBL a && that.container instanceof CompoundContainerFTBL b) {
 			Container a1 = a.getContainer1FTBL();
 			Container a2 = a.getContainer2FTBL();
 			Container b1 = b.getContainer1FTBL();
@@ -36,8 +34,7 @@ public final class ContainerKey {
 
 	@Override
 	public int hashCode() {
-		if (container instanceof CompoundContainerFTBL) {
-			CompoundContainerFTBL c = (CompoundContainerFTBL) container;
+		if (container instanceof CompoundContainerFTBL c) {
 			return c.getContainer1FTBL().hashCode() ^ c.getContainer2FTBL().hashCode();
 		}
 
