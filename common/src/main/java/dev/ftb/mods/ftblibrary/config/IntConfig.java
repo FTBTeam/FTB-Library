@@ -19,11 +19,11 @@ public class IntConfig extends NumberConfig<Integer> {
 		super.addInfo(list);
 
 		if (min != Integer.MIN_VALUE) {
-			list.add(info("Min", StringUtils.formatDouble(min)));
+			list.add(info("Min", formatValue(min)));
 		}
 
 		if (max != Integer.MAX_VALUE) {
-			list.add(info("Max", StringUtils.formatDouble(max)));
+			list.add(info("Max", formatValue(max)));
 		}
 	}
 
@@ -43,5 +43,10 @@ public class IntConfig extends NumberConfig<Integer> {
 		}
 
 		return false;
+	}
+
+	@Override
+	protected String formatValue(Integer v) {
+		return String.format("%,d", v);
 	}
 }

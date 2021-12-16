@@ -33,6 +33,10 @@ public abstract class NumberConfig<T extends Number> extends ConfigFromString<T>
 
 	@Override
 	public Component getStringForGUI(@Nullable T v) {
-		return v == null ? NULL_TEXT : new TextComponent(StringUtils.formatDouble(v.doubleValue(), true));
+		return v == null ? NULL_TEXT : new TextComponent(formatValue(v));
+	}
+
+	protected String formatValue(T v) {
+		return StringUtils.formatDouble(v.doubleValue(), true);
 	}
 }

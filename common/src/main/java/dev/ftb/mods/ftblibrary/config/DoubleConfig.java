@@ -19,11 +19,11 @@ public class DoubleConfig extends NumberConfig<Double> {
 		super.addInfo(list);
 
 		if (min != Double.NEGATIVE_INFINITY) {
-			list.add(info("Min", StringUtils.formatDouble(min)));
+			list.add(info("Min", formatValue(min)));
 		}
 
 		if (max != Double.POSITIVE_INFINITY) {
-			list.add(info("Max", StringUtils.formatDouble(max)));
+			list.add(info("Max", formatValue(max)));
 		}
 	}
 

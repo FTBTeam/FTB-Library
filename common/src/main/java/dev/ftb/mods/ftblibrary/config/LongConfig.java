@@ -19,11 +19,11 @@ public class LongConfig extends NumberConfig<Long> {
 		super.addInfo(list);
 
 		if (min != Long.MIN_VALUE) {
-			list.add(info("Min", StringUtils.formatDouble(min)));
+			list.add(info("Min", formatValue(min)));
 		}
 
 		if (max != Long.MAX_VALUE) {
-			list.add(info("Max", StringUtils.formatDouble(max)));
+			list.add(info("Max", formatValue(max)));
 		}
 	}
 
@@ -43,5 +43,10 @@ public class LongConfig extends NumberConfig<Long> {
 		}
 
 		return false;
+	}
+
+	@Override
+	protected String formatValue(Long v) {
+		return String.format("%,d", v);
 	}
 }

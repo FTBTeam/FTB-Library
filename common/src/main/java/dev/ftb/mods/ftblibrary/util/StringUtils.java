@@ -230,13 +230,11 @@ public class StringUtils {
 	}
 
 	public static String formatDouble0(double value) {
-		String s = DOUBLE_FORMATTER_0.format(value);
-		return s.endsWith(".00") ? s.substring(0, s.length() - 2) : s;
+		return DOUBLE_FORMATTER_0.format(value);
 	}
 
 	public static String formatDouble00(double value) {
-		String s = DOUBLE_FORMATTER_00.format(value);
-		return s.endsWith(".00") ? s.substring(0, s.length() - 3) : s;
+		return DOUBLE_FORMATTER_00.format(value);
 	}
 
 	public static String formatDouble(double value, boolean fancy) {
@@ -285,8 +283,8 @@ public class StringUtils {
 		return map;
 	}
 
-	public static String fixTabs(String string, int tabSize) //FIXME
-	{
+	//FIXME
+	public static String fixTabs(String string, int tabSize) {
 		String with;
 
 		if (tabSize == 2) {
