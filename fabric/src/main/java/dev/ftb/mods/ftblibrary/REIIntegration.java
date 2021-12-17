@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.fabric;
+package dev.ftb.mods.ftblibrary;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 

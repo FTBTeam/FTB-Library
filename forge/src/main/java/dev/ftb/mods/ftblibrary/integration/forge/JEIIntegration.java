@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.forge;
+package dev.ftb.mods.ftblibrary.integration.forge;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
@@ -47,7 +47,9 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-		if (ModList.get().isLoaded("roughlyenoughitems")) return;
+		if (ModList.get().isLoaded("roughlyenoughitems")) {
+			return;
+		}
 		registration.addGlobalGuiHandler(this);
 	}
 
@@ -97,6 +99,8 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 	};
 
 	static {
-		SelectItemStackScreen.modes.add(0, JEI_ITEMS);
+		if (!ModList.get().isLoaded("roughlyenoughitems")) {
+			SelectItemStackScreen.modes.add(0, JEI_ITEMS);
+		}
 	}
 }

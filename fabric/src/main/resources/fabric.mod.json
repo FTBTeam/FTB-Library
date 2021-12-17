@@ -19,7 +19,7 @@
 			"dev.ftb.mods.ftblibrary.fabric.FTBLibraryFabric"
 		],
 		"rei_plugins": [
-			"dev.ftb.mods.ftblibrary.fabric.REIIntegration"
+			"dev.ftb.mods.ftblibrary.integration.REIIntegration"
 		]
 	},
 	"mixins": [

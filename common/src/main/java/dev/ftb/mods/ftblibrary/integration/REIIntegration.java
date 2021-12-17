@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.forge;
+package dev.ftb.mods.ftblibrary.integration;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -6,6 +6,10 @@ import com.google.gson.JsonParser;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
+import dev.ftb.mods.ftblibrary.config.ui.ItemSearchMode;
+import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButton;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonGroup;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
@@ -18,21 +22,51 @@ import me.shedaniel.rei.api.client.favorites.SystemFavoriteEntryProvider;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
+import me.shedaniel.rei.api.client.registry.entry.EntryRegistry;
+import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.CollectionUtils;
 import me.shedaniel.rei.api.common.util.ImmutableTextComponent;
-import me.shedaniel.rei.forge.REIPlugin;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-@REIPlugin
 public class REIIntegration implements REIClientPlugin {
 	public static final ResourceLocation ID = new ResourceLocation("ftblibrary", "sidebar_button");
+
+	private static final ItemSearchMode REI_ITEMS = new ItemSearchMode() {
+		@Override
+		public Icon getIcon() {
+			return ItemIcon.getItemIcon(Items.GLOW_BERRIES);
+		}
+
+		@Override
+		public MutableComponent getDisplayName() {
+			return new TranslatableComponent("ftblibrary.select_item.list_mode.rei");
+		}
+
+		@Override
+		public Collection<ItemStack> getAllItems() {
+			return CollectionUtils.filterAndMap(
+					EntryRegistry.getInstance().getPreFilteredList(),
+					stack -> stack.getType().equals(VanillaEntryTypes.ITEM),
+					stack -> stack.castValue()
+			);
+		}
+	};
+
+	static {
+		SelectItemStackScreen.modes.add(0, REI_ITEMS);
+	}
 
 	@Override
 	public void registerFavorites(FavoriteEntryType.Registry registry) {
@@ -77,11 +111,15 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public DataResult<SidebarButtonEntry> fromArgs(Object... args) {
-			if (args.length == 0) return DataResult.error("Cannot create SidebarButtonEntry from empty args!");
-			if (!(args[0] instanceof ResourceLocation))
+			if (args.length == 0) {
+				return DataResult.error("Cannot create SidebarButtonEntry from empty args!");
+			}
+			if (!(args[0] instanceof ResourceLocation)) {
 				return DataResult.error("Creation of SidebarButtonEntry from args expected ResourceLocation as the first argument!");
-			if (!(args[1] instanceof SidebarButton) && !(args[1] instanceof JsonObject))
+			}
+			if (!(args[1] instanceof SidebarButton) && !(args[1] instanceof JsonObject)) {
 				return DataResult.error("Creation of SidebarButtonEntry from args expected SidebarButton or JsonObject as the second argument!");
+			}
 			return DataResult.success(new SidebarButtonEntry(args[1] instanceof SidebarButton ? (SidebarButton) args[1] : new SidebarButton((ResourceLocation) args[0], null, (JsonObject) args[1])), Lifecycle.stable());
 		}
 	}
