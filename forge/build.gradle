@@ -116,11 +116,12 @@ if (ENV.CURSEFORGE_KEY) {
 			id = project.curseforge_id_forge
 			releaseType = project.curseforge_type
 			addGameVersion "Forge"
-			addGameVersion "1.16.5"
+			addGameVersion "1.18.1"
 			mainArtifact(remapJar.archivePath)
 			relations {
 				requiredDependency 'architectury-forge'
 				optionalDependency 'jei'
+				optionalDependency 'roughly-enough-items-forge'
 			}
 			changelog = getGitChangelog
 			changelogType = 'markdown'
