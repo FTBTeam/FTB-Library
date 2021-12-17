@@ -4,7 +4,6 @@ import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.utils.EnvExecutor;
-import dev.ftb.mods.ftblibrary.item.FTBLibraryItems;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
@@ -26,7 +25,6 @@ public class FTBLibrary {
 		LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
 		LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
 		PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
-		FTBLibraryItems.init();
 		PROXY.init();
 	}
 
