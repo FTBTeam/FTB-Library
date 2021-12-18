@@ -230,11 +230,11 @@ public class StringUtils {
 	}
 
 	public static String formatDouble0(double value) {
-		return DOUBLE_FORMATTER_0.format(value);
+		return (value == (long) value) ? String.format("%,d", (long) value) : DOUBLE_FORMATTER_0.format(value);
 	}
 
 	public static String formatDouble00(double value) {
-		return DOUBLE_FORMATTER_00.format(value);
+		return (value == (long) value) ? String.format("%,d", (long) value) : DOUBLE_FORMATTER_00.format(value);
 	}
 
 	public static String formatDouble(double value, boolean fancy) {
