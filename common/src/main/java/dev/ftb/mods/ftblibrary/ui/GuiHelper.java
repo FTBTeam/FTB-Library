@@ -18,12 +18,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
@@ -181,41 +183,75 @@ public class GuiHelper {
 			return false;
 		}
 
-		Minecraft mc = Minecraft.getInstance();
-		Font font = mc.font;
-		ItemRenderer itemRenderer = mc.getItemRenderer();
-		Tesselator tesselator = Tesselator.getInstance();
+		var mc = Minecraft.getInstance();
+		var font = mc.font;
+		var itemRenderer = mc.getItemRenderer();
+		var tesselator = Tesselator.getInstance();
+
+		poseStack.pushPose();
+		poseStack.translate(x, y, 0);
+		poseStack.scale(scaleX, scaleY, 1F);
+
+		mc.getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
+		RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
 
 		GuiHelper.setupDrawing();
-		BakedModel bakedModel = itemRenderer.getModel(stack, mc.level, mc.player, 0);
+		poseStack.translate(8, 8, itemRenderer.blitOffset);
+		poseStack.scale(1, -1, 1);
+		poseStack.scale(16, 16, 16);
+		var bufferSource = mc.renderBuffers().bufferSource();
 
-		boolean sideLit = bakedModel.usesBlockLight();
-		if (!sideLit) {
+		var bakedModel = itemRenderer.getModel(stack, mc.level, mc.player, 0);
+
+		boolean flatLight = !bakedModel.usesBlockLight();
+
+		if (flatLight) {
 			Lighting.setupForFlatItems();
 		}
 
-		poseStack.pushPose();
-		poseStack.mulPoseMatrix(RenderSystem.getModelViewMatrix());
-		poseStack.translate(x + 8, y + 8, 0);
-		poseStack.scale(16 * scaleX, -16 * scaleY, 1F);
-		PoseStack modelViewStack = RenderSystem.getModelViewStack();
-		modelViewStack.pushPose();
-		modelViewStack.last().pose().load(poseStack.last().pose());
-		RenderSystem.applyModelViewMatrix();
-		MultiBufferSource.BufferSource immediate = mc.renderBuffers().bufferSource();
-		itemRenderer.render(stack, ItemTransforms.TransformType.GUI, false, new PoseStack(), immediate,
-				0xf000f0, OverlayTexture.NO_OVERLAY, bakedModel);
-		immediate.endBatch();
-		poseStack.popPose();
-		modelViewStack.popPose();
-		RenderSystem.applyModelViewMatrix();
+		itemRenderer.render(stack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, bakedModel);
+		bufferSource.endBatch();
+		RenderSystem.enableDepthTest();
 
-		if (renderOverlay) {
-			itemRenderer.renderGuiItemDecorations(font, stack, (int) x, (int) y, null);
+		if (flatLight) {
+			Lighting.setupFor3DItems();
 		}
 
-		if (!sideLit) Lighting.setupFor3DItems();
+		if (renderOverlay) {
+			if (stack.getCount() != 1 || text != null) {
+				String s = text == null ? String.valueOf(stack.getCount()) : text;
+				poseStack.translate(0, 0, itemRenderer.blitOffset + 20);
+				font.drawInBatch(s, (float) (19 - 2 - font.width(s)), (float) (6 + 3), 16777215, true, poseStack.last().pose(), bufferSource, false, 0, 15728880);
+				bufferSource.endBatch();
+			}
 
+			if (stack.isBarVisible()) {
+				RenderSystem.disableDepthTest();
+				RenderSystem.disableTexture();
+				RenderSystem.disableBlend();
+				int i = stack.getBarWidth();
+				int j = stack.getBarColor();
+				draw(poseStack, tesselator, 2, 13, 13, 2, 0, 0, 0, 255);
+				draw(poseStack, tesselator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
+				RenderSystem.enableBlend();
+				RenderSystem.enableTexture();
+				RenderSystem.enableDepthTest();
+			}
+
+			float f3 = mc.player == null ? 0.0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
+
+			if (f3 > 0.0F) {
+				RenderSystem.disableDepthTest();
+				RenderSystem.disableTexture();
+				RenderSystem.enableBlend();
+				RenderSystem.defaultBlendFunc();
+				draw(poseStack, tesselator, 0, Mth.floor(16.0F * (1.0F - f3)), 16, Mth.ceil(16.0F * f3), 255, 255, 255, 127);
+				RenderSystem.enableTexture();
+				RenderSystem.enableDepthTest();
+			}
+		}
+
+		poseStack.popPose();
 		return true;
 	}
 
