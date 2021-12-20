@@ -49,7 +49,7 @@ public abstract class Button extends Widget {
 	@Override
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		GuiHelper.setupDrawing();
-		int s = h >= 16 ? 16 : 8;
+		var s = h >= 16 ? 16 : 8;
 		drawBackground(matrixStack, theme, x, y, w, h);
 		drawIcon(matrixStack, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
 	}

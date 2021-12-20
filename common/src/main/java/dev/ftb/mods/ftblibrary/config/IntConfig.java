@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.config;
 
-import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +29,7 @@ public class IntConfig extends NumberConfig<Integer> {
 	@Override
 	public boolean parse(@Nullable Consumer<Integer> callback, String string) {
 		try {
-			int v = Long.decode(string).intValue();
+			var v = Long.decode(string).intValue();
 
 			if (v >= min && v <= max) {
 				if (callback != null) {

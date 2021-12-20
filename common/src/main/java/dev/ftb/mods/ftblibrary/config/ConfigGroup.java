@@ -48,15 +48,15 @@ public class ConfigGroup {
 	}
 
 	public Component getTooltip() {
-		String t = getNameKey() + ".tooltip";
+		var t = getNameKey() + ".tooltip";
 		return I18n.exists(t) ? new TranslatableComponent(t) : TextComponent.EMPTY;
 	}
 
 	public ConfigGroup getGroup(String id) {
-		int index = id.indexOf('.');
+		var index = id.indexOf('.');
 
 		if (index == -1) {
-			ConfigGroup g = groups.get(id);
+			var g = groups.get(id);
 
 			if (g == null) {
 				g = new ConfigGroup(id);
@@ -146,12 +146,12 @@ public class ConfigGroup {
 
 	public void save(boolean accepted) {
 		if (accepted) {
-			for (ConfigValue value : values.values()) {
+			for (var value : values.values()) {
 				value.setter.accept(value.value);
 			}
 		}
 
-		for (ConfigGroup group : groups.values()) {
+		for (var group : groups.values()) {
 			group.save(accepted);
 		}
 

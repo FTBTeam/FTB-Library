@@ -28,13 +28,13 @@ public class ColorConfig extends ConfigFromString<Color4I> {
 					return false;
 				}
 
-				String[] s = string.split(",");
+				var s = string.split(",");
 
 				if (s.length == 3 || s.length == 4) {
-					int[] c = new int[4];
+					var c = new int[4];
 					c[3] = 255;
 
-					for (int i = 0; i < s.length; i++) {
+					for (var i = 0; i < s.length; i++) {
 						c[i] = Integer.parseInt(s[i]);
 					}
 
@@ -51,7 +51,7 @@ public class ColorConfig extends ConfigFromString<Color4I> {
 					string = string.substring(1);
 				}
 
-				int hex = Integer.parseInt(string, 16);
+				var hex = Integer.parseInt(string, 16);
 
 				if (callback != null) {
 					callback.accept(Color4I.rgba(0xFF000000 | hex));

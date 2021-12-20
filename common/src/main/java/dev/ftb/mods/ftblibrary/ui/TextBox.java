@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -83,7 +82,7 @@ public class TextBox extends Widget {
 
 	public void setCursorPosition(int pos) {
 		cursorPosition = pos;
-		int i = text.length();
+		var i = text.length();
 		cursorPosition = Mth.clamp(cursorPosition, 0, i);
 		setSelectionPos(cursorPosition);
 	}
@@ -97,11 +96,11 @@ public class TextBox extends Widget {
 			return;
 		}
 
-		String s = "";
-		String s1 = SharedConstants.filterText(textToWrite);
-		int i = Math.min(cursorPosition, selectionEnd);
-		int j = Math.max(cursorPosition, selectionEnd);
-		int k = charLimit - text.length() - (i - j);
+		var s = "";
+		var s1 = SharedConstants.filterText(textToWrite);
+		var i = Math.min(cursorPosition, selectionEnd);
+		var j = Math.max(cursorPosition, selectionEnd);
+		var k = charLimit - text.length() - (i - j);
 
 		if (!text.isEmpty()) {
 			s = s + text.substring(0, i);
@@ -126,7 +125,7 @@ public class TextBox extends Widget {
 	}
 
 	public void setSelectionPos(int position) {
-		int i = text.length();
+		var i = text.length();
 
 		if (position > i) {
 			position = i;
@@ -142,10 +141,10 @@ public class TextBox extends Widget {
 			lineScrollOffset = i;
 		}
 
-		int j = width - 10;
-		Theme theme = getGui().getTheme();
-		String s = theme.trimStringToWidth(text.substring(lineScrollOffset), j);
-		int k = s.length() + lineScrollOffset;
+		var j = width - 10;
+		var theme = getGui().getTheme();
+		var s = theme.trimStringToWidth(text.substring(lineScrollOffset), j);
+		var k = s.length() + lineScrollOffset;
 
 		if (position == lineScrollOffset) {
 			lineScrollOffset -= theme.trimStringToWidthReverse(text, j).length();
@@ -169,13 +168,13 @@ public class TextBox extends Widget {
 	}
 
 	public int getNthWordFromPosWS(int n, int pos, boolean skipWs) {
-		int i = pos;
-		boolean flag = n < 0;
-		int j = Math.abs(n);
+		var i = pos;
+		var flag = n < 0;
+		var j = Math.abs(n);
 
-		for (int k = 0; k < j; ++k) {
+		for (var k = 0; k < j; ++k) {
 			if (!flag) {
-				int l = text.length();
+				var l = text.length();
 				i = text.indexOf(32, i);
 
 				if (i == -1) {
@@ -221,10 +220,10 @@ public class TextBox extends Widget {
 		if (selectionEnd != cursorPosition) {
 			writeText("");
 		} else {
-			boolean flag = num < 0;
-			int i = flag ? cursorPosition + num : cursorPosition;
-			int j = flag ? cursorPosition : cursorPosition + num;
-			String s = "";
+			var flag = num < 0;
+			var i = flag ? cursorPosition + num : cursorPosition;
+			var j = flag ? cursorPosition : cursorPosition + num;
+			var s = "";
 
 			if (i >= 0) {
 				s = text.substring(0, i);
@@ -250,9 +249,9 @@ public class TextBox extends Widget {
 
 			if (button.isLeft()) {
 				if (isFocused) {
-					int i = getMouseX() - getX();
-					Theme theme = getGui().getTheme();
-					String s = theme.trimStringToWidth(text.substring(lineScrollOffset), width);
+					var i = getMouseX() - getX();
+					var theme = getGui().getTheme();
+					var s = theme.trimStringToWidth(text.substring(lineScrollOffset), width);
 					setCursorPosition(theme.trimStringToWidth(s, i).length() + lineScrollOffset);
 				}
 			} else if (button.isRight() && getText().length() > 0 && allowInput()) {
@@ -401,29 +400,29 @@ public class TextBox extends Widget {
 	@Override
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		drawTextBox(matrixStack, theme, x, y, w, h);
-		boolean drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
-		String textToDraw = getFormattedText();
+		var drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
+		var textToDraw = getFormattedText();
 		GuiHelper.pushScissor(getScreen(), x, y, w, h);
 
-		Color4I col = validText ? (textColor.isEmpty() ? theme.getContentColor(WidgetType.NORMAL) : textColor).withAlpha(drawGhostText ? 120 : 255) : Color4I.RED;
-		int j = cursorPosition - lineScrollOffset;
-		int k = selectionEnd - lineScrollOffset;
-		String s = theme.trimStringToWidth(textToDraw.substring(lineScrollOffset), w);
-		int textX = x + 4;
-		int textY = y + (h - 8) / 2;
-		int textX1 = textX;
+		var col = validText ? (textColor.isEmpty() ? theme.getContentColor(WidgetType.NORMAL) : textColor).withAlpha(drawGhostText ? 120 : 255) : Color4I.RED;
+		var j = cursorPosition - lineScrollOffset;
+		var k = selectionEnd - lineScrollOffset;
+		var s = theme.trimStringToWidth(textToDraw.substring(lineScrollOffset), w);
+		var textX = x + 4;
+		var textY = y + (h - 8) / 2;
+		var textX1 = textX;
 
 		if (k > s.length()) {
 			k = s.length();
 		}
 
 		if (!s.isEmpty()) {
-			String s1 = j > 0 && j <= s.length() ? s.substring(0, j) : s;
+			var s1 = j > 0 && j <= s.length() ? s.substring(0, j) : s;
 			textX1 = theme.drawString(matrixStack, new TextComponent(s1), textX, textY, col, 0);
 		}
 
-		boolean drawCursor = cursorPosition < textToDraw.length() || textToDraw.length() >= charLimit;
-		int cursorX = textX1;
+		var drawCursor = cursorPosition < textToDraw.length() || textToDraw.length() >= charLimit;
+		var cursorX = textX1;
 
 		if (j <= 0 || j > s.length()) {
 			cursorX = j > 0 ? textX + w : textX;
@@ -445,18 +444,18 @@ public class TextBox extends Widget {
 		}
 
 		if (k != j) {
-			int l1 = textX + theme.getStringWidth(new TextComponent(s.substring(0, k)));
+			var l1 = textX + theme.getStringWidth(new TextComponent(s.substring(0, k)));
 
 			int startX = cursorX, startY = textY - 1, endX = l1 - 1, endY = textY + 1 + theme.getFontHeight();
 
 			if (startX < endX) {
-				int i = startX;
+				var i = startX;
 				startX = endX;
 				endX = i;
 			}
 
 			if (startY < endY) {
-				int j12 = startY;
+				var j12 = startY;
 				startY = endY;
 				endY = j12;
 			}
@@ -470,7 +469,7 @@ public class TextBox extends Widget {
 			}
 
 			// (please help)
-			BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+			var bufferBuilder = Tesselator.getInstance().getBuilder();
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.disableTexture();

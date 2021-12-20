@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -47,8 +46,8 @@ public class ItemIcon extends Icon {
 		}
 
 		return new LazyIcon(() -> {
-			String[] s = lazyStackString.split(" ", 4);
-			ItemStack stack = new ItemStack(Registry.ITEM.get(new ResourceLocation(s[0])));
+			var s = lazyStackString.split(" ", 4);
+			var stack = new ItemStack(Registry.ITEM.get(new ResourceLocation(s[0])));
 
 			if (s.length >= 2 && !s[1].equals("1")) {
 				stack.setCount(Integer.parseInt(s[1]));
@@ -119,12 +118,12 @@ public class ItemIcon extends Icon {
 	}
 
 	public String toString() {
-		ItemStack is = getStack();
-		StringBuilder builder = new StringBuilder("item:");
+		var is = getStack();
+		var builder = new StringBuilder("item:");
 		builder.append(Registries.getId(is.getItem(), Registry.ITEM_REGISTRY));
-		int count = is.getCount();
-		int damage = is.getDamageValue();
-		CompoundTag nbt = is.getTag();
+		var count = is.getCount();
+		var damage = is.getDamageValue();
+		var nbt = is.getTag();
 
 		if (count > 1 || damage > 0 || nbt != null) {
 			builder.append(' ');
@@ -145,8 +144,8 @@ public class ItemIcon extends Icon {
 	}
 
 	public int hashCode() {
-		ItemStack stack = getStack();
-		int h = stack.getItem().hashCode();
+		var stack = getStack();
+		var h = stack.getItem().hashCode();
 		h = h * 31 + stack.getCount();
 		h = h * 31 + Objects.hashCode(stack.getTag());
 		return h;

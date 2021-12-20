@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
+import dev.architectury.utils.NbtType;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.SNBTNet;
-import dev.architectury.utils.NbtType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.Util;
@@ -34,7 +34,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 
 			defaultValue.sort(null);
 
-			for (BaseValue<?> value : defaultValue) {
+			for (var value : defaultValue) {
 				value.write(tag);
 			}
 
@@ -43,11 +43,11 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 
 		tag.comment(key, String.join("\n", comment));
 
-		SNBTCompoundTag tag1 = new SNBTCompoundTag();
+		var tag1 = new SNBTCompoundTag();
 
 		defaultValue.sort(null);
 
-		for (BaseValue<?> value : defaultValue) {
+		for (var value : defaultValue) {
 			value.write(tag1);
 		}
 
@@ -57,7 +57,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	@Override
 	public void read(SNBTCompoundTag tag) {
 		if (parent == null) {
-			for (BaseValue<?> value : defaultValue) {
+			for (var value : defaultValue) {
 				if (tag.contains(value.key)) {
 					value.read(tag);
 				}
@@ -67,9 +67,9 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		}
 
 		if (tag.contains(key, NbtType.COMPOUND)) {
-			SNBTCompoundTag tag1 = tag.getCompound(key);
+			var tag1 = tag.getCompound(key);
 
-			for (BaseValue<?> value : defaultValue) {
+			for (var value : defaultValue) {
 				if (tag1.contains(value.key)) {
 					value.read(tag1);
 				}
@@ -81,15 +81,15 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
 		if (parent == null) {
-			for (BaseValue<?> value : defaultValue) {
+			for (var value : defaultValue) {
 				if (!value.excluded) {
 					value.createClientConfig(group);
 				}
 			}
 		} else {
-			ConfigGroup g = group.getGroup(key);
+			var g = group.getGroup(key);
 
-			for (BaseValue<?> value : defaultValue) {
+			for (var value : defaultValue) {
 				if (!value.excluded) {
 					value.createClientConfig(g);
 				}
@@ -98,7 +98,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	}
 
 	public void write(FriendlyByteBuf buf) {
-		SNBTCompoundTag tag = new SNBTCompoundTag();
+		var tag = new SNBTCompoundTag();
 		write(tag);
 		SNBTNet.write(buf, tag);
 	}
@@ -108,7 +108,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	}
 
 	public void load(Path path) {
-		SNBTCompoundTag tag = SNBT.read(path);
+		var tag = SNBT.read(path);
 
 		if (tag != null) {
 			read(tag);
@@ -125,7 +125,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		if (parent != null) {
 			parent.saveNow(path);
 		} else {
-			SNBTCompoundTag tag = new SNBTCompoundTag();
+			var tag = new SNBTCompoundTag();
 			write(tag);
 			SNBT.write(path, tag);
 		}
@@ -141,7 +141,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 				}
 			}
 		} else {
-			SNBTConfig defaultConfigFile = SNBTConfig.create(key);
+			var defaultConfigFile = SNBTConfig.create(key);
 			defaultConfigFile.comment(comment.get());
 			defaultConfigFile.save(defaultPath);
 		}

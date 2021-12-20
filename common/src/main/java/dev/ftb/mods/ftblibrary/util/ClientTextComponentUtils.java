@@ -10,7 +10,6 @@ import net.minecraft.network.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 public class ClientTextComponentUtils {
@@ -32,10 +31,10 @@ public class ClientTextComponentUtils {
 		}
 
 		if (s.indexOf(':') != -1) {
-			Map<String, String> map = StringUtils.splitProperties(s);
+			var map = StringUtils.splitProperties(s);
 
-			for (CustomComponentParser parser : CUSTOM_COMPONENT_PARSERS) {
-				Component c = parser.parse(s, map);
+			for (var parser : CUSTOM_COMPONENT_PARSERS) {
+				var c = parser.parse(s, map);
 
 				if (c != null && c != TextComponent.EMPTY) {
 					return c;
@@ -43,7 +42,7 @@ public class ClientTextComponentUtils {
 			}
 
 			if (map.containsKey("image")) {
-				ImageComponent c = new ImageComponent();
+				var c = new ImageComponent();
 				c.image = Icon.getIcon(map.get("image"));
 
 				if (map.containsKey("width")) {

@@ -17,7 +17,7 @@ public class CombinedIcon extends Icon {
 	public static Icon getCombined(Collection<Icon> icons) {
 		List<Icon> list = new ArrayList<>(icons.size());
 
-		for (Icon icon : icons) {
+		for (var icon : icons) {
 			if (!icon.isEmpty()) {
 				list.add(icon);
 			}
@@ -37,7 +37,7 @@ public class CombinedIcon extends Icon {
 	CombinedIcon(Collection<Icon> icons) {
 		list = new ArrayList<>(icons.size());
 
-		for (Icon icon : icons) {
+		for (var icon : icons) {
 			if (!icon.isEmpty()) {
 				list.add(icon);
 			}
@@ -53,7 +53,7 @@ public class CombinedIcon extends Icon {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
-		for (Icon icon : list) {
+		for (var icon : list) {
 			icon.draw(matrixStack, x, y, w, h);
 		}
 	}
@@ -61,7 +61,7 @@ public class CombinedIcon extends Icon {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void drawStatic(PoseStack matrixStack, int x, int y, int w, int h) {
-		for (Icon icon : list) {
+		for (var icon : list) {
 			icon.drawStatic(matrixStack, x, y, w, h);
 		}
 	}
@@ -69,16 +69,16 @@ public class CombinedIcon extends Icon {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void draw3D(PoseStack matrixStack) {
-		for (Icon icon : list) {
+		for (var icon : list) {
 			icon.draw3D(matrixStack);
 		}
 	}
 
 	@Override
 	public JsonElement getJson() {
-		JsonArray json = new JsonArray();
+		var json = new JsonArray();
 
-		for (Icon o : list) {
+		for (var o : list) {
 			json.add(o.getJson());
 		}
 

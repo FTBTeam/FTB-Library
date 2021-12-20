@@ -19,7 +19,7 @@ public final class FluidKey {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		FluidKey fluidKey = (FluidKey) o;
+		var fluidKey = (FluidKey) o;
 		return stack.isFluidEqual(fluidKey.stack);
 	}
 

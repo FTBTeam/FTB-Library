@@ -48,7 +48,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 
 		StringUtils.ignoreResourceLocationErrors = false;
 
-		for (ResourceLocation rl : textures) {
+		for (var rl : textures) {
 			if (!ResourceLocation.isValidResourceLocation(rl.toString())) {
 				FTBLibrary.LOGGER.warn("Image " + rl + " has invalid path! Report this to author of '" + rl.getNamespace() + "'!");
 			} else if (isValidImage(rl)) {
@@ -80,7 +80,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 			});
 		}
 
-		for (ResourceLocation res : images) {
+		for (var res : images) {
 			panel.add(new SimpleTextButton(panel, new TextComponent("").append(new TextComponent(res.getNamespace()).withStyle(ChatFormatting.GOLD)).append(":").append(new TextComponent(res.getPath().substring(9, res.getPath().length() - 4)).withStyle(ChatFormatting.YELLOW)), Icon.getIcon(res.toString())) {
 				@Override
 				public void onClicked(MouseButton mouseButton) {

@@ -2,12 +2,10 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.common.base.Objects;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
@@ -15,9 +13,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +40,7 @@ public class ImageIcon extends Icon {
 
 	@Override
 	public ImageIcon copy() {
-		ImageIcon icon = new ImageIcon(texture);
+		var icon = new ImageIcon(texture);
 		icon.minU = minU;
 		icon.minV = minV;
 		icon.maxU = maxU;
@@ -65,8 +61,8 @@ public class ImageIcon extends Icon {
 
 	@Environment(EnvType.CLIENT)
 	public void bindTexture() {
-		TextureManager manager = Minecraft.getInstance().getTextureManager();
-		AbstractTexture tex = manager.getTexture(texture);
+		var manager = Minecraft.getInstance().getTextureManager();
+		var tex = manager.getTexture(texture);
 
 		if (tex == null) {
 			tex = new SimpleTexture(texture);
@@ -84,15 +80,15 @@ public class ImageIcon extends Icon {
 		if (tileSize <= 0D) {
 			GuiHelper.drawTexturedRect(matrixStack, x, y, w, h, color, minU, minV, maxU, maxV);
 		} else {
-			int r = color.redi();
-			int g = color.greeni();
-			int b = color.bluei();
-			int a = color.alphai();
+			var r = color.redi();
+			var g = color.greeni();
+			var b = color.bluei();
+			var a = color.alphai();
 
 			RenderSystem.enableTexture();
-			Matrix4f m = matrixStack.last().pose();
-			Tesselator tesselator = Tesselator.getInstance();
-			BufferBuilder buffer = tesselator.getBuilder();
+			var m = matrixStack.last().pose();
+			var tesselator = Tesselator.getInstance();
+			var buffer = tesselator.getBuilder();
 			RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
@@ -126,7 +122,7 @@ public class ImageIcon extends Icon {
 
 	@Override
 	public ImageIcon withColor(Color4I color) {
-		ImageIcon icon = copy();
+		var icon = copy();
 		icon.color = color;
 		return icon;
 	}
@@ -138,7 +134,7 @@ public class ImageIcon extends Icon {
 
 	@Override
 	public ImageIcon withUV(float u0, float v0, float u1, float v1) {
-		ImageIcon icon = copy();
+		var icon = copy();
 		icon.minU = u0;
 		icon.minV = v0;
 		icon.maxU = u1;

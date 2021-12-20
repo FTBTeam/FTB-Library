@@ -48,7 +48,7 @@ public class HollowRectangleIcon extends Icon {
 
 	@Override
 	public JsonElement getJson() {
-		JsonObject o = new JsonObject();
+		var o = new JsonObject();
 		o.addProperty("id", "hollow_rectangle");
 		o.add("color", color.getJson());
 

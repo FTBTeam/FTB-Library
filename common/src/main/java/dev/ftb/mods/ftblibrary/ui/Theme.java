@@ -211,7 +211,7 @@ public class Theme {
 		} else if (text instanceof FormattedText) {
 			return drawString(matrixStack, Language.getInstance().getVisualOrder((FormattedText) text), x, y, color, flags);
 		} else {
-			String s = String.valueOf(text);
+			var s = String.valueOf(text);
 
 			if (Bits.getFlag(flags, CENTERED)) {
 				x -= getStringWidth(s) / 2F;

@@ -40,14 +40,14 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 			@Override
 			public void alignWidgets() {
 				setY(hasSearchBox ? 23 : 9);
-				int prevWidth = width;
+				var prevWidth = width;
 
 				if (widgets.isEmpty()) {
 					setWidth(100);
 				} else {
 					setWidth(100);
 
-					for (Widget w : widgets) {
+					for (var w : widgets) {
 						setWidth(Math.max(width, w.width));
 					}
 				}
@@ -60,7 +60,7 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 					setWidth(Math.max(width, prevWidth));
 				}
 
-				for (Widget w : widgets) {
+				for (var w : widgets) {
 					w.setX(borderH);
 					w.setWidth(width - borderH * 2);
 				}
@@ -148,7 +148,7 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		super.drawBackground(matrixStack, theme, x, y, w, h);
 
-		Component title = getTitle();
+		var title = getTitle();
 
 		if (title != TextComponent.EMPTY) {
 			theme.drawString(matrixStack, title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);

@@ -10,7 +10,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -91,7 +90,7 @@ public final class NameMap<E> implements Iterable<E> {
 
 		Map<String, E> map0 = new LinkedHashMap<>(size());
 
-		for (E value : values) {
+		for (var value : values) {
 			map0.put(getName(value), value);
 		}
 
@@ -133,7 +132,7 @@ public final class NameMap<E> implements Iterable<E> {
 	}
 
 	public E get(@Nullable String s) {
-		E value = getNullable(s);
+		var value = getNullable(s);
 		return value == null ? defaultValue : value;
 	}
 

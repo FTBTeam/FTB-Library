@@ -27,15 +27,15 @@ public class Bits {
 	}
 
 	public static int toInt(boolean[] b) {
-		int d = 0;
-		for (int i = 0; i < b.length; i++) {
+		var d = 0;
+		for (var i = 0; i < b.length; i++) {
 			d |= (b[i] ? 1 : 0) << i;
 		}
 		return d;
 	}
 
 	public static void toBool(boolean[] b, int d) {
-		for (int j = 0; j < b.length; j++) {
+		for (var j = 0; j < b.length; j++) {
 			b[j] = ((d >> j) & 1) == 1;
 		}
 	}
@@ -84,16 +84,16 @@ public class Bits {
 	// - //
 
 	public static int toUShort(byte[] b, int off) {
-		int ch1 = b[off] & MAX_BYTE;
-		int ch2 = b[off + 1] & MAX_BYTE;
+		var ch1 = b[off] & MAX_BYTE;
+		var ch2 = b[off + 1] & MAX_BYTE;
 		return (ch1 << 8) + ch2;
 	}
 
 	public static int toInt(byte[] b, int off) {
-		int ch1 = b[off] & MAX_BYTE;
-		int ch2 = b[off + 1] & MAX_BYTE;
-		int ch3 = b[off + 2] & MAX_BYTE;
-		int ch4 = b[off + 3] & MAX_BYTE;
+		var ch1 = b[off] & MAX_BYTE;
+		var ch2 = b[off + 1] & MAX_BYTE;
+		var ch3 = b[off + 2] & MAX_BYTE;
+		var ch4 = b[off + 3] & MAX_BYTE;
 		return (ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4;
 	}
 
@@ -102,8 +102,8 @@ public class Bits {
 	}
 
 	public static UUID toUUID(byte[] b, int off) {
-		long msb = toLong(b, off);
-		long lsb = toLong(b, off + 8);
+		var msb = toLong(b, off);
+		var lsb = toLong(b, off + 8);
 		return new UUID(msb, lsb);
 	}
 
@@ -114,7 +114,7 @@ public class Bits {
 
 		List<UUID> list = new ArrayList<>(b.length / 16);
 
-		for (int i = 0; i < b.length; i += 16) {
+		for (var i = 0; i < b.length; i += 16) {
 			list.add(toUUID(b, i));
 		}
 
@@ -152,10 +152,10 @@ public class Bits {
 	}
 
 	public static byte[] fromUUIDList(Collection<UUID> c) {
-		byte[] b = new byte[c.size() * 16];
-		int idx = 0;
+		var b = new byte[c.size() * 16];
+		var idx = 0;
 
-		for (UUID id : c) {
+		for (var id : c) {
 			fromUUID(b, idx, id);
 			idx += 16;
 		}

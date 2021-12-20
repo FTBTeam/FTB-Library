@@ -48,7 +48,7 @@ public class TextComponentParser {
 	}
 
 	public static Component parse(String text, @Nullable Function<String, Component> substitutes) {
-		Component c = parse0(text, substitutes);
+		var c = parse0(text, substitutes);
 
 		if (c == TextComponent.EMPTY) {
 			return c;
@@ -88,10 +88,10 @@ public class TextComponentParser {
 			return TextComponent.EMPTY;
 		}
 
-		char[] c = text.toCharArray();
-		boolean hasSpecialCodes = false;
+		var c = text.toCharArray();
+		var hasSpecialCodes = false;
 
-		for (char c1 : c) {
+		for (var c1 : c) {
 			if (c1 == '{' || c1 == '&' || c1 == '\u00a7') {
 				hasSpecialCodes = true;
 				break;
@@ -105,11 +105,11 @@ public class TextComponentParser {
 		component = new TextComponent("");
 		style = Style.EMPTY;
 		builder = new StringBuilder();
-		boolean sub = false;
+		var sub = false;
 
-		for (int i = 0; i < c.length; i++) {
-			boolean escape = i > 0 && c[i - 1] == '\\';
-			boolean end = i == c.length - 1;
+		for (var i = 0; i < c.length; i++) {
+			var escape = i > 0 && c[i - 1] == '\\';
+			var end = i == c.length - 1;
 
 			if (sub && (end || c[i] == '{' || c[i] == '}')) {
 				if (c[i] == '{') {
@@ -132,7 +132,7 @@ public class TextComponentParser {
 					i++;
 
 					if (c[i] == '#') {
-						char[] rrggbb = new char[7];
+						var rrggbb = new char[7];
 						rrggbb[0] = '#';
 						System.arraycopy(c, i + 1, rrggbb, 1, 6);
 						i += 6;
@@ -142,7 +142,7 @@ public class TextComponentParser {
 							throw new BadFormatException("Invalid formatting! You must escape whitespace after & with \\&!");
 						}
 
-						ChatFormatting formatting = CODE_TO_FORMATTING.get(c[i]);
+						var formatting = CODE_TO_FORMATTING.get(c[i]);
 
 						if (formatting == null) {
 							throw new BadFormatException("Invalid formatting! Unknown formatting symbol after &: '" + c[i] + "'!");
@@ -173,23 +173,23 @@ public class TextComponentParser {
 	}
 
 	private void finishPart() throws BadFormatException {
-		String string = builder.toString();
+		var string = builder.toString();
 		builder.setLength(0);
 
 		if (string.isEmpty()) {
 			return;
 		} else if (string.length() < 2 || string.charAt(0) != '{') {
-			TextComponent component1 = new TextComponent(string);
+			var component1 = new TextComponent(string);
 			component1.setStyle(style);
 			component.append(component1);
 			return;
 		}
 
-		Component component1 = substitutes.apply(string.substring(1));
+		var component1 = substitutes.apply(string.substring(1));
 
 		if (component1 != null) {
-			Style style0 = component1.getStyle();
-			Style style1 = style;
+			var style0 = component1.getStyle();
+			var style1 = style;
 			style1 = style1.withHoverEvent(style0.getHoverEvent());
 			style1 = style1.withClickEvent(style0.getClickEvent());
 			style1 = style1.withInsertion(style0.getInsertion());

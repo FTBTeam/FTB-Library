@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.ui.misc;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -48,16 +47,16 @@ public class LoadingScreen extends BaseScreen {
 		if (isLoading()) {
 			GuiHelper.drawHollowRect(matrixStack, x + width / 2 - 48, y + height / 2 - 8, 96, 16, Color4I.WHITE, true);
 
-			int x1 = x + width / 2 - 48;
-			int y1 = y + height / 2 - 8;
-			int w1 = 96;
-			int h1 = 16;
+			var x1 = x + width / 2 - 48;
+			var y1 = y + height / 2 - 8;
+			var w1 = 96;
+			var h1 = 16;
 
-			Color4I col = Color4I.WHITE;
+			var col = Color4I.WHITE;
 			RenderSystem.disableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			Tesselator tesselator = Tesselator.getInstance();
-			BufferBuilder buffer = tesselator.getBuilder();
+			var tesselator = Tesselator.getInstance();
+			var buffer = tesselator.getBuilder();
 			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 			GuiHelper.addRectToBuffer(matrixStack, buffer, x1, y1 + 1, 1, h1 - 2, col);
@@ -73,9 +72,9 @@ public class LoadingScreen extends BaseScreen {
 			timer += Minecraft.getInstance().getDeltaFrameTime();
 			timer = timer % (h1 * 2F);
 
-			for (int oy = 0; oy < h1; oy++) {
-				for (int ox = 0; ox < w1; ox++) {
-					int index = ox + oy + (int) timer;
+			for (var oy = 0; oy < h1; oy++) {
+				for (var ox = 0; ox < w1; ox++) {
+					var index = ox + oy + (int) timer;
 
 					if (index % (h1 * 2) < h1) {
 						col = Color4I.WHITE.withAlpha(200 - (index % h1) * 9);
@@ -88,10 +87,10 @@ public class LoadingScreen extends BaseScreen {
 			tesselator.end();
 			GlStateManager._enableTexture();
 
-			Component[] s = getText();
+			var s = getText();
 
 			if (s.length > 0) {
-				for (int i = 0; i < s.length; i++) {
+				for (var i = 0; i < s.length; i++) {
 					theme.drawString(matrixStack, s[i], x + width / 2, y - 26 + i * 12, Theme.CENTERED);
 				}
 			}

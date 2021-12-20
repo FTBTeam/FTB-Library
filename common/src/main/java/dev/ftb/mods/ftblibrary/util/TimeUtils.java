@@ -2,13 +2,13 @@ package dev.ftb.mods.ftblibrary.util;
 
 public class TimeUtils {
 	public static String getTimeString(long millis) {
-		boolean neg = false;
+		var neg = false;
 		if (millis < 0L) {
 			neg = true;
 			millis = -millis;
 		}
 
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 
 		if (millis < 1000L) {
 			if (neg) {
@@ -21,15 +21,15 @@ public class TimeUtils {
 			return sb.toString();
 		}
 
-		long secs = millis / 1000L;
+		var secs = millis / 1000L;
 
 		if (neg) {
 			sb.append('-');
 		}
 
-		long h = (secs / 3600L) % 24;
-		long m = (secs / 60L) % 60L;
-		long s = secs % 60L;
+		var h = (secs / 3600L) % 24;
+		var m = (secs / 60L) % 60L;
+		var s = secs % 60L;
 
 		if (secs >= 86400L) {
 			sb.append(secs / 86400L);
@@ -66,7 +66,7 @@ public class TimeUtils {
 			return "0 seconds";
 		}
 
-		StringBuilder builder = new StringBuilder();
+		var builder = new StringBuilder();
 		prettyTimeString(builder, seconds, true);
 		return builder.toString();
 	}

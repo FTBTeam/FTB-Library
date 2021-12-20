@@ -75,13 +75,13 @@ public class StringUtils {
 	}
 
 	public static String getID(Object o, int flags) {
-		String id = getRawID(o);
+		var id = getRawID(o);
 
 		if (flags == 0) {
 			return id;
 		}
 
-		boolean fix = Bits.getFlag(flags, FLAG_ID_FIX);
+		var fix = Bits.getFlag(flags, FLAG_ID_FIX);
 
 		if (!fix && id.isEmpty() && !Bits.getFlag(flags, FLAG_ID_ALLOW_EMPTY)) {
 			throw new NullPointerException("ID can't be empty!");
@@ -104,11 +104,11 @@ public class StringUtils {
 		}
 
 		if (Bits.getFlag(flags, FLAG_ID_ONLY_UNDERLINE)) {
-			boolean allowPeriod = Bits.getFlag(flags, 16);
+			var allowPeriod = Bits.getFlag(flags, 16);
 
-			char[] chars = id.toCharArray();
+			var chars = id.toCharArray();
 
-			for (int i = 0; i < chars.length; i++) {
+			for (var i = 0; i < chars.length; i++) {
 				if (!(chars[i] == '.' && allowPeriod || isTextChar(chars[i], true))) {
 					if (fix) {
 						chars[i] = '_';
@@ -129,7 +129,7 @@ public class StringUtils {
 			return EMPTY_ARRAY;
 		}
 
-		String[] s1 = new String[s.length - 1];
+		var s1 = new String[s.length - 1];
 		System.arraycopy(s, 1, s1, 0, s1.length);
 		return s1;
 	}
@@ -145,7 +145,7 @@ public class StringUtils {
 	public static void replace(List<String> txt, String s, String s1) {
 		if (!txt.isEmpty()) {
 			String s2;
-			for (int i = 0; i < txt.size(); i++) {
+			for (var i = 0; i < txt.size(); i++) {
 				s2 = txt.get(i);
 				if (s2 != null && s2.length() > 0) {
 					s2 = s2.replace(s, s1);
@@ -160,9 +160,9 @@ public class StringUtils {
 			return s;
 		}
 
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < s.length(); i++) {
-			char c1 = s.charAt(i);
+		var sb = new StringBuilder();
+		for (var i = 0; i < s.length(); i++) {
+			var c1 = s.charAt(i);
 			sb.append((c1 == c) ? with : c1);
 		}
 
@@ -174,9 +174,9 @@ public class StringUtils {
 			return "";
 		}
 
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 
-		for (int i = startIndex; i < o.length; i++) {
+		for (var i = startIndex; i < o.length; i++) {
 			sb.append(o[i]);
 			if (i != o.length - 1) {
 				sb.append(' ');
@@ -190,7 +190,7 @@ public class StringUtils {
 		if (s.length() == 0) {
 			return s;
 		}
-		char c = Character.toUpperCase(s.charAt(0));
+		var c = Character.toUpperCase(s.charAt(0));
 		if (s.length() == 1) {
 			return Character.toString(c);
 		}
@@ -198,11 +198,11 @@ public class StringUtils {
 	}
 
 	public static String fillString(CharSequence s, char fill, int length) {
-		int sl = s.length();
+		var sl = s.length();
 
-		char[] c = new char[Math.max(sl, length)];
+		var c = new char[Math.max(sl, length)];
 
-		for (int i = 0; i < c.length; i++) {
+		for (var i = 0; i < c.length; i++) {
 			if (i >= sl) {
 				c[i] = fill;
 			} else {
@@ -214,11 +214,11 @@ public class StringUtils {
 	}
 
 	public static String removeAllWhitespace(String s) {
-		char[] chars = new char[s.length()];
-		int j = 0;
+		var chars = new char[s.length()];
+		var j = 0;
 
-		for (int i = 0; i < chars.length; i++) {
-			char c = s.charAt(i);
+		for (var i = 0; i < chars.length; i++) {
+			var c = s.charAt(i);
 
 			if (c > ' ') {
 				chars[j] = c;
@@ -272,10 +272,10 @@ public class StringUtils {
 			map.clear();
 		}
 
-		for (String entry : s.split(",")) {
-			String[] val = entry.split("=");
+		for (var entry : s.split(",")) {
+			var val = entry.split("=");
 
-			for (String key : val[0].split("&")) {
+			for (var key : val[0].split("&")) {
 				map.put(key, val[1]);
 			}
 		}
@@ -292,7 +292,7 @@ public class StringUtils {
 		} else if (tabSize == 4) {
 			with = "    ";
 		} else {
-			char[] c = new char[tabSize];
+			var c = new char[tabSize];
 			Arrays.fill(c, ' ');
 			with = new String(c);
 		}
@@ -301,7 +301,7 @@ public class StringUtils {
 	}
 
 	public static int stringSize(int x) {
-		for (int i = 0; ; i++) {
+		for (var i = 0; ; i++) {
 			if (x <= INT_SIZE_TABLE[i]) {
 				return i + 1;
 			}
@@ -309,19 +309,19 @@ public class StringUtils {
 	}
 
 	public static String add0s(int number, int max) {
-		int size = stringSize(max);
-		int nsize = stringSize(number);
+		var size = stringSize(max);
+		var nsize = stringSize(number);
 
 		return "0".repeat(Math.max(0, size - nsize)) + number;
 	}
 
 	public static String camelCaseToWords(String key) {
-		StringBuilder builder = new StringBuilder();
-		boolean pu = false;
+		var builder = new StringBuilder();
+		var pu = false;
 
-		for (int i = 0; i < key.length(); i++) {
-			char c = key.charAt(i);
-			boolean u = Character.isUpperCase(c);
+		for (var i = 0; i < key.length(); i++) {
+			var c = key.charAt(i);
+			var u = Character.isUpperCase(c);
 
 			if (!pu && u) {
 				builder.append(' ');
@@ -342,9 +342,9 @@ public class StringUtils {
 	public static Map<String, String> splitProperties(String s) {
 		Map<String, String> map = new LinkedHashMap<>();
 
-		for (String s1 : s.split(" ")) {
+		for (var s1 : s.split(" ")) {
 			if (!s1.isEmpty()) {
-				String[] s2 = s1.split(":", 2);
+				var s2 = s1.split(":", 2);
 				map.put(s2[0], s2.length == 2 ? s2[1].replace("%20", " ") : "");
 			}
 		}

@@ -1,20 +1,17 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,28 +30,28 @@ public class AtlasSpriteIcon extends Icon {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
-		TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
+		var sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
 
 		if (sprite == null) {
 			return;
 		}
 
-		Matrix4f m = matrixStack.last().pose();
+		var m = matrixStack.last().pose();
 
-		int r = color.redi();
-		int g = color.greeni();
-		int b = color.bluei();
-		int a = color.alphai();
+		var r = color.redi();
+		var g = color.greeni();
+		var b = color.bluei();
+		var a = color.alphai();
 
-		float minU = sprite.getU0();
-		float minV = sprite.getV0();
-		float maxU = sprite.getU1();
-		float maxV = sprite.getV1();
+		var minU = sprite.getU0();
+		var minV = sprite.getV0();
+		var maxU = sprite.getU1();
+		var maxV = sprite.getV1();
 
 		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		RenderSystem.setShaderTexture(0, sprite.atlas().getId());
-		BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		var buffer = Tesselator.getInstance().getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 		buffer.vertex(m, x, y, 0F).color(r, g, b, a).uv(minU, minV).endVertex();
 		buffer.vertex(m, x, y + h, 0F).color(r, g, b, a).uv(minU, maxV).endVertex();
@@ -91,7 +88,7 @@ public class AtlasSpriteIcon extends Icon {
 
 	@Override
 	public AtlasSpriteIcon withColor(Color4I color) {
-		AtlasSpriteIcon icon = copy();
+		var icon = copy();
 		icon.color = color;
 		return icon;
 	}

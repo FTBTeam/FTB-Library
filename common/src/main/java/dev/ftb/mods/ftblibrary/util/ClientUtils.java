@@ -1,8 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import dev.architectury.event.CompoundEventResult;
 import dev.architectury.event.events.client.ClientChatEvent;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import net.minecraft.Util;
@@ -29,7 +27,7 @@ public class ClientUtils {
 	private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
 
 	public static void execClientCommand(String command, boolean printChat) {
-		CompoundEventResult<String> process = ClientChatEvent.PROCESS.invoker().process(command);
+		var process = ClientChatEvent.PROCESS.invoker().process(command);
 		if (process.isFalse()) {
 			command = "";
 		} else {
@@ -55,7 +53,7 @@ public class ClientUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T getGuiAs(Screen gui, Class<T> clazz) {
 		if (gui instanceof IScreenWrapper) {
-			BaseScreen guiBase = ((IScreenWrapper) gui).getGui();
+			var guiBase = ((IScreenWrapper) gui).getGui();
 
 			if (clazz.isAssignableFrom(guiBase.getClass())) {
 				return (T) guiBase;
@@ -75,9 +73,9 @@ public class ClientUtils {
 			case "http":
 			case "https": {
 				try {
-					final URI uri = new URI(scheme + ':' + path);
+					final var uri = new URI(scheme + ':' + path);
 					if (Minecraft.getInstance().options.chatLinksPrompt) {
-						final Screen currentScreen = Minecraft.getInstance().screen;
+						final var currentScreen = Minecraft.getInstance().screen;
 
 						Minecraft.getInstance().setScreen(new ConfirmLinkScreen(result ->
 						{
@@ -116,15 +114,15 @@ public class ClientUtils {
 				return true;
 			}
 			case "static_method": {
-				Optional<MethodHandle> handle = staticMethodCache.get(path);
+				var handle = staticMethodCache.get(path);
 
 				if (handle == null) {
 					handle = Optional.empty();
-					String[] s = path.split(":", 2);
+					var s = path.split(":", 2);
 
 					try {
 						Class c = Class.forName(s[0]);
-						MethodHandle h = MethodHandles.publicLookup().findStatic(c, s[1], EMPTY_METHOD_TYPE);
+						var h = MethodHandles.publicLookup().findStatic(c, s[1], EMPTY_METHOD_TYPE);
 						handle = Optional.ofNullable(h);
 					} catch (Throwable ex) {
 						ex.printStackTrace();

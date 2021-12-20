@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
@@ -60,12 +59,12 @@ public abstract class Icon implements Drawable {
 		if (json == null || json.isJsonNull()) {
 			return EMPTY;
 		} else if (json.isJsonObject()) {
-			JsonObject o = json.getAsJsonObject();
+			var o = json.getAsJsonObject();
 
 			if (o.has("id")) {
 				switch (o.get("id").getAsString()) {
 					case "color": {
-						Color4I color = Color4I.fromJson(o.get("color"));
+						var color = Color4I.fromJson(o.get("color"));
 						return (o.has("mutable") && o.get("mutable").getAsBoolean()) ? color.mutable() : color;
 					}
 					case "padding":
@@ -75,7 +74,7 @@ public abstract class Icon implements Drawable {
 					case "animation": {
 						List<Icon> icons = new ArrayList<>();
 
-						for (JsonElement e : o.get("icons").getAsJsonArray()) {
+						for (var e : o.get("icons").getAsJsonArray()) {
 							icons.add(getIcon(e));
 						}
 
@@ -83,8 +82,8 @@ public abstract class Icon implements Drawable {
 					}
 					case "border": {
 						Icon icon = EMPTY;
-						Color4I outline = EMPTY;
-						boolean roundEdges = false;
+						var outline = EMPTY;
+						var roundEdges = false;
 
 						if (o.has("icon")) {
 							icon = getIcon(o.get("icon"));
@@ -104,7 +103,7 @@ public abstract class Icon implements Drawable {
 						return new BulletIcon().withColor(o.has("color") ? Color4I.fromJson(o.get("color")) : EMPTY);
 					}
 					case "part": {
-						PartIcon partIcon = new PartIcon(getIcon(o.get("parent")));
+						var partIcon = new PartIcon(getIcon(o.get("parent")));
 						partIcon.posX = o.get("x").getAsInt();
 						partIcon.posY = o.get("y").getAsInt();
 						partIcon.width = o.get("width").getAsInt();
@@ -119,20 +118,20 @@ public abstract class Icon implements Drawable {
 		} else if (json.isJsonArray()) {
 			List<Icon> list = new ArrayList<>();
 
-			for (JsonElement e : json.getAsJsonArray()) {
+			for (var e : json.getAsJsonArray()) {
 				list.add(getIcon(e));
 			}
 
 			return CombinedIcon.getCombined(list);
 		}
 
-		String s = json.getAsString();
+		var s = json.getAsString();
 
 		if (s.isEmpty()) {
 			return EMPTY;
 		}
 
-		Icon icon = IconPresets.MAP.get(s);
+		var icon = IconPresets.MAP.get(s);
 		return icon == null ? getIcon(s) : icon;
 	}
 
@@ -145,52 +144,52 @@ public abstract class Icon implements Drawable {
 			return EMPTY;
 		}
 
-		String[] comb = id.split(" \\+ ");
+		var comb = id.split(" \\+ ");
 
 		if (comb.length > 1) {
-			ArrayList<Icon> list = new ArrayList<>(comb.length);
+			var list = new ArrayList<Icon>(comb.length);
 
-			for (String s : comb) {
+			for (var s : comb) {
 				list.add(getIcon(s));
 			}
 
 			return CombinedIcon.getCombined(list);
 		}
 
-		String[] ids = id.split("; ");
+		var ids = id.split("; ");
 
-		for (int i = 0; i < ids.length; i++) {
+		for (var i = 0; i < ids.length; i++) {
 			ids[i] = ids[i].trim();
 		}
 
-		Icon icon = getIcon0(ids[0]);
+		var icon = getIcon0(ids[0]);
 
 		if (ids.length > 1 && !icon.isEmpty()) {
-			IconProperties properties = new IconProperties();
+			var properties = new IconProperties();
 
-			for (int i = 1; i < ids.length; i++) {
-				String[] p = ids[i].split("=", 2);
+			for (var i = 1; i < ids.length; i++) {
+				var p = ids[i].split("=", 2);
 				properties.set(p[0], p.length == 1 ? "1" : p[1]);
 			}
 
 			icon.setProperties(properties);
 
-			int padding = properties.getInt("padding", 0);
+			var padding = properties.getInt("padding", 0);
 			if (padding != 0) {
 				icon = icon.withPadding(padding);
 			}
 
-			Color4I border = properties.getColor("border");
+			var border = properties.getColor("border");
 			if (border != null) {
 				icon = icon.withBorder(border, properties.getBoolean("border_round_edges", false));
 			}
 
-			Color4I color = properties.getColor("color");
+			var color = properties.getColor("color");
 			if (color != null) {
 				icon = icon.withColor(color);
 			}
 
-			Color4I tint = properties.getColor("tint");
+			var tint = properties.getColor("tint");
 			if (tint != null) {
 				icon = icon.withTint(tint);
 			}
@@ -204,13 +203,13 @@ public abstract class Icon implements Drawable {
 			return Icon.EMPTY;
 		}
 
-		Color4I col = Color4I.fromString(id);
+		var col = Color4I.fromString(id);
 
 		if (!col.isEmpty()) {
 			return col;
 		}
 
-		String[] ida = id.split(":", 2);
+		var ida = id.split(":", 2);
 
 		if (ida.length == 2) {
 			switch (ida[0]) {

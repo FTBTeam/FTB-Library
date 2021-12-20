@@ -33,7 +33,7 @@ public class IconWithPadding extends IconWithParent {
 			return parent.getJson();
 		}
 
-		JsonObject json = new JsonObject();
+		var json = new JsonObject();
 		json.addProperty("id", "padding");
 		json.addProperty("padding", padding);
 		json.add("parent", parent.getJson());

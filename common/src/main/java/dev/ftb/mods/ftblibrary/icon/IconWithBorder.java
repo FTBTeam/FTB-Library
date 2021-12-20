@@ -41,7 +41,7 @@ public class IconWithBorder extends IconWithParent {
 
 	@Override
 	public JsonElement getJson() {
-		JsonObject o = new JsonObject();
+		var o = new JsonObject();
 		o.addProperty("id", "border");
 		o.add("icon", parent.getJson());
 		o.add("color", color.getJson());

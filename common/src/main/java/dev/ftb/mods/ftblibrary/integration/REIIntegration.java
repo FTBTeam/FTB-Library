@@ -11,7 +11,6 @@ import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButton;
-import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonGroup;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import me.shedaniel.math.Point;
@@ -76,8 +75,8 @@ public class REIIntegration implements REIClientPlugin {
 			public List<FavoriteEntry> provide() {
 				List<FavoriteEntry> entries = new ArrayList<>();
 
-				for (SidebarButtonGroup group : SidebarButtonManager.INSTANCE.groups) {
-					for (SidebarButton button : group.getButtons()) {
+				for (var group : SidebarButtonManager.INSTANCE.groups) {
+					for (var button : group.getButtons()) {
 						entries.add(new SidebarButtonEntry(button));
 					}
 				}
@@ -104,8 +103,8 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public DataResult<SidebarButtonEntry> read(CompoundTag object) {
-			ResourceLocation id = new ResourceLocation(object.getString("id"));
-			JsonObject json = (JsonObject) JsonParser.parseString(object.getString("json"));
+			var id = new ResourceLocation(object.getString("id"));
+			var json = (JsonObject) JsonParser.parseString(object.getString("json"));
 			return DataResult.success(new SidebarButtonEntry(new SidebarButton(id, null, json)), Lifecycle.stable());
 		}
 
@@ -133,8 +132,8 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public boolean isInvalid() {
-			for (SidebarButtonGroup group : SidebarButtonManager.INSTANCE.groups) {
-				for (SidebarButton groupButton : group.getButtons()) {
+			for (var group : SidebarButtonManager.INSTANCE.groups) {
+				for (var groupButton : group.getButtons()) {
 					if (groupButton.id.equals(button.id) && groupButton.isActuallyVisible()) {
 						return false;
 					}

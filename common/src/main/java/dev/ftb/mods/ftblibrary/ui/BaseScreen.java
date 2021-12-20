@@ -141,10 +141,10 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 
 	@Override
 	public final void closeGui(boolean openPrevScreen) {
-		double mx = Minecraft.getInstance().mouseHandler.xpos();
-		double my = Minecraft.getInstance().mouseHandler.ypos();
+		var mx = Minecraft.getInstance().mouseHandler.xpos();
+		var my = Minecraft.getInstance().mouseHandler.ypos();
 
-		Minecraft mc = Minecraft.getInstance();
+		var mc = Minecraft.getInstance();
 
 		if (mc.player != null) {
 			mc.player.closeContainer();
@@ -211,7 +211,7 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 		if (contextMenu != null) {
 			contextMenu.updateMouseOver(mouseX, mouseY);
 		} else {
-			for (Widget widget : widgets) {
+			for (var widget : widgets) {
 				widget.updateMouseOver(mouseX, mouseY);
 			}
 		}
@@ -240,8 +240,8 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 			return;
 		}
 
-		int x = getX();
-		int y = getY();
+		var x = getX();
+		var y = getY();
 
 		if (contextMenu == null) {
 			px = getMouseX() - x;
@@ -262,7 +262,7 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 	}
 
 	public ContextMenu openContextMenu(List<ContextMenuItem> menu) {
-		ContextMenu contextMenu = new ContextMenu(this, menu);
+		var contextMenu = new ContextMenu(this, menu);
 		openContextMenu(contextMenu);
 		return contextMenu;
 	}
@@ -299,7 +299,7 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 			return true;
 		}
 
-		long now = System.currentTimeMillis();
+		var now = System.currentTimeMillis();
 
 		if (lastClickTime == 0L) {
 			lastClickTime = now;
@@ -372,9 +372,9 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 		if (widget == this) {
 			return isMouseOver(getX(), getY(), width, height);
 		} else if (isMouseOver(widget.getX(), widget.getY(), widget.width, widget.height)) {
-			boolean offset = widget.parent.isOffset();
+			var offset = widget.parent.isOffset();
 			widget.parent.setOffset(false);
-			boolean b = isMouseOver(widget.parent);
+			var b = isMouseOver(widget.parent);
 			widget.parent.setOffset(offset);
 			return b;
 		}

@@ -33,8 +33,8 @@ public interface ConfigUtil {
 	 * @param filename  Filename of the configuration file
 	 */
 	static void loadDefaulted(SNBTConfig config, Path configDir, String namespace, String filename) {
-		Path configPath = configDir.resolve(filename).toAbsolutePath();
-		Path defaultPath = DEFAULT_CONFIG_DIR.resolve(namespace).resolve(filename);
+		var configPath = configDir.resolve(filename).toAbsolutePath();
+		var defaultPath = DEFAULT_CONFIG_DIR.resolve(namespace).resolve(filename);
 		config.load(
 				configPath,
 				defaultPath,

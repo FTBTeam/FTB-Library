@@ -13,7 +13,7 @@ public class FaceIcon extends Icon {
 	private static final HashMap<UUID, FaceIcon> CACHE = new HashMap<>();
 
 	public static FaceIcon getFace(GameProfile profile) {
-		FaceIcon icon = CACHE.get(profile.getId());
+		var icon = CACHE.get(profile.getId());
 
 		if (icon == null) {
 			icon = new FaceIcon(profile);

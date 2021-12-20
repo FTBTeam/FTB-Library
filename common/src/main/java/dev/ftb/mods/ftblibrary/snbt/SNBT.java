@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.architectury.platform.Platform;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;
@@ -44,12 +44,12 @@ public class SNBT {
 	}
 
 	public static List<String> writeLines(CompoundTag nbt) {
-		SNBTBuilder builder = new SNBTBuilder();
+		var builder = new SNBTBuilder();
 
-		SNBTTagProperties rootProperties = nbt instanceof SNBTCompoundTag ? ((SNBTCompoundTag) nbt).getProperties("") : SNBTTagProperties.DEFAULT;
+		var rootProperties = nbt instanceof SNBTCompoundTag ? ((SNBTCompoundTag) nbt).getProperties("") : SNBTTagProperties.DEFAULT;
 
 		if (!rootProperties.comment.isEmpty()) {
-			for (String s : rootProperties.comment.split("\n")) {
+			for (var s : rootProperties.comment.split("\n")) {
 				builder.print("# ");
 				builder.print(s);
 				builder.println();
@@ -80,7 +80,7 @@ public class SNBT {
 		if (nbt == null || nbt instanceof EndTag) {
 			builder.print("null");
 		} else if (nbt instanceof CompoundTag compound) {
-			SNBTCompoundTag ocompound = compound instanceof SNBTCompoundTag ? (SNBTCompoundTag) compound : null;
+			var ocompound = compound instanceof SNBTCompoundTag ? (SNBTCompoundTag) compound : null;
 
 			if (compound.isEmpty()) {
 				builder.print("{ }");
@@ -91,7 +91,7 @@ public class SNBT {
 				builder.singleLine++;
 			}
 
-			boolean singleLine = builder.singleLine > 0;
+			var singleLine = builder.singleLine > 0;
 
 			builder.print("{");
 
@@ -102,11 +102,11 @@ public class SNBT {
 				builder.push();
 			}
 
-			int index = 0;
+			var index = 0;
 
-			for (String key : compound.getAllKeys()) {
+			for (var key : compound.getAllKeys()) {
 				index++;
-				SNBTTagProperties properties = ocompound == null ? SNBTTagProperties.DEFAULT : ocompound.getProperties(key);
+				var properties = ocompound == null ? SNBTTagProperties.DEFAULT : ocompound.getProperties(key);
 
 				if (!properties.comment.isEmpty()) {
 					if (singleLine) {
@@ -117,7 +117,7 @@ public class SNBT {
 						builder.println();
 					}
 
-					for (String s : properties.comment.split("\n")) {
+					for (var s : properties.comment.split("\n")) {
 						builder.print("# ");
 						builder.print(s);
 						builder.println();
@@ -194,7 +194,7 @@ public class SNBT {
 			return;
 		}
 
-		boolean singleLine = builder.singleLine > 0;
+		var singleLine = builder.singleLine > 0;
 
 		builder.print("[");
 		builder.print(opening);
@@ -206,7 +206,7 @@ public class SNBT {
 			builder.push();
 		}
 
-		int index = 0;
+		var index = 0;
 
 		for (Tag value : nbt) {
 			index++;

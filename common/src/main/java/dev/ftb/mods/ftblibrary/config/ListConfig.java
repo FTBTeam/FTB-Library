@@ -28,7 +28,7 @@ public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 	public List<E> copy(List<E> v) {
 		List<E> list = new ArrayList<>(v.size());
 
-		for (E value : v) {
+		for (var value : v) {
 			list.add(type.copy(value));
 		}
 
@@ -45,7 +45,7 @@ public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 		if (!value.isEmpty()) {
 			l.add(info("List"));
 
-			for (E value : value) {
+			for (var value : value) {
 				l.add(type.getStringForGUI(value));
 			}
 
@@ -57,7 +57,7 @@ public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 		if (!defaultValue.isEmpty()) {
 			l.add(info("Default"));
 
-			for (E value : defaultValue) {
+			for (var value : defaultValue) {
 				l.add(type.getStringForGUI(value));
 			}
 		}

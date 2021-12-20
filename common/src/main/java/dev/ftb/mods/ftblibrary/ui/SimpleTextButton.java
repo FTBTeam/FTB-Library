@@ -47,14 +47,14 @@ public abstract class SimpleTextButton extends Button {
 	@Override
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		drawBackground(matrixStack, theme, x, y, w, h);
-		int s = h >= 16 ? 16 : 8;
-		int off = (h - s) / 2;
+		var s = h >= 16 ? 16 : 8;
+		var off = (h - s) / 2;
 		FormattedText title = getTitle();
-		int textX = x;
-		int textY = y + (h - theme.getFontHeight() + 1) / 2;
+		var textX = x;
+		var textY = y + (h - theme.getFontHeight() + 1) / 2;
 
-		int sw = theme.getStringWidth(title);
-		int mw = w - (hasIcon() ? off + s : 0) - 6;
+		var sw = theme.getStringWidth(title);
+		var mw = w - (hasIcon() ? off + s : 0) - 6;
 
 		if (sw > mw) {
 			sw = mw;

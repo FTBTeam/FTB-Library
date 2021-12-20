@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.config;
 
-import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +64,7 @@ public class DoubleConfig extends NumberConfig<Double> {
 		}
 
 		try {
-			double multiplier = 1D;
+			var multiplier = 1D;
 
 			if (string.endsWith("K")) {
 				multiplier = 1000D;
@@ -78,7 +77,7 @@ public class DoubleConfig extends NumberConfig<Double> {
 				string = string.substring(0, string.length() - 1);
 			}
 
-			double v = Double.parseDouble(string.trim()) * multiplier;
+			var v = Double.parseDouble(string.trim()) * multiplier;
 
 			if (v >= min && v <= max) {
 				if (callback != null) {

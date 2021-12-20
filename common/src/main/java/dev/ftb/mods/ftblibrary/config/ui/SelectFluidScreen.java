@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
+import dev.architectury.fluid.FluidStack;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.FluidConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -10,13 +12,10 @@ import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.architectury.fluid.FluidStack;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
@@ -36,7 +35,7 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 	@Override
 	public void addButtons(Panel panel) {
 		if (config.allowEmpty) {
-			FluidStack fluidStack = FluidStack.create(Fluids.EMPTY, FluidStack.bucketAmount());
+			var fluidStack = FluidStack.create(Fluids.EMPTY, FluidStack.bucketAmount());
 
 			panel.add(new SimpleTextButton(panel, fluidStack.getName(), ItemIcon.getItemIcon(Items.BUCKET)) {
 				@Override
@@ -53,12 +52,12 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 			});
 		}
 
-		for (Fluid fluid : Registry.FLUID) {
+		for (var fluid : Registry.FLUID) {
 			if (fluid == Fluids.EMPTY || fluid.defaultFluidState().isSource()) {
 				continue;
 			}
 
-			FluidStack fluidStack = FluidStack.create(fluid, FluidStack.bucketAmount());
+			var fluidStack = FluidStack.create(fluid, FluidStack.bucketAmount());
 
 			panel.add(new SimpleTextButton(panel, fluidStack.getName(), Icon.getIcon(getStillTexture(fluidStack)).withTint(Color4I.rgb(getColor(fluidStack)))) {
 				@Override

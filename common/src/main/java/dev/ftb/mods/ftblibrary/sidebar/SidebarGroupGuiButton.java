@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
@@ -40,11 +39,11 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		int rx, ry = 0;
 		boolean addedAny;
 
-		for (SidebarButtonGroup group : SidebarButtonManager.INSTANCE.groups) {
+		for (var group : SidebarButtonManager.INSTANCE.groups) {
 			rx = 0;
 			addedAny = false;
 
-			for (SidebarButton button : group.getButtons()) {
+			for (var button : group.getButtons()) {
 				if (button.isActuallyVisible()) {
 					buttons.add(new SidebarGuiButton(rx, ry, button));
 					rx++;
@@ -57,17 +56,17 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			}
 		}
 
-		for (SidebarGuiButton button : buttons) {
+		for (var button : buttons) {
 			button.x = 1 + button.buttonX * 17;
 			button.y = 1 + button.buttonY * 17;
 		}
 
 		x = Integer.MAX_VALUE;
 		y = Integer.MAX_VALUE;
-		int maxX = Integer.MIN_VALUE;
-		int maxY = Integer.MIN_VALUE;
+		var maxX = Integer.MIN_VALUE;
+		var maxY = Integer.MIN_VALUE;
 
-		for (SidebarGuiButton b : buttons) {
+		for (var b : buttons) {
 			if (b.x >= 0 && b.y >= 0) {
 				x = Math.min(x, b.x);
 				y = Math.min(y, b.y);
@@ -92,9 +91,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		matrixStack.pushPose();
 		matrixStack.translate(0, 0, 500);
 
-		Font font = Minecraft.getInstance().font;
+		var font = Minecraft.getInstance().font;
 
-		for (SidebarGuiButton b : buttons) {
+		for (var b : buttons) {
 			GuiHelper.setupDrawing();
 			b.button.getIcon().draw(matrixStack, b.x, b.y, 16, 16);
 
@@ -103,11 +102,11 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			}
 
 			if (b.button.getCustomTextHandler() != null) {
-				String text = b.button.getCustomTextHandler().get();
+				var text = b.button.getCustomTextHandler().get();
 
 				if (!text.isEmpty()) {
-					int nw = font.width(text);
-					int width = 16;
+					var nw = font.width(text);
+					var width = 16;
 					Color4I.LIGHT_RED.draw(matrixStack, b.x + width - nw, b.y - 1, nw + 1, 9);
 					font.draw(matrixStack, text, b.x + width - nw + 1, b.y, 0xFFFFFFFF);
 					RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
@@ -117,8 +116,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 		if (mouseOver != null) {
 			GuiHelper.setupDrawing();
-			int mx1 = mx + 10;
-			int my1 = Math.max(3, my - 9);
+			var mx1 = mx + 10;
+			var my1 = Math.max(3, my - 9);
 
 			List<String> list = new ArrayList<>();
 			list.add(I18n.get(mouseOver.button.getLangKey()));
@@ -127,9 +126,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				mouseOver.button.getTooltipHandler().accept(list);
 			}
 
-			int tw = 0;
+			var tw = 0;
 
-			for (String s : list) {
+			for (var s : list) {
 				tw = Math.max(tw, font.width(s));
 			}
 
@@ -137,7 +136,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 			Color4I.DARK_GRAY.draw(matrixStack, mx1 - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
 
-			for (int i = 0; i < list.size(); i++) {
+			for (var i = 0; i < list.size(); i++) {
 				font.draw(matrixStack, list.get(i), mx1, my1 + i * 10, 0xFFFFFFFF);
 			}
 		}

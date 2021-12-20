@@ -42,7 +42,7 @@ public class PanelScrollBar extends ScrollBar {
 
 	@Override
 	public int getScrollBarSize() {
-		double max = getMaxValue();
+		var max = getMaxValue();
 
 		if (max <= 0) {
 			return 0;
@@ -61,7 +61,7 @@ public class PanelScrollBar extends ScrollBar {
 
 	@Override
 	public void onMoved() {
-		double value = getMaxValue() <= 0 ? 0 : getValue();
+		var value = getMaxValue() <= 0 ? 0 : getValue();
 
 		if (plane.isVertical) {
 			panel.setScrollY(value);

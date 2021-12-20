@@ -74,7 +74,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 
 	@Override
 	public int compareTo(BaseValue<T> o) {
-		int i = Integer.compare(getOrder(), o.getOrder());
+		var i = Integer.compare(getOrder(), o.getOrder());
 		return i == 0 ? key.compareToIgnoreCase(o.key) : i;
 	}
 

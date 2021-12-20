@@ -1,14 +1,13 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
+import dev.architectury.utils.NbtType;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.StringConfig;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import dev.architectury.utils.NbtType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +31,9 @@ public class StringListValue extends BaseValue<List<String>> {
 		s.add("Default: [" + defaultValue.stream().map(StringTag::quoteAndEscape).collect(Collectors.joining(", ")) + "]");
 		tag.comment(key, String.join("\n", s));
 
-		ListTag stag = new ListTag();
+		var stag = new ListTag();
 
-		for (String s1 : get()) {
+		for (var s1 : get()) {
 			stag.add(StringTag.valueOf(s1));
 		}
 
@@ -43,12 +42,12 @@ public class StringListValue extends BaseValue<List<String>> {
 
 	@Override
 	public void read(SNBTCompoundTag tag) {
-		Tag stag = tag.get(key);
+		var stag = tag.get(key);
 
 		if (stag instanceof ListTag && (((ListTag) stag).isEmpty() || ((ListTag) stag).getElementType() == NbtType.STRING)) {
 			get().clear();
 
-			for (int i = 0; i < ((ListTag) stag).size(); i++) {
+			for (var i = 0; i < ((ListTag) stag).size(); i++) {
 				get().add(((ListTag) stag).getString(i));
 			}
 		}

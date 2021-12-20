@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class PixelBuffer {
 	public static PixelBuffer from(BufferedImage img) {
-		PixelBuffer buffer = new PixelBuffer(img.getWidth(), img.getHeight());
+		var buffer = new PixelBuffer(img.getWidth(), img.getHeight());
 		buffer.setPixels(img.getRGB(0, 0, buffer.getWidth(), buffer.getHeight(), buffer.getPixels(), 0, buffer.getWidth()));
 		return buffer;
 	}
@@ -61,9 +61,9 @@ public class PixelBuffer {
 			return;
 		}
 
-		int off = -1;
-		for (int y = startY; y < startY + h; y++) {
-			for (int x = startX; x < startX + w; x++) {
+		var off = -1;
+		for (var y = startY; y < startY + h; y++) {
+			for (var x = startX; x < startX + w; x++) {
 				setRGB(x, y, rgbArray[++off]);
 			}
 		}
@@ -78,11 +78,11 @@ public class PixelBuffer {
 			p = new int[w * h];
 		}
 
-		int off = -1;
+		var off = -1;
 		w += startX;
 		h += startY;
-		for (int y = startY; y < h; y++) {
-			for (int x = startX; x < w; x++) {
+		for (var y = startY; y < h; y++) {
+			for (var x = startX; x < w; x++) {
 				p[++off] = getRGB(x, y);
 			}
 		}
@@ -91,21 +91,21 @@ public class PixelBuffer {
 	}
 
 	public void fill(int col) {
-		int[] pixels = getPixels();
+		var pixels = getPixels();
 		Arrays.fill(pixels, col);
 		setPixels(pixels);
 	}
 
 	public void fill(int startX, int startY, int w, int h, int col) {
-		for (int y = startY; y < startY + h; y++) {
-			for (int x = startX; x < startX + w; x++) {
+		for (var y = startY; y < startY + h; y++) {
+			for (var x = startX; x < startX + w; x++) {
 				setRGB(x, y, col);
 			}
 		}
 	}
 
 	public BufferedImage toImage(int type) {
-		BufferedImage image = new BufferedImage(width, height, type);
+		var image = new BufferedImage(width, height, type);
 		image.setRGB(0, 0, width, height, pixels, 0, width);
 		return image;
 	}
@@ -117,7 +117,7 @@ public class PixelBuffer {
 			return true;
 		} else if (o instanceof PixelBuffer b) {
 			if (width == b.width && height == b.height) {
-				for (int i = 0; i < pixels.length; i++) {
+				for (var i = 0; i < pixels.length; i++) {
 					if (pixels[i] != b.pixels[i]) {
 						return false;
 					}
@@ -134,23 +134,23 @@ public class PixelBuffer {
 	}
 
 	public PixelBuffer copy() {
-		PixelBuffer b = new PixelBuffer(width, height);
+		var b = new PixelBuffer(width, height);
 		System.arraycopy(pixels, 0, b.pixels, 0, pixels.length);
 		return b;
 	}
 
 	public PixelBuffer getSubimage(int x, int y, int w, int h) {
-		PixelBuffer b = new PixelBuffer(w, h);
+		var b = new PixelBuffer(w, h);
 		getRGB(x, y, w, h, b.pixels);
 		return b;
 	}
 
 	public ByteBuffer toByteBuffer(boolean alpha) {
-		int[] pixels = getPixels();
-		ByteBuffer bb = BufferUtils.createByteBuffer(pixels.length * 4);
-		byte alpha255 = (byte) 255;
+		var pixels = getPixels();
+		var bb = BufferUtils.createByteBuffer(pixels.length * 4);
+		var alpha255 = (byte) 255;
 
-		for (int c : pixels) {
+		for (var c : pixels) {
 			bb.put((byte) (c >> 16));
 			bb.put((byte) (c >> 8));
 			bb.put((byte) c);

@@ -71,12 +71,12 @@ public class Widget implements IScreenWrapper {
 	}
 
 	public boolean collidesWith(int x, int y, int w, int h) {
-		int ay = getY();
+		var ay = getY();
 		if (ay >= y + h || ay + height <= y) {
 			return false;
 		}
 
-		int ax = getX();
+		var ax = getX();
 		return ax < x + w && ax + width > x;
 	}
 
@@ -97,7 +97,7 @@ public class Widget implements IScreenWrapper {
 	}
 
 	public void addMouseOverText(TooltipList list) {
-		Component title = getTitle();
+		var title = getTitle();
 
 		if (title != TextComponent.EMPTY) {
 			list.add(title);
@@ -115,8 +115,8 @@ public class Widget implements IScreenWrapper {
 			return false;
 		}
 
-		int ax = getX();
-		int ay = getY();
+		var ax = getX();
+		var ay = getY();
 		return mouseX >= ax && mouseY >= ay && mouseX < ax + width && mouseY < ay + height;
 	}
 
@@ -178,7 +178,7 @@ public class Widget implements IScreenWrapper {
 	}
 
 	public final boolean handleClick(String click) {
-		int index = click.indexOf(':');
+		var index = click.indexOf(':');
 
 		if (index == -1) {
 			return handleClick("", click);
@@ -230,7 +230,7 @@ public class Widget implements IScreenWrapper {
 	}
 
 	public String toString() {
-		String s = getClass().getSimpleName();
+		var s = getClass().getSimpleName();
 
 		if (s.isEmpty()) {
 			s = getClass().getSuperclass().getSimpleName();

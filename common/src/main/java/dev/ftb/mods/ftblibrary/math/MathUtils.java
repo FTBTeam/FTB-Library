@@ -127,7 +127,7 @@ public class MathUtils {
 			if (CACHED_SPIRAL_POINTS == null) {
 				CACHED_SPIRAL_POINTS = new XZ[CACHED_SPIRAL_POINTS_SIZE];
 
-				for (int i = 0; i < CACHED_SPIRAL_POINTS_SIZE; i++) {
+				for (var i = 0; i < CACHED_SPIRAL_POINTS_SIZE; i++) {
 					CACHED_SPIRAL_POINTS[i] = getSpiralPoint0(i);
 				}
 			}
@@ -149,7 +149,7 @@ public class MathUtils {
 		int dx = 0, dz = 1;
 		int segmentLength = 1, segmentPassed = 0;
 
-		for (int n = 0; n < index; n++) {
+		for (var n = 0; n < index; n++) {
 			x += dx;
 			z += dz;
 			segmentPassed++;
@@ -158,7 +158,7 @@ public class MathUtils {
 				segmentPassed = 0;
 
 				// 'rotate' directions
-				int buffer = dz;
+				var buffer = dz;
 				dz = -dx;
 				dx = buffer;
 

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
@@ -9,7 +9,6 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import dev.ftb.mods.ftblibrary.util.ClientUtils;
-import dev.architectury.platform.Platform;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -56,16 +55,16 @@ public class SidebarButton implements Comparable<SidebarButton> {
 		}
 
 		if (json.has("click")) {
-			JsonElement j = json.get("click");
-			for (JsonElement e : j.isJsonArray() ? j.getAsJsonArray() : Collections.singleton(j)) {
+			var j = json.get("click");
+			for (var e : j.isJsonArray() ? j.getAsJsonArray() : Collections.singleton(j)) {
 				if (e.isJsonPrimitive()) {
 					clickEvents.add(e.getAsString());
 				}
 			}
 		}
 		if (json.has("shift_click")) {
-			JsonElement j = json.get("shift_click");
-			for (JsonElement e : j.isJsonArray() ? j.getAsJsonArray() : Collections.singleton(j)) {
+			var j = json.get("shift_click");
+			for (var e : j.isJsonArray() ? j.getAsJsonArray() : Collections.singleton(j)) {
 				if (e.isJsonPrimitive()) {
 					shiftClickEvents.add(e.getAsString());
 				}
@@ -88,14 +87,14 @@ public class SidebarButton implements Comparable<SidebarButton> {
 		}
 
 		if (json.has("required_mods")) {
-			LinkedHashSet<String> requiredServerMods = new LinkedHashSet<>();
+			var requiredServerMods = new LinkedHashSet<String>();
 
-			for (JsonElement e : json.get("required_mods").getAsJsonArray()) {
+			for (var e : json.get("required_mods").getAsJsonArray()) {
 				requiredServerMods.add(e.getAsString());
 			}
 
 			addVisibilityCondition(() -> {
-				for (String s : requiredServerMods) {
+				for (var s : requiredServerMods) {
 					if (!Platform.isModLoaded(s)) {
 						return false;
 					}
@@ -152,7 +151,7 @@ public class SidebarButton implements Comparable<SidebarButton> {
 			new LoadingScreen(new TranslatableComponent(getLangKey())).openGui();
 		}
 
-		for (String event : (shift && !shiftClickEvents.isEmpty() ? shiftClickEvents : clickEvents)) {
+		for (var event : (shift && !shiftClickEvents.isEmpty() ? shiftClickEvents : clickEvents)) {
 			GuiHelper.BLANK_GUI.handleClick(event);
 		}
 	}

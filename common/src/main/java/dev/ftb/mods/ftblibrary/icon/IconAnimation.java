@@ -18,9 +18,9 @@ public class IconAnimation extends Icon {
 	public static Icon fromList(List<Icon> icons, boolean includeEmpty) {
 		List<Icon> list = new ArrayList<>(icons.size());
 
-		for (Icon icon : icons) {
+		for (var icon : icons) {
 			if (icon instanceof IconAnimation) {
-				for (Icon icon1 : ((IconAnimation) icon).list) {
+				for (var icon1 : ((IconAnimation) icon).list) {
 					if (includeEmpty || !icon1.isEmpty()) {
 						list.add(icon1);
 					}
@@ -76,12 +76,12 @@ public class IconAnimation extends Icon {
 
 	@Override
 	public JsonElement getJson() {
-		JsonObject json = new JsonObject();
+		var json = new JsonObject();
 		json.addProperty("id", "animation");
 
-		JsonArray array = new JsonArray();
+		var array = new JsonArray();
 
-		for (Icon icon : list) {
+		for (var icon : list) {
 			array.add(icon.getJson());
 		}
 

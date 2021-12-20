@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
@@ -76,7 +75,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		Key key = new Key(keyCode, scanCode, modifiers);
+		var key = new Key(keyCode, scanCode, modifiers);
 
 		if (wrappedGui.keyPressed(key)) {
 			return true;
@@ -93,7 +92,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
 	@Override
 	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-		Key key = new Key(keyCode, scanCode, modifiers);
+		var key = new Key(keyCode, scanCode, modifiers);
 		wrappedGui.keyReleased(key);
 		return super.keyReleased(keyCode, scanCode, modifiers);
 	}
@@ -109,7 +108,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
 	@Override
 	protected void renderBg(PoseStack matrixStack, float f, int mx, int my) {
-		Theme theme = wrappedGui.getTheme();
+		var theme = wrappedGui.getTheme();
 		GuiHelper.setupDrawing();
 		renderBackground(matrixStack);
 		GuiHelper.setupDrawing();
@@ -118,7 +117,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 		if (drawSlots) {
 			GuiHelper.setupDrawing();
 
-			for (Slot slot : menu.slots) {
+			for (var slot : menu.slots) {
 				theme.drawContainerSlot(matrixStack, leftPos + slot.x, topPos + slot.y, 16, 16);
 			}
 		}
@@ -130,16 +129,16 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 		matrixStack.translate(-leftPos, -topPos, 0);
 		GuiHelper.setupDrawing();
 
-		Theme theme = wrappedGui.getTheme();
+		var theme = wrappedGui.getTheme();
 		wrappedGui.drawForeground(matrixStack, theme, leftPos, topPos, imageWidth, imageHeight);
 
 		Objects.requireNonNullElse(wrappedGui.contextMenu, wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
-			Object object = wrappedGui.getIngredientUnderMouse();
+			var object = wrappedGui.getIngredientUnderMouse();
 
 			if (object instanceof WrappedIngredient && ((WrappedIngredient) object).tooltip) {
-				Object ingredient = WrappedIngredient.unwrap(object);
+				var ingredient = WrappedIngredient.unwrap(object);
 
 				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty()) {
 					matrixStack.pushPose();

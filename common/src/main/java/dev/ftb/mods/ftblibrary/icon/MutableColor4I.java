@@ -71,7 +71,7 @@ public class MutableColor4I extends Color4I {
 			return JsonNull.INSTANCE;
 		}
 
-		JsonObject json = new JsonObject();
+		var json = new JsonObject();
 		json.addProperty("red", red);
 		json.addProperty("green", green);
 		json.addProperty("blue", blue);
@@ -136,11 +136,11 @@ public class MutableColor4I extends Color4I {
 			b = 1F;
 		}
 
-		float h6 = (h - Mth.floor(h)) * 6F;
-		float f = h6 - Mth.floor(h6);
-		float p = b * (1F - s);
-		float q = b * (1F - s * f);
-		float t = b * (1F - (s * (1F - f)));
+		var h6 = (h - Mth.floor(h)) * 6F;
+		var f = h6 - Mth.floor(h6);
+		var p = b * (1F - s);
+		var q = b * (1F - s * f);
+		var t = b * (1F - (s * (1F - f)));
 		switch ((int) h6) {
 			case 0 -> {
 				red = toint(b);

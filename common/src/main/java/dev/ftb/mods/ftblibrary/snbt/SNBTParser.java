@@ -22,7 +22,7 @@ import java.util.List;
 
 class SNBTParser {
 	static SNBTCompoundTag read(List<String> lines) {
-		SNBTParser parser = new SNBTParser(lines);
+		var parser = new SNBTParser(lines);
 		return (SNBTCompoundTag) SpecialTag.unwrap(parser.readTag(parser.nextNS()));
 	}
 
@@ -30,10 +30,10 @@ class SNBTParser {
 	private int position;
 
 	private SNBTParser(List<String> lines) {
-		StringBuilder bufferBuilder = new StringBuilder();
+		var bufferBuilder = new StringBuilder();
 
-		for (String line : lines) {
-			String tline = line.trim();
+		for (var line : lines) {
+			var tline = line.trim();
 
 			if (!tline.startsWith("//") && !tline.startsWith("#")) {
 				bufferBuilder.append(line);
@@ -60,10 +60,10 @@ class SNBTParser {
 			return "EOF";
 		}
 
-		int row = 0;
-		int col = 0;
+		var row = 0;
+		var col = 0;
 
-		for (int i = 0; i < p; i++) {
+		for (var i = 0; i < p; i++) {
 			if (buffer[i] == '\n') {
 				row++;
 				col = 0;
@@ -80,14 +80,14 @@ class SNBTParser {
 			throw new SNBTEOFException();
 		}
 
-		char c = buffer[position];
+		var c = buffer[position];
 		position++;
 		return c;
 	}
 
 	private char nextNS() {
 		while (true) {
-			char c = next();
+			var c = next();
 
 			if (c > ' ') {
 				return c;
@@ -107,7 +107,7 @@ class SNBTParser {
 				return StringTag.valueOf(readQuotedString('\''));
 		}
 
-		String s = readWordString(first);
+		var s = readWordString(first);
 
 		return switch (s) {
 			case "true" -> SpecialTag.TRUE;
@@ -134,10 +134,10 @@ class SNBTParser {
 	}
 
 	private SNBTCompoundTag readCompound() {
-		SNBTCompoundTag tag = new SNBTCompoundTag();
+		var tag = new SNBTCompoundTag();
 
 		while (true) {
-			char c = nextNS();
+			var c = nextNS();
 
 			if (c == '}') {
 				return tag;
@@ -155,10 +155,10 @@ class SNBTParser {
 				key = readWordString(c);
 			}
 
-			char n = nextNS();
+			var n = nextNS();
 
 			if (n == ':' || n == '=') {
-				Tag t = readTag(nextNS());
+				var t = readTag(nextNS());
 
 				if (t == SpecialTag.TRUE) {
 					tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_TRUE;
@@ -174,9 +174,9 @@ class SNBTParser {
 	}
 
 	private CollectionTag<?> readCollection() {
-		int prevPos = position;
-		char next1 = nextNS();
-		char next2 = nextNS();
+		var prevPos = position;
+		var next1 = nextNS();
+		var next2 = nextNS();
 
 		if (next2 == ';' && (next1 == 'I' || next1 == 'i' || next1 == 'L' || next1 == 'l' || next1 == 'B' || next1 == 'b')) {
 			return readArray(prevPos, next1);
@@ -187,11 +187,11 @@ class SNBTParser {
 	}
 
 	private ListTag readList() {
-		ListTag tag = new ListTag();
+		var tag = new ListTag();
 
 		while (true) {
-			int prevPos = position;
-			char c = nextNS();
+			var prevPos = position;
+			var c = nextNS();
 
 			if (c == ']') {
 				return tag;
@@ -199,7 +199,7 @@ class SNBTParser {
 				continue;
 			}
 
-			Tag t = SpecialTag.unwrap(readTag(c));
+			var t = SpecialTag.unwrap(readTag(c));
 
 			try {
 				tag.add(t);
@@ -213,7 +213,7 @@ class SNBTParser {
 		List<Number> listOfNumbers = new ArrayList<>();
 
 		while (true) {
-			char c = nextNS();
+			var c = nextNS();
 
 			if (c == ']') {
 				return switch (type) {
@@ -226,7 +226,7 @@ class SNBTParser {
 				continue;
 			}
 
-			Tag t = SpecialTag.unwrap(readTag(c));
+			var t = SpecialTag.unwrap(readTag(c));
 
 			if (t instanceof NumericTag) {
 				switch (type) {
@@ -241,11 +241,11 @@ class SNBTParser {
 	}
 
 	private String readWordString(char first) {
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 		sb.append(first);
 
 		while (true) {
-			char c = next();
+			var c = next();
 
 			if (SNBTUtils.isSimpleCharacter(c)) {
 				sb.append(c);
@@ -257,11 +257,11 @@ class SNBTParser {
 	}
 
 	private String readQuotedString(char stop) {
-		StringBuilder sb = new StringBuilder();
-		boolean escape = false;
+		var sb = new StringBuilder();
+		var escape = false;
 
 		while (true) {
-			char c = next();
+			var c = next();
 
 			if (c == '\n') {
 				throw new SNBTSyntaxException("New line without closing string with " + stop + " @ " + posString(position - 1) + "!");

@@ -24,15 +24,15 @@ public abstract class BaseContainer extends AbstractContainerMenu {
 	}
 
 	public void addPlayerSlots(Inventory playerInventory, int posX, int posY, boolean ignoreCurrent) {
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 9; x++) {
+		for (var y = 0; y < 3; y++) {
+			for (var x = 0; x < 9; x++) {
 				addSlot(new Slot(playerInventory, x + y * 9 + 9, posX + x * 18, posY + y * 18));
 			}
 		}
 
-		int i = ignoreCurrent ? playerInventory.selected : -1;
+		var i = ignoreCurrent ? playerInventory.selected : -1;
 
-		for (int x = 0; x < 9; x++) {
+		for (var x = 0; x < 9; x++) {
 			if (x != i) {
 				addSlot(new Slot(playerInventory, x, posX + x * 18, posY + 58));
 			} else {
@@ -52,17 +52,17 @@ public abstract class BaseContainer extends AbstractContainerMenu {
 
 	@Override
 	public ItemStack quickMoveStack(Player player, int index) {
-		int nonPlayerSlots = getNonPlayerSlots();
+		var nonPlayerSlots = getNonPlayerSlots();
 
 		if (nonPlayerSlots <= 0) {
 			return ItemStack.EMPTY;
 		}
 
-		ItemStack stack = ItemStack.EMPTY;
-		Slot slot = slots.get(index);
+		var stack = ItemStack.EMPTY;
+		var slot = slots.get(index);
 
 		if (slot.hasItem()) {
-			ItemStack stack1 = slot.getItem();
+			var stack1 = slot.getItem();
 			stack = stack1.copy();
 
 			if (index < nonPlayerSlots) {

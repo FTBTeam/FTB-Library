@@ -11,13 +11,12 @@ import dev.ftb.mods.ftblibrary.ui.TextBox;
 import dev.ftb.mods.ftblibrary.ui.WidgetType;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.Nullable;
 
 public class EditConfigFromStringScreen<T> extends BaseScreen {
 	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, ConfigCallback callback) {
-		ConfigGroup group = new ConfigGroup("group");
+		var group = new ConfigGroup("group");
 		group.add("value", type, value, e -> {
 		}, defaultValue);
 		new EditConfigFromStringScreen<>(type, callback).openGui();
@@ -36,7 +35,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 		callback = cb;
 		current = config.value == null ? null : config.copy(config.value);
 
-		int bsize = width / 2 - 10;
+		var bsize = width / 2 - 10;
 
 		buttonCancel = new SimpleTextButton(this, new TranslatableComponent("gui.cancel"), Icon.EMPTY) {
 			@Override
@@ -128,7 +127,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 	@Override
 	public boolean doesGuiPauseGame() {
-		Screen screen = getPrevScreen();
+		var screen = getPrevScreen();
 		return screen != null && screen.isPauseScreen();
 	}
 }

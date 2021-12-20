@@ -19,7 +19,7 @@ public final class ItemKey {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		ItemKey itemKey = (ItemKey) o;
+		var itemKey = (ItemKey) o;
 		return stack.getItem() == itemKey.stack.getItem() && stack.areShareTagsEqual(itemKey.stack);
 	}
 

@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.platform.Mod;
@@ -13,22 +12,16 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Nameable;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.TickingBlockEntity;
 
 import java.util.HashMap;
@@ -46,7 +39,7 @@ public class FTBLibraryCommands {
 	}
 
 	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection type) {
-		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("ftblibrary")
+		var command = Commands.literal("ftblibrary")
 				.requires(commandSource -> commandSource.hasPermission(2))
 				.then(Commands.literal("gamemode")
 						.executes(context -> {
@@ -67,10 +60,10 @@ public class FTBLibraryCommands {
 				)
 				.then(Commands.literal("day")
 						.executes(context -> {
-							long addDay = (24000L - (context.getSource().getLevel().getDayTime() % 24000L) + 6000L) % 24000L;
+							var addDay = (24000L - (context.getSource().getLevel().getDayTime() % 24000L) + 6000L) % 24000L;
 
 							if (addDay != 0L) {
-								for (ServerLevel world : context.getSource().getServer().getAllLevels()) {
+								for (var world : context.getSource().getServer().getAllLevels()) {
 									world.setDayTime(world.getDayTime() + addDay);
 								}
 							}
@@ -80,10 +73,10 @@ public class FTBLibraryCommands {
 				)
 				.then(Commands.literal("night")
 						.executes(context -> {
-							long addDay = (24000L - (context.getSource().getLevel().getDayTime() % 24000L) + 18000L) % 24000L;
+							var addDay = (24000L - (context.getSource().getLevel().getDayTime() % 24000L) + 18000L) % 24000L;
 
 							if (addDay != 0L) {
-								for (ServerLevel world : context.getSource().getServer().getAllLevels()) {
+								for (var world : context.getSource().getServer().getAllLevels()) {
 									world.setDayTime(world.getDayTime() + addDay);
 								}
 							}
@@ -95,8 +88,8 @@ public class FTBLibraryCommands {
 						.then(Commands.literal("block")
 								.then(Commands.argument("pos", BlockPosArgument.blockPos())
 										.executes(context -> editNBT(context, (info, tag) -> {
-											BlockPos pos = BlockPosArgument.getSpawnablePos(context, "pos");
-											BlockEntity blockEntity = context.getSource().getLevel().getBlockEntity(pos);
+											var pos = BlockPosArgument.getSpawnablePos(context, "pos");
+											var blockEntity = context.getSource().getLevel().getBlockEntity(pos);
 
 											if (blockEntity == null) {
 												return;
@@ -113,9 +106,9 @@ public class FTBLibraryCommands {
 											info.putString("id", tag.getString("id"));
 											tag.remove("id");
 
-											ListTag list = new ListTag();
+											var list = new ListTag();
 											addInfo(list, new TextComponent("Class"), new TextComponent(blockEntity.getClass().getName()));
-											ResourceLocation key = Registries.getId(blockEntity.getType(), Registry.BLOCK_ENTITY_TYPE_REGISTRY);
+											var key = Registries.getId(blockEntity.getType(), Registry.BLOCK_ENTITY_TYPE_REGISTRY);
 											addInfo(list, new TextComponent("ID"), new TextComponent(key == null ? "null" : key.toString()));
 											addInfo(list, new TextComponent("Block"), new TextComponent(String.valueOf(Registries.getId(blockEntity.getBlockState().getBlock(), Registry.BLOCK_REGISTRY))));
 											addInfo(list, new TextComponent("Block Class"), new TextComponent(blockEntity.getBlockState().getBlock().getClass().getName()));
@@ -124,7 +117,7 @@ public class FTBLibraryCommands {
 											addInfo(list, new TextComponent("Ticking"), new TextComponent(blockEntity instanceof TickingBlockEntity ? "true" : "false"));
 											info.put("text", list);
 
-											Component title = blockEntity instanceof Nameable ? ((Nameable) blockEntity).getDisplayName() : null;
+											var title = blockEntity instanceof Nameable ? ((Nameable) blockEntity).getDisplayName() : null;
 
 											if (title == null) {
 												title = new TextComponent(blockEntity.getClass().getSimpleName());
@@ -137,7 +130,7 @@ public class FTBLibraryCommands {
 						.then(Commands.literal("entity")
 								.then(Commands.argument("entity", EntityArgument.entity())
 										.executes(context -> editNBT(context, (info, tag) -> {
-											Entity entity = EntityArgument.getEntity(context, "entity");
+											var entity = EntityArgument.getEntity(context, "entity");
 
 											if (entity instanceof Player) {
 												return;
@@ -148,9 +141,9 @@ public class FTBLibraryCommands {
 
 											entity.save(tag);
 
-											ListTag list = new ListTag();
+											var list = new ListTag();
 											addInfo(list, new TextComponent("Class"), new TextComponent(entity.getClass().getName()));
-											ResourceLocation key = Registries.getId(entity.getType(), Registry.ENTITY_TYPE_REGISTRY);
+											var key = Registries.getId(entity.getType(), Registry.ENTITY_TYPE_REGISTRY);
 											addInfo(list, new TextComponent("ID"), new TextComponent(key == null ? "null" : key.toString()));
 											addInfo(list, new TextComponent("Mod"), new TextComponent(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
 											info.put("text", list);
@@ -161,7 +154,7 @@ public class FTBLibraryCommands {
 						.then(Commands.literal("player")
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(context -> editNBT(context, (info, tag) -> {
-											ServerPlayer player = EntityArgument.getPlayer(context, "player");
+											var player = EntityArgument.getPlayer(context, "player");
 
 											info.putString("type", "player");
 											info.putUUID("id", player.getUUID());
@@ -169,7 +162,7 @@ public class FTBLibraryCommands {
 											player.saveWithoutId(tag);
 											tag.remove("id");
 
-											ListTag list = new ListTag();
+											var list = new ListTag();
 											addInfo(list, new TextComponent("Name"), player.getName());
 											addInfo(list, new TextComponent("Display Name"), player.getDisplayName());
 											addInfo(list, new TextComponent("UUID"), new TextComponent(player.getUUID().toString()));
@@ -181,7 +174,7 @@ public class FTBLibraryCommands {
 						)
 						.then(Commands.literal("item")
 								.executes(context -> editNBT(context, (info, tag) -> {
-									ServerPlayer player = context.getSource().getPlayerOrException();
+									var player = context.getSource().getPlayerOrException();
 									info.putString("type", "item");
 									player.getItemInHand(InteractionHand.MAIN_HAND).save(tag);
 								}))
@@ -205,9 +198,9 @@ public class FTBLibraryCommands {
 	}
 
 	private static int editNBT(CommandContext<CommandSourceStack> context, NBTEditCallback data) throws CommandSyntaxException {
-		ServerPlayer player = context.getSource().getPlayerOrException();
-		CompoundTag info = new CompoundTag();
-		CompoundTag tag = new CompoundTag();
+		var player = context.getSource().getPlayerOrException();
+		var info = new CompoundTag();
+		var tag = new CompoundTag();
 		data.accept(info, tag);
 
 		if (!info.isEmpty()) {

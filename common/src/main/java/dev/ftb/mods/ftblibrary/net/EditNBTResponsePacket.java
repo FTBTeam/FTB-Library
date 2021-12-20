@@ -1,19 +1,15 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.simple.BaseC2SMessage;
 import dev.architectury.networking.simple.MessageType;
+import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-
-import java.util.UUID;
 
 public class EditNBTResponsePacket extends BaseC2SMessage {
 	private final CompoundTag info;
@@ -42,15 +38,15 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 
 	@Override
 	public void handle(NetworkManager.PacketContext context) {
-		ServerPlayer player = (ServerPlayer) context.getPlayer();
+		var player = (ServerPlayer) context.getPlayer();
 
 		if (info.equals(FTBLibraryCommands.EDITING_NBT.remove(player.getUUID()))) {
 			switch (info.getString("type")) {
 				case "block" -> {
-					BlockPos pos = new BlockPos(info.getInt("x"), info.getInt("y"), info.getInt("z"));
+					var pos = new BlockPos(info.getInt("x"), info.getInt("y"), info.getInt("z"));
 
 					if (player.level.isLoaded(pos)) {
-						BlockEntity blockEntity = player.level.getBlockEntity(pos);
+						var blockEntity = player.level.getBlockEntity(pos);
 
 						if (blockEntity != null) {
 							tag.putInt("x", pos.getX());
@@ -64,19 +60,19 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 					}
 				}
 				case "entity" -> {
-					Entity entity = player.level.getEntity(info.getInt("id"));
+					var entity = player.level.getEntity(info.getInt("id"));
 
 					if (entity != null) {
-						UUID uUID = entity.getUUID();
+						var uUID = entity.getUUID();
 						entity.load(tag);
 						entity.setUUID(uUID);
 					}
 				}
 				case "player" -> {
-					ServerPlayer player1 = player.level.getServer().getPlayerList().getPlayer(info.getUUID("id"));
+					var player1 = player.level.getServer().getPlayerList().getPlayer(info.getUUID("id"));
 
 					if (player1 != null) {
-						UUID uUID = player1.getUUID();
+						var uUID = player1.getUUID();
 						player1.load(tag);
 						player1.setUUID(uUID);
 						player1.moveTo(player1.getX(), player1.getY(), player1.getZ());

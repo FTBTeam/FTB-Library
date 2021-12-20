@@ -2,12 +2,10 @@ package dev.ftb.mods.ftblibrary.util;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.core.DisplayInfoFTBL;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -31,20 +29,20 @@ public class KnownServerRegistries {
 
 	public KnownServerRegistries(FriendlyByteBuf buffer) {
 		{
-			int s = buffer.readVarInt();
+			var s = buffer.readVarInt();
 			dimensions = new ArrayList<>(s);
 
-			for (int i = 0; i < s; i++) {
+			for (var i = 0; i < s; i++) {
 				dimensions.add(buffer.readResourceLocation());
 			}
 		}
 
 		{
-			int s = buffer.readVarInt();
+			var s = buffer.readVarInt();
 			advancements = new LinkedHashMap<>(s);
 
-			for (int i = 0; i < s; i++) {
-				AdvancementInfo info = new AdvancementInfo();
+			for (var i = 0; i < s; i++) {
+				var info = new AdvancementInfo();
 				info.id = buffer.readResourceLocation();
 				info.name = buffer.readComponent();
 				info.icon = buffer.readItem();
@@ -58,7 +56,7 @@ public class KnownServerRegistries {
 	public KnownServerRegistries(MinecraftServer server) {
 		dimensions = new ArrayList<>();
 
-		for (ServerLevel level : server.getAllLevels()) {
+		for (var level : server.getAllLevels()) {
 			dimensions.add(level.dimension().location());
 		}
 
@@ -66,9 +64,9 @@ public class KnownServerRegistries {
 
 		List<AdvancementInfo> advancementList = new ArrayList<>();
 
-		for (Advancement advancement : server.getAdvancements().getAllAdvancements()) {
+		for (var advancement : server.getAdvancements().getAllAdvancements()) {
 			if (advancement.getDisplay() instanceof DisplayInfoFTBL) {
-				AdvancementInfo info = new AdvancementInfo();
+				var info = new AdvancementInfo();
 				info.id = advancement.getId();
 				info.name = advancement.getDisplay().getTitle();
 				info.icon = ((DisplayInfoFTBL) advancement.getDisplay()).getIconStackFTBL();
@@ -80,7 +78,7 @@ public class KnownServerRegistries {
 
 		advancements = new LinkedHashMap<>(advancementList.size());
 
-		for (AdvancementInfo info : advancementList) {
+		for (var info : advancementList) {
 			advancements.put(info.id, info);
 		}
 	}
@@ -88,13 +86,13 @@ public class KnownServerRegistries {
 	public void write(FriendlyByteBuf buffer) {
 		buffer.writeVarInt(dimensions.size());
 
-		for (ResourceLocation id : dimensions) {
+		for (var id : dimensions) {
 			buffer.writeResourceLocation(id);
 		}
 
 		buffer.writeVarInt(advancements.size());
 
-		for (AdvancementInfo info : advancements.values()) {
+		for (var info : advancements.values()) {
 			buffer.writeResourceLocation(info.id);
 			buffer.writeComponent(info.name);
 			buffer.writeItem(info.icon);

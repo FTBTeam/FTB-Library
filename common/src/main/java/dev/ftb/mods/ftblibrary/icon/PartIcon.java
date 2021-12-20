@@ -44,8 +44,8 @@ public class PartIcon extends IconWithParent {
 	}
 
 	public void updateParts() {
-		int mw = width - corner * 2;
-		int mh = height - corner * 2;
+		var mw = width - corner * 2;
+		var mh = height - corner * 2;
 		all = get(0, 0, width, height);
 		middleU = get(corner, 0, mw, corner);
 		middleD = get(corner, height - corner, mw, corner);
@@ -60,7 +60,7 @@ public class PartIcon extends IconWithParent {
 
 	@Override
 	public PartIcon copy() {
-		PartIcon icon = new PartIcon(parent.copy());
+		var icon = new PartIcon(parent.copy());
 		icon.posX = posX;
 		icon.posY = posY;
 		icon.width = width;
@@ -82,10 +82,10 @@ public class PartIcon extends IconWithParent {
 		textureWidth = properties.getInt("texture_w", textureWidth);
 		textureHeight = properties.getInt("texture_h", textureHeight);
 
-		String s = properties.getString("pos", "");
+		var s = properties.getString("pos", "");
 
 		if (!s.isEmpty()) {
-			String[] s1 = s.split(",", 4);
+			var s1 = s.split(",", 4);
 
 			if (s1.length == 4) {
 				posX = Integer.parseInt(s1[0]);
@@ -106,9 +106,9 @@ public class PartIcon extends IconWithParent {
 			return;
 		}
 
-		int c = corner;
-		int mw = w - c * 2;
-		int mh = h - c * 2;
+		var c = corner;
+		var mw = w - c * 2;
+		var mh = h - c * 2;
 
 		middleU.draw(matrixStack, x + c, y, mw, c);
 		middleR.draw(matrixStack, x + w - c, y + c, c, mh);
@@ -125,7 +125,7 @@ public class PartIcon extends IconWithParent {
 
 	@Override
 	public JsonElement getJson() {
-		JsonObject json = new JsonObject();
+		var json = new JsonObject();
 		json.addProperty("id", "part");
 		json.add("parent", parent.getJson());
 		json.addProperty("x", posX);

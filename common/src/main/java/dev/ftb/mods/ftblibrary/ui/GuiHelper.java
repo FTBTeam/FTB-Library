@@ -8,18 +8,13 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -49,19 +44,19 @@ public class GuiHelper {
 		}
 
 		public Scissor crop(int sx, int sy, int sw, int sh) {
-			int x0 = Math.max(x, sx);
-			int y0 = Math.max(y, sy);
-			int x1 = Math.min(x + w, sx + sw);
-			int y1 = Math.min(y + h, sy + sh);
+			var x0 = Math.max(x, sx);
+			var y0 = Math.max(y, sy);
+			var x1 = Math.min(x + w, sx + sw);
+			var y1 = Math.min(y + h, sy + sh);
 			return new Scissor(x0, y0, x1 - x0, y1 - y0);
 		}
 
 		public void scissor(Window screen) {
-			double scale = screen.getGuiScale();
-			int sx = (int) (x * scale);
-			int sy = (int) ((screen.getGuiScaledHeight() - (y + h)) * scale);
-			int sw = (int) (w * scale);
-			int sh = (int) (h * scale);
+			var scale = screen.getGuiScale();
+			var sx = (int) (x * scale);
+			var sy = (int) ((screen.getGuiScaledHeight() - (y + h)) * scale);
+			var sw = (int) (w * scale);
+			var sh = (int) (h * scale);
 			GL11.glScissor(sx, sy, sw, sh);
 		}
 	}
@@ -94,8 +89,8 @@ public class GuiHelper {
 		RenderSystem.enableTexture();
 		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
+		var tesselator = Tesselator.getInstance();
+		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 		addRectToBufferWithUV(matrixStack, buffer, x, y, w, h, col, u0, v0, u1, v1);
 		tesselator.end();
@@ -106,11 +101,11 @@ public class GuiHelper {
 			return;
 		}
 
-		Matrix4f m = matrixStack.last().pose();
-		int r = col.redi();
-		int g = col.greeni();
-		int b = col.bluei();
-		int a = col.alphai();
+		var m = matrixStack.last().pose();
+		var r = col.redi();
+		var g = col.greeni();
+		var b = col.bluei();
+		var a = col.alphai();
 		buffer.vertex(m, x, y + h, 0).color(r, g, b, a).endVertex();
 		buffer.vertex(m, x + w, y + h, 0).color(r, g, b, a).endVertex();
 		buffer.vertex(m, x + w, y, 0).color(r, g, b, a).endVertex();
@@ -122,11 +117,11 @@ public class GuiHelper {
 			return;
 		}
 
-		Matrix4f m = matrixStack.last().pose();
-		int r = col.redi();
-		int g = col.greeni();
-		int b = col.bluei();
-		int a = col.alphai();
+		var m = matrixStack.last().pose();
+		var r = col.redi();
+		var g = col.greeni();
+		var b = col.bluei();
+		var a = col.alphai();
 		buffer.vertex(m, x, y + h, 0).color(r, g, b, a).uv(u0, v1).endVertex();
 		buffer.vertex(m, x + w, y + h, 0).color(r, g, b, a).uv(u1, v1).endVertex();
 		buffer.vertex(m, x + w, y, 0).color(r, g, b, a).uv(u1, v0).endVertex();
@@ -141,8 +136,8 @@ public class GuiHelper {
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.disableTexture();
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
+		var tesselator = Tesselator.getInstance();
+		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 		addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 2, col);
@@ -163,8 +158,8 @@ public class GuiHelper {
 	public static void drawRectWithShade(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, int intensity) {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.disableTexture();
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
+		var tesselator = Tesselator.getInstance();
+		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		addRectToBuffer(matrixStack, buffer, x, y, w - 1, 1, col);
 		addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 1, col);
@@ -203,7 +198,7 @@ public class GuiHelper {
 
 		var bakedModel = itemRenderer.getModel(stack, mc.level, mc.player, 0);
 
-		boolean flatLight = !bakedModel.usesBlockLight();
+		var flatLight = !bakedModel.usesBlockLight();
 
 		if (flatLight) {
 			Lighting.setupForFlatItems();
@@ -219,7 +214,7 @@ public class GuiHelper {
 
 		if (renderOverlay) {
 			if (stack.getCount() != 1 || text != null) {
-				String s = text == null ? String.valueOf(stack.getCount()) : text;
+				var s = text == null ? String.valueOf(stack.getCount()) : text;
 				poseStack.translate(0, 0, itemRenderer.blitOffset + 20);
 				font.drawInBatch(s, (float) (19 - 2 - font.width(s)), (float) (6 + 3), 16777215, true, poseStack.last().pose(), bufferSource, false, 0, 15728880);
 				bufferSource.endBatch();
@@ -229,8 +224,8 @@ public class GuiHelper {
 				RenderSystem.disableDepthTest();
 				RenderSystem.disableTexture();
 				RenderSystem.disableBlend();
-				int i = stack.getBarWidth();
-				int j = stack.getBarColor();
+				var i = stack.getBarWidth();
+				var j = stack.getBarColor();
 				draw(poseStack, tesselator, 2, 13, 13, 2, 0, 0, 0, 255);
 				draw(poseStack, tesselator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
 				RenderSystem.enableBlend();
@@ -238,7 +233,7 @@ public class GuiHelper {
 				RenderSystem.enableDepthTest();
 			}
 
-			float f3 = mc.player == null ? 0.0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
+			var f3 = mc.player == null ? 0.0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
 
 			if (f3 > 0.0F) {
 				RenderSystem.disableDepthTest();
@@ -257,8 +252,8 @@ public class GuiHelper {
 
 	private static void draw(PoseStack matrixStack, Tesselator tesselator, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		Matrix4f m = matrixStack.last().pose();
-		BufferBuilder renderer = tesselator.getBuilder();
+		var m = matrixStack.last().pose();
+		var renderer = tesselator.getBuilder();
 		renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		renderer.vertex(m, x, y, 0).color(red, green, blue, alpha).endVertex();
 		renderer.vertex(m, x, y + height, 0).color(red, green, blue, alpha).endVertex();
@@ -272,7 +267,7 @@ public class GuiHelper {
 			GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		}
 
-		Scissor scissor = SCISSOR.isEmpty() ? new Scissor(x, y, w, h) : SCISSOR.lastElement().crop(x, y, w, h);
+		var scissor = SCISSOR.isEmpty() ? new Scissor(x, y, w, h) : SCISSOR.lastElement().crop(x, y, w, h);
 		SCISSOR.push(scissor);
 		scissor.scissor(screen);
 	}
@@ -306,10 +301,10 @@ public class GuiHelper {
 	}
 
 	public static void addStackTooltip(ItemStack stack, List<Component> list, @Nullable Component prefix) {
-		List<Component> tooltip = stack.getTooltipLines(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
+		var tooltip = stack.getTooltipLines(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
 		list.add(prefix == null ? tooltip.get(0).copy().withStyle(stack.getRarity().color) : prefix.copy().append(tooltip.get(0)));
 
-		for (int i = 1; i < tooltip.size(); i++) {
+		for (var i = 1; i < tooltip.size(); i++) {
 			list.add(new TextComponent("").withStyle(ChatFormatting.GRAY).append(tooltip.get(i)));
 		}
 	}

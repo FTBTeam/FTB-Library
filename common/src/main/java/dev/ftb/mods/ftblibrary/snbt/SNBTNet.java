@@ -59,7 +59,7 @@ public class SNBTNet {
 
 		buf.writeVarInt(tag.getAllKeys().size());
 
-		for (String s : tag.getAllKeys()) {
+		for (var s : tag.getAllKeys()) {
 			buf.writeUtf(s, Short.MAX_VALUE);
 			buf.writeByte(tag.get(s).getId());
 			write(buf, tag.get(s));
@@ -77,7 +77,7 @@ public class SNBTNet {
 		if (!tag.isEmpty()) {
 			buf.writeByte(tag.getElementType());
 
-			for (Tag value : tag) {
+			for (var value : tag) {
 				write(buf, value);
 			}
 		}
@@ -91,7 +91,7 @@ public class SNBTNet {
 
 		buf.writeVarInt(tag.size());
 
-		for (byte v : tag.getAsByteArray()) {
+		for (var v : tag.getAsByteArray()) {
 			buf.writeByte(v);
 		}
 	}
@@ -104,7 +104,7 @@ public class SNBTNet {
 
 		buf.writeVarInt(tag.size());
 
-		for (int v : tag.getAsIntArray()) {
+		for (var v : tag.getAsIntArray()) {
 			buf.writeInt(v);
 		}
 	}
@@ -117,7 +117,7 @@ public class SNBTNet {
 
 		buf.writeVarInt(tag.size());
 
-		for (long v : tag.getAsLongArray()) {
+		for (var v : tag.getAsLongArray()) {
 			buf.writeLong(v);
 		}
 	}
@@ -144,17 +144,17 @@ public class SNBTNet {
 
 	@Nullable
 	public static SNBTCompoundTag readCompound(FriendlyByteBuf buf) {
-		int len = buf.readVarInt();
+		var len = buf.readVarInt();
 
 		if (len == -1) {
 			return null;
 		}
 
-		SNBTCompoundTag tag = new SNBTCompoundTag();
+		var tag = new SNBTCompoundTag();
 
-		for (int i = 0; i < len; i++) {
-			String key = buf.readUtf(Short.MAX_VALUE);
-			byte type = buf.readByte();
+		for (var i = 0; i < len; i++) {
+			var key = buf.readUtf(Short.MAX_VALUE);
+			var type = buf.readByte();
 			tag.put(key, read(type, buf));
 		}
 
@@ -163,7 +163,7 @@ public class SNBTNet {
 
 	@Nullable
 	public static ListTag readList(FriendlyByteBuf buf) {
-		int len = buf.readVarInt();
+		var len = buf.readVarInt();
 
 		if (len == -1) {
 			return null;
@@ -171,11 +171,11 @@ public class SNBTNet {
 			return new ListTag();
 		}
 
-		byte type = buf.readByte();
+		var type = buf.readByte();
 
-		ListTag tag = new ListTag();
+		var tag = new ListTag();
 
-		for (int i = 0; i < len; i++) {
+		for (var i = 0; i < len; i++) {
 			tag.add(read(type, buf));
 		}
 
@@ -183,7 +183,7 @@ public class SNBTNet {
 	}
 
 	public static ByteArrayTag readByteArray(FriendlyByteBuf buf) {
-		int len = buf.readVarInt();
+		var len = buf.readVarInt();
 
 		if (len == -1) {
 			return null;
@@ -191,9 +191,9 @@ public class SNBTNet {
 			return EMPTY_BYTE_ARRAY;
 		}
 
-		byte[] values = new byte[len];
+		var values = new byte[len];
 
-		for (int i = 0; i < len; i++) {
+		for (var i = 0; i < len; i++) {
 			values[i] = buf.readByte();
 		}
 
@@ -201,7 +201,7 @@ public class SNBTNet {
 	}
 
 	public static IntArrayTag readIntArray(FriendlyByteBuf buf) {
-		int len = buf.readVarInt();
+		var len = buf.readVarInt();
 
 		if (len == -1) {
 			return null;
@@ -209,9 +209,9 @@ public class SNBTNet {
 			return EMPTY_INT_ARRAY;
 		}
 
-		int[] values = new int[len];
+		var values = new int[len];
 
-		for (int i = 0; i < len; i++) {
+		for (var i = 0; i < len; i++) {
 			values[i] = buf.readInt();
 		}
 
@@ -219,7 +219,7 @@ public class SNBTNet {
 	}
 
 	public static LongArrayTag readLongArray(FriendlyByteBuf buf) {
-		int len = buf.readVarInt();
+		var len = buf.readVarInt();
 
 		if (len == -1) {
 			return null;
@@ -227,9 +227,9 @@ public class SNBTNet {
 			return EMPTY_LONG_ARRAY;
 		}
 
-		long[] values = new long[len];
+		var values = new long[len];
 
-		for (int i = 0; i < len; i++) {
+		for (var i = 0; i < len; i++) {
 			values[i] = buf.readLong();
 		}
 

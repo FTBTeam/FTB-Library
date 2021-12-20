@@ -64,7 +64,7 @@ public class TextField extends Widget {
 	}
 
 	public TextField setText(Component txt) {
-		Theme theme = getGui().getTheme();
+		var theme = getGui().getTheme();
 
 		if (trim) {
 			formattedText = new FormattedText[]{theme.trimStringToWidth(new TextComponent("").append(txt), maxWidth)};
@@ -82,7 +82,7 @@ public class TextField extends Widget {
 	public TextField resize(Theme theme) {
 		setWidth(0);
 
-		for (FormattedText s : formattedText) {
+		for (var s : formattedText) {
 			setWidth(Math.max(width, (int) ((float) theme.getStringWidth(s) * scale)));
 		}
 
@@ -103,15 +103,15 @@ public class TextField extends Widget {
 		drawBackground(matrixStack, theme, x, y, w, h);
 
 		if (formattedText.length != 0) {
-			boolean centered = Bits.getFlag(textFlags, 4);
-			boolean centeredV = Bits.getFlag(textFlags, 32);
-			Color4I col = textColor;
+			var centered = Bits.getFlag(textFlags, 4);
+			var centeredV = Bits.getFlag(textFlags, 32);
+			var col = textColor;
 			if (col.isEmpty()) {
 				col = theme.getContentColor(WidgetType.mouseOver(Bits.getFlag(textFlags, 16)));
 			}
 
-			int tx = x + (centered ? w / 2 : 0);
-			int ty = y + (centeredV ? (h - theme.getFontHeight()) / 2 : 0);
+			var tx = x + (centered ? w / 2 : 0);
+			var ty = y + (centeredV ? (h - theme.getFontHeight()) / 2 : 0);
 			int i;
 			if (scale == 1.0F) {
 				for (i = 0; i < formattedText.length; ++i) {

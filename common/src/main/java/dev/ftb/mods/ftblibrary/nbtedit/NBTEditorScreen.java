@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.architectury.utils.NbtType;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.config.DoubleConfig;
@@ -21,7 +22,6 @@ import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
 import dev.ftb.mods.ftblibrary.ui.SimpleButton;
 import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
@@ -30,7 +30,6 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import dev.architectury.utils.NbtType;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
@@ -44,7 +43,6 @@ import net.minecraft.nbt.NumericTag;
 import net.minecraft.nbt.ShortTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -181,19 +179,19 @@ public class NBTEditorScreen extends BaseScreen {
 		public void edit() {
 			switch (nbt.getId()) {
 				case NbtType.BYTE, NbtType.SHORT, NbtType.INT -> {
-					IntConfig intConfig = new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE);
+					var intConfig = new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE);
 					EditConfigFromStringScreen.open(intConfig, ((NumericTag) nbt).getAsInt(), 0, accepted -> onCallback(intConfig, accepted));
 				}
 				case NbtType.LONG -> {
-					LongConfig longConfig = new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE);
+					var longConfig = new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE);
 					EditConfigFromStringScreen.open(longConfig, ((NumericTag) nbt).getAsLong(), 0L, accepted -> onCallback(longConfig, accepted));
 				}
 				case NbtType.FLOAT, NbtType.DOUBLE, NbtType.NUMBER -> {
-					DoubleConfig doubleConfig = new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+					var doubleConfig = new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 					EditConfigFromStringScreen.open(doubleConfig, ((NumericTag) nbt).getAsDouble(), 0D, accepted -> onCallback(doubleConfig, accepted));
 				}
 				case NbtType.STRING -> {
-					StringConfig stringConfig = new StringConfig();
+					var stringConfig = new StringConfig();
 					EditConfigFromStringScreen.open(stringConfig, nbt.getAsString(), "", accepted -> onCallback(stringConfig, accepted));
 				}
 			}
@@ -217,7 +215,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public CompoundTag copy() {
-			CompoundTag n = new CompoundTag();
+			var n = new CompoundTag();
 			n.put(key, nbt);
 			return n;
 		}
@@ -240,7 +238,7 @@ public class NBTEditorScreen extends BaseScreen {
 		@Override
 		public void addChildren() {
 			if (!collapsed) {
-				for (ButtonNBT button : children.values()) {
+				for (var button : children.values()) {
 					panelNbt.add(button);
 					button.addChildren();
 				}
@@ -277,7 +275,7 @@ public class NBTEditorScreen extends BaseScreen {
 		public void setCollapsedTree(boolean c) {
 			setCollapsed(c);
 
-			for (ButtonNBT button : children.values()) {
+			for (var button : children.values()) {
 				if (button instanceof ButtonNBTCollection) {
 					((ButtonNBTCollection) button).setCollapsedTree(c);
 				}
@@ -304,8 +302,8 @@ public class NBTEditorScreen extends BaseScreen {
 			List<String> list = new ArrayList<>(map.getAllKeys());
 			list.sort(StringUtils.IGNORE_CASE_COMPARATOR);
 
-			for (String s : list) {
-				ButtonNBT nbt = getFrom(this, s);
+			for (var s : list) {
+				var nbt = getFrom(this, s);
 				children.put(s, nbt);
 				nbt.updateChildren(first);
 			}
@@ -321,7 +319,7 @@ public class NBTEditorScreen extends BaseScreen {
 			hoverIcon = Icon.EMPTY;
 
 			if (map.contains("id", NbtType.STRING) && map.contains("Count", NbtType.NUMBER)) {
-				ItemStack stack = ItemStack.of(map);
+				var stack = ItemStack.of(map);
 
 				if (!stack.isEmpty()) {
 					hoverIcon = ItemIcon.getItemIcon(stack);
@@ -334,13 +332,13 @@ public class NBTEditorScreen extends BaseScreen {
 		@Override
 		public void addMouseOverText(TooltipList list) {
 			if (this == buttonNBTRoot) {
-				ListTag infoList = info.getList("text", NbtType.STRING);
+				var infoList = info.getList("text", NbtType.STRING);
 
 				if (infoList.size() > 0) {
 					list.add(new TranslatableComponent("gui.info").append(":"));
 
-					for (int i = 0; i < infoList.size(); i++) {
-						MutableComponent component = TextComponent.Serializer.fromJson(infoList.getString(i));
+					for (var i = 0; i < infoList.size(); i++) {
+						var component = TextComponent.Serializer.fromJson(infoList.getString(i));
 
 						if (component != null) {
 							list.add(component);
@@ -392,15 +390,15 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public CompoundTag copy() {
-			CompoundTag nbt = map.copy();
+			var nbt = map.copy();
 
 			if (this == buttonNBTRoot) {
-				ListTag infoList1 = new ListTag();
-				ListTag infoList0 = info.getList("text", NbtType.STRING);
+				var infoList1 = new ListTag();
+				var infoList0 = info.getList("text", NbtType.STRING);
 
 				if (infoList0.size() > 0) {
-					for (int i = 0; i < infoList0.size(); i++) {
-						MutableComponent component = TextComponent.Serializer.fromJson(infoList0.getString(i));
+					for (var i = 0; i < infoList0.size(); i++) {
+						var component = TextComponent.Serializer.fromJson(infoList0.getString(i));
 
 						if (component != null) {
 							infoList1.add(StringTag.valueOf(component.getString()));
@@ -426,9 +424,9 @@ public class NBTEditorScreen extends BaseScreen {
 		@Override
 		public void updateChildren(boolean first) {
 			children.clear();
-			for (int i = 0; i < list.size(); i++) {
-				String s = Integer.toString(i);
-				ButtonNBT nbt = getFrom(this, s);
+			for (var i = 0; i < list.size(); i++) {
+				var s = Integer.toString(i);
+				var nbt = getFrom(this, s);
 				children.put(s, nbt);
 				nbt.updateChildren(first);
 			}
@@ -441,7 +439,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public void setTag(String k, @Nullable Tag base) {
-			int id = Integer.parseInt(k);
+			var id = Integer.parseInt(k);
 
 			if (id == -1) {
 				if (base != null) {
@@ -465,7 +463,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public CompoundTag copy() {
-			CompoundTag n = new CompoundTag();
+			var n = new CompoundTag();
 			n.put(key, list);
 			return n;
 		}
@@ -482,9 +480,9 @@ public class NBTEditorScreen extends BaseScreen {
 		@Override
 		public void updateChildren(boolean first) {
 			children.clear();
-			for (int i = 0; i < list.size(); i++) {
-				String s = Integer.toString(i);
-				ButtonNBT nbt = getFrom(this, s);
+			for (var i = 0; i < list.size(); i++) {
+				var s = Integer.toString(i);
+				var nbt = getFrom(this, s);
 				children.put(s, nbt);
 				nbt.updateChildren(first);
 			}
@@ -497,7 +495,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public void setTag(String k, @Nullable Tag base) {
-			int id = Integer.parseInt(k);
+			var id = Integer.parseInt(k);
 
 			if (id == -1) {
 				if (base != null) {
@@ -521,7 +519,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public CompoundTag copy() {
-			CompoundTag n = new CompoundTag();
+			var n = new CompoundTag();
 			n.put(key, new ByteArrayTag(list.toByteArray()));
 			return n;
 		}
@@ -538,9 +536,9 @@ public class NBTEditorScreen extends BaseScreen {
 		@Override
 		public void updateChildren(boolean first) {
 			children.clear();
-			for (int i = 0; i < list.size(); i++) {
-				String s = Integer.toString(i);
-				ButtonNBT nbt = getFrom(this, s);
+			for (var i = 0; i < list.size(); i++) {
+				var s = Integer.toString(i);
+				var nbt = getFrom(this, s);
 				children.put(s, nbt);
 				nbt.updateChildren(first);
 			}
@@ -553,7 +551,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public void setTag(String k, @Nullable Tag base) {
-			int id = Integer.parseInt(k);
+			var id = Integer.parseInt(k);
 
 			if (id == -1) {
 				if (base != null) {
@@ -577,14 +575,14 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public CompoundTag copy() {
-			CompoundTag n = new CompoundTag();
+			var n = new CompoundTag();
 			n.put(key, new IntArrayTag(list.toIntArray()));
 			return n;
 		}
 	}
 
 	private ButtonNBT getFrom(ButtonNBTCollection b, String key) {
-		Tag nbt = b.getTag(key);
+		var nbt = b.getTag(key);
 
 		return switch (nbt.getId()) {
 			case NbtType.COMPOUND -> new ButtonNBTMap(panelNbt, b, key, (CompoundTag) nbt);
@@ -598,7 +596,7 @@ public class NBTEditorScreen extends BaseScreen {
 	public SimpleButton newTag(Panel panel, String t, Icon icon, Supplier<Tag> supplier) {
 		return new SimpleButton(panel, new TextComponent(t), icon, (gui, button) -> {
 			if (selected instanceof ButtonNBTMap) {
-				StringConfig value = new StringConfig(Pattern.compile("^.+$"));
+				var value = new StringConfig(Pattern.compile("^.+$"));
 				EditConfigFromStringScreen.open(value, "", "", set -> {
 					if (set && !value.value.isEmpty()) {
 						((ButtonNBTCollection) selected).setTag(value.value, supplier.get());
@@ -644,16 +642,16 @@ public class NBTEditorScreen extends BaseScreen {
 					}
 				}));
 
-				boolean canRename = selected.parent instanceof ButtonNBTMap;
+				var canRename = selected.parent instanceof ButtonNBTMap;
 
 				add(new SimpleButton(this, new TranslatableComponent("gui.rename"), canRename ? Icons.INFO : Icons.INFO_GRAY, (gui, button) -> {
 					if (canRename) {
-						StringConfig value = new StringConfig();
+						var value = new StringConfig();
 						EditConfigFromStringScreen.open(value, selected.key, "", set -> {
 							if (set && !value.value.isEmpty()) {
-								ButtonNBTCollection parent = selected.parent;
-								String s0 = selected.key;
-								Tag nbt = parent.getTag(s0);
+								var parent = selected.parent;
+								var s0 = selected.key;
+								var nbt = parent.getTag(s0);
 								parent.setTag(s0, null);
 								parent.setTag(value.value, nbt);
 								parent.updateChildren(false);
@@ -729,7 +727,7 @@ public class NBTEditorScreen extends BaseScreen {
 				add(new SimpleButton(this, new TranslatableComponent("gui.copy"), ItemIcon.getItemIcon(Items.PAPER), (widget, button) -> setClipboardString(selected.copy().toString())));
 
 				add(new SimpleButton(this, new TranslatableComponent("gui.collapse_all"), Icons.REMOVE, (widget, button) -> {
-					for (Widget w : panelNbt.widgets) {
+					for (var w : panelNbt.widgets) {
 						if (w instanceof ButtonNBTCollection) {
 							((ButtonNBTCollection) w).setCollapsed(true);
 						}
@@ -740,7 +738,7 @@ public class NBTEditorScreen extends BaseScreen {
 				}));
 
 				add(new SimpleButton(this, new TranslatableComponent("gui.expand_all"), Icons.ADD, (widget, button) -> {
-					for (Widget w : panelNbt.widgets) {
+					for (var w : panelNbt.widgets) {
 						if (w instanceof ButtonNBTCollection) {
 							((ButtonNBTCollection) w).setCollapsed(false);
 						}

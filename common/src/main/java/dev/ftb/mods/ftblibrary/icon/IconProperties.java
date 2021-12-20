@@ -51,7 +51,7 @@ public class IconProperties {
 
 	@Nullable
 	public Color4I getColor(String key) {
-		String s = map.get(key);
+		var s = map.get(key);
 		return s == null ? null : Color4I.fromString(s);
 	}
 }

@@ -71,7 +71,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	}
 
 	public static Component info(String key, Object value) {
-		Component c = value instanceof Component ? (Component) value : new TextComponent(String.valueOf(value));
+		var c = value instanceof Component ? (Component) value : new TextComponent(String.valueOf(value));
 		return new TextComponent("").append((new TextComponent(key + ": ").withStyle(ChatFormatting.AQUA))).append(c);
 	}
 
@@ -82,7 +82,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	}
 
 	public String getPath() {
-		String p = group.getPath();
+		var p = group.getPath();
 		return p.isEmpty() ? id : (p + '.' + id);
 	}
 
@@ -100,7 +100,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	}
 
 	public String getTooltip() {
-		String k = getNameKey() + ".tooltip";
+		var k = getNameKey() + ".tooltip";
 		return I18n.exists(k) ? I18n.get(k) : "";
 	}
 
@@ -129,7 +129,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 
 	@Override
 	public int compareTo(ConfigValue<T> o) {
-		int i = group.getPath().compareToIgnoreCase(o.group.getPath());
+		var i = group.getPath().compareToIgnoreCase(o.group.getPath());
 
 		if (i == 0) {
 			i = Integer.compare(order, o.order);

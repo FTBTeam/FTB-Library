@@ -18,10 +18,10 @@ public interface WidgetLayout {
 
 		@Override
 		public int align(Panel panel) {
-			int i = pre;
+			var i = pre;
 
 			if (!panel.widgets.isEmpty()) {
-				for (Widget widget : panel.widgets) {
+				for (var widget : panel.widgets) {
 					widget.setY(i);
 					i += widget.height + spacing;
 				}
@@ -45,10 +45,10 @@ public interface WidgetLayout {
 
 		@Override
 		public int align(Panel panel) {
-			int i = pre;
+			var i = pre;
 
 			if (!panel.widgets.isEmpty()) {
-				for (Widget widget : panel.widgets) {
+				for (var widget : panel.widgets) {
 					widget.setX(i);
 					i += widget.width + spacing;
 				}

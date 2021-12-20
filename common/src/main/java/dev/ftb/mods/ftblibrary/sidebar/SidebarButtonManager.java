@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -32,7 +31,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	public final List<SidebarButtonGroup> groups = new ArrayList<>();
 
 	private JsonElement readJson(Resource resource) {
-		try (InputStreamReader reader = new InputStreamReader(resource.getInputStream())) {
+		try (var reader = new InputStreamReader(resource.getInputStream())) {
 			return JsonParser.parseReader(reader);
 		} catch (Exception ex) {
 		}
@@ -41,7 +40,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	}
 
 	private JsonElement readJson(File file) {
-		try (FileReader reader = new FileReader(file)) {
+		try (var reader = new FileReader(file)) {
 			return JsonParser.parseReader(reader);
 		} catch (Exception ex) {
 		}
@@ -53,7 +52,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	public void onResourceManagerReload(ResourceManager manager) {
 		groups.clear();
 
-		JsonElement element = readJson(Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile());
+		var element = readJson(Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile());
 		JsonObject sidebarButtonConfig;
 
 		if (element.isJsonObject()) {
@@ -64,21 +63,21 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 		Map<ResourceLocation, SidebarButtonGroup> groupMap = new HashMap<>();
 
-		for (String domain : manager.getNamespaces()) {
+		for (var domain : manager.getNamespaces()) {
 			try {
-				for (Resource resource : manager.getResources(new ResourceLocation(domain, "sidebar_button_groups.json"))) {
-					JsonElement json = readJson(resource);
+				for (var resource : manager.getResources(new ResourceLocation(domain, "sidebar_button_groups.json"))) {
+					var json = readJson(resource);
 
-					for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
+					for (var entry : json.getAsJsonObject().entrySet()) {
 						if (entry.getValue().isJsonObject()) {
-							JsonObject groupJson = entry.getValue().getAsJsonObject();
-							int y = 0;
+							var groupJson = entry.getValue().getAsJsonObject();
+							var y = 0;
 
 							if (groupJson.has("y")) {
 								y = groupJson.get("y").getAsInt();
 							}
 
-							SidebarButtonGroup group = new SidebarButtonGroup(new ResourceLocation(domain, entry.getKey()), y);
+							var group = new SidebarButtonGroup(new ResourceLocation(domain, entry.getKey()), y);
 							groupMap.put(group.getId(), group);
 						}
 					}
@@ -90,15 +89,15 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 			}
 		}
 
-		for (String domain : manager.getNamespaces()) {
+		for (var domain : manager.getNamespaces()) {
 			try {
-				for (Resource resource : manager.getResources(new ResourceLocation(domain, "sidebar_buttons.json"))) {
-					JsonElement json = readJson(resource);
+				for (var resource : manager.getResources(new ResourceLocation(domain, "sidebar_buttons.json"))) {
+					var json = readJson(resource);
 
 					if (json.isJsonObject()) {
-						for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
+						for (var entry : json.getAsJsonObject().entrySet()) {
 							if (entry.getValue().isJsonObject()) {
-								JsonObject buttonJson = entry.getValue().getAsJsonObject();
+								var buttonJson = entry.getValue().getAsJsonObject();
 
 								if (!buttonJson.has("group")) {
 									continue;
@@ -108,18 +107,18 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 									continue;
 								}
 
-								SidebarButtonGroup group = groupMap.get(new ResourceLocation(buttonJson.get("group").getAsString()));
+								var group = groupMap.get(new ResourceLocation(buttonJson.get("group").getAsString()));
 
 								if (group == null) {
 									continue;
 								}
 
-								SidebarButton button = new SidebarButton(new ResourceLocation(domain, entry.getKey()), group, buttonJson);
+								var button = new SidebarButton(new ResourceLocation(domain, entry.getKey()), group, buttonJson);
 
 								group.getButtons().add(button);
 
 								if (sidebarButtonConfig.has(button.id.getNamespace())) {
-									JsonElement e = sidebarButtonConfig.get(button.id.getNamespace());
+									var e = sidebarButtonConfig.get(button.id.getNamespace());
 
 									if (e.isJsonObject() && e.getAsJsonObject().has(button.id.getPath())) {
 										button.setConfig(e.getAsJsonObject().get(button.id.getPath()).getAsBoolean());
@@ -138,7 +137,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 			}
 		}
 
-		for (SidebarButtonGroup group : groupMap.values()) {
+		for (var group : groupMap.values()) {
 			if (!group.getButtons().isEmpty()) {
 				group.getButtons().sort(null);
 				groups.add(group);
@@ -147,8 +146,8 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 		groups.sort(null);
 
-		for (SidebarButtonGroup group : groups) {
-			for (SidebarButton button : group.getButtons()) {
+		for (var group : groups) {
+			for (var button : group.getButtons()) {
 				SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(button));
 			}
 		}
@@ -157,11 +156,11 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	}
 
 	public void saveConfig() {
-		JsonObject o = new JsonObject();
+		var o = new JsonObject();
 
-		for (SidebarButtonGroup group : groups) {
-			for (SidebarButton button : group.getButtons()) {
-				JsonObject o1 = o.getAsJsonObject(button.id.getNamespace());
+		for (var group : groups) {
+			for (var button : group.getButtons()) {
+				var o1 = o.getAsJsonObject(button.id.getNamespace());
 
 				if (o1 == null) {
 					o1 = new JsonObject();
@@ -172,11 +171,11 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 			}
 		}
 
-		File file = Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile();
+		var file = Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile();
 
-		try (FileWriter writer = new FileWriter(file)) {
-			Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-			JsonWriter jsonWriter = new JsonWriter(writer);
+		try (var writer = new FileWriter(file)) {
+			var gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+			var jsonWriter = new JsonWriter(writer);
 			jsonWriter.setIndent("\t");
 			gson.toJson(o, jsonWriter);
 		} catch (Exception ex) {

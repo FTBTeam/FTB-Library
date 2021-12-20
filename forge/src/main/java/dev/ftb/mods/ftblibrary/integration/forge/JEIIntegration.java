@@ -16,7 +16,6 @@ import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -56,7 +55,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 	@Override
 	@NotNull
 	public Collection<Rect2i> getGuiExtraAreas() {
-		Screen currentScreen = Minecraft.getInstance().screen;
+		var currentScreen = Minecraft.getInstance().screen;
 
 		if (FTBLibraryClient.areButtonsVisible(currentScreen)) {
 			return Collections.singleton(SidebarGroupGuiButton.lastDrawnArea);
@@ -68,7 +67,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 	@Override
 	@Nullable
 	public Object getIngredientUnderMouse(double mouseX, double mouseY) {
-		Screen currentScreen = Minecraft.getInstance().screen;
+		var currentScreen = Minecraft.getInstance().screen;
 
 		if (currentScreen instanceof IScreenWrapper) {
 			return WrappedIngredient.unwrap(((IScreenWrapper) currentScreen).getGui().getIngredientUnderMouse());

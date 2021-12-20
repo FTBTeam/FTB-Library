@@ -26,7 +26,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -67,9 +66,9 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		}
 
 		try {
-			for (Field field : Icons.class.getDeclaredFields()) {
+			for (var field : Icons.class.getDeclaredFields()) {
 				field.setAccessible(true);
-				Object o = field.get(null);
+				var o = field.get(null);
 
 				if (o instanceof AtlasSpriteIcon a) {
 					addSprite.accept(a.id);
@@ -83,13 +82,13 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	@SuppressWarnings("rawtypes")
 	private void guiInit(Screen screen, ScreenAccess access) {
 		if (areButtonsVisible(screen)) {
-			SidebarGroupGuiButton group = new SidebarGroupGuiButton((AbstractContainerScreen) screen);
+			var group = new SidebarGroupGuiButton((AbstractContainerScreen) screen);
 			access.addRenderableWidget(group);
 		}
 	}
 
 	private void clientTick(Minecraft client) {
-		CursorType t = client.screen instanceof IScreenWrapper ? ((IScreenWrapper) client.screen).getGui().getCursor() : null;
+		var t = client.screen instanceof IScreenWrapper ? ((IScreenWrapper) client.screen).getGui().getCursor() : null;
 
 		if (lastCursorType != t) {
 			lastCursorType = t;
@@ -97,7 +96,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		}
 
 		if (!ClientUtils.RUN_LATER.isEmpty()) {
-			for (Runnable runnable : new ArrayList<>(ClientUtils.RUN_LATER)) {
+			for (var runnable : new ArrayList<>(ClientUtils.RUN_LATER)) {
 				runnable.run();
 			}
 
@@ -115,7 +114,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 
 	@Override
 	public void testScreen() {
-		ConfigGroup group = new ConfigGroup("test");
+		var group = new ConfigGroup("test");
 		group.add("image", new ImageConfig(), "", v -> {
 		}, "");
 

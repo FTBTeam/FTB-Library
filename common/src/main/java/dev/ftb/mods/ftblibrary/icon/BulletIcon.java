@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -33,7 +32,7 @@ public class BulletIcon extends Icon {
 
 	@Override
 	public BulletIcon copy() {
-		BulletIcon icon = new BulletIcon();
+		var icon = new BulletIcon();
 		icon.color = color;
 		icon.colorB = colorB;
 		icon.colorD = colorD;
@@ -48,7 +47,7 @@ public class BulletIcon extends Icon {
 			return this;
 		}
 
-		MutableColor4I c = color.mutable();
+		var c = color.mutable();
 		c.addBrightness(18);
 		colorB = c.copy();
 		c = color.mutable();
@@ -96,8 +95,8 @@ public class BulletIcon extends Icon {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		RenderSystem.disableTexture();
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
+		var tesselator = Tesselator.getInstance();
+		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 		GuiHelper.addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
@@ -112,7 +111,7 @@ public class BulletIcon extends Icon {
 
 	@Override
 	public JsonElement getJson() {
-		JsonObject o = new JsonObject();
+		var o = new JsonObject();
 		o.addProperty("id", "bullet");
 
 		if (!color.isEmpty()) {

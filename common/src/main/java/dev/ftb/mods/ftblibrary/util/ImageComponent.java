@@ -16,7 +16,7 @@ public class ImageComponent extends TextComponent {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("{image:");
+		var sb = new StringBuilder("{image:");
 		sb.append(image);
 
 		sb.append(" width:").append(width);

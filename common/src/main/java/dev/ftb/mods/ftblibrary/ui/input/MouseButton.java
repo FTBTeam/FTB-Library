@@ -7,7 +7,7 @@ public class MouseButton {
 	private static final MouseButton[] BUTTONS = new MouseButton[16];
 
 	static {
-		for (int i = 0; i < BUTTONS.length; i++) {
+		for (var i = 0; i < BUTTONS.length; i++) {
 			BUTTONS[i] = new MouseButton(i);
 		}
 	}

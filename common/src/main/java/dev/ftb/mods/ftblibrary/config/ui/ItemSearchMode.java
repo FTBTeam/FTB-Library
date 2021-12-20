@@ -10,7 +10,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -53,9 +52,9 @@ public interface ItemSearchMode {
 		public Collection<ItemStack> getAllItems() {
 			if (allItemsCache == null) {
 				List<ItemStack> stacks = new ArrayList<>(Registry.ITEM.keySet().size() + 100);
-				for (Item item : Registry.ITEM) {
+				for (var item : Registry.ITEM) {
 					NonNullList<ItemStack> list = NonNullList.create();
-					CreativeModeTab category = item.getItemCategory();
+					var category = item.getItemCategory();
 					item.fillItemCategory(MoreObjects.firstNonNull(category, CreativeModeTab.TAB_SEARCH), list);
 					if (list.isEmpty()) {
 						stacks.add(item.getDefaultInstance());
@@ -84,14 +83,14 @@ public interface ItemSearchMode {
 		public Collection<ItemStack> getAllItems() {
 			Player player = Minecraft.getInstance().player;
 
-			if(player == null) {
+			if (player == null) {
 				return Collections.emptySet();
 			}
 
-			int inv = player.getInventory().getContainerSize();
+			var inv = player.getInventory().getContainerSize();
 			List<ItemStack> items = new ArrayList<>(inv);
-			for (int i = 0; i < inv; i++) {
-				ItemStack stack = Minecraft.getInstance().player.getInventory().getItem(i);
+			for (var i = 0; i < inv; i++) {
+				var stack = Minecraft.getInstance().player.getInventory().getItem(i);
 
 				if (!stack.isEmpty()) {
 					items.add(stack);

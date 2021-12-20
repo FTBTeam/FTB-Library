@@ -86,7 +86,7 @@ public class ContextMenu extends Panel {
 		items = i;
 		hasIcons = false;
 
-		for (ContextMenuItem item : items) {
+		for (var item : items) {
 			if (!item.icon.isEmpty()) {
 				hasIcons = true;
 				break;
@@ -96,14 +96,14 @@ public class ContextMenu extends Panel {
 
 	@Override
 	public void addWidgets() {
-		for (ContextMenuItem item : items) {
+		for (var item : items) {
 			add(item.createWidget(this));
 		}
 	}
 
 	@Override
 	public boolean mousePressed(MouseButton button) {
-		boolean b = super.mousePressed(button);
+		var b = super.mousePressed(button);
 
 		if (!b && !isMouseOver()) {
 			closeContextMenu();
@@ -117,11 +117,11 @@ public class ContextMenu extends Panel {
 	public void alignWidgets() {
 		setWidth(0);
 
-		for (Widget widget : widgets) {
+		for (var widget : widgets) {
 			setWidth(Math.max(width, widget.width));
 		}
 
-		for (Widget widget : widgets) {
+		for (var widget : widgets) {
 			widget.setX(3);
 			widget.setWidth(width);
 		}

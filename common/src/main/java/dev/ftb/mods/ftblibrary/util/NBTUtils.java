@@ -8,7 +8,7 @@ import java.io.DataOutputStream;
 public class NBTUtils {
 	public static long getSizeInBytes(CompoundTag nbt, boolean compressed) {
 		try {
-			ByteCounterOutputStream byteCounter = new ByteCounterOutputStream();
+			var byteCounter = new ByteCounterOutputStream();
 
 			if (compressed) {
 				NbtIo.writeCompressed(nbt, byteCounter);

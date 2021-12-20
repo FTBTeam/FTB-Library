@@ -56,7 +56,7 @@ public abstract class Panel extends Widget {
 	public void refreshWidgets() {
 		contentWidth = contentHeight = -1;
 		clearWidgets();
-		Theme theme = getGui().getTheme();
+		var theme = getGui().getTheme();
 
 		try {
 			addWidgets();
@@ -66,7 +66,7 @@ public abstract class Panel extends Widget {
 
 		//alignWidgets();
 
-		for (Widget widget : widgets) {
+		for (var widget : widgets) {
 			if (widget instanceof Panel) {
 				((Panel) widget).refreshWidgets();
 			}
@@ -107,10 +107,10 @@ public abstract class Panel extends Widget {
 
 	public int getContentWidth() {
 		if (contentWidth == -1) {
-			int minX = Integer.MAX_VALUE;
-			int maxX = Integer.MIN_VALUE;
+			var minX = Integer.MAX_VALUE;
+			var maxX = Integer.MIN_VALUE;
 
-			for (Widget widget : widgets) {
+			for (var widget : widgets) {
 				if (widget.posX < minX) {
 					minX = widget.posX;
 				}
@@ -128,10 +128,10 @@ public abstract class Panel extends Widget {
 
 	public int getContentHeight() {
 		if (contentHeight == -1) {
-			int minY = Integer.MAX_VALUE;
-			int maxY = Integer.MIN_VALUE;
+			var minY = Integer.MAX_VALUE;
+			var maxY = Integer.MIN_VALUE;
 
-			for (Widget widget : widgets) {
+			for (var widget : widgets) {
 				if (widget.posY < minY) {
 					minY = widget.posY;
 				}
@@ -178,7 +178,7 @@ public abstract class Panel extends Widget {
 
 	@Override
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		boolean renderInside = getOnlyRenderWidgetsInside();
+		var renderInside = getOnlyRenderWidgetsInside();
 
 		drawBackground(matrixStack, theme, x, y, w, h);
 
@@ -189,8 +189,8 @@ public abstract class Panel extends Widget {
 		setOffset(true);
 		drawOffsetBackground(matrixStack, theme, x + offsetX, y + offsetY, w, h);
 
-		for (int i = 0; i < widgets.size(); i++) {
-			Widget widget = widgets.get(i);
+		for (var i = 0; i < widgets.size(); i++) {
+			var widget = widgets.get(i);
 
 			if (widget.shouldDraw() && (!renderInside || widget.collidesWith(x, y, w, h))) {
 				drawWidget(matrixStack, theme, widget, i, x + offsetX, y + offsetY, w, h);
@@ -211,15 +211,15 @@ public abstract class Panel extends Widget {
 	}
 
 	public void drawWidget(PoseStack matrixStack, Theme theme, Widget widget, int index, int x, int y, int w, int h) {
-		int wx = widget.getX();
-		int wy = widget.getY();
-		int ww = widget.width;
-		int wh = widget.height;
+		var wx = widget.getX();
+		var wy = widget.getY();
+		var ww = widget.width;
+		var wh = widget.height;
 
 		widget.draw(matrixStack, theme, wx, wy, ww, wh);
 
 		if (Theme.renderDebugBoxes) {
-			Color4I col = Color4I.rgb(java.awt.Color.HSBtoRGB((widget.hashCode() & 255) / 255F, 1F, 1F));
+			var col = Color4I.rgb(java.awt.Color.HSBtoRGB((widget.hashCode() & 255) / 255F, 1F, 1F));
 			GuiHelper.drawHollowRect(matrixStack, wx, wy, ww, wh, col.withAlpha(150), false);
 			col.withAlpha(30).draw(matrixStack, wx + 1, wy + 1, ww - 2, wh - 2);
 		}
@@ -233,8 +233,8 @@ public abstract class Panel extends Widget {
 
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.shouldAddMouseOverText()) {
 				widget.addMouseOverText(list);
@@ -253,7 +253,7 @@ public abstract class Panel extends Widget {
 		super.updateMouseOver(mouseX, mouseY);
 		setOffset(true);
 
-		for (Widget widget : widgets) {
+		for (var widget : widgets) {
 			widget.updateMouseOver(mouseX, mouseY);
 		}
 
@@ -268,8 +268,8 @@ public abstract class Panel extends Widget {
 
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled()) {
 				if (widget.mousePressed(button)) {
@@ -291,8 +291,8 @@ public abstract class Panel extends Widget {
 
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled()) {
 				if (widget.mouseDoubleClicked(button)) {
@@ -310,8 +310,8 @@ public abstract class Panel extends Widget {
 	public void mouseReleased(MouseButton button) {
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled()) {
 				widget.mouseReleased(button);
@@ -325,8 +325,8 @@ public abstract class Panel extends Widget {
 	public boolean mouseScrolled(double scroll) {
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled()) {
 				if (widget.mouseScrolled(scroll)) {
@@ -336,7 +336,7 @@ public abstract class Panel extends Widget {
 			}
 		}
 
-		boolean scrollPanel = scrollPanel(scroll);
+		var scrollPanel = scrollPanel(scroll);
 		setOffset(false);
 		return scrollPanel;
 	}
@@ -358,11 +358,11 @@ public abstract class Panel extends Widget {
 			return false;
 		}
 
-		double sx = getScrollX();
-		double sy = getScrollY();
+		var sx = getScrollX();
+		var sy = getScrollY();
 
 		if (dx != 0) {
-			int w = getContentWidth();
+			var w = getContentWidth();
 
 			if (w > width) {
 				setScrollX(Mth.clamp(sx + dx, 0, w - width));
@@ -370,7 +370,7 @@ public abstract class Panel extends Widget {
 		}
 
 		if (dy != 0) {
-			int h = getContentHeight();
+			var h = getContentHeight();
 
 			if (h > height) {
 				setScrollY(Mth.clamp(sy + dy, 0, h - height));
@@ -400,8 +400,8 @@ public abstract class Panel extends Widget {
 
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled() && widget.keyPressed(key)) {
 				setOffset(false);
@@ -417,8 +417,8 @@ public abstract class Panel extends Widget {
 	public void keyReleased(Key key) {
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled()) {
 				widget.keyReleased(key);
@@ -436,8 +436,8 @@ public abstract class Panel extends Widget {
 
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled() && widget.charTyped(c, modifiers)) {
 				setOffset(false);
@@ -451,7 +451,7 @@ public abstract class Panel extends Widget {
 
 	@Override
 	public void onClosed() {
-		for (Widget widget : widgets) {
+		for (var widget : widgets) {
 			widget.onClosed();
 		}
 	}
@@ -466,11 +466,11 @@ public abstract class Panel extends Widget {
 	public Object getIngredientUnderMouse() {
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled() && widget.isMouseOver()) {
-				Object object = widget.getIngredientUnderMouse();
+				var object = widget.getIngredientUnderMouse();
 
 				if (object != null) {
 					setOffset(false);
@@ -487,7 +487,7 @@ public abstract class Panel extends Widget {
 	public void tick() {
 		setOffset(true);
 
-		for (Widget widget : widgets) {
+		for (var widget : widgets) {
 			if (widget.isEnabled()) {
 				widget.tick();
 			}
@@ -497,7 +497,7 @@ public abstract class Panel extends Widget {
 	}
 
 	public boolean isMouseOverAnyWidget() {
-		for (Widget widget : widgets) {
+		for (var widget : widgets) {
 			if (widget.isMouseOver()) {
 				return true;
 			}
@@ -511,11 +511,11 @@ public abstract class Panel extends Widget {
 	public CursorType getCursor() {
 		setOffset(true);
 
-		for (int i = widgets.size() - 1; i >= 0; i--) {
-			Widget widget = widgets.get(i);
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
 
 			if (widget.isEnabled() && widget.isMouseOver()) {
-				CursorType cursor = widget.getCursor();
+				var cursor = widget.getCursor();
 
 				if (cursor != null) {
 					setOffset(false);

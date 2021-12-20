@@ -32,7 +32,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 
 	@Override
 	public Color4I getColor(E v) {
-		Color4I col = nameMap.getColor(v);
+		var col = nameMap.getColor(v);
 		return col.isEmpty() ? Tristate.DEFAULT.color : col;
 	}
 
@@ -43,9 +43,9 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 		if (nameMap.size() > 0) {
 			list.blankLine();
 
-			for (E v : nameMap) {
-				boolean e = isEqual(v, value);
-				TextComponent c = new TextComponent(e ? "+ " : "- ");
+			for (var v : nameMap) {
+				var e = isEqual(v, value);
+				var c = new TextComponent(e ? "+ " : "- ");
 				c.withStyle(e ? ChatFormatting.AQUA : ChatFormatting.DARK_GRAY);
 				c.append(nameMap.getDisplayName(v));
 				list.add(c);
@@ -56,10 +56,10 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 	@Override
 	public void onClicked(MouseButton button, ConfigCallback callback) {
 		if (nameMap.values.size() > 16 || BaseScreen.isCtrlKeyDown()) {
-			ButtonListBaseScreen g = new ButtonListBaseScreen() {
+			var g = new ButtonListBaseScreen() {
 				@Override
 				public void addButtons(Panel panel) {
-					for (E v : nameMap) {
+					for (var v : nameMap) {
 						panel.add(new SimpleTextButton(panel, nameMap.getDisplayName(v), nameMap.getIcon(v)) {
 							@Override
 							public void onClicked(MouseButton button) {
@@ -88,7 +88,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 	@Override
 	public Icon getIcon(@Nullable E v) {
 		if (v != null) {
-			Icon icon = nameMap.getIcon(v);
+			var icon = nameMap.getIcon(v);
 
 			if (!icon.isEmpty()) {
 				return icon;

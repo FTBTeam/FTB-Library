@@ -24,7 +24,7 @@ public enum CursorType {
 
 	@Environment(EnvType.CLIENT)
 	public static void set(@Nullable CursorType type) {
-		long window = Minecraft.getInstance().getWindow().getWindow();
+		var window = Minecraft.getInstance().getWindow().getWindow();
 
 		if (type == null) {
 			GLFW.glfwSetCursor(window, MemoryUtil.NULL);

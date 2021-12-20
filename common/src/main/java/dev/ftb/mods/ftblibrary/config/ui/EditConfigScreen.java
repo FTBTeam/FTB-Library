@@ -6,7 +6,6 @@ import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.icon.MutableColor4I;
 import dev.ftb.mods.ftblibrary.math.Bits;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.Button;
@@ -73,7 +72,7 @@ public class EditConfigScreen extends BaseScreen {
 
 				title = new TextComponent("");
 
-				for (int i = groups.size() - 1; i >= 0; i--) {
+				for (var i = groups.size() - 1; i >= 0; i--) {
 					title.append(groups.get(i).getName());
 
 					if (i != 0) {
@@ -84,7 +83,7 @@ public class EditConfigScreen extends BaseScreen {
 				title = new TranslatableComponent("stat.generalButton");
 			}
 
-			String infoKey = group.getPath() + ".info";
+			var infoKey = group.getPath() + ".info";
 			info = I18n.exists(infoKey) ? new TranslatableComponent(infoKey) : null;
 			setCollapsed(collapsed);
 		}
@@ -139,7 +138,7 @@ public class EditConfigScreen extends BaseScreen {
 
 		@Override
 		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			boolean mouseOver = getMouseY() >= 20 && isMouseOver();
+			var mouseOver = getMouseY() >= 20 && isMouseOver();
 
 			if (mouseOver) {
 				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
@@ -149,14 +148,14 @@ public class EditConfigScreen extends BaseScreen {
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
 			FormattedText s = inst.getStringForGUI(inst.value);
-			int slen = theme.getStringWidth(s);
+			var slen = theme.getStringWidth(s);
 
 			if (slen > 150) {
 				s = new TextComponent(theme.trimStringToWidth(s, 150).getString().trim() + "...");
 				slen = 152;
 			}
 
-			MutableColor4I textCol = inst.getColor(inst.value).mutable();
+			var textCol = inst.getColor(inst.value).mutable();
 			textCol.setAlpha(255);
 
 			if (mouseOver) {
@@ -183,10 +182,10 @@ public class EditConfigScreen extends BaseScreen {
 		public void addMouseOverText(TooltipList list) {
 			if (getMouseY() > 18) {
 				list.add(keyText.copy().withStyle(ChatFormatting.UNDERLINE));
-				String tooltip = inst.getTooltip();
+				var tooltip = inst.getTooltip();
 
 				if (!tooltip.isEmpty()) {
-					for (String s : tooltip.split("\n")) {
+					for (var s : tooltip.split("\n")) {
 						list.styledString(s, Style.EMPTY.withItalic(true).withColor(TextColor.fromLegacyFormat(ChatFormatting.GRAY)));
 					}
 				}
@@ -214,7 +213,7 @@ public class EditConfigScreen extends BaseScreen {
 		configPanel = new Panel(this) {
 			@Override
 			public void addWidgets() {
-				for (Widget w : configEntryButtons) {
+				for (var w : configEntryButtons) {
 					if (!(w instanceof ConfigEntryButton) || !((ConfigEntryButton) w).group.collapsed) {
 						add(w);
 					}
@@ -223,7 +222,7 @@ public class EditConfigScreen extends BaseScreen {
 
 			@Override
 			public void alignWidgets() {
-				for (Widget w : widgets) {
+				for (var w : widgets) {
 					w.setWidth(width - 16);
 				}
 
@@ -239,7 +238,7 @@ public class EditConfigScreen extends BaseScreen {
 
 			ConfigGroupButton group = null;
 
-			for (ConfigValue value : list) {
+			for (var value : list) {
 				if (group == null || group.group != value.group) {
 					group = new ConfigGroupButton(configPanel, value.group);
 					configEntryButtons.add(group);
@@ -261,7 +260,7 @@ public class EditConfigScreen extends BaseScreen {
 
 		buttonExpandAll = new SimpleButton(this, new TranslatableComponent("gui.expand_all"), Icons.ADD, (widget, button) ->
 		{
-			for (Widget w : configEntryButtons) {
+			for (var w : configEntryButtons) {
 				if (w instanceof ConfigGroupButton) {
 					((ConfigGroupButton) w).setCollapsed(false);
 				}
@@ -273,7 +272,7 @@ public class EditConfigScreen extends BaseScreen {
 
 		buttonCollapseAll = new SimpleButton(this, new TranslatableComponent("gui.collapse_all"), Icons.REMOVE, (widget, button) ->
 		{
-			for (Widget w : configEntryButtons) {
+			for (var w : configEntryButtons) {
 				if (w instanceof ConfigGroupButton) {
 					((ConfigGroupButton) w).setCollapsed(true);
 				}
@@ -287,7 +286,7 @@ public class EditConfigScreen extends BaseScreen {
 	private void collectAllConfigValues(ConfigGroup group, List<ConfigValue> list) {
 		list.addAll(group.getValues());
 
-		for (ConfigGroup group1 : group.getGroups()) {
+		for (var group1 : group.getGroups()) {
 			collectAllConfigValues(group1, list);
 		}
 	}

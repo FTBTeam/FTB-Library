@@ -1,12 +1,12 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
-import dev.architectury.platform.Platform;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
@@ -64,7 +64,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		Key key = new Key(keyCode, scanCode, modifiers);
+		var key = new Key(keyCode, scanCode, modifiers);
 
 		if (wrappedGui.keyPressed(key)) {
 			return true;
@@ -74,7 +74,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 			} else if (wrappedGui.onClosedByKey(key)) {
 				wrappedGui.closeGui(false);
 			} else if (Platform.isModLoaded("jei")) {
-				Object object = WrappedIngredient.unwrap(wrappedGui.getIngredientUnderMouse());
+				var object = WrappedIngredient.unwrap(wrappedGui.getIngredientUnderMouse());
 
 				if (object != null) {
 					handleIngredientKey(key, object);
@@ -87,7 +87,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
 	@Override
 	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-		Key key = new Key(keyCode, scanCode, modifiers);
+		var key = new Key(keyCode, scanCode, modifiers);
 		wrappedGui.keyReleased(key);
 		return super.keyReleased(keyCode, scanCode, modifiers);
 	}
@@ -110,21 +110,21 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
 		renderBackground(matrixStack);
 		GuiHelper.setupDrawing();
-		int x = wrappedGui.getX();
-		int y = wrappedGui.getY();
-		int w = wrappedGui.width;
-		int h = wrappedGui.height;
-		Theme theme = wrappedGui.getTheme();
+		var x = wrappedGui.getX();
+		var y = wrappedGui.getY();
+		var w = wrappedGui.width;
+		var h = wrappedGui.height;
+		var theme = wrappedGui.getTheme();
 		wrappedGui.draw(matrixStack, theme, x, y, w, h);
 		wrappedGui.drawForeground(matrixStack, theme, x, y, w, h);
 
 		Objects.requireNonNullElse(wrappedGui.contextMenu, wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
-			Object object = wrappedGui.getIngredientUnderMouse();
+			var object = wrappedGui.getIngredientUnderMouse();
 
 			if (object instanceof WrappedIngredient && ((WrappedIngredient) object).tooltip) {
-				Object ingredient = WrappedIngredient.unwrap(object);
+				var ingredient = WrappedIngredient.unwrap(object);
 
 				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty()) {
 					matrixStack.pushPose();

@@ -75,7 +75,7 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 
 	@Override
 	public int compareTo(ChunkDimPos o) {
-		int i = dimension.location().compareTo(o.dimension.location());
+		var i = dimension.location().compareTo(o.dimension.location());
 		return i == 0 ? Long.compare(getChunkPos().toLong(), o.getChunkPos().toLong()) : i;
 	}
 

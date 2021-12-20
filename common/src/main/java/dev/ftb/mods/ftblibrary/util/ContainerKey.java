@@ -19,13 +19,13 @@ public final class ContainerKey {
 			return false;
 		}
 
-		ContainerKey that = (ContainerKey) o;
+		var that = (ContainerKey) o;
 
 		if (container instanceof CompoundContainerFTBL a && that.container instanceof CompoundContainerFTBL b) {
-			Container a1 = a.getContainer1FTBL();
-			Container a2 = a.getContainer2FTBL();
-			Container b1 = b.getContainer1FTBL();
-			Container b2 = b.getContainer2FTBL();
+			var a1 = a.getContainer1FTBL();
+			var a2 = a.getContainer2FTBL();
+			var b1 = b.getContainer1FTBL();
+			var b2 = b.getContainer2FTBL();
 			return a1 == b1 && a2 == b2 || a1 == b2 && a2 == b1;
 		}
 

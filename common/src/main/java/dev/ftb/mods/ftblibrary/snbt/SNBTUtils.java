@@ -18,7 +18,7 @@ public class SNBTUtils {
 		ESCAPE_CHARS['\r'] = 'r';
 		ESCAPE_CHARS['\f'] = 'f';
 
-		for (int i = 0; i < ESCAPE_CHARS.length; i++) {
+		for (var i = 0; i < ESCAPE_CHARS.length; i++) {
 			if (ESCAPE_CHARS[i] != 0) {
 				REVERSE_ESCAPE_CHARS[ESCAPE_CHARS[i]] = (char) i;
 			}
@@ -34,7 +34,7 @@ public class SNBTUtils {
 	}
 
 	public static boolean isSimpleString(String string) {
-		for (int i = 0; i < string.length(); i++) {
+		for (var i = 0; i < string.length(); i++) {
 			if (!isSimpleCharacter(string.charAt(i))) {
 				return false;
 			}
@@ -48,7 +48,7 @@ public class SNBTUtils {
 			return 0;
 		}
 
-		char last = s.charAt(s.length() - 1);
+		var last = s.charAt(s.length() - 1);
 
 		if (isDigit(last)) {
 			return NbtType.INT;
@@ -82,14 +82,14 @@ public class SNBTUtils {
 	}
 
 	public static boolean isInt(String s, int off) {
-		int len = s.length() - off;
+		var len = s.length() - off;
 
 		if (len <= 0) {
 			return false;
 		}
 
-		for (int i = 0; i < len; i++) {
-			char c = s.charAt(i);
+		for (var i = 0; i < len; i++) {
+			var c = s.charAt(i);
 
 			if (c == '-') {
 				if (i != 0) {
@@ -104,17 +104,17 @@ public class SNBTUtils {
 	}
 
 	public static boolean isFloat(String s, int off) {
-		int len = s.length() - off;
+		var len = s.length() - off;
 
 		if (len <= 0) {
 			return false;
 		}
 
-		int p = 0;
-		int e = 0;
+		var p = 0;
+		var e = 0;
 
-		for (int i = 0; i < len; i++) {
-			char c = s.charAt(i);
+		for (var i = 0; i < len; i++) {
+			var c = s.charAt(i);
 
 			if (c == '-') {
 				if (i != 0) {
@@ -153,12 +153,12 @@ public class SNBTUtils {
 	}
 
 	public static String quoteAndEscape(String string) {
-		int len = string.length();
-		StringBuilder sb = new StringBuilder(len + 2);
+		var len = string.length();
+		var sb = new StringBuilder(len + 2);
 		sb.append('"');
 
-		for (int i = 0; i < len; i++) {
-			char c = string.charAt(i);
+		for (var i = 0; i < len; i++) {
+			var c = string.charAt(i);
 
 			if (c < ESCAPE_CHARS.length && ESCAPE_CHARS[c] != 0) {
 				sb.append('\\');

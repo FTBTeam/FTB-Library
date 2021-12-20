@@ -42,7 +42,7 @@ public class NBTConfig extends ConfigFromString<CompoundTag> {
 		}
 
 		try {
-			CompoundTag nbt = TagParser.parseTag(string);
+			var nbt = TagParser.parseTag(string);
 
 			if (callback != null) {
 				callback.accept(nbt);

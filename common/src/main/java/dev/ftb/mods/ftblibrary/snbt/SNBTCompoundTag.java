@@ -21,9 +21,9 @@ public class SNBTCompoundTag extends CompoundTag {
 		if (tag instanceof SNBTCompoundTag) {
 			return (SNBTCompoundTag) tag;
 		} else if (tag instanceof CompoundTag) {
-			SNBTCompoundTag tag1 = new SNBTCompoundTag();
+			var tag1 = new SNBTCompoundTag();
 
-			for (String s : ((CompoundTag) tag).getAllKeys()) {
+			for (var s : ((CompoundTag) tag).getAllKeys()) {
 				tag1.put(s, ((CompoundTag) tag).get(s));
 			}
 
@@ -46,7 +46,7 @@ public class SNBTCompoundTag extends CompoundTag {
 			properties = new HashMap<>();
 		}
 
-		SNBTTagProperties p = properties.get(key);
+		var p = properties.get(key);
 
 		if (p == null) {
 			p = new SNBTTagProperties();
@@ -58,7 +58,7 @@ public class SNBTCompoundTag extends CompoundTag {
 
 	SNBTTagProperties getProperties(String key) {
 		if (properties != null) {
-			SNBTTagProperties p = properties.get(key);
+			var p = properties.get(key);
 
 			if (p != null) {
 				return p;
@@ -75,7 +75,7 @@ public class SNBTCompoundTag extends CompoundTag {
 	}
 
 	public void comment(String key, String comment) {
-		String s = comment == null ? "" : comment.trim();
+		var s = comment == null ? "" : comment.trim();
 
 		if (!s.isEmpty()) {
 			getOrCreateProperties(key).comment = comment;
@@ -101,7 +101,7 @@ public class SNBTCompoundTag extends CompoundTag {
 	}
 
 	public boolean isBoolean(String key) {
-		int t = getProperties(key).valueType;
+		var t = getProperties(key).valueType;
 		return t == SNBTTagProperties.TYPE_TRUE || t == SNBTTagProperties.TYPE_FALSE;
 	}
 
@@ -136,13 +136,13 @@ public class SNBTCompoundTag extends CompoundTag {
 
 	@Nullable
 	public ListTag getNullableList(String key, byte type) {
-		Tag tag = get(key);
+		var tag = get(key);
 		return tag instanceof ListTag && (((ListTag) tag).isEmpty() || type == 0 || ((ListTag) tag).getElementType() == type) ? (ListTag) tag : null;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends Tag> List<T> getList(String key, Class<T> type) {
-		Tag tag = get(key);
+		var tag = get(key);
 
 		if (!(tag instanceof CollectionTag<?> l)) {
 			return Collections.emptyList();

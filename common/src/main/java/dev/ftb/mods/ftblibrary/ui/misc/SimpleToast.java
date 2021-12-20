@@ -6,17 +6,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-
-import java.util.List;
 
 /**
  * @author LatvianModder
@@ -27,28 +23,28 @@ public class SimpleToast implements Toast {
 	@Override
 	public Visibility render(PoseStack matrixStack, ToastComponent gui, long delta) {
 		GuiHelper.setupDrawing();
-		Minecraft mc = gui.getMinecraft();
+		var mc = gui.getMinecraft();
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, TEXTURE);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		gui.blit(matrixStack, 0, 0, 0, 0, 160, 32);
 
-		List<FormattedCharSequence> list = mc.font.split(getSubtitle(), 125);
-		int i = isImportant() ? 16746751 : 16776960;
+		var list = mc.font.split(getSubtitle(), 125);
+		var i = isImportant() ? 16746751 : 16776960;
 
 		if (list.size() == 1) {
 			mc.font.drawShadow(matrixStack, getTitle(), 30, 7, i | -16777216);
 			mc.font.drawShadow(matrixStack, list.get(0), 30, 18, -1);
 		} else {
 			if (delta < 1500L) {
-				int k = Mth.floor(Mth.clamp((float) (1500L - delta) / 300F, 0F, 1F) * 255F) << 24 | 67108864;
+				var k = Mth.floor(Mth.clamp((float) (1500L - delta) / 300F, 0F, 1F) * 255F) << 24 | 67108864;
 				mc.font.drawShadow(matrixStack, getTitle(), 30, 11, i | k);
 			} else {
-				int i1 = Mth.floor(Mth.clamp((float) (delta - 1500L) / 300F, 0F, 1F) * 252F) << 24 | 67108864;
-				int l = 16 - list.size() * mc.font.lineHeight / 2;
+				var i1 = Mth.floor(Mth.clamp((float) (delta - 1500L) / 300F, 0F, 1F) * 252F) << 24 | 67108864;
+				var l = 16 - list.size() * mc.font.lineHeight / 2;
 
-				for (FormattedCharSequence s : list) {
+				for (var s : list) {
 					mc.font.drawShadow(matrixStack, s, 30, l, 16777215 | i1);
 					l += mc.font.lineHeight;
 				}

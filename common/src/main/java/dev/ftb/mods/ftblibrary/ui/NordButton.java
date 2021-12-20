@@ -25,13 +25,13 @@ public abstract class NordButton extends SimpleTextButton {
 	@Override
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		this.drawBackground(matrixStack, theme, x, y, w, h);
-		int s = h >= 20 ? 16 : 8;
-		int off = (h - s) / 2;
+		var s = h >= 20 ? 16 : 8;
+		var off = (h - s) / 2;
 		FormattedText title = getTitle();
-		int textX = x;
-		int textY = y + (h - theme.getFontHeight() + 1) / 2;
-		int sw = theme.getStringWidth(title);
-		int mw = w - (hasIcon() ? off + s : 0) - 6;
+		var textX = x;
+		var textY = y + (h - theme.getFontHeight() + 1) / 2;
+		var sw = theme.getStringWidth(title);
+		var mw = w - (hasIcon() ? off + s : 0) - 6;
 
 		if (sw > mw) {
 			sw = mw;

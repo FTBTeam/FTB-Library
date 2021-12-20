@@ -7,14 +7,12 @@ import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.config.ListConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.icon.MutableColor4I;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.Button;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
 import dev.ftb.mods.ftblibrary.ui.SimpleButton;
 import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
@@ -41,9 +39,9 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 
 		@Override
 		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			boolean mouseOver = getMouseY() >= 20 && isMouseOver();
+			var mouseOver = getMouseY() >= 20 && isMouseOver();
 
-			MutableColor4I textCol = list.type.getColor(list.value.get(index)).mutable();
+			var textCol = list.type.getColor(list.value.get(index)).mutable();
 			textCol.setAlpha(255);
 
 			if (mouseOver) {
@@ -106,7 +104,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 
 		@Override
 		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			boolean mouseOver = getMouseY() >= 20 && isMouseOver();
+			var mouseOver = getMouseY() >= 20 && isMouseOver();
 
 			if (mouseOver) {
 				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
@@ -151,7 +149,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		configPanel = new Panel(this) {
 			@Override
 			public void addWidgets() {
-				for (int i = 0; i < list.value.size(); i++) {
+				for (var i = 0; i < list.value.size(); i++) {
 					add(new ButtonConfigValue<>(this, list, i));
 				}
 
@@ -162,7 +160,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 
 			@Override
 			public void alignWidgets() {
-				for (Widget w : widgets) {
+				for (var w : widgets) {
 					w.setWidth(width - 16);
 				}
 

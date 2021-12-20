@@ -87,24 +87,24 @@ public class TooltipList {
 
 		List<FormattedCharSequence> textLines = new ArrayList<>(lines.size());
 
-		for (Component component : lines) {
+		for (var component : lines) {
 			textLines.add(component.getVisualOrderText());
 		}
 
 		RenderSystem.disableDepthTest();
-		int tooltipTextWidth = 0;
+		var tooltipTextWidth = 0;
 
-		for (FormattedCharSequence textLine : textLines) {
-			int textLineWidth = font.width(textLine);
+		for (var textLine : textLines) {
+			var textLineWidth = font.width(textLine);
 			if (textLineWidth > tooltipTextWidth) {
 				tooltipTextWidth = textLineWidth;
 			}
 		}
 
-		boolean needsWrap = false;
+		var needsWrap = false;
 
-		int titleLinesCount = 1;
-		int tooltipX = mouseX + 12;
+		var titleLinesCount = 1;
+		var tooltipX = mouseX + 12;
 		if (tooltipX + tooltipTextWidth + 4 > screenWidth) {
 			tooltipX = mouseX - 16 - tooltipTextWidth;
 			if (tooltipX < 4) // if the tooltip doesn't fit on the screen
@@ -124,17 +124,17 @@ public class TooltipList {
 		}
 
 		if (needsWrap) {
-			int wrappedTooltipWidth = 0;
+			var wrappedTooltipWidth = 0;
 			List<FormattedCharSequence> wrappedTextLines = new ArrayList<>();
-			for (int i = 0; i < lines.size(); i++) {
-				Component textLine = lines.get(i);
-				List<FormattedCharSequence> wrappedLine = font.split(textLine, tooltipTextWidth);
+			for (var i = 0; i < lines.size(); i++) {
+				var textLine = lines.get(i);
+				var wrappedLine = font.split(textLine, tooltipTextWidth);
 				if (i == 0) {
 					titleLinesCount = wrappedLine.size();
 				}
 
-				for (FormattedCharSequence line : wrappedLine) {
-					int lineWidth = font.width(line);
+				for (var line : wrappedLine) {
+					var lineWidth = font.width(line);
 					if (lineWidth > wrappedTooltipWidth) {
 						wrappedTooltipWidth = lineWidth;
 					}
@@ -151,8 +151,8 @@ public class TooltipList {
 			}
 		}
 
-		int tooltipY = mouseY - 12;
-		int tooltipHeight = 8;
+		var tooltipY = mouseY - 12;
+		var tooltipHeight = 8;
 
 		if (textLines.size() > 1) {
 			tooltipHeight += (textLines.size() - 1) * 10;
@@ -169,14 +169,14 @@ public class TooltipList {
 
 		mStack.pushPose();
 		mStack.translate(0, 0, zOffset);
-		Matrix4f mat = mStack.last().pose();
+		var mat = mStack.last().pose();
 		RenderSystem.enableDepthTest();
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
+		var tesselator = Tesselator.getInstance();
+		var buffer = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		drawGradientRect(mat, buffer, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
@@ -192,10 +192,10 @@ public class TooltipList {
 
 		RenderSystem.disableBlend();
 		RenderSystem.enableTexture();
-		MultiBufferSource.BufferSource renderType = MultiBufferSource.immediate(buffer);
+		var renderType = MultiBufferSource.immediate(buffer);
 
-		for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
-			FormattedCharSequence line = textLines.get(lineNumber);
+		for (var lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
+			var line = textLines.get(lineNumber);
 			if (line != null) {
 				font.drawInBatch(line, (float) tooltipX, (float) tooltipY, -1, true, mat, renderType, false, 0, 15728880);
 			}
@@ -215,14 +215,14 @@ public class TooltipList {
 
 	@Environment(EnvType.CLIENT)
 	private static void drawGradientRect(Matrix4f mat, BufferBuilder buffer, int left, int top, int right, int bottom, int startColor, int endColor) {
-		int startAlpha = (startColor >> 24) & 255;
-		int startRed = (startColor >> 16) & 255;
-		int startGreen = (startColor >> 8) & 255;
-		int startBlue = startColor & 255;
-		int endAlpha = (endColor >> 24) & 255;
-		int endRed = (endColor >> 16) & 255;
-		int endGreen = (endColor >> 8) & 255;
-		int endBlue = endColor & 255;
+		var startAlpha = (startColor >> 24) & 255;
+		var startRed = (startColor >> 16) & 255;
+		var startGreen = (startColor >> 8) & 255;
+		var startBlue = startColor & 255;
+		var endAlpha = (endColor >> 24) & 255;
+		var endRed = (endColor >> 16) & 255;
+		var endGreen = (endColor >> 8) & 255;
+		var endBlue = endColor & 255;
 
 		buffer.vertex(mat, right, top, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
 		buffer.vertex(mat, left, top, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();

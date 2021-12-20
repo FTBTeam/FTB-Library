@@ -1,14 +1,11 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -35,7 +32,7 @@ public class Color4I extends Icon {
 	private static final Color4I[] WHITE_A = new Color4I[256];
 
 	static {
-		for (int i = 0; i < 256; i++) {
+		for (var i = 0; i < 256; i++) {
 			BLACK_A[i] = new Color4I(0, 0, 0, i) {
 				@Override
 				public Color4I withAlpha(int a) {
@@ -66,15 +63,15 @@ public class Color4I extends Icon {
 	private static final Color4I[] COLORS_256 = new Color4I[256];
 
 	static {
-		for (int i = 0; i < 16; i++) {
-			int j = (i >> 3 & 1) * 85;
-			int r = (i >> 2 & 1) * 170 + j;
-			int g = (i >> 1 & 1) * 170 + j;
-			int b = (i & 1) * 170 + j;
+		for (var i = 0; i < 16; i++) {
+			var j = (i >> 3 & 1) * 85;
+			var r = (i >> 2 & 1) * 170 + j;
+			var g = (i >> 1 & 1) * 170 + j;
+			var b = (i & 1) * 170 + j;
 			CHAT_FORMATTING_COLORS[i] = rgb((i == 6) ? r + 85 : r, g, b);
 		}
 
-		int[] colors256 = {
+		var colors256 = new int[]{
 				0x000000, 0x252525, 0x343434, 0x4E4E4E, 0x686868, 0x757575, 0x8E8E8E, 0xA4A4A4, 0xB8B8B8, 0xC5C5C5, 0xD0D0D0, 0xD7D7D7, 0xE1E1E1, 0xEAEAEA, 0xF4F4F4, 0xFFFFFF,
 				0x412000, 0x542800, 0x763700, 0x9A5000, 0xC36806, 0xE47B07, 0xFF911A, 0xFFAB1D, 0xFFC51F, 0xFFD03B, 0xFFD84C, 0xFFE651, 0xFFF456, 0xFFF970, 0xFFFF90, 0xFFFFAA,
 				0x451904, 0x721E11, 0x9F241E, 0xB33A20, 0xC85120, 0xE36920, 0xFC8120, 0xFD8C25, 0xFE982C, 0xFFAE38, 0xFFB946, 0xFFBF51, 0xFFC66D, 0xFFD587, 0xFFE498, 0xFFE6AB,
@@ -93,7 +90,7 @@ public class Color4I extends Icon {
 				0x401A02, 0x581F05, 0x702408, 0x8D3A13, 0xAB511F, 0xB56427, 0xBF7730, 0xD0853A, 0xE19344, 0xEDA04E, 0xF9AD58, 0xFCB75C, 0xFFC160, 0xFFCA69, 0xFFCF7E, 0xFFDA96,
 		};
 
-		for (int i = 0; i < 256; i++) {
+		for (var i = 0; i < 256; i++) {
 			COLORS_256[i] = rgb(colors256[i]);
 		}
 	}
@@ -114,7 +111,7 @@ public class Color4I extends Icon {
 		if (s == null || s.isEmpty()) {
 			return EMPTY;
 		} else if ((s.length() == 7 || s.length() == 9) && s.charAt(0) == '#') {
-			String hex = s.substring(1);
+			var hex = s.substring(1);
 			return hex.length() == 8 ? rgba((int) Long.parseLong(hex, 16)) : rgb((int) Long.parseLong(hex, 16));
 		} else if (s.equalsIgnoreCase("transparent")) {
 			return WHITE.withAlpha(0);
@@ -149,13 +146,13 @@ public class Color4I extends Icon {
 		} else if (element.isJsonPrimitive()) {
 			return fromString(element.getAsString());
 		} else if (element.isJsonArray()) {
-			JsonArray array = element.getAsJsonArray();
+			var array = element.getAsJsonArray();
 
 			if (array.size() >= 3) {
-				int r = array.get(0).getAsInt();
-				int g = array.get(1).getAsInt();
-				int b = array.get(2).getAsInt();
-				int a = 255;
+				var r = array.get(0).getAsInt();
+				var g = array.get(1).getAsInt();
+				var b = array.get(2).getAsInt();
+				var a = 255;
 
 				if (array.size() >= 3) {
 					a = array.get(3).getAsInt();
@@ -165,13 +162,13 @@ public class Color4I extends Icon {
 			}
 		}
 
-		JsonObject object = element.getAsJsonObject();
+		var object = element.getAsJsonObject();
 
 		if (object.has("red") && object.has("green") && object.has("blue")) {
-			int r = object.get("red").getAsInt();
-			int g = object.get("green").getAsInt();
-			int b = object.get("blue").getAsInt();
-			int a = 255;
+			var r = object.get("red").getAsInt();
+			var g = object.get("green").getAsInt();
+			var b = object.get("blue").getAsInt();
+			var a = 255;
 
 			if (object.has("alpha")) {
 				a = object.get("alpha").getAsInt();
@@ -295,31 +292,31 @@ public class Color4I extends Icon {
 	}
 
 	public String toString() {
-		int a = alphai();
+		var a = alphai();
 		char[] chars;
 
 		if (a < 255) {
 			chars = new char[9];
 			chars[1] = StringUtils.HEX[(a & 0xF0) >> 4];
 			chars[2] = StringUtils.HEX[a & 0xF];
-			int r = redi();
+			var r = redi();
 			chars[3] = StringUtils.HEX[(r & 0xF0) >> 4];
 			chars[4] = StringUtils.HEX[r & 0xF];
-			int g = greeni();
+			var g = greeni();
 			chars[5] = StringUtils.HEX[(g & 0xF0) >> 4];
 			chars[6] = StringUtils.HEX[g & 0xF];
-			int b = bluei();
+			var b = bluei();
 			chars[7] = StringUtils.HEX[(b & 0xF0) >> 4];
 			chars[8] = StringUtils.HEX[b & 0xF];
 		} else {
 			chars = new char[7];
-			int r = redi();
+			var r = redi();
 			chars[1] = StringUtils.HEX[(r & 0xF0) >> 4];
 			chars[2] = StringUtils.HEX[r & 0xF];
-			int g = greeni();
+			var g = greeni();
 			chars[3] = StringUtils.HEX[(g & 0xF0) >> 4];
 			chars[4] = StringUtils.HEX[g & 0xF];
-			int b = bluei();
+			var b = bluei();
 			chars[5] = StringUtils.HEX[(b & 0xF0) >> 4];
 			chars[6] = StringUtils.HEX[b & 0xF];
 		}
@@ -345,8 +342,8 @@ public class Color4I extends Icon {
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
+		var tesselator = Tesselator.getInstance();
+		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		GuiHelper.addRectToBuffer(matrixStack, buffer, x, y, w, h, this);
 		tesselator.end();
@@ -369,9 +366,9 @@ public class Color4I extends Icon {
 		}
 
 		double a = col.alphaf();
-		double r = MathUtils.lerp(redi(), col.redi(), a);
-		double g = MathUtils.lerp(greeni(), col.greeni(), a);
-		double b = MathUtils.lerp(bluei(), col.bluei(), a);
+		var r = MathUtils.lerp(redi(), col.redi(), a);
+		var g = MathUtils.lerp(greeni(), col.greeni(), a);
+		var b = MathUtils.lerp(bluei(), col.bluei(), a);
 		return rgba((int) r, (int) g, (int) b, alpha);
 	}
 
@@ -385,15 +382,15 @@ public class Color4I extends Icon {
 
 	public Color4I lerp(Color4I col, float m) {
 		m = Mth.clamp(m, 0F, 1F);
-		float r = MathUtils.lerp(redf(), col.redf(), m);
-		float g = MathUtils.lerp(greenf(), col.greenf(), m);
-		float b = MathUtils.lerp(bluef(), col.bluef(), m);
-		float a = MathUtils.lerp(alphaf(), col.alphaf(), m);
+		var r = MathUtils.lerp(redf(), col.redf(), m);
+		var g = MathUtils.lerp(greenf(), col.greenf(), m);
+		var b = MathUtils.lerp(bluef(), col.bluef(), m);
+		var a = MathUtils.lerp(alphaf(), col.alphaf(), m);
 		return rgba((int) (r * 255F), (int) (g * 255F), (int) (b * 255F), (int) (a * 255F));
 	}
 
 	public Color4I addBrightness(float percent) {
-		float[] hsb = new float[3];
+		var hsb = new float[3];
 		java.awt.Color.RGBtoHSB(redi(), greeni(), bluei(), hsb);
 		return rgb(java.awt.Color.HSBtoRGB(hsb[0], hsb[1], Mth.clamp(hsb[2] + percent, 0F, 1F))).withAlpha(alphai());
 	}
@@ -406,7 +403,7 @@ public class Color4I extends Icon {
 	@Override
 	@Nullable
 	public PixelBuffer createPixelBuffer() {
-		PixelBuffer buffer = new PixelBuffer(1, 1);
+		var buffer = new PixelBuffer(1, 1);
 		buffer.setRGB(0, 0, rgba());
 		return buffer;
 	}

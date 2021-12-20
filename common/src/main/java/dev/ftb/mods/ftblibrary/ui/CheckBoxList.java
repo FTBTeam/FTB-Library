@@ -32,8 +32,8 @@ public class CheckBoxList extends Button {
 		public CheckBoxEntry select(int v) {
 			if (checkBoxList.radioButtons) {
 				if (v > 0) {
-					for (CheckBoxEntry entry : checkBoxList.entries) {
-						boolean old1 = entry.value > 0;
+					for (var entry : checkBoxList.entries) {
+						var old1 = entry.value > 0;
 						entry.value = 0;
 
 						if (old1) {
@@ -45,7 +45,7 @@ public class CheckBoxList extends Button {
 				}
 			}
 
-			int old = value;
+			var old = value;
 			value = v;
 
 			if (old != value) {
@@ -93,20 +93,20 @@ public class CheckBoxList extends Button {
 	}
 
 	public CheckBoxEntry addBox(String name) {
-		CheckBoxEntry entry = new CheckBoxEntry(name);
+		var entry = new CheckBoxEntry(name);
 		addBox(entry);
 		return entry;
 	}
 
 	@Override
 	public void onClicked(MouseButton button) {
-		int y = getMouseY() - getY();
+		var y = getMouseY() - getY();
 
 		if (y % 11 == 10) {
 			return;
 		}
 
-		int i = y / 11;
+		var i = y / 11;
 
 		if (i >= 0 && i < entries.size()) {
 			entries.get(i).onClicked(button, i);
@@ -121,9 +121,9 @@ public class CheckBoxList extends Button {
 	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		drawBackground(matrixStack, theme, x, y, w, h);
 
-		for (int i = 0; i < entries.size(); i++) {
-			CheckBoxEntry entry = entries.get(i);
-			int ey = y + i * 11 + 1;
+		for (var i = 0; i < entries.size(); i++) {
+			var entry = entries.get(i);
+			var ey = y + i * 11 + 1;
 			drawCheckboxBackground(matrixStack, theme, x, ey, 10, 10);
 			getCheckboxIcon(matrixStack, theme, x + 1, ey + 1, 8, 8, i, entry.value);
 			theme.drawString(matrixStack, entry.name, x + 12, ey + 1);

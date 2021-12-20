@@ -30,7 +30,6 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +41,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -58,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 public class SelectItemStackScreen extends BaseScreen {
 
 	public static final ExecutorService ITEM_SEARCH = Executors.newSingleThreadExecutor(task -> {
-		Thread thread = new Thread(task, "FTBLibrary-ItemSearch");
+		var thread = new Thread(task, "FTBLibrary-ItemSearch");
 		thread.setDaemon(true);
 		return thread;
 	});
@@ -189,7 +187,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		@Override
 		public void onClicked(MouseButton button) {
 			playClickSound();
-			NBTConfig c = new NBTConfig();
+			var c = new NBTConfig();
 
 			EditConfigFromStringScreen.open(c, current.save(new CompoundTag()), config.defaultValue.save(new CompoundTag()), accepted -> {
 				if (accepted) {
@@ -209,7 +207,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		@Override
 		public void onClicked(MouseButton button) {
 			playClickSound();
-			IntConfig c = new IntConfig(0, current.getMaxStackSize());
+			var c = new IntConfig(0, current.getMaxStackSize());
 			EditConfigFromStringScreen.open(c, current.getCount(), config.defaultValue.getCount(), accepted -> {
 				if (accepted) {
 					current.setCount(c.value);
@@ -228,7 +226,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		@Override
 		public void onClicked(MouseButton button) {
 			playClickSound();
-			NBTConfig c = new NBTConfig();
+			var c = new NBTConfig();
 			EditConfigFromStringScreen.open(c, current.getTag(), config.defaultValue.getTag(), accepted -> {
 				if (accepted) {
 					current.setTag(c.value);
@@ -248,8 +246,8 @@ public class SelectItemStackScreen extends BaseScreen {
 		public void onClicked(MouseButton button) {
 			playClickSound();
 
-			final CompoundTag nbt = current.save(new CompoundTag());
-			NBTConfig c = new NBTConfig();
+			final var nbt = current.save(new CompoundTag());
+			var c = new NBTConfig();
 
 			EditConfigFromStringScreen.open(c, (CompoundTag) nbt.get("ForgeCaps"), (CompoundTag) config.defaultValue.save(new CompoundTag()).get("ForgeCaps"), accepted -> {
 				if (accepted) {
@@ -268,35 +266,35 @@ public class SelectItemStackScreen extends BaseScreen {
 	}
 
 	public List<Widget> getItems(String search, Panel panel) {
-		Stopwatch timer = Stopwatch.createStarted();
+		var timer = Stopwatch.createStarted();
 
 		// sanity check, just in case
 		if (activeMode == null) {
 			return Collections.emptyList();
 		}
 
-		Collection<ItemStack> items = activeMode.getAllItems();
+		var items = activeMode.getAllItems();
 		List<Widget> widgets = new ArrayList<>(search.isEmpty() ? items.size() + 1 : 64);
 
-		String mod = "";
+		var mod = "";
 
 		if (search.startsWith("@")) {
 			mod = search.substring(1);
 		}
 
-		ItemStackButton button = new ItemStackButton(panel, ItemStack.EMPTY);
+		var button = new ItemStackButton(panel, ItemStack.EMPTY);
 
 		if (config.allowEmpty && button.shouldAdd(search, mod)) {
 			widgets.add(new ItemStackButton(panel, ItemStack.EMPTY));
 		}
 
-		for (ItemStack stack : items) {
+		for (var stack : items) {
 			if (!stack.isEmpty()) {
 				button = new ItemStackButton(panel, stack);
 
 				if (button.shouldAdd(search, mod)) {
 					widgets.add(button);
-					int j = widgets.size() - 1;
+					var j = widgets.size() - 1;
 					button.setPos(1 + (j % 9) * 19, 1 + (j / 9) * 19);
 				}
 			}
@@ -322,7 +320,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		callback = cb;
 		current = config.value.isEmpty() ? ItemStack.EMPTY : config.value.copy();
 
-		int bsize = width / 2 - 10;
+		var bsize = width / 2 - 10;
 
 		buttonCancel = new SimpleTextButton(this, new TranslatableComponent("gui.cancel"), Icon.EMPTY) {
 			@Override
@@ -400,7 +398,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 			@Override
 			public void alignWidgets() {
-				for (Widget widget : widgets) {
+				for (var widget : widgets) {
 					widget.setSize(20, 20);
 				}
 
@@ -450,7 +448,7 @@ public class SelectItemStackScreen extends BaseScreen {
 	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		super.drawBackground(matrixStack, theme, x, y, w, h);
 
-		long now = System.currentTimeMillis();
+		var now = System.currentTimeMillis();
 
 		if (now >= update) {
 			update = Long.MAX_VALUE;
@@ -461,7 +459,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 	@Override
 	public boolean doesGuiPauseGame() {
-		Screen screen = getPrevScreen();
+		var screen = getPrevScreen();
 		return screen != null && screen.isPauseScreen();
 	}
 }
