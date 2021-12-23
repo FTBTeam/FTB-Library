@@ -37,7 +37,7 @@ public class ItemIcon extends Icon {
 	}
 
 	public static Icon getItemIcon(Item item) {
-		return item == Items.AIR ? EMPTY : getItemIcon(new ItemStack(item));
+		return item == Items.AIR ? EMPTY : getItemIcon(item.getDefaultInstance());
 	}
 
 	public static Icon getItemIcon(String lazyStackString) {
@@ -47,7 +47,7 @@ public class ItemIcon extends Icon {
 
 		return new LazyIcon(() -> {
 			var s = lazyStackString.split(" ", 4);
-			var stack = new ItemStack(Registry.ITEM.get(new ResourceLocation(s[0])));
+			var stack = Registry.ITEM.get(new ResourceLocation(s[0])).getDefaultInstance();
 
 			if (s.length >= 2 && !s[1].equals("1")) {
 				stack.setCount(Integer.parseInt(s[1]));
@@ -91,8 +91,14 @@ public class ItemIcon extends Icon {
 	@Environment(EnvType.CLIENT)
 	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
 		matrixStack.pushPose();
-		matrixStack.translate(0, 0, 100);
-		GuiHelper.drawItem(matrixStack, getStack(), x, y, w / 16F, h / 16F, true, null);
+		matrixStack.translate(x + w / 2D, y + h / 2D, 100);
+
+		if (w != 16 || h != 16) {
+			int s = Math.min(w, h);
+			matrixStack.scale(s / 16F, s / 16F, s / 16F);
+		}
+
+		GuiHelper.drawItem(matrixStack, getStack(), 0, true, null);
 		matrixStack.popPose();
 	}
 
@@ -100,8 +106,14 @@ public class ItemIcon extends Icon {
 	@Environment(EnvType.CLIENT)
 	public void drawStatic(PoseStack matrixStack, int x, int y, int w, int h) {
 		matrixStack.pushPose();
-		matrixStack.translate(0, 0, 100);
-		GuiHelper.drawItem(matrixStack, getStack(), x, y, w / 16F, h / 16F, false, null);
+		matrixStack.translate(x + w / 2D, y + h / 2D, 100);
+
+		if (w != 16 || h != 16) {
+			int s = Math.min(w, h);
+			matrixStack.scale(s / 16F, s / 16F, s / 16F);
+		}
+
+		GuiHelper.drawItem(matrixStack, getStack(), 0, false, null);
 		matrixStack.popPose();
 	}
 

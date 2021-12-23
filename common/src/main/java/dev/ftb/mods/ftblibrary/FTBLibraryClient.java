@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	public void init() {
 		// when using REI >= 6, disable the regular sidebar buttons,
 		// we'll be using REI's system favourites instead.
-		if (Platform.isModLoaded("roughlyenoughitems") && !Platform.getMod("roughlyenoughitems").getVersion().startsWith("5.")) {
+		if (Platform.isModLoaded("roughlyenoughitems")) {
 			showButtons = 3;
 		}
 
@@ -117,6 +118,9 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		var group = new ConfigGroup("test");
 		group.add("image", new ImageConfig(), "", v -> {
 		}, "");
+
+		group.addItemStack("item", ItemStack.EMPTY, v -> {
+		}, ItemStack.EMPTY, false, true);
 
 		new EditConfigScreen(group).openGuiLater();
 	}

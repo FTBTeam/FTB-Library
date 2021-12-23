@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -12,6 +13,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -79,6 +81,7 @@ public class GuiHelper {
 		RenderSystem.blendFunc(770, 771);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		RenderSystem.enableDepthTest();
+		// Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
 	}
 
 	public static void playSound(SoundEvent event, float pitch) {
@@ -173,38 +176,35 @@ public class GuiHelper {
 		RenderSystem.enableTexture();
 	}
 
-	public static boolean drawItem(PoseStack poseStack, ItemStack stack, double x, double y, float scaleX, float scaleY, boolean renderOverlay, @Nullable String text) {
-		if (stack.isEmpty() || scaleX == 0D || scaleY == 0D) {
-			return false;
+	public static void drawItem(PoseStack poseStack, ItemStack stack, int hash, boolean renderOverlay, @Nullable String text) {
+		if (stack.isEmpty()) {
+			return;
 		}
 
 		var mc = Minecraft.getInstance();
-		var font = mc.font;
 		var itemRenderer = mc.getItemRenderer();
-		var tesselator = Tesselator.getInstance();
+		var bakedModel = itemRenderer.getModel(stack, null, mc.player, hash);
 
-		poseStack.pushPose();
-		poseStack.translate(x, y, 0);
-		poseStack.scale(scaleX, scaleY, 1F);
-
-		mc.getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
+		Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
 		RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
-
-		GuiHelper.setupDrawing();
-		poseStack.translate(8, 8, itemRenderer.blitOffset);
-		poseStack.scale(1, -1, 1);
-		poseStack.scale(16, 16, 16);
-		var bufferSource = mc.renderBuffers().bufferSource();
-
-		var bakedModel = itemRenderer.getModel(stack, mc.level, mc.player, 0);
-
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+		PoseStack modelViewStack = RenderSystem.getModelViewStack();
+		modelViewStack.pushPose();
+		modelViewStack.mulPoseMatrix(poseStack.last().pose());
+		// modelViewStack.translate(x, y, 100.0D + this.blitOffset);
+		modelViewStack.scale(1F, -1F, 1F);
+		modelViewStack.scale(16F, 16F, 16F);
+		RenderSystem.applyModelViewMatrix();
+		MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 		var flatLight = !bakedModel.usesBlockLight();
 
 		if (flatLight) {
 			Lighting.setupForFlatItems();
 		}
 
-		itemRenderer.render(stack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, bakedModel);
+		itemRenderer.render(stack, ItemTransforms.TransformType.GUI, false, new PoseStack(), bufferSource, 0xF000F0, OverlayTexture.NO_OVERLAY, bakedModel);
 		bufferSource.endBatch();
 		RenderSystem.enableDepthTest();
 
@@ -212,54 +212,63 @@ public class GuiHelper {
 			Lighting.setupFor3DItems();
 		}
 
+		modelViewStack.popPose();
+		RenderSystem.applyModelViewMatrix();
+
 		if (renderOverlay) {
+			var t = Tesselator.getInstance();
+			var font = mc.font;
+
 			if (stack.getCount() != 1 || text != null) {
 				var s = text == null ? String.valueOf(stack.getCount()) : text;
-				poseStack.translate(0, 0, itemRenderer.blitOffset + 20);
-				font.drawInBatch(s, (float) (19 - 2 - font.width(s)), (float) (6 + 3), 16777215, true, poseStack.last().pose(), bufferSource, false, 0, 15728880);
+				poseStack.pushPose();
+				poseStack.translate(9D - font.width(s), 1D, 20D);
+				font.drawInBatch(s, 0F, 0F, 0xFFFFFF, true, poseStack.last().pose(), bufferSource, false, 0, 0xF000F0);
 				bufferSource.endBatch();
+				poseStack.popPose();
 			}
 
 			if (stack.isBarVisible()) {
 				RenderSystem.disableDepthTest();
 				RenderSystem.disableTexture();
 				RenderSystem.disableBlend();
-				var i = stack.getBarWidth();
-				var j = stack.getBarColor();
-				draw(poseStack, tesselator, 2, 13, 13, 2, 0, 0, 0, 255);
-				draw(poseStack, tesselator, 2, 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
+				var barWidth = stack.getBarWidth();
+				var barColor = stack.getBarColor();
+				draw(poseStack, t, -6, 5, 13, 2, 0, 0, 0, 255);
+				draw(poseStack, t, -6, 5, barWidth, 1, barColor >> 16 & 255, barColor >> 8 & 255, barColor & 255, 255);
 				RenderSystem.enableBlend();
 				RenderSystem.enableTexture();
 				RenderSystem.enableDepthTest();
 			}
 
-			var f3 = mc.player == null ? 0.0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
+			var cooldown = mc.player == null ? 0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
 
-			if (f3 > 0.0F) {
+			if (cooldown > 0F) {
 				RenderSystem.disableDepthTest();
 				RenderSystem.disableTexture();
 				RenderSystem.enableBlend();
 				RenderSystem.defaultBlendFunc();
-				draw(poseStack, tesselator, 0, Mth.floor(16.0F * (1.0F - f3)), 16, Mth.ceil(16.0F * f3), 255, 255, 255, 127);
+				draw(poseStack, t, -8, Mth.floor(16F * (1F - cooldown)) - 8, 16, Mth.ceil(16F * cooldown), 255, 255, 255, 127);
 				RenderSystem.enableTexture();
 				RenderSystem.enableDepthTest();
 			}
 		}
-
-		poseStack.popPose();
-		return true;
 	}
 
-	private static void draw(PoseStack matrixStack, Tesselator tesselator, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+	private static void draw(PoseStack matrixStack, Tesselator t, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+		if (width <= 0 || height <= 0) {
+			return;
+		}
+
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		var m = matrixStack.last().pose();
-		var renderer = tesselator.getBuilder();
+		var renderer = t.getBuilder();
 		renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		renderer.vertex(m, x, y, 0).color(red, green, blue, alpha).endVertex();
 		renderer.vertex(m, x, y + height, 0).color(red, green, blue, alpha).endVertex();
 		renderer.vertex(m, x + width, y + height, 0).color(red, green, blue, alpha).endVertex();
 		renderer.vertex(m, x + width, y, 0).color(red, green, blue, alpha).endVertex();
-		tesselator.end();
+		t.end();
 	}
 
 	public static void pushScissor(Window screen, int x, int y, int w, int h) {
