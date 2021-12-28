@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -469,24 +468,21 @@ public class TextBox extends Widget {
 			}
 
 			// (please help)
-			var bufferBuilder = Tesselator.getInstance().getBuilder();
-			RenderSystem.enableBlend();
-			RenderSystem.defaultBlendFunc();
+			var tesselator = Tesselator.getInstance();
+			var bufferBuilder = tesselator.getBuilder();
+			RenderSystem.setShader(GameRenderer::getPositionShader);
+			RenderSystem.setShaderColor(0, 0, 1, 1);
 			RenderSystem.disableTexture();
 			RenderSystem.enableColorLogicOp();
 			RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
-			RenderSystem.setShader(GameRenderer::getPositionTexShader);
-			RenderSystem.setShaderColor(0F, 0F, 255F, 255F);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
 			bufferBuilder.vertex(startX, endY, 0).endVertex();
 			bufferBuilder.vertex(endX, endY, 0).endVertex();
 			bufferBuilder.vertex(endX, startY, 0).endVertex();
 			bufferBuilder.vertex(startX, startY, 0).endVertex();
-			bufferBuilder.end();
-			BufferUploader.end(bufferBuilder);
+			tesselator.end();
 			RenderSystem.disableColorLogicOp();
 			RenderSystem.enableTexture();
-			RenderSystem.disableBlend();
 		}
 
 		GuiHelper.popScissor(getScreen());
