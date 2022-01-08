@@ -71,8 +71,10 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		} else {
 			if (key.backspace()) {
 				wrappedGui.onBack();
+				return true;
 			} else if (wrappedGui.onClosedByKey(key)) {
 				wrappedGui.closeGui(false);
+				return true;
 			} else if (Platform.isModLoaded("jei")) {
 				var object = WrappedIngredient.unwrap(wrappedGui.getIngredientUnderMouse());
 
