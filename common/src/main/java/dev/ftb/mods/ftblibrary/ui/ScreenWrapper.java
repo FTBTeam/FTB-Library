@@ -44,8 +44,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 			wrappedGui.onBack();
 			return true;
 		} else {
-			wrappedGui.mousePressed(MouseButton.get(button));
-			return super.mouseClicked(x, y, button);
+			return wrappedGui.mousePressed(MouseButton.get(button)) || super.mouseClicked(x, y, button);
 		}
 	}
 
@@ -58,8 +57,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
 	@Override
 	public boolean mouseScrolled(double x, double y, double scroll) {
-		wrappedGui.mouseScrolled(scroll);
-		return super.mouseScrolled(x, y, scroll);
+		return wrappedGui.mouseScrolled(scroll) || super.mouseScrolled(x, y, scroll);
 	}
 
 	@Override
@@ -71,8 +69,10 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		} else {
 			if (key.backspace()) {
 				wrappedGui.onBack();
+				return true;
 			} else if (wrappedGui.onClosedByKey(key)) {
 				wrappedGui.closeGui(false);
+				return true;
 			} else if (Platform.isModLoaded("jei")) {
 				var object = WrappedIngredient.unwrap(wrappedGui.getIngredientUnderMouse());
 
