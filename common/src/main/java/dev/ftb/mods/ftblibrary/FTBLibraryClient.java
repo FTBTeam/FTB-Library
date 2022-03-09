@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +63,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	}
 
 	private void textureStitch(TextureAtlas atlas, Consumer<ResourceLocation> addSprite) {
-		if (!atlas.location().equals(TextureAtlas.LOCATION_BLOCKS)) {
+		if (!atlas.location().equals(InventoryMenu.BLOCK_ATLAS)) {
 			return;
 		}
 

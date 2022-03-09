@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.architectury.hooks.LevelResourceHooks;
 import dev.architectury.platform.Platform;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -13,7 +12,7 @@ public interface ConfigUtil {
 	Path CONFIG_DIR = Platform.getConfigFolder();
 	Path LOCAL_DIR = ROOT_DIR.resolve("local");
 
-	LevelResource SERVER_CONFIG_DIR = LevelResourceHooks.create("serverconfig");
+	LevelResource SERVER_CONFIG_DIR = new LevelResource("serverconfig");
 
 	/**
 	 * @see #loadDefaulted(SNBTConfig, Path, String, String)

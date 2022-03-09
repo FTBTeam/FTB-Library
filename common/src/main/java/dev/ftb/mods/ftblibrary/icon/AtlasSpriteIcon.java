@@ -11,8 +11,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -30,7 +30,7 @@ public class AtlasSpriteIcon extends Icon {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
-		var sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
+		var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
 
 		if (sprite == null) {
 			return;
