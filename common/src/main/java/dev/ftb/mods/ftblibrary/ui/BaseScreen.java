@@ -154,7 +154,7 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 			}
 		}
 
-		if (openPrevScreen) {
+		if (openPrevScreen && getPrevScreen() != null) {
 			mc.setScreen(getPrevScreen());
 			GLFW.glfwSetCursorPos(getScreen().getWindow(), mx, my);
 		}
