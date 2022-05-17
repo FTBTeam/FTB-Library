@@ -75,7 +75,7 @@ if (ENV.CURSEFORGE_KEY) {
 			addGameVersion "1.18.2"
 			mainArtifact(remapJar.archivePath)
 			relations {
-				requiredDependency 'architectury-fabric'
+				requiredDependency 'architectury-api'
 				optionalDependency 'roughly-enough-items'
 			}
 			changelog = getGitChangelog
