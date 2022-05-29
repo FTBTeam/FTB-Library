@@ -304,7 +304,7 @@ public class FTBLibraryCommands {
 			String outputFileName = "loot-" + (blockEntity instanceof ChestBlockEntity ? "chest" : "barrel") + "-" + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + ".json";
 
 			Component customName = chest.getCustomName();
-			if (customName != null && customName.getString().contains("/")) {
+			if (customName != null && customName.getString().contains("/") && !customName.getString().contains("..")) {
 				String chestPathName = customName.getString();
 				if (chestPathName.chars().filter(c -> c == '/').count() == 2) {
 					// [0] == modname, [1] == type of loot (chests etc), [2] == file name
