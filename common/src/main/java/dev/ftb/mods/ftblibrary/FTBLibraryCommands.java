@@ -53,10 +53,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author LatvianModder
@@ -291,19 +288,36 @@ public class FTBLibraryCommands {
 				tablePool.add(itemBuilder);
 			}
 
+			// Use the loot table serializer to generate the loot table output json
 			var lootTable = LootTable.lootTable().withPool(tablePool);
 			Gson gson = Deserializers.createLootTableSerializer()
 					.setPrettyPrinting()
 					.create();
 
 			String output = gson.toJson(lootTable.build());
+
+			// Put into the moddata path in the servers root
 			Path path = source.getServer().getServerDirectory().toPath();
+
+			// If the chest is named and contains a / we'll infer it's output path based on it.
 			Path outputDir = path.resolve("moddata/ftb-library/generated/");
+			String outputFileName = "loot-" + (blockEntity instanceof ChestBlockEntity ? "chest" : "barrel") + "-" + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + ".json";
+
+			Component customName = chest.getCustomName();
+			if (customName != null && customName.getString().contains("/")) {
+				String chestPathName = customName.getString();
+				if (chestPathName.chars().filter(c -> c == '/').count() == 2) {
+					// [0] == modname, [1] == type of loot (chests etc), [2] == file name
+					String[] pathParts = chestPathName.split("/");
+					outputFileName = String.format("%s.json", pathParts[2]);
+					outputDir = path.resolve(String.format("kubejs/%s/loot_tables/%s/", pathParts[0], pathParts[1]));
+				}
+			}
+
 			if (!Files.exists(outputDir)) {
 				Files.createDirectories(outputDir);
 			}
 
-			String outputFileName = "loot-" + (blockEntity instanceof ChestBlockEntity ? "chest" : "barrel") + "-" + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + ".json";
 			Files.writeString(outputDir.resolve(outputFileName), output);
 			source.sendSuccess(new TextComponent("Loot table stored at " + outputDir.resolve(outputFileName).toString().replace(path.toAbsolutePath().toString(), "")), true);
 		} catch (Exception e) {
