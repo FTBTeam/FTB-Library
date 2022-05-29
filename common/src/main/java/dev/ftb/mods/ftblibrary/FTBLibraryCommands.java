@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary;
 
+import com.google.gson.Gson;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -18,12 +19,41 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.block.entity.TickingBlockEntity;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.storage.loot.Deserializers;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.functions.*;
+import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
+import net.minecraft.world.level.storage.loot.providers.nbt.StorageNbtProvider;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -179,7 +209,7 @@ public class FTBLibraryCommands {
 									player.getItemInHand(InteractionHand.MAIN_HAND).save(tag);
 								}))
 						)
-				);
+				).then(Commands.literal("generate_loot_tables").executes(FTBLibraryCommands::generateLootTables));
 
 		if (Platform.isDevelopmentEnvironment()) {
 			command.then(Commands.literal("test_screen")
@@ -191,6 +221,97 @@ public class FTBLibraryCommands {
 		}
 
 		dispatcher.register(command);
+	}
+
+	private static int generateLootTables(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+		CommandSourceStack source = context.getSource();
+
+		var player = source.getPlayerOrException();
+		HitResult pick = player.pick(30, 1.0F, true);
+		if (pick.getType() != HitResult.Type.BLOCK) {
+			source.sendFailure(new TextComponent("You must be facing a valid block"));
+			return 0;
+		}
+
+		BlockHitResult trace = (BlockHitResult) pick;
+		var level = source.getLevel();
+
+		var blockEntity = level.getBlockEntity(trace.getBlockPos());
+		if (!(blockEntity instanceof ChestBlockEntity) && !(blockEntity instanceof BarrelBlockEntity)) {
+			source.sendFailure(new TextComponent("You must be facing a chest or barrel"));
+			return 0;
+		}
+
+		var chest = ((RandomizableContainerBlockEntity) blockEntity);
+		var items = new ArrayList<ItemStack>();
+		for (int i = 0; i < chest.getContainerSize(); i ++) {
+			var item = chest.getItem(i);
+			if (!item.isEmpty()) {
+				items.add(item);
+			}
+		}
+
+		try {
+			var tablePool = LootPool.lootPool()
+					.setRolls(ConstantValue.exactly(1.0F));
+
+			for (ItemStack e : items) {
+				LootPoolSingletonContainer.Builder<?> itemBuilder = LootItem.lootTableItem(e.getItem()).setWeight(1);
+
+				// If there is more than one item in the slot, use it to generate a possibility range
+				if (e.getCount() > 1) {
+					itemBuilder.apply(SetItemCountFunction.setCount(UniformGenerator.between(0, e.getCount())));
+				}
+
+				CompoundTag itemTag = e.getOrCreateTag();
+				// If you're copying then we don't need to do anything special
+				if (itemTag.contains("copy") || e.getItem() instanceof EnchantedBookItem || (e.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock)) {
+					itemBuilder.apply(SetNbtFunction.setTag(itemTag));
+				} else {
+					// If the item is enchanted, support random, copy and leveled random
+					if (e.isEnchanted()) {
+						if (itemTag.contains("level")) {
+							String range = itemTag.getString("level");
+							if (range.contains(",")) {
+								String[] split = range.split(",");
+								itemBuilder.apply(EnchantWithLevelsFunction.enchantWithLevels(UniformGenerator.between(Float.parseFloat(split[0]), Float.parseFloat(split[1]))));
+							} else {
+								itemBuilder.apply(EnchantWithLevelsFunction.enchantWithLevels(UniformGenerator.between(0, Float.parseFloat(range))));
+							}
+						} else if (itemTag.contains("set")) {
+							SetEnchantmentsFunction.Builder enchantBuilder = new SetEnchantmentsFunction.Builder();
+							EnchantmentHelper.getEnchantments(e).forEach((enchant, l) -> enchantBuilder.withEnchantment(enchant, ConstantValue.exactly(l)));
+							itemBuilder.apply(enchantBuilder);
+						} else {
+							itemBuilder.apply(EnchantRandomlyFunction.randomApplicableEnchantment());
+						}
+					}
+				}
+
+				tablePool.add(itemBuilder);
+			}
+
+			var lootTable = LootTable.lootTable().withPool(tablePool);
+			Gson gson = Deserializers.createLootTableSerializer()
+					.setPrettyPrinting()
+					.create();
+
+			String output = gson.toJson(lootTable.build());
+			Path path = source.getServer().getServerDirectory().toPath();
+			Path outputDir = path.resolve("moddata/ftb-library/generated/");
+			if (!Files.exists(outputDir)) {
+				Files.createDirectories(outputDir);
+			}
+
+			String outputFileName = "loot-" + (blockEntity instanceof ChestBlockEntity ? "chest" : "barrel") + "-" + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + ".json";
+			Files.writeString(outputDir.resolve(outputFileName), output);
+			source.sendSuccess(new TextComponent("Loot table stored at " + outputDir.resolve(outputFileName).toString().replace(path.toAbsolutePath().toString(), "")), true);
+		} catch (Exception e) {
+			source.sendFailure(new TextComponent("Something went wrong, check the logs"));
+			FTBLibrary.LOGGER.error(e);
+			return 0;
+		}
+		return 1;
 	}
 
 	private static void addInfo(ListTag list, Component key, Component value) {
