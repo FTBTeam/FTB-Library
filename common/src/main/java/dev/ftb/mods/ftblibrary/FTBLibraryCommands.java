@@ -77,7 +77,11 @@ public class FTBLibraryCommands {
 				)
 				.then(Commands.literal("rain")
 						.executes(context -> {
-							context.getSource().getLevel().setWeatherParameters(1000000, 0, !context.getSource().getLevel().isRaining(), false);
+							if (context.getSource().getLevel().isRaining()) {
+								context.getSource().getLevel().setWeatherParameters(6000, 0, false, false); // clear
+							} else {
+								context.getSource().getLevel().setWeatherParameters(0, 6000, true, false);// rain
+							}
 							return 1;
 						})
 				)

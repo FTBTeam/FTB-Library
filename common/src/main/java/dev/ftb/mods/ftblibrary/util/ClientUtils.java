@@ -30,24 +30,22 @@ public class ClientUtils {
 	public static void execClientCommand(String command, boolean printChat) {
 		ChatProcessorImpl processor = new ChatProcessorImpl(command, null);
 		var process = ClientChatEvent.PROCESS.invoker().process(processor);
-		if (process.isPresent()) {
-			if (process.isFalse()) {
-				command = "";
-			} else {
-				// TODO: validate this still works
+		if (process.isFalse()) {
+			command = "";
+		} else {
+			// TODO: validate this still works
 //				command = process.object() != null ? process.object() : command;
-			}
-
-			if (command.isEmpty()) {
-				return;
-			}
-
-			if (printChat) {
-				Minecraft.getInstance().gui.getChat().addRecentChat(command);
-			}
-
-			Minecraft.getInstance().player.chat(command);
 		}
+
+		if (command.isEmpty()) {
+			return;
+		}
+
+		if (printChat) {
+			Minecraft.getInstance().gui.getChat().addRecentChat(command);
+		}
+
+		Minecraft.getInstance().player.command(command.replace("/", ""));
 	}
 
 	public static void runLater(final Runnable runnable) {
