@@ -15,7 +15,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,7 +137,7 @@ public class Theme {
 	}
 
 	public final int getStringWidth(FormattedText text) {
-		return text == TextComponent.EMPTY ? 0 : getFont().width(text);
+		return text == Component.EMPTY ? 0 : getFont().width(text);
 	}
 
 	public final int getStringWidth(FormattedCharSequence text) {
@@ -166,7 +165,7 @@ public class Theme {
 	}
 
 	public final List<FormattedText> listFormattedStringToWidth(FormattedText text, int width) {
-		if (width <= 0 || text == TextComponent.EMPTY) {
+		if (width <= 0 || text == Component.EMPTY) {
 			return Collections.emptyList();
 		}
 
@@ -174,7 +173,7 @@ public class Theme {
 	}
 
 	public final int drawString(PoseStack matrixStack, @Nullable Object text, float x, float y, Color4I color, int flags) {
-		if (text == null || text == FormattedCharSequence.EMPTY || text == TextComponent.EMPTY || (text instanceof String && ((String) text).isEmpty()) || color.isEmpty()) {
+		if (text == null || text == FormattedCharSequence.EMPTY || text == Component.EMPTY || (text instanceof String && ((String) text).isEmpty()) || color.isEmpty()) {
 			return 0;
 		}
 

@@ -2,11 +2,8 @@ package dev.ftb.mods.ftblibrary.util;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +24,7 @@ public class ClientTextComponentUtils {
 
 	private static Component defaultStringToComponent(String s) {
 		if (s.isEmpty()) {
-			return TextComponent.EMPTY;
+			return Component.empty();
 		}
 
 		if (s.indexOf(':') != -1) {
@@ -36,7 +33,7 @@ public class ClientTextComponentUtils {
 			for (var parser : CUSTOM_COMPONENT_PARSERS) {
 				var c = parser.parse(s, map);
 
-				if (c != null && c != TextComponent.EMPTY) {
+				if (c != null && c != Component.EMPTY) {
 					return c;
 				}
 			}
@@ -61,11 +58,12 @@ public class ClientTextComponentUtils {
 
 				c.fit = map.getOrDefault("fit", "false").equals("true");
 
+				var output = MutableComponent.create(c);
 				if (map.containsKey("text")) {
-					c.withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, parse(map.get("text")))));
+					output.withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, parse(map.get("text")))));
 				}
 
-				return c;
+				return output;
 			} else if (map.containsKey("open_url")) {
 				return parse(map.get("text")).copy().withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, map.get("open_url"))));
 			}

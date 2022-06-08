@@ -6,8 +6,8 @@ import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +45,7 @@ public interface ItemSearchMode {
 
 		@Override
 		public MutableComponent getDisplayName() {
-			return new TranslatableComponent("ftblibrary.select_item.list_mode.all");
+			return Component.translatable("ftblibrary.select_item.list_mode.all");
 		}
 
 		@Override
@@ -76,7 +76,7 @@ public interface ItemSearchMode {
 
 		@Override
 		public MutableComponent getDisplayName() {
-			return new TranslatableComponent("ftblibrary.select_item.list_mode.inv");
+			return Component.translatable("ftblibrary.select_item.list_mode.inv");
 		}
 
 		@Override

@@ -29,7 +29,7 @@ dependencies {
 
 	modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-	modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}")
+//	modImplementation("me.shedaniel:Roug/**/hlyEnoughItems-fabric:${rootProject.rei_version}")
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
@@ -72,7 +72,7 @@ if (ENV.CURSEFORGE_KEY) {
 			id = project.curseforge_id_fabric
 			releaseType = project.curseforge_type
 			addGameVersion "Fabric"
-			addGameVersion "1.18.2"
+			addGameVersion "1.19"
 			mainArtifact(remapJar.archivePath)
 			relations {
 				requiredDependency 'architectury-api'

@@ -3,12 +3,12 @@ dependencies {
 
 	modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
-	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
-		exclude group: "dev.architectury"
-	}
-	modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
-		exclude group: "dev.architectury"
-	}
+//	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
+//		exclude group: "dev.architectury"
+//	}
+//	modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
+//		exclude group: "dev.architectury"
+//	}
 }
 
 def ENV = System.getenv()

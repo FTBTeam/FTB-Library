@@ -18,31 +18,25 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.entity.TickingBlockEntity;
 import net.minecraft.world.level.storage.loot.Deserializers;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.*;
-import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
-import net.minecraft.world.level.storage.loot.providers.nbt.StorageNbtProvider;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.BlockHitResult;
@@ -50,10 +44,12 @@ import net.minecraft.world.phys.HitResult;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author LatvianModder
@@ -134,20 +130,20 @@ public class FTBLibraryCommands {
 											tag.remove("id");
 
 											var list = new ListTag();
-											addInfo(list, new TextComponent("Class"), new TextComponent(blockEntity.getClass().getName()));
+											addInfo(list, Component.literal("Class"), Component.literal(blockEntity.getClass().getName()));
 											var key = Registries.getId(blockEntity.getType(), Registry.BLOCK_ENTITY_TYPE_REGISTRY);
-											addInfo(list, new TextComponent("ID"), new TextComponent(key == null ? "null" : key.toString()));
-											addInfo(list, new TextComponent("Block"), new TextComponent(String.valueOf(Registries.getId(blockEntity.getBlockState().getBlock(), Registry.BLOCK_REGISTRY))));
-											addInfo(list, new TextComponent("Block Class"), new TextComponent(blockEntity.getBlockState().getBlock().getClass().getName()));
-											addInfo(list, new TextComponent("Position"), new TextComponent("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"));
-											addInfo(list, new TextComponent("Mod"), new TextComponent(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
-											addInfo(list, new TextComponent("Ticking"), new TextComponent(blockEntity instanceof TickingBlockEntity ? "true" : "false"));
+											addInfo(list, Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()));
+											addInfo(list, Component.literal("Block"), Component.literal(String.valueOf(Registries.getId(blockEntity.getBlockState().getBlock(), Registry.BLOCK_REGISTRY))));
+											addInfo(list, Component.literal("Block Class"), Component.literal(blockEntity.getBlockState().getBlock().getClass().getName()));
+											addInfo(list, Component.literal("Position"), Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"));
+											addInfo(list, Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
+											addInfo(list, Component.literal("Ticking"), Component.literal(blockEntity instanceof TickingBlockEntity ? "true" : "false"));
 											info.put("text", list);
 
 											var title = blockEntity instanceof Nameable ? ((Nameable) blockEntity).getDisplayName() : null;
 
 											if (title == null) {
-												title = new TextComponent(blockEntity.getClass().getSimpleName());
+												title = Component.literal(blockEntity.getClass().getSimpleName());
 											}
 
 											info.putString("title", Component.Serializer.toJson(title));
@@ -169,10 +165,10 @@ public class FTBLibraryCommands {
 											entity.save(tag);
 
 											var list = new ListTag();
-											addInfo(list, new TextComponent("Class"), new TextComponent(entity.getClass().getName()));
+											addInfo(list, Component.literal("Class"), Component.literal(entity.getClass().getName()));
 											var key = Registries.getId(entity.getType(), Registry.ENTITY_TYPE_REGISTRY);
-											addInfo(list, new TextComponent("ID"), new TextComponent(key == null ? "null" : key.toString()));
-											addInfo(list, new TextComponent("Mod"), new TextComponent(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
+											addInfo(list, Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()));
+											addInfo(list, Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
 											info.put("text", list);
 											info.putString("title", Component.Serializer.toJson(entity.getDisplayName()));
 										}))
@@ -190,10 +186,10 @@ public class FTBLibraryCommands {
 											tag.remove("id");
 
 											var list = new ListTag();
-											addInfo(list, new TextComponent("Name"), player.getName());
-											addInfo(list, new TextComponent("Display Name"), player.getDisplayName());
-											addInfo(list, new TextComponent("UUID"), new TextComponent(player.getUUID().toString()));
-											// addInfo(list, new TextComponent("FTB Library Team"), new TextComponent(p.team.getId()));
+											addInfo(list, Component.literal("Name"), player.getName());
+											addInfo(list, Component.literal("Display Name"), player.getDisplayName());
+											addInfo(list, Component.literal("UUID"), Component.literal(player.getUUID().toString()));
+											// addInfo(list, Component.literal("FTB Library Team"), Component.literal(p.team.getId()));
 											info.put("text", list);
 											info.putString("title", Component.Serializer.toJson(player.getDisplayName()));
 										}))
@@ -226,7 +222,7 @@ public class FTBLibraryCommands {
 		var player = source.getPlayerOrException();
 		HitResult pick = player.pick(30, 1.0F, true);
 		if (pick.getType() != HitResult.Type.BLOCK) {
-			source.sendFailure(new TextComponent("You must be facing a valid block"));
+			source.sendFailure(Component.literal("You must be facing a valid block"));
 			return 0;
 		}
 
@@ -235,7 +231,7 @@ public class FTBLibraryCommands {
 
 		var blockEntity = level.getBlockEntity(trace.getBlockPos());
 		if (!(blockEntity instanceof ChestBlockEntity) && !(blockEntity instanceof BarrelBlockEntity)) {
-			source.sendFailure(new TextComponent("You must be facing a chest or barrel"));
+			source.sendFailure(Component.literal("You must be facing a chest or barrel"));
 			return 0;
 		}
 
@@ -319,9 +315,9 @@ public class FTBLibraryCommands {
 			}
 
 			Files.writeString(outputDir.resolve(outputFileName), output);
-			source.sendSuccess(new TextComponent("Loot table stored at " + outputDir.resolve(outputFileName).toString().replace(path.toAbsolutePath().toString(), "")), true);
+			source.sendSuccess(Component.literal("Loot table stored at " + outputDir.resolve(outputFileName).toString().replace(path.toAbsolutePath().toString(), "")), true);
 		} catch (Exception e) {
-			source.sendFailure(new TextComponent("Something went wrong, check the logs"));
+			source.sendFailure(Component.literal("Something went wrong, check the logs"));
 			FTBLibrary.LOGGER.error(e);
 			return 0;
 		}

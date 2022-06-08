@@ -7,20 +7,12 @@ import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.config.ListConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.SimpleButton;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * @author LatvianModder
@@ -99,7 +91,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		public ButtonAddValue(Panel panel) {
 			super(panel);
 			setHeight(12);
-			setTitle(new TextComponent("+ ").append(new TranslatableComponent("gui.add")));
+			setTitle(Component.literal("+ ").append(Component.translatable("gui.add")));
 		}
 
 		@Override
@@ -144,7 +136,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		list = l;
 		callback = cb;
 
-		title = new TextComponent(list.getName()).withStyle(ChatFormatting.BOLD);
+		title = Component.literal(list.getName()).withStyle(ChatFormatting.BOLD);
 
 		configPanel = new Panel(this) {
 			@Override
@@ -169,8 +161,8 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		};
 
 		scroll = new PanelScrollBar(this, configPanel);
-		buttonAccept = new SimpleButton(this, new TranslatableComponent("gui.accept"), Icons.ACCEPT, (widget, button) -> callback.save(true));
-		buttonCancel = new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> callback.save(false));
+		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, (widget, button) -> callback.save(true));
+		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> callback.save(false));
 	}
 
 	@Override

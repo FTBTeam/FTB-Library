@@ -1,11 +1,7 @@
 package dev.ftb.mods.ftblibrary.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,8 +11,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.ArrayList;
@@ -57,19 +51,19 @@ public class TooltipList {
 	}
 
 	public void blankLine() {
-		add(TextComponent.EMPTY);
+		add(Component.empty());
 	}
 
 	public void styledString(String text, Style style) {
-		add(new TextComponent(text).withStyle(style));
+		add(Component.literal(text).withStyle(style));
 	}
 
 	public void styledString(String text, ChatFormatting color) {
-		add(new TextComponent(text).withStyle(color));
+		add(Component.literal(text).withStyle(color));
 	}
 
 	public void styledTranslate(String key, Style style, Object... objects) {
-		add(new TranslatableComponent(key, objects).withStyle(style));
+		add(Component.translatable(key, objects).withStyle(style));
 	}
 
 	public void string(String text) {

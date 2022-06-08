@@ -84,7 +84,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
 		@Override
 		public MutableComponent getDisplayName() {
-			return new TranslatableComponent("ftblibrary.select_item.list_mode.jei");
+			return Component.translatable("ftblibrary.select_item.list_mode.jei");
 		}
 
 		@Override

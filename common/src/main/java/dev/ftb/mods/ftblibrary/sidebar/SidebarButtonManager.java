@@ -1,10 +1,6 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import dev.architectury.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +26,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	public final List<SidebarButtonGroup> groups = new ArrayList<>();
 
 	private JsonElement readJson(Resource resource) {
-		try (var reader = new InputStreamReader(resource.getInputStream())) {
+		try (var reader = resource.openAsReader()) {
 			return JsonParser.parseReader(reader);
 		} catch (Exception ex) {
 		}
@@ -65,7 +60,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 		for (var domain : manager.getNamespaces()) {
 			try {
-				for (var resource : manager.getResources(new ResourceLocation(domain, "sidebar_button_groups.json"))) {
+				for (var resource : manager.getResourceStack((new ResourceLocation(domain, "sidebar_button_groups.json")))) {
 					var json = readJson(resource);
 
 					for (var entry : json.getAsJsonObject().entrySet()) {
@@ -91,7 +86,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 		for (var domain : manager.getNamespaces()) {
 			try {
-				for (var resource : manager.getResources(new ResourceLocation(domain, "sidebar_buttons.json"))) {
+				for (var resource : manager.getResourceStack(new ResourceLocation(domain, "sidebar_buttons.json"))) {
 					var json = readJson(resource);
 
 					if (json.isJsonObject()) {

@@ -13,18 +13,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.BlankPanel;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
-import dev.ftb.mods.ftblibrary.ui.TextBox;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.Widget;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
-import dev.ftb.mods.ftblibrary.ui.WidgetType;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -34,17 +23,11 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -74,7 +57,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		private final ItemStack stack;
 
 		private ItemStackButton(Panel panel, ItemStack is) {
-			super(panel, TextComponent.EMPTY, Icons.BARRIER);
+			super(panel, Component.empty(), Icons.BARRIER);
 			setSize(18, 18);
 			stack = is;
 			title = null;
@@ -138,13 +121,13 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		@Override
 		public Component getTitle() {
-			return new TranslatableComponent("ftblibrary.select_item.list_mode");
+			return Component.translatable("ftblibrary.select_item.list_mode");
 		}
 
 		@Override
 		public void addMouseOverText(TooltipList list) {
 			super.addMouseOverText(list);
-			list.add(activeMode.getDisplayName().withStyle(ChatFormatting.GRAY).append(new TextComponent(" [" + panelStacks.widgets.size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
+			list.add(activeMode.getDisplayName().withStyle(ChatFormatting.GRAY).append(Component.literal(" [" + panelStacks.widgets.size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
 		}
 
 		@Override
@@ -168,7 +151,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 	private class ButtonEditData extends Button {
 		public ButtonEditData(Panel panel) {
-			super(panel, TextComponent.EMPTY, Icons.BUG);
+			super(panel, Component.empty(), Icons.BUG);
 		}
 
 		@Override
@@ -207,7 +190,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 	private class ButtonCount extends ButtonStackConfig {
 		public ButtonCount(Panel panel) {
-			super(panel, new TranslatableComponent("ftblibrary.select_item.count"), ItemIcon.getItemIcon(Items.PAPER));
+			super(panel, Component.translatable("ftblibrary.select_item.count"), ItemIcon.getItemIcon(Items.PAPER));
 		}
 
 		@Override
@@ -226,7 +209,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 	private class ButtonNBT extends ButtonStackConfig {
 		public ButtonNBT(Panel panel) {
-			super(panel, new TranslatableComponent("ftblibrary.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
+			super(panel, Component.translatable("ftblibrary.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
 		}
 
 		@Override
@@ -245,7 +228,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 	private class ButtonCaps extends ButtonStackConfig {
 		public ButtonCaps(Panel panel) {
-			super(panel, new TranslatableComponent("ftblibrary.select_item.caps"), ItemIcon.getItemIcon(Items.ANVIL));
+			super(panel, Component.translatable("ftblibrary.select_item.caps"), ItemIcon.getItemIcon(Items.ANVIL));
 		}
 
 		@Override
@@ -328,7 +311,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		var bsize = width / 2 - 10;
 
-		buttonCancel = new SimpleTextButton(this, new TranslatableComponent("gui.cancel"), Icon.EMPTY) {
+		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Icon.EMPTY) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
@@ -343,7 +326,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		buttonCancel.setPosAndSize(8, height - 24, bsize, 16);
 
-		buttonAccept = new SimpleTextButton(this, new TranslatableComponent("gui.accept"), Icon.EMPTY) {
+		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Icon.EMPTY) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();

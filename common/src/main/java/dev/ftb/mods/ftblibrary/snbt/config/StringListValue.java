@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.architectury.utils.NbtType;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.StringConfig;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
@@ -8,6 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class StringListValue extends BaseValue<List<String>> {
 	public void read(SNBTCompoundTag tag) {
 		var stag = tag.get(key);
 
-		if (stag instanceof ListTag && (((ListTag) stag).isEmpty() || ((ListTag) stag).getElementType() == NbtType.STRING)) {
+		if (stag instanceof ListTag && (((ListTag) stag).isEmpty() || ((ListTag) stag).getElementType() == Tag.TAG_STRING)) {
 			get().clear();
 
 			for (var i = 0; i < ((ListTag) stag).size(); i++) {

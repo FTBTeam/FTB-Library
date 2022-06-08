@@ -10,7 +10,7 @@ import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,7 +45,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 
 			for (var v : nameMap) {
 				var e = isEqual(v, value);
-				var c = new TextComponent(e ? "+ " : "- ");
+				var c = Component.literal(e ? "+ " : "- ");
 				c.withStyle(e ? ChatFormatting.AQUA : ChatFormatting.DARK_GRAY);
 				c.append(nameMap.getDisplayName(v));
 				list.add(c);

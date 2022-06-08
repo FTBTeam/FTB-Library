@@ -1,21 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import dev.architectury.utils.NbtType;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.CollectionTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.EndTag;
-import net.minecraft.nbt.FloatTag;
-import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.LongArrayTag;
-import net.minecraft.nbt.LongTag;
-import net.minecraft.nbt.NumericTag;
-import net.minecraft.nbt.ShortTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,13 +105,13 @@ class SNBTParser {
 			case "-Infinityf", "-∞f" -> SpecialTag.NEG_INFINITY_F;
 			case "NaNf" -> SpecialTag.NAN_F;
 			default -> switch (SNBTUtils.getNumberType(s)) {
-				case NbtType.BYTE -> ByteTag.valueOf(Byte.parseByte(s.substring(0, s.length() - 1)));
-				case NbtType.SHORT -> ShortTag.valueOf(Short.parseShort(s.substring(0, s.length() - 1)));
-				case NbtType.INT -> IntTag.valueOf(Integer.parseInt(s));
-				case NbtType.LONG -> LongTag.valueOf(Long.parseLong(s.substring(0, s.length() - 1)));
-				case NbtType.FLOAT -> FloatTag.valueOf(Float.parseFloat(s.substring(0, s.length() - 1)));
-				case NbtType.DOUBLE -> DoubleTag.valueOf(Double.parseDouble(s.substring(0, s.length() - 1)));
-				case -NbtType.DOUBLE -> DoubleTag.valueOf(Double.parseDouble(s));
+				case Tag.TAG_BYTE -> ByteTag.valueOf(Byte.parseByte(s.substring(0, s.length() - 1)));
+				case Tag.TAG_SHORT -> ShortTag.valueOf(Short.parseShort(s.substring(0, s.length() - 1)));
+				case Tag.TAG_INT -> IntTag.valueOf(Integer.parseInt(s));
+				case Tag.TAG_LONG -> LongTag.valueOf(Long.parseLong(s.substring(0, s.length() - 1)));
+				case Tag.TAG_FLOAT -> FloatTag.valueOf(Float.parseFloat(s.substring(0, s.length() - 1)));
+				case Tag.TAG_DOUBLE -> DoubleTag.valueOf(Double.parseDouble(s.substring(0, s.length() - 1)));
+				case -Tag.TAG_DOUBLE -> DoubleTag.valueOf(Double.parseDouble(s));
 				default -> StringTag.valueOf(s);
 			};
 		};

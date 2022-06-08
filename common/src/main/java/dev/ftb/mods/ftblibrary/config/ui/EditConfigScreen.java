@@ -7,27 +7,13 @@ import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.math.Bits;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.SimpleButton;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.Widget;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
-import dev.ftb.mods.ftblibrary.ui.WidgetType;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +56,7 @@ public class EditConfigScreen extends BaseScreen {
 
 				groups.remove(groups.size() - 1);
 
-				title = new TextComponent("");
+				title = Component.literal("");
 
 				for (var i = groups.size() - 1; i >= 0; i--) {
 					title.append(groups.get(i).getName());
@@ -80,17 +66,17 @@ public class EditConfigScreen extends BaseScreen {
 					}
 				}
 			} else {
-				title = new TranslatableComponent("stat.generalButton");
+				title = Component.translatable("stat.generalButton");
 			}
 
 			var infoKey = group.getPath() + ".info";
-			info = I18n.exists(infoKey) ? new TranslatableComponent(infoKey) : null;
+			info = I18n.exists(infoKey) ? Component.translatable(infoKey) : null;
 			setCollapsed(collapsed);
 		}
 
 		public void setCollapsed(boolean v) {
 			collapsed = v;
-			setTitle(new TextComponent("").append(new TextComponent(collapsed ? "[-] " : "[v] ").withStyle(collapsed ? ChatFormatting.RED : ChatFormatting.GREEN)).append(title));
+			setTitle(Component.literal("").append(Component.literal(collapsed ? "[-] " : "[v] ").withStyle(collapsed ? ChatFormatting.RED : ChatFormatting.GREEN)).append(title));
 		}
 
 		@Override
@@ -130,9 +116,9 @@ public class EditConfigScreen extends BaseScreen {
 			inst = i;
 
 			if (!inst.getCanEdit()) {
-				keyText = new TextComponent(inst.getName()).withStyle(ChatFormatting.GRAY);
+				keyText = Component.literal(inst.getName()).withStyle(ChatFormatting.GRAY);
 			} else {
-				keyText = new TextComponent(inst.getName());
+				keyText = Component.literal(inst.getName());
 			}
 		}
 
@@ -151,7 +137,7 @@ public class EditConfigScreen extends BaseScreen {
 			var slen = theme.getStringWidth(s);
 
 			if (slen > 150) {
-				s = new TextComponent(theme.trimStringToWidth(s, 150).getString().trim() + "...");
+				s = Component.literal(theme.trimStringToWidth(s, 150).getString().trim() + "...");
 				slen = 152;
 			}
 
@@ -255,10 +241,10 @@ public class EditConfigScreen extends BaseScreen {
 
 		scroll = new PanelScrollBar(this, configPanel);
 
-		buttonAccept = new SimpleButton(this, new TranslatableComponent("gui.close"), Icons.ACCEPT, (widget, button) -> group.save(true));
-		buttonCancel = new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> group.save(false));
+		buttonAccept = new SimpleButton(this, Component.translatable("gui.close"), Icons.ACCEPT, (widget, button) -> group.save(true));
+		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> group.save(false));
 
-		buttonExpandAll = new SimpleButton(this, new TranslatableComponent("gui.expand_all"), Icons.ADD, (widget, button) ->
+		buttonExpandAll = new SimpleButton(this, Component.translatable("gui.expand_all"), Icons.ADD, (widget, button) ->
 		{
 			for (var w : configEntryButtons) {
 				if (w instanceof ConfigGroupButton) {
@@ -270,7 +256,7 @@ public class EditConfigScreen extends BaseScreen {
 			widget.getGui().refreshWidgets();
 		});
 
-		buttonCollapseAll = new SimpleButton(this, new TranslatableComponent("gui.collapse_all"), Icons.REMOVE, (widget, button) ->
+		buttonCollapseAll = new SimpleButton(this, Component.translatable("gui.collapse_all"), Icons.REMOVE, (widget, button) ->
 		{
 			for (var w : configEntryButtons) {
 				if (w instanceof ConfigGroupButton) {

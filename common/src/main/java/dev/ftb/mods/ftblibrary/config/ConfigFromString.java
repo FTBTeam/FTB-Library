@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigFromStringScreen;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -20,7 +20,7 @@ public abstract class ConfigFromString<T> extends ConfigValue<T> {
 
 	@Override
 	public Component getStringForGUI(@Nullable T v) {
-		return new TextComponent(getStringFromValue(v));
+		return Component.literal(getStringFromValue(v));
 	}
 
 	@Override

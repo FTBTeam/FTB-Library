@@ -9,7 +9,7 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import dev.ftb.mods.ftblibrary.util.ClientUtils;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,7 +148,7 @@ public class SidebarButton implements Comparable<SidebarButton> {
 
 	public void onClicked(boolean shift) {
 		if (loadingScreen) {
-			new LoadingScreen(new TranslatableComponent(getLangKey())).openGui();
+			new LoadingScreen(Component.translatable(getLangKey())).openGui();
 		}
 
 		for (var event : (shift && !shiftClickEvents.isEmpty() ? shiftClickEvents : clickEvents)) {

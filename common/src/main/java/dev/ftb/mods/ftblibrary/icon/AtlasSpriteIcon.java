@@ -57,8 +57,7 @@ public class AtlasSpriteIcon extends Icon {
 		buffer.vertex(m, x, y + h, 0F).color(r, g, b, a).uv(minU, maxV).endVertex();
 		buffer.vertex(m, x + w, y + h, 0F).color(r, g, b, a).uv(maxU, maxV).endVertex();
 		buffer.vertex(m, x + w, y, 0F).color(r, g, b, a).uv(maxU, minV).endVertex();
-		buffer.end();
-		BufferUploader.end(buffer);
+		BufferUploader.drawWithShader(buffer.end());
 	}
 
 	@Override
@@ -75,7 +74,7 @@ public class AtlasSpriteIcon extends Icon {
 	@Nullable
 	public PixelBuffer createPixelBuffer() {
 		try {
-			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(id.getNamespace(), "textures/" + id.getPath() + ".png")).getInputStream());
+			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(id.getNamespace(), "textures/" + id.getPath() + ".png")).orElseThrow().open());
 		} catch (Exception ex) {
 			return null;
 		}

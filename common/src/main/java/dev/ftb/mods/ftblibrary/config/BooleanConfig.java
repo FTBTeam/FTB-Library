@@ -4,15 +4,15 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author LatvianModder
  */
 public class BooleanConfig extends ConfigWithVariants<Boolean> {
-	public static final TextComponent TRUE_TEXT = new TextComponent("True");
-	public static final TextComponent FALSE_TEXT = new TextComponent("False");
+	public static final Component TRUE_TEXT = Component.literal("True");
+	public static final Component FALSE_TEXT = Component.literal("False");
 
 	@Override
 	public Color4I getColor(@Nullable Boolean v) {

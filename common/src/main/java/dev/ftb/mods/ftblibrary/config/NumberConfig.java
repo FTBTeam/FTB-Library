@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -33,7 +33,7 @@ public abstract class NumberConfig<T extends Number> extends ConfigFromString<T>
 
 	@Override
 	public Component getStringForGUI(@Nullable T v) {
-		return v == null ? NULL_TEXT : new TextComponent(formatValue(v));
+		return v == null ? NULL_TEXT : Component.literal(formatValue(v));
 	}
 
 	protected String formatValue(T v) {

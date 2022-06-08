@@ -1,9 +1,10 @@
 package dev.ftb.mods.ftblibrary.util;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.ComponentContents;
 
-public class ImageComponent extends TextComponent {
+// TODO: Fix me
+public class ImageComponent implements ComponentContents {
 	public Icon image = Icon.EMPTY;
 	public int width = 100;
 	public int height = 100;
@@ -11,8 +12,10 @@ public class ImageComponent extends TextComponent {
 	public boolean fit = false;
 
 	public ImageComponent() {
-		super("[Image]");
+		super();
 	}
+
+
 
 	@Override
 	public String toString() {

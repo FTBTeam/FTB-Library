@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
@@ -14,7 +13,7 @@ import java.util.function.BooleanSupplier;
  * @author LatvianModder
  */
 public class ContextMenuItem implements Comparable<ContextMenuItem> {
-	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(TextComponent.EMPTY, Icon.EMPTY, () -> {
+	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(Component.empty(), Icon.EMPTY, () -> {
 	}) {
 		@Override
 		public Widget createWidget(ContextMenu panel) {
@@ -29,7 +28,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 	public Icon icon;
 	public Runnable callback;
 	public BooleanSupplier enabled = TRUE;
-	public Component yesNoText = new TextComponent("");
+	public Component yesNoText = Component.literal("");
 	public boolean closeMenu = true;
 
 	public ContextMenuItem(Component t, Icon i, @Nullable Runnable c) {

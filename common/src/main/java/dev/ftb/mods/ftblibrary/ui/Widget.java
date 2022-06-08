@@ -9,7 +9,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -89,7 +89,7 @@ public class Widget implements IScreenWrapper {
 	}
 
 	public Component getTitle() {
-		return TextComponent.EMPTY;
+		return Component.empty();
 	}
 
 	public WidgetType getWidgetType() {
@@ -99,7 +99,7 @@ public class Widget implements IScreenWrapper {
 	public void addMouseOverText(TooltipList list) {
 		var title = getTitle();
 
-		if (title != TextComponent.EMPTY) {
+		if (title.getContents() != ComponentContents.EMPTY) {
 			list.add(title);
 		}
 	}

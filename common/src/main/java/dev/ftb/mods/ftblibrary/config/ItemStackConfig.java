@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class ItemStackConfig extends ConfigValue<ItemStack> {
 			return v.getHoverName();
 		}
 
-		return new TextComponent(v.getCount() + "x ").append(v.getHoverName());
+		return Component.literal(v.getCount() + "x ").append(v.getHoverName());
 	}
 
 	@Override

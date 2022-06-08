@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.util;
 
 import dev.architectury.event.events.client.ClientChatEvent;
+import dev.architectury.impl.ChatProcessorImpl;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import net.minecraft.Util;
@@ -27,22 +28,26 @@ public class ClientUtils {
 	private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
 
 	public static void execClientCommand(String command, boolean printChat) {
-		var process = ClientChatEvent.PROCESS.invoker().process(command);
-		if (process.isFalse()) {
-			command = "";
-		} else {
-			command = process.object() != null ? process.object() : command;
-		}
+		ChatProcessorImpl processor = new ChatProcessorImpl(command, null);
+		var process = ClientChatEvent.PROCESS.invoker().process(processor);
+		if (process.isPresent()) {
+			if (process.isFalse()) {
+				command = "";
+			} else {
+				// TODO: validate this still works
+//				command = process.object() != null ? process.object() : command;
+			}
 
-		if (command.isEmpty()) {
-			return;
-		}
+			if (command.isEmpty()) {
+				return;
+			}
 
-		if (printChat) {
-			Minecraft.getInstance().gui.getChat().addRecentChat(command);
-		}
+			if (printChat) {
+				Minecraft.getInstance().gui.getChat().addRecentChat(command);
+			}
 
-		Minecraft.getInstance().player.chat(command);
+			Minecraft.getInstance().player.chat(command);
+		}
 	}
 
 	public static void runLater(final Runnable runnable) {
@@ -74,7 +79,7 @@ public class ClientUtils {
 			case "https": {
 				try {
 					final var uri = new URI(scheme + ':' + path);
-					if (Minecraft.getInstance().options.chatLinksPrompt) {
+					if (Minecraft.getInstance().options.chatLinksPrompt().get()) {
 						final var currentScreen = Minecraft.getInstance().screen;
 
 						Minecraft.getInstance().setScreen(new ConfirmLinkScreen(result ->

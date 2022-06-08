@@ -6,17 +6,9 @@ import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -28,7 +20,7 @@ public final class NameMap<E> implements Iterable<E> {
 		private final List<T> values;
 
 		private Function<T, String> idProvider = t -> StringUtils.getID(t, StringUtils.FLAG_ID_FIX | StringUtils.FLAG_ID_ONLY_LOWERCASE);
-		private Function<T, Component> nameProvider = t -> new TextComponent(idProvider.apply(t));
+		private Function<T, Component> nameProvider = t -> Component.literal(idProvider.apply(t));
 		private Function<T, Color4I> colorProvider = t -> Icon.EMPTY;
 		private Function<T, Icon> iconProvider = t -> Icon.EMPTY;
 
@@ -48,11 +40,11 @@ public final class NameMap<E> implements Iterable<E> {
 		}
 
 		public Builder<T> nameKey(Function<T, String> p) {
-			return name(v -> new TranslatableComponent(p.apply(v)));
+			return name(v -> Component.translatable(p.apply(v)));
 		}
 
 		public Builder<T> baseNameKey(String key) {
-			return name(v -> new TranslatableComponent(key + '.' + idProvider.apply(v)));
+			return name(v -> Component.translatable(key + '.' + idProvider.apply(v)));
 		}
 
 		public Builder<T> color(Function<T, Color4I> p) {

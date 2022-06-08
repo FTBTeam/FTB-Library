@@ -19,7 +19,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -314,7 +314,7 @@ public class GuiHelper {
 		list.add(prefix == null ? tooltip.get(0).copy().withStyle(stack.getRarity().color) : prefix.copy().append(tooltip.get(0)));
 
 		for (var i = 1; i < tooltip.size(); i++) {
-			list.add(new TextComponent("").withStyle(ChatFormatting.GRAY).append(tooltip.get(i)));
+			list.add(Component.literal("").withStyle(ChatFormatting.GRAY).append(tooltip.get(i)));
 		}
 	}
 }
