@@ -120,7 +120,7 @@ if (ENV.CURSEFORGE_KEY) {
 			relations {
 				requiredDependency 'architectury-api'
 				optionalDependency 'jei'
-				optionalDependency 'roughly-enough-items-forge'
+				optionalDependency 'roughly-enough-items'
 			}
 			changelog = getGitChangelog
 			changelogType = 'markdown'
