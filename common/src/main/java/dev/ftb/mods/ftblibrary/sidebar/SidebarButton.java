@@ -9,6 +9,7 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import dev.ftb.mods.ftblibrary.util.ClientUtils;
+import net.minecraft.Util;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -112,7 +113,7 @@ public class SidebarButton implements Comparable<SidebarButton> {
 	}
 
 	public String getLangKey() {
-		return "sidebar_button." + id.getNamespace() + '.' + id.getPath();
+		return Util.makeDescriptionId("sidebar_button", id);
 	}
 
 	public String getTooltipLangKey() {

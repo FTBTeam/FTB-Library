@@ -13,7 +13,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
@@ -72,20 +71,23 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 						if (entry.getValue().isJsonObject()) {
 							var groupJson = entry.getValue().getAsJsonObject();
 							var y = 0;
+							var pinned = true;
 
 							if (groupJson.has("y")) {
 								y = groupJson.get("y").getAsInt();
 							}
 
-							var group = new SidebarButtonGroup(new ResourceLocation(domain, entry.getKey()), y);
+							if (groupJson.has("pinned")) {
+								pinned = groupJson.get("pinned").getAsBoolean();
+							}
+
+							var group = new SidebarButtonGroup(new ResourceLocation(domain, entry.getKey()), y, pinned);
 							groupMap.put(group.getId(), group);
 						}
 					}
 				}
 			} catch (Exception ex) {
-				if (!(ex instanceof FileNotFoundException)) {
-					ex.printStackTrace();
-				}
+				ex.printStackTrace();
 			}
 		}
 
@@ -131,9 +133,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 					}
 				}
 			} catch (Exception ex) {
-				if (!(ex instanceof FileNotFoundException)) {
-					ex.printStackTrace();
-				}
+				ex.printStackTrace();
 			}
 		}
 
