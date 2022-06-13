@@ -15,7 +15,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
@@ -417,7 +417,7 @@ public class TextBox extends Widget {
 
 		if (!s.isEmpty()) {
 			var s1 = j > 0 && j <= s.length() ? s.substring(0, j) : s;
-			textX1 = theme.drawString(matrixStack, new TextComponent(s1), textX, textY, col, 0);
+			textX1 = theme.drawString(matrixStack, Component.literal(s1), textX, textY, col, 0);
 		}
 
 		var drawCursor = cursorPosition < textToDraw.length() || textToDraw.length() >= charLimit;
@@ -431,7 +431,7 @@ public class TextBox extends Widget {
 		}
 
 		if (j > 0 && j < s.length()) {
-			theme.drawString(matrixStack, new TextComponent(s.substring(j)), textX1, textY, col, 0);
+			theme.drawString(matrixStack, Component.literal(s.substring(j)), textX1, textY, col, 0);
 		}
 
 		if (j >= 0 && j <= s.length() && isFocused() && System.currentTimeMillis() % 1000L > 500L) {
@@ -443,7 +443,7 @@ public class TextBox extends Widget {
 		}
 
 		if (k != j) {
-			var l1 = textX + theme.getStringWidth(new TextComponent(s.substring(0, k)));
+			var l1 = textX + theme.getStringWidth(Component.literal(s.substring(0, k)));
 
 			int startX = cursorX, startY = textY - 1, endX = l1 - 1, endY = textY + 1 + theme.getFontHeight();
 

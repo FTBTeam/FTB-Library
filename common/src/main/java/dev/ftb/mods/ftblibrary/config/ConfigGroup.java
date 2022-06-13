@@ -2,16 +2,10 @@ package dev.ftb.mods.ftblibrary.config;
 
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -44,12 +38,12 @@ public class ConfigGroup {
 	}
 
 	public Component getName() {
-		return new TranslatableComponent(getNameKey());
+		return Component.translatable(getNameKey());
 	}
 
 	public Component getTooltip() {
 		var t = getNameKey() + ".tooltip";
-		return I18n.exists(t) ? new TranslatableComponent(t) : TextComponent.EMPTY;
+		return I18n.exists(t) ? Component.translatable(t) : Component.empty();
 	}
 
 	public ConfigGroup getGroup(String id) {

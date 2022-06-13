@@ -5,7 +5,7 @@ import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.util.Mth;
 
 public class ScrollBar extends Widget {
@@ -94,7 +94,7 @@ public class ScrollBar extends Widget {
 	public void addMouseOverText(TooltipList list) {
 		if (showValueOnMouseOver()) {
 			var t = getTitle();
-			list.string(t == TextComponent.EMPTY ? (Double.toString(getValue())) : (t + ": " + getValue()));
+			list.string(t.getContents() == ComponentContents.EMPTY ? (Double.toString(getValue())) : (t + ": " + getValue()));
 		}
 
 		if (Theme.renderDebugBoxes) {

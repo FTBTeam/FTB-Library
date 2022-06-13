@@ -1,16 +1,10 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.TextBox;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.Widget;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
+import dev.ftb.mods.ftblibrary.ui.*;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.ComponentContents;
 
 /**
  * @author LatvianModder
@@ -18,7 +12,7 @@ import net.minecraft.network.chat.TextComponent;
 public abstract class ButtonListBaseScreen extends BaseScreen {
 	private final Panel panelButtons;
 	private final PanelScrollBar scrollBar;
-	private Component title = TextComponent.EMPTY;
+	private Component title = Component.empty();
 	private final TextBox searchBox;
 	private boolean hasSearchBox;
 	private int borderH, borderV, borderW;
@@ -150,7 +144,7 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 
 		var title = getTitle();
 
-		if (title != TextComponent.EMPTY) {
+		if (title.getContents() != ComponentContents.EMPTY) {
 			theme.drawString(matrixStack, title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);
 		}
 	}

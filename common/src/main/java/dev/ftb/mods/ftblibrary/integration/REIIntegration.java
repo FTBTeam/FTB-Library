@@ -13,23 +13,22 @@ import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButton;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.favorites.FavoriteEntry;
 import me.shedaniel.rei.api.client.favorites.FavoriteEntryType;
 import me.shedaniel.rei.api.client.favorites.SystemFavoriteEntryProvider;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
+import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.EntryRegistry;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.CollectionUtils;
-import me.shedaniel.rei.api.common.util.ImmutableTextComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -50,7 +49,7 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public MutableComponent getDisplayName() {
-			return new TranslatableComponent("ftblibrary.select_item.list_mode.rei");
+			return Component.translatable("ftblibrary.select_item.list_mode.rei");
 		}
 
 		@Override
@@ -153,7 +152,7 @@ public class REIIntegration implements REIClientPlugin {
 
 				@Override
 				@Nullable
-				public Tooltip getTooltip(Point mouse) {
+				public Tooltip getTooltip(TooltipContext context) {
 					List<String> list = new ArrayList<>();
 					list.add(I18n.get(button.getLangKey()));
 
@@ -161,7 +160,7 @@ public class REIIntegration implements REIClientPlugin {
 						button.getTooltipHandler().accept(list);
 					}
 
-					return Tooltip.create(mouse, CollectionUtils.map(list, ImmutableTextComponent::new));
+					return Tooltip.create(context.getPoint(), CollectionUtils.map(list, Component::literal));
 				}
 
 				@Override

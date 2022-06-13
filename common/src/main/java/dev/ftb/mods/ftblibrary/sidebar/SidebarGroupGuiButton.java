@@ -11,7 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	private SidebarGuiButton mouseOver;
 
 	public SidebarGroupGuiButton(AbstractContainerScreen g) {
-		super(0, 0, 0, 0, TextComponent.EMPTY);
+		super(0, 0, 0, 0, Component.empty());
 		gui = g;
 		buttons = new ArrayList<>();
 	}

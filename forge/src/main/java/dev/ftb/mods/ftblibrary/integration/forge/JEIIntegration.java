@@ -17,8 +17,8 @@ import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -84,7 +84,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
 		@Override
 		public MutableComponent getDisplayName() {
-			return new TranslatableComponent("ftblibrary.select_item.list_mode.jei");
+			return Component.translatable("ftblibrary.select_item.list_mode.jei");
 		}
 
 		@Override

@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Button extends Widget {
@@ -20,7 +19,7 @@ public abstract class Button extends Widget {
 	}
 
 	public Button(Panel panel) {
-		this(panel, TextComponent.EMPTY, Icon.EMPTY);
+		this(panel, Component.empty(), Icon.EMPTY);
 	}
 
 	@Override

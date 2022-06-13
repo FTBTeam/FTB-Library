@@ -5,7 +5,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ import java.util.List;
  * @author LatvianModder
  */
 public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E>> {
-	public static final TextComponent EMPTY_LIST = new TextComponent("[]");
-	public static final TextComponent NON_EMPTY_LIST = new TextComponent("[...]");
+	public static final Component EMPTY_LIST = Component.literal("[]");
+	public static final Component NON_EMPTY_LIST = Component.literal("[...]");
 
 	public static final Color4I COLOR = Color4I.rgb(0xFFAA49);
 	public final CV type;

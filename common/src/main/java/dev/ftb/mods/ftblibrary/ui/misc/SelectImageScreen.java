@@ -11,13 +11,14 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LatvianModder
@@ -30,7 +31,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 	public SelectImageScreen(ImageConfig i, ConfigCallback c) {
 		imageConfig = i;
 		callback = c;
-		setTitle(new TextComponent("Select Image"));
+		setTitle(Component.literal("Select Image"));
 		setHasSearchBox(true);
 		focus();
 		setBorder(1, 1, 1);
@@ -38,21 +39,21 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		images = new ArrayList<>();
 
 		StringUtils.ignoreResourceLocationErrors = true;
-		Collection<ResourceLocation> textures = Collections.emptyList();
+		Map<ResourceLocation, Resource> textures = Collections.emptyMap();
 
 		try {
-			textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.endsWith(".png"));
+			textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.getPath().endsWith(".png"));
 		} catch (Exception ex) {
 			FTBLibrary.LOGGER.error("A mod has broken resource preventing this list from loading: " + ex);
 		}
 
 		StringUtils.ignoreResourceLocationErrors = false;
 
-		for (var rl : textures) {
-			if (!ResourceLocation.isValidResourceLocation(rl.toString())) {
-				FTBLibrary.LOGGER.warn("Image " + rl + " has invalid path! Report this to author of '" + rl.getNamespace() + "'!");
-			} else if (isValidImage(rl)) {
-				images.add(rl);
+		for (var rl : textures.entrySet()) {
+			if (!ResourceLocation.isValidResourceLocation(rl.getKey().toString())) {
+				FTBLibrary.LOGGER.warn("Image " + rl.getKey() + " has invalid path! Report this to author of '" + rl.getKey().getNamespace() + "'!");
+			} else if (isValidImage(rl.getKey())) {
+				images.add(rl.getKey());
 			}
 		}
 
@@ -70,7 +71,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 	@Override
 	public void addButtons(Panel panel) {
 		if (allowNone()) {
-			panel.add(new SimpleTextButton(panel, new TextComponent("None"), Icon.EMPTY) {
+			panel.add(new SimpleTextButton(panel, Component.literal("None"), Icon.EMPTY) {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
 					playClickSound();
@@ -81,7 +82,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		}
 
 		for (var res : images) {
-			panel.add(new SimpleTextButton(panel, new TextComponent("").append(new TextComponent(res.getNamespace()).withStyle(ChatFormatting.GOLD)).append(":").append(new TextComponent(res.getPath().substring(9, res.getPath().length() - 4)).withStyle(ChatFormatting.YELLOW)), Icon.getIcon(res.toString())) {
+			panel.add(new SimpleTextButton(panel, Component.literal("").append(Component.literal(res.getNamespace()).withStyle(ChatFormatting.GOLD)).append(":").append(Component.literal(res.getPath().substring(9, res.getPath().length() - 4)).withStyle(ChatFormatting.YELLOW)), Icon.getIcon(res.toString())) {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
 					playClickSound();

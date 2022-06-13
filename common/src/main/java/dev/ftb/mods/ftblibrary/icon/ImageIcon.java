@@ -151,7 +151,7 @@ public class ImageIcon extends Icon {
 	@Nullable
 	public PixelBuffer createPixelBuffer() {
 		try {
-			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(texture).getInputStream());
+			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(texture).orElseThrow().open());
 		} catch (Exception ex) {
 			return null;
 		}

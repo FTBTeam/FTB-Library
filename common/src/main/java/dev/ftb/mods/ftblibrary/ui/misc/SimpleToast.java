@@ -11,7 +11,6 @@ import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 
 /**
@@ -63,11 +62,11 @@ public class SimpleToast implements Toast {
 	}
 
 	public Component getTitle() {
-		return new TextComponent("<error>");
+		return Component.literal("<error>");
 	}
 
 	public Component getSubtitle() {
-		return TextComponent.EMPTY;
+		return Component.empty();
 	}
 
 	public boolean isImportant() {

@@ -1,20 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import dev.architectury.utils.NbtType;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.EndTag;
-import net.minecraft.nbt.FloatTag;
-import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.LongArrayTag;
-import net.minecraft.nbt.LongTag;
-import net.minecraft.nbt.ShortTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,19 +111,19 @@ public class SNBTNet {
 	@Nullable
 	public static Tag read(byte type, FriendlyByteBuf buf) {
 		return switch (type) {
-			case NbtType.END -> EndTag.INSTANCE;
-			case NbtType.BYTE -> ByteTag.valueOf(buf.readByte());
-			case NbtType.SHORT -> ShortTag.valueOf(buf.readShort());
-			case NbtType.INT -> IntTag.valueOf(buf.readInt());
-			case NbtType.LONG -> LongTag.valueOf(buf.readLong());
-			case NbtType.FLOAT -> FloatTag.valueOf(buf.readFloat());
-			case NbtType.DOUBLE -> DoubleTag.valueOf(buf.readDouble());
-			case NbtType.BYTE_ARRAY -> readByteArray(buf);
-			case NbtType.STRING -> StringTag.valueOf(buf.readUtf(Short.MAX_VALUE));
-			case NbtType.LIST -> readList(buf);
-			case NbtType.COMPOUND -> readCompound(buf);
-			case NbtType.INT_ARRAY -> readIntArray(buf);
-			case NbtType.LONG_ARRAY -> readLongArray(buf);
+			case Tag.TAG_END -> EndTag.INSTANCE;
+			case Tag.TAG_BYTE -> ByteTag.valueOf(buf.readByte());
+			case Tag.TAG_SHORT -> ShortTag.valueOf(buf.readShort());
+			case Tag.TAG_INT -> IntTag.valueOf(buf.readInt());
+			case Tag.TAG_LONG -> LongTag.valueOf(buf.readLong());
+			case Tag.TAG_FLOAT -> FloatTag.valueOf(buf.readFloat());
+			case Tag.TAG_DOUBLE -> DoubleTag.valueOf(buf.readDouble());
+			case Tag.TAG_BYTE_ARRAY -> readByteArray(buf);
+			case Tag.TAG_STRING -> StringTag.valueOf(buf.readUtf(Short.MAX_VALUE));
+			case Tag.TAG_LIST -> readList(buf);
+			case Tag.TAG_COMPOUND -> readCompound(buf);
+			case Tag.TAG_INT_ARRAY -> readIntArray(buf);
+			case Tag.TAG_LONG_ARRAY -> readLongArray(buf);
 			default -> null;
 		};
 	}

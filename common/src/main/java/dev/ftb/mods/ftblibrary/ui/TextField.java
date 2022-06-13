@@ -7,14 +7,13 @@ import dev.ftb.mods.ftblibrary.math.Bits;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 
 /**
  * @author LatvianModder
  */
 public class TextField extends Widget {
-	public Component component = TextComponent.EMPTY;
+	public Component component = Component.empty();
 	private FormattedText[] formattedText = new FormattedText[0];
 	public int textFlags = 0;
 	public int minWidth = 0;
@@ -67,16 +66,16 @@ public class TextField extends Widget {
 		var theme = getGui().getTheme();
 
 		if (trim) {
-			formattedText = new FormattedText[]{theme.trimStringToWidth(new TextComponent("").append(txt), maxWidth)};
+			formattedText = new FormattedText[]{theme.trimStringToWidth(Component.literal("").append(txt), maxWidth)};
 		} else {
-			formattedText = theme.listFormattedStringToWidth(new TextComponent("").append(txt), maxWidth).toArray(new FormattedText[0]);
+			formattedText = theme.listFormattedStringToWidth(Component.literal("").append(txt), maxWidth).toArray(new FormattedText[0]);
 		}
 
 		return resize(theme);
 	}
 
 	public TextField setText(String txt) {
-		return setText(new TextComponent(txt));
+		return setText(Component.literal(txt));
 	}
 
 	public TextField resize(Theme theme) {

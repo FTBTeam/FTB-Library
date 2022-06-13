@@ -22,13 +22,13 @@ side = "BOTH"
 [[dependencies.ftblibrary]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,)"
+versionRange = "[1.19,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.ftblibrary]]
 modId = "architectury"
 mandatory = true
-versionRange = "[3.1.45,)"
+versionRange = "[5.5.16,)"
 ordering = "AFTER"
 side = "BOTH"

@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import dev.architectury.utils.NbtType;
+import net.minecraft.nbt.Tag;
 
 import java.util.function.BooleanSupplier;
 
@@ -51,31 +51,31 @@ public class SNBTUtils {
 		var last = s.charAt(s.length() - 1);
 
 		if (isDigit(last)) {
-			return NbtType.INT;
+			return Tag.TAG_INT;
 		} else if (last == 'B' || last == 'b') {
 			if (isInt(s, 1)) {
-				return NbtType.BYTE;
+				return Tag.TAG_BYTE;
 			}
 		} else if (last == 'S' || last == 's') {
 			if (isInt(s, 1)) {
-				return NbtType.SHORT;
+				return Tag.TAG_SHORT;
 			}
 		} else if (last == 'L' || last == 'l') {
 			if (isInt(s, 1)) {
-				return NbtType.LONG;
+				return Tag.TAG_LONG;
 			}
 		} else if (last == 'F' || last == 'f') {
 			if (isFloat(s, 1)) {
-				return NbtType.FLOAT;
+				return Tag.TAG_FLOAT;
 			}
 		} else if (last == 'D' || last == 'd') {
 			if (isFloat(s, 1)) {
-				return NbtType.DOUBLE;
+				return Tag.TAG_DOUBLE;
 			}
 		} else if (isInt(s, 0)) {
-			return NbtType.INT;
+			return Tag.TAG_INT;
 		} else if (isFloat(s, 0)) {
-			return -NbtType.DOUBLE;
+			return -Tag.TAG_DOUBLE;
 		}
 
 		return 0;

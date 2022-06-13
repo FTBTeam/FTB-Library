@@ -4,14 +4,10 @@ import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ConfigFromString;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.icon.Icon;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
-import dev.ftb.mods.ftblibrary.ui.TextBox;
-import dev.ftb.mods.ftblibrary.ui.WidgetType;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 public class EditConfigFromStringScreen<T> extends BaseScreen {
@@ -37,7 +33,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 		var bsize = width / 2 - 10;
 
-		buttonCancel = new SimpleTextButton(this, new TranslatableComponent("gui.cancel"), Icon.EMPTY) {
+		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Icon.EMPTY) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
@@ -52,7 +48,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 		buttonCancel.setPosAndSize(8, height - 24, bsize, 16);
 
-		buttonAccept = new SimpleTextButton(this, new TranslatableComponent("gui.accept"), Icon.EMPTY) {
+		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Icon.EMPTY) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();

@@ -5,7 +5,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 
 /**
@@ -17,7 +17,7 @@ public enum Tristate {
 	DEFAULT("default", "Default", InteractionResult.PASS, Color4I.rgb(0x0094FF), 2, Icons.SETTINGS);
 
 	public static final Tristate[] VALUES = values();
-	public static final NameMap<Tristate> NAME_MAP = NameMap.of(DEFAULT, VALUES).id(v -> v.name).name(v -> new TextComponent(v.displayName)).color(v -> v.color).icon(v -> v.icon).create();
+	public static final NameMap<Tristate> NAME_MAP = NameMap.of(DEFAULT, VALUES).id(v -> v.name).name(v -> Component.literal(v.displayName)).color(v -> v.color).icon(v -> v.icon).create();
 
 	public static Tristate read(CompoundTag nbt, String key) {
 		return nbt.contains(key) ? nbt.getBoolean(key) ? TRUE : FALSE : DEFAULT;

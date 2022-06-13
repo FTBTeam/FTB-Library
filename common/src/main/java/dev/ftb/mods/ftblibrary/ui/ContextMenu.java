@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class ContextMenu extends Panel {
 			if (item.yesNoText.getString().isEmpty()) {
 				item.onClicked(contextMenu, button);
 			} else {
-				getGui().openYesNo(item.yesNoText, new TextComponent(""), () -> item.onClicked(contextMenu, button));
+				getGui().openYesNo(item.yesNoText, Component.literal(""), () -> item.onClicked(contextMenu, button));
 			}
 		}
 	}

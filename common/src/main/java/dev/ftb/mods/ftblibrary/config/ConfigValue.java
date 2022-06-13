@@ -8,7 +8,6 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -18,7 +17,7 @@ import java.util.function.Consumer;
  * @author LatvianModder
  */
 public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
-	public static final TextComponent NULL_TEXT = new TextComponent("null");
+	public static final Component NULL_TEXT = Component.literal("null");
 
 	public ConfigGroup group;
 	public T value;
@@ -67,18 +66,18 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	}
 
 	protected static Component info(String key) {
-		return new TextComponent(key + ":").withStyle(ChatFormatting.AQUA);
+		return Component.literal(key + ":").withStyle(ChatFormatting.AQUA);
 	}
 
 	public static Component info(String key, Object value) {
-		var c = value instanceof Component ? (Component) value : new TextComponent(String.valueOf(value));
-		return new TextComponent("").append((new TextComponent(key + ": ").withStyle(ChatFormatting.AQUA))).append(c);
+		var c = value instanceof Component ? (Component) value : Component.literal(String.valueOf(value));
+		return Component.literal("").append((Component.literal(key + ": ").withStyle(ChatFormatting.AQUA))).append(c);
 	}
 
 	public abstract void onClicked(MouseButton button, ConfigCallback callback);
 
 	public Component getStringForGUI(@Nullable T v) {
-		return new TextComponent(String.valueOf(v));
+		return Component.literal(String.valueOf(v));
 	}
 
 	public String getPath() {

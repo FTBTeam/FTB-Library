@@ -6,6 +6,7 @@ dependencies {
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
 		exclude group: "dev.architectury"
 	}
+
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
 		exclude group: "dev.architectury"
 	}

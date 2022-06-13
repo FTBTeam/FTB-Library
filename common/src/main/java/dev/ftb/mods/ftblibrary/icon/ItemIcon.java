@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -67,7 +67,7 @@ public class ItemIcon extends Icon {
 
 			if (stack.isEmpty()) {
 				stack = new ItemStack(Items.BARRIER);
-				stack.setHoverName(new TextComponent(lazyStackString));
+				stack.setHoverName(Component.literal(lazyStackString));
 			}
 
 			return getItemIcon(stack);

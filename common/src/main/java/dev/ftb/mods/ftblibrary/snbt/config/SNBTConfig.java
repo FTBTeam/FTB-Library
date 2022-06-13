@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.architectury.utils.NbtType;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
@@ -9,6 +8,7 @@ import dev.ftb.mods.ftblibrary.snbt.SNBTNet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.Util;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.IOException;
@@ -66,7 +66,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 			return;
 		}
 
-		if (tag.contains(key, NbtType.COMPOUND)) {
+		if (tag.contains(key, Tag.TAG_COMPOUND)) {
 			var tag1 = tag.getCompound(key);
 
 			for (var value : defaultValue) {

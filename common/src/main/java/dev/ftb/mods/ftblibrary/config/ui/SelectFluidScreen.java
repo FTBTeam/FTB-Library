@@ -13,7 +13,7 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
@@ -26,7 +26,7 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 	private final ConfigCallback callback;
 
 	public SelectFluidScreen(FluidConfig c, ConfigCallback cb) {
-		setTitle(new TranslatableComponent("ftblibrary.select_fluid.gui"));
+		setTitle(Component.translatable("ftblibrary.select_fluid.gui"));
 		setHasSearchBox(true);
 		config = c;
 		callback = cb;

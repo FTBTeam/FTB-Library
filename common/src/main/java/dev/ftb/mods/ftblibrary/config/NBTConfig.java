@@ -4,7 +4,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -13,8 +13,8 @@ import java.util.function.Consumer;
  * @author LatvianModder
  */
 public class NBTConfig extends ConfigFromString<CompoundTag> {
-	public static final TextComponent EMPTY_NBT = new TextComponent("{}");
-	public static final TextComponent NON_EMPTY_NBT = new TextComponent("{...}");
+	public static final Component EMPTY_NBT = Component.literal("{}");
+	public static final Component NON_EMPTY_NBT = Component.literal("{...}");
 
 	@Override
 	public CompoundTag copy(CompoundTag v) {
