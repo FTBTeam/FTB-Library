@@ -16,7 +16,6 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.favorites.FavoriteEntry;
 import me.shedaniel.rei.api.client.favorites.FavoriteEntryType;
-import me.shedaniel.rei.api.client.favorites.SystemFavoriteEntryProvider;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
@@ -69,25 +68,13 @@ public class REIIntegration implements REIClientPlugin {
 	@Override
 	public void registerFavorites(FavoriteEntryType.Registry registry) {
 		registry.register(ID, SidebarButtonType.INSTANCE);
-		registry.registerSystemFavorites(new SystemFavoriteEntryProvider<>() {
-			@Override
-			public List<FavoriteEntry> provide() {
-				List<FavoriteEntry> entries = new ArrayList<>();
-
-				for (var group : SidebarButtonManager.INSTANCE.groups) {
-					for (var button : group.getButtons()) {
-						entries.add(new SidebarButtonEntry(button));
-					}
-				}
-
-				return entries;
+		for (var group : SidebarButtonManager.INSTANCE.groups) {
+			List<SidebarButtonEntry> buttons = CollectionUtils.map(group.getButtons(), SidebarButtonEntry::new);
+			if (!buttons.isEmpty()) {
+				registry.getOrCrateSection(Component.translatable(group.getLangKey()))
+						.add(group.isPinned(), buttons.toArray(new SidebarButtonEntry[0]));
 			}
-
-			@Override
-			public long updateInterval() {
-				return 2000;
-			}
-		});
+		}
 	}
 
 	private enum SidebarButtonType implements FavoriteEntryType<SidebarButtonEntry> {
@@ -112,13 +99,13 @@ public class REIIntegration implements REIClientPlugin {
 			if (args.length == 0) {
 				return DataResult.error("Cannot create SidebarButtonEntry from empty args!");
 			}
-			if (!(args[0] instanceof ResourceLocation)) {
+			if (!(args[0] instanceof ResourceLocation id)) {
 				return DataResult.error("Creation of SidebarButtonEntry from args expected ResourceLocation as the first argument!");
 			}
 			if (!(args[1] instanceof SidebarButton) && !(args[1] instanceof JsonObject)) {
 				return DataResult.error("Creation of SidebarButtonEntry from args expected SidebarButton or JsonObject as the second argument!");
 			}
-			return DataResult.success(new SidebarButtonEntry(args[1] instanceof SidebarButton ? (SidebarButton) args[1] : new SidebarButton((ResourceLocation) args[0], null, (JsonObject) args[1])), Lifecycle.stable());
+			return DataResult.success(new SidebarButtonEntry(args[1] instanceof SidebarButton button ? button : new SidebarButton(id, null, (JsonObject) args[1])), Lifecycle.stable());
 		}
 	}
 
@@ -198,8 +185,8 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public boolean isSame(FavoriteEntry other) {
-			if (other instanceof SidebarButtonEntry) {
-				return ((SidebarButtonEntry) other).button.id.equals(button.id);
+			if (other instanceof SidebarButtonEntry entry) {
+				return entry.button.id.equals(button.id);
 			}
 			return false;
 		}

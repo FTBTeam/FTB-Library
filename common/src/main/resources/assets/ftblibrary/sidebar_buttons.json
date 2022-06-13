@@ -7,7 +7,7 @@
 		],
 		"x": 100,
 		"click": "command:/ftblibrary gamemode",
-		"hide_with_nei": true,
+		"is_utility_button": true,
 		"requires_op": true
 	},
 	"toggle.rain": {
@@ -19,7 +19,7 @@
 		"x": 110,
 		"click": "command:/ftblibrary rain",
 		"config": true,
-		"hide_with_nei": true,
+		"is_utility_button": true,
 		"requires_op": true
 	},
 	"toggle.day": {
@@ -33,7 +33,7 @@
 		"required_server_mods": [
 			"ftblibrary"
 		],
-		"hide_with_nei": true,
+		"is_utility_button": true,
 		"requires_op": true
 	},
 	"toggle.night": {
@@ -47,7 +47,7 @@
 		"required_server_mods": [
 			"ftblibrary"
 		],
-		"hide_with_nei": true,
+		"is_utility_button": true,
 		"requires_op": true
 	}
 }
