@@ -3,7 +3,8 @@
 		"y": 0
 	},
 	"cheat": {
-		"y": 100
+		"y": 100,
+		"pinned": false
 	},
 	"util": {
 		"y": 200

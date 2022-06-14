@@ -60,6 +60,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 		for (var domain : manager.getNamespaces()) {
 			try {
+				// TODO: Use an alternative way to register sidebar groups because jsons are a bit messy
 				for (var resource : manager.getResourceStack((new ResourceLocation(domain, "sidebar_button_groups.json")))) {
 					var json = readJson(resource);
 
@@ -67,20 +68,23 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 						if (entry.getValue().isJsonObject()) {
 							var groupJson = entry.getValue().getAsJsonObject();
 							var y = 0;
+							var pinned = true;
 
 							if (groupJson.has("y")) {
 								y = groupJson.get("y").getAsInt();
 							}
 
-							var group = new SidebarButtonGroup(new ResourceLocation(domain, entry.getKey()), y);
+							if(groupJson.has("pinned")) {
+								pinned = groupJson.get("pinned").getAsBoolean();
+							}
+
+							var group = new SidebarButtonGroup(new ResourceLocation(domain, entry.getKey()), y, pinned);
 							groupMap.put(group.getId(), group);
 						}
 					}
 				}
 			} catch (Exception ex) {
-				if (!(ex instanceof FileNotFoundException)) {
-					ex.printStackTrace();
-				}
+				ex.printStackTrace();
 			}
 		}
 
@@ -126,9 +130,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 					}
 				}
 			} catch (Exception ex) {
-				if (!(ex instanceof FileNotFoundException)) {
-					ex.printStackTrace();
-				}
+				ex.printStackTrace();
 			}
 		}
 
