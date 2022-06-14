@@ -17,6 +17,7 @@ import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.util.ClientUtils;
+import me.shedaniel.rei.api.client.config.ConfigObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -107,8 +108,14 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	}
 
 	public static boolean areButtonsVisible(@Nullable Screen gui) {
-		if (showButtons == 0 || showButtons == 2 && !(gui instanceof EffectRenderingInventoryScreen) || showButtons == 3) {
+		if (showButtons == 0 || showButtons == 2 && !(gui instanceof EffectRenderingInventoryScreen)) {
 			return false;
+		}
+
+		if(showButtons == 3 && Platform.isModLoaded("roughlyenoughitems")) {
+			if(ConfigObject.getInstance().isFavoritesEnabled()) {
+				return false;
+			}
 		}
 
 		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.groups.isEmpty();
