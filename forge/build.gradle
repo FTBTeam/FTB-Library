@@ -47,7 +47,8 @@ dependencies {
 
 	modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-//	modCompileOnly "mezz.jei:jei-1.18:${rootProject.forge_jei_version}"
+//	modCompileOnly "mezz.jei:jei-1.19-forge-api:${rootProject.forge_jei_version}"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-plugin-compatibilities-forge:${rootProject.rei_version}"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 
 	/*modImplementation("dev.ftb.mods:ftb-teams-forge:1605.2.1-build.13") {

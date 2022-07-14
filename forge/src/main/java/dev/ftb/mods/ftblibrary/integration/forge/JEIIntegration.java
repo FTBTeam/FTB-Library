@@ -93,7 +93,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 				return Collections.emptySet();
 			}
 
-			return runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM);
+			return runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK);
 		}
 	};
 
