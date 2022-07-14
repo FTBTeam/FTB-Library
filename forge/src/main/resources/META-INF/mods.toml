@@ -1,13 +1,13 @@
 modLoader = "javafml"
 loaderVersion = "[${forgeshortversion},)"
-issueTrackerURL = "https://github.com/FTBTeam/FTB-Library/issues"
+issueTrackerURL = "https://go.ftb.team/support-mod-issues"
 license = "All Rights Reserved"
 
 [[mods]]
 modId = "ftblibrary"
 version = "${version}"
 displayName = "FTB Library"
-authors = "LatvianModder"
+authors = "FTB Team"
 description = '''
 FTB Library adds nothing.
 '''
