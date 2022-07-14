@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[39,)"
+loaderVersion = "[${forgeshortversion},)"
 issueTrackerURL = "https://github.com/FTBTeam/FTB-Library/issues"
 license = "All Rights Reserved"
 
@@ -15,20 +15,20 @@ FTB Library adds nothing.
 [[dependencies.ftblibrary]]
 modId = "forge"
 mandatory = true
-versionRange = "[39,)"
+versionRange = "[${forgeversion},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.ftblibrary]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19,)"
+versionRange = "[${mcversion},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.ftblibrary]]
 modId = "architectury"
 mandatory = true
-versionRange = "[5.5.16,)"
+versionRange = "[${archversion},)"
 ordering = "AFTER"
 side = "BOTH"
