@@ -47,37 +47,24 @@ dependencies {
 
 	modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-//	modCompileOnly "mezz.jei:jei-1.19-forge-api:${rootProject.forge_jei_version}"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-plugin-compatibilities-forge:${rootProject.rei_version}"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
-
-	/*modImplementation("dev.ftb.mods:ftb-teams-forge:1605.2.1-build.13") {
-		transitive = false
-	}
-	modImplementation("dev.latvian.mods:item-filters-forge:1605.2.5-build.4") {
-		transitive = false
-	}
-	modImplementation("dev.ftb.mods:ftb-quests-forge:1605.3.3-build.49") {
-		transitive = false
-	}*/
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
 }
 
 processResources {
+	exclude '.cache'
+
 	inputs.property "version", project.version
-	inputs.property "archversion", project.architectury_version
-	inputs.property "forgeversion", project.forge_version
-	inputs.property "forgeshortversion", project.forge_version.split("\\.")[0]
-	inputs.property "mcversion", project.minecraft_version
 
 	filesMatching("META-INF/mods.toml") {
-		expand "version": project.version
-		expand "archversion": project.architectury_version
-		expand "forgeversion": project.forge_version
-		expand "forgeshortversion": project.forge_version.split("\\.")[0]
-		expand "mcversion": project.minecraft_version
+		expand "version": project.version,
+				"archversion": project.architectury_version,
+				"forgeversion": project.forge_version,
+				"forgeshortversion": project.forge_version.split("\\.")[0],
+				"mcversion": project.minecraft_version
 	}
 }
 
