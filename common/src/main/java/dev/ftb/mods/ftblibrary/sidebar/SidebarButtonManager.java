@@ -13,6 +13,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
@@ -87,7 +88,9 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 					}
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				if (!(ex instanceof FileNotFoundException)) {
+					ex.printStackTrace();
+				}
 			}
 		}
 
@@ -133,7 +136,9 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 					}
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				if (!(ex instanceof FileNotFoundException)) {
+					ex.printStackTrace();
+				}
 			}
 		}
 
