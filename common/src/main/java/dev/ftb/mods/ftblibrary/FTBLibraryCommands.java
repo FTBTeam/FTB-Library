@@ -220,6 +220,9 @@ public class FTBLibraryCommands {
 		dispatcher.register(command);
 	}
 
+	/**
+	 * @deprecated being moved to FTB Pack Companion in a more usable way.
+	 */
 	private static int generateLootTables(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		CommandSourceStack source = context.getSource();
 
@@ -301,7 +304,7 @@ public class FTBLibraryCommands {
 
 			// If the chest is named and contains a / we'll infer it's output path based on it.
 			Path outputDir = path.resolve("moddata/ftb-library/generated/");
-			String outputFileName = "loot-" + (blockEntity instanceof ChestBlockEntity ? "chest" : "barrel") + "-" + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + ".json";
+			String outputFileName = "loot-" + (blockEntity instanceof ChestBlockEntity ? "chest" : "barrel") + "-" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replaceAll(":|\\.", "_")+ ".json";
 
 			Component customName = chest.getCustomName();
 			if (customName != null && customName.getString().contains("/") && !customName.getString().contains("..")) {
