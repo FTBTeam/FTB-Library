@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import dev.architectury.event.events.client.ClientChatEvent;
-import dev.architectury.impl.ChatProcessorImpl;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import net.minecraft.Util;
@@ -28,14 +26,15 @@ public class ClientUtils {
 	private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
 
 	public static void execClientCommand(String command, boolean printChat) {
-		ChatProcessorImpl processor = new ChatProcessorImpl(command, null);
-		var process = ClientChatEvent.PROCESS.invoker().process(processor);
-		if (process.isFalse()) {
-			command = "";
-		} else {
-			// TODO: validate this still works
-//				command = process.object() != null ? process.object() : command;
-		}
+		// FIXME: find what replaces this...
+//		ChatProcessorImpl processor = new ChatProcessorImpl(command, null);
+//		var process = ClientChatEvent.PROCESS.invoker().process(processor);
+//		if (process.isFalse()) {
+//			command = "";
+//		} else {
+//			// TODO: validate this still works
+////				command = process.object() != null ? process.object() : command;
+//		}
 
 		if (command.isEmpty()) {
 			return;
@@ -45,7 +44,7 @@ public class ClientUtils {
 			Minecraft.getInstance().gui.getChat().addRecentChat(command);
 		}
 
-		Minecraft.getInstance().player.command(command.replace("/", ""));
+		Minecraft.getInstance().player.commandUnsigned(command.replace("/", ""));
 	}
 
 	public static void runLater(final Runnable runnable) {

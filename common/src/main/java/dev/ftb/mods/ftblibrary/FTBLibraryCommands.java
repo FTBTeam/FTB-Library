@@ -9,6 +9,7 @@ import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.Registries;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -61,7 +62,7 @@ public class FTBLibraryCommands {
 		void accept(CompoundTag info, CompoundTag tag) throws CommandSyntaxException;
 	}
 
-	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection type) {
+	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection type) {
 		var command = Commands.literal("ftblibrary")
 				.requires(commandSource -> commandSource.hasPermission(2))
 				.then(Commands.literal("gamemode")
