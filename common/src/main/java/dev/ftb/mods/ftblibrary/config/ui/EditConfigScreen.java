@@ -255,8 +255,8 @@ public class EditConfigScreen extends BaseScreen {
 
 		scroll = new PanelScrollBar(this, configPanel);
 
-		buttonAccept = new SimpleButton(this, new TranslatableComponent("gui.close"), Icons.ACCEPT, (widget, button) -> group.save(true));
-		buttonCancel = new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> group.save(false));
+		buttonAccept = new SimpleButton(this, new TranslatableComponent("gui.close"), Icons.ACCEPT, (widget, button) -> doAccept());
+		buttonCancel = new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> doCancel());
 
 		buttonExpandAll = new SimpleButton(this, new TranslatableComponent("gui.expand_all"), Icons.ADD, (widget, button) ->
 		{
@@ -323,6 +323,29 @@ public class EditConfigScreen extends BaseScreen {
 			buttonExpandAll.setPos(width - 58, 2);
 			buttonCollapseAll.setPos(width - 78, 2);
 		}
+	}
+
+	@Override
+	public boolean keyPressed(Key key) {
+		if (super.keyPressed(key)) return true;
+
+		if (key.escOrInventory() || key.enter()) {
+			if (key.esc()) {
+				doCancel();
+			} else {
+				doAccept();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private void doAccept() {
+		group.save(true);
+	}
+
+	private void doCancel() {
+		group.save(false);
 	}
 
 	@Override

@@ -39,6 +39,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -128,7 +129,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		public ButtonSwitchMode(Panel panel) {
 			super(panel);
-			activeMode = modeIterator.next();
+			if (activeMode == null) activeMode = modeIterator.next();
 		}
 
 		@Override
@@ -332,7 +333,7 @@ public class SelectItemStackScreen extends BaseScreen {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
-				callback.save(false);
+				doCancel();
 			}
 
 			@Override
@@ -347,8 +348,7 @@ public class SelectItemStackScreen extends BaseScreen {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
-				config.setCurrentValue(current);
-				callback.save(true);
+				doAccept();
 			}
 
 			@Override
@@ -417,6 +417,15 @@ public class SelectItemStackScreen extends BaseScreen {
 		updateItemWidgets(Collections.emptyList());
 	}
 
+	private void doCancel() {
+		callback.save(false);
+	}
+
+	private void doAccept() {
+		config.setCurrentValue(current);
+		callback.save(true);
+	}
+
 	private void updateItemWidgets(List<Widget> items) {
 		panelStacks.widgets.clear();
 		panelStacks.addAll(items);
@@ -438,6 +447,21 @@ public class SelectItemStackScreen extends BaseScreen {
 	@Override
 	public void onClosed() {
 		super.onClosed();
+	}
+
+	@Override
+	public boolean keyPressed(Key key) {
+		if (super.keyPressed(key)) return true;
+
+		if (key.escOrInventory() || key.enter()) {
+			if (key.esc()) {
+				doCancel();
+			} else {
+				doAccept();
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override
