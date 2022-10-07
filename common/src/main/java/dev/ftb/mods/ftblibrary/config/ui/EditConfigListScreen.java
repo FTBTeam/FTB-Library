@@ -161,8 +161,8 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		};
 
 		scroll = new PanelScrollBar(this, configPanel);
-		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, (widget, button) -> callback.save(true));
-		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> callback.save(false));
+		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, (widget, button) -> doAccept());
+		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> doCancel());
 	}
 
 	@Override
@@ -186,6 +186,29 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 
 		buttonAccept.setPos(width - 18, 2);
 		buttonCancel.setPos(width - 38, 2);
+	}
+
+	@Override
+	public boolean keyPressed(Key key) {
+		if (super.keyPressed(key)) return true;
+
+		if (key.escOrInventory() || key.enter()) {
+			if (key.esc()) {
+				doCancel();
+			} else {
+				doAccept();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private void doAccept() {
+		callback.save(true);
+	}
+
+	private void doCancel() {
+		callback.save(false);
 	}
 
 	@Override

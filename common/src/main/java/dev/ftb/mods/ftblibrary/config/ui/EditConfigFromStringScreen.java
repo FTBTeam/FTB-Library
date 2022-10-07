@@ -37,7 +37,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
-				callback.save(false);
+				doCancel();
 			}
 
 			@Override
@@ -52,8 +52,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
-				config.setCurrentValue(current);
-				callback.save(true);
+				doAccept();
 			}
 
 			@Override
@@ -101,6 +100,30 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 		textBox.textColor = config.getColor(current);
 		textBox.setCursorPosition(textBox.getText().length());
 		textBox.setFocused(true);
+	}
+
+	@Override
+	public boolean keyPressed(Key key) {
+		if (super.keyPressed(key)) return true;
+
+		if (key.escOrInventory() || key.enter()) {
+			if (key.esc()) {
+				doCancel();
+			} else {
+				doAccept();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private void doAccept() {
+		config.setCurrentValue(current);
+		callback.save(true);
+	}
+
+	private void doCancel() {
+		callback.save(false);
 	}
 
 	@Override
