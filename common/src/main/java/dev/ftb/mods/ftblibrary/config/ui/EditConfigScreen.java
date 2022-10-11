@@ -241,7 +241,7 @@ public class EditConfigScreen extends BaseScreen {
 
 		scroll = new PanelScrollBar(this, configPanel);
 
-		buttonAccept = new SimpleButton(this, Component.translatable("gui.close"), Icons.ACCEPT, (widget, button) -> doAccept());
+		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, (widget, button) -> doAccept());
 		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> doCancel());
 
 		buttonExpandAll = new SimpleButton(this, Component.translatable("gui.expand_all"), Icons.ADD, (widget, button) ->
