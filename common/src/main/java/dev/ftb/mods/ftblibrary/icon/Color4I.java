@@ -202,7 +202,7 @@ public class Color4I extends Icon {
 	}
 
 	public static Color4I hsb(float h, float s, float b) {
-		return rgb(java.awt.Color.HSBtoRGB(h, s, b));
+		return rgb(HSBtoRGB(h, s, b));
 	}
 
 	public static Color4I rgba(int col) {
@@ -391,8 +391,91 @@ public class Color4I extends Icon {
 
 	public Color4I addBrightness(float percent) {
 		var hsb = new float[3];
-		java.awt.Color.RGBtoHSB(redi(), greeni(), bluei(), hsb);
-		return rgb(java.awt.Color.HSBtoRGB(hsb[0], hsb[1], Mth.clamp(hsb[2] + percent, 0F, 1F))).withAlpha(alphai());
+		RGBtoHSB(redi(), greeni(), bluei(), hsb);
+		return rgb(HSBtoRGB(hsb[0], hsb[1], Mth.clamp(hsb[2] + percent, 0F, 1F))).withAlpha(alphai());
+	}
+
+	private static float[] RGBtoHSB(int r, int g, int b, float[] hsbvals) {
+		float hue, saturation, brightness;
+		if (hsbvals == null) {
+			hsbvals = new float[3];
+		}
+		int cmax = (r > g) ? r : g;
+		if (b > cmax) cmax = b;
+		int cmin = (r < g) ? r : g;
+		if (b < cmin) cmin = b;
+
+		brightness = ((float) cmax) / 255.0f;
+		if (cmax != 0)
+			saturation = ((float) (cmax - cmin)) / ((float) cmax);
+		else
+			saturation = 0;
+		if (saturation == 0)
+			hue = 0;
+		else {
+			float redc = ((float) (cmax - r)) / ((float) (cmax - cmin));
+			float greenc = ((float) (cmax - g)) / ((float) (cmax - cmin));
+			float bluec = ((float) (cmax - b)) / ((float) (cmax - cmin));
+			if (r == cmax)
+				hue = bluec - greenc;
+			else if (g == cmax)
+				hue = 2.0f + redc - bluec;
+			else
+				hue = 4.0f + greenc - redc;
+			hue = hue / 6.0f;
+			if (hue < 0)
+				hue = hue + 1.0f;
+		}
+		hsbvals[0] = hue;
+		hsbvals[1] = saturation;
+		hsbvals[2] = brightness;
+		return hsbvals;
+	}
+
+	public static int HSBtoRGB(float hue, float saturation, float brightness) {
+		int r = 0, g = 0, b = 0;
+		if (saturation == 0) {
+			r = g = b = (int) (brightness * 255.0f + 0.5f);
+		} else {
+			float h = (hue - (float)Math.floor(hue)) * 6.0f;
+			float f = h - (float)java.lang.Math.floor(h);
+			float p = brightness * (1.0f - saturation);
+			float q = brightness * (1.0f - saturation * f);
+			float t = brightness * (1.0f - (saturation * (1.0f - f)));
+			switch ((int) h) {
+				case 0:
+					r = (int) (brightness * 255.0f + 0.5f);
+					g = (int) (t * 255.0f + 0.5f);
+					b = (int) (p * 255.0f + 0.5f);
+					break;
+				case 1:
+					r = (int) (q * 255.0f + 0.5f);
+					g = (int) (brightness * 255.0f + 0.5f);
+					b = (int) (p * 255.0f + 0.5f);
+					break;
+				case 2:
+					r = (int) (p * 255.0f + 0.5f);
+					g = (int) (brightness * 255.0f + 0.5f);
+					b = (int) (t * 255.0f + 0.5f);
+					break;
+				case 3:
+					r = (int) (p * 255.0f + 0.5f);
+					g = (int) (q * 255.0f + 0.5f);
+					b = (int) (brightness * 255.0f + 0.5f);
+					break;
+				case 4:
+					r = (int) (t * 255.0f + 0.5f);
+					g = (int) (p * 255.0f + 0.5f);
+					b = (int) (brightness * 255.0f + 0.5f);
+					break;
+				case 5:
+					r = (int) (brightness * 255.0f + 0.5f);
+					g = (int) (p * 255.0f + 0.5f);
+					b = (int) (q * 255.0f + 0.5f);
+					break;
+			}
+		}
+		return 0xff000000 | (r << 16) | (g << 8) | (b << 0);
 	}
 
 	@Override
