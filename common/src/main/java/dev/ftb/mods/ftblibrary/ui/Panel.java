@@ -219,7 +219,7 @@ public abstract class Panel extends Widget {
 		widget.draw(matrixStack, theme, wx, wy, ww, wh);
 
 		if (Theme.renderDebugBoxes) {
-			var col = Color4I.rgb(java.awt.Color.HSBtoRGB((widget.hashCode() & 255) / 255F, 1F, 1F));
+			var col = Color4I.rgb(Color4I.HSBtoRGB((widget.hashCode() & 255) / 255F, 1F, 1F));
 			GuiHelper.drawHollowRect(matrixStack, wx, wy, ww, wh, col.withAlpha(150), false);
 			col.withAlpha(30).draw(matrixStack, wx + 1, wy + 1, ww - 2, wh - 2);
 		}
