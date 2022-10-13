@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.util;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.*;
-import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.architectury.networking.simple.MessageType;
 import dev.architectury.networking.simple.SimpleNetworkManager;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 
 public interface FTBLibraryNet {
 	SimpleNetworkManager NET = SimpleNetworkManager.create(FTBLibrary.MOD_ID);

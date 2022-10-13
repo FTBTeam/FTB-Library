@@ -53,8 +53,8 @@ public class StringConfig extends ConfigFromString<String> {
 	@Override
 	public void addInfo(TooltipList list) {
 		if (value != null && !value.equals(defaultValue)) {
-			list.add(new TranslatableComponent("config.group.value").append(": ").withStyle(ChatFormatting.AQUA)
-					.append(new TextComponent("\"" + value + "\"").withStyle(ChatFormatting.WHITE)));
+			list.add(Component.translatable("config.group.value").append(": ").withStyle(ChatFormatting.AQUA)
+					.append(Component.literal("\"" + value + "\"").withStyle(ChatFormatting.WHITE)));
 		}
 
 		super.addInfo(list);

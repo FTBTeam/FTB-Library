@@ -1,14 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
 import dev.ftb.mods.ftblibrary.config.Tristate;
-import dev.ftb.mods.ftblibrary.snbt.config.BooleanValue;
-import dev.ftb.mods.ftblibrary.snbt.config.DoubleValue;
-import dev.ftb.mods.ftblibrary.snbt.config.EnumValue;
-import dev.ftb.mods.ftblibrary.snbt.config.IntArrayValue;
-import dev.ftb.mods.ftblibrary.snbt.config.IntValue;
-import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
-import dev.ftb.mods.ftblibrary.snbt.config.StringListValue;
-import dev.ftb.mods.ftblibrary.snbt.config.StringValue;
+import dev.ftb.mods.ftblibrary.snbt.config.*;
 import net.minecraft.Util;
 
 import java.nio.file.Paths;

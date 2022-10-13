@@ -1,12 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.FloatTag;
-import net.minecraft.nbt.StreamTagVisitor;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagType;
-import net.minecraft.nbt.TagVisitor;
+import net.minecraft.nbt.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataOutput;

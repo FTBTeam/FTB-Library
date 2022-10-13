@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;

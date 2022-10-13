@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 
