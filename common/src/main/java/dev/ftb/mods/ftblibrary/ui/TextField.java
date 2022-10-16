@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.math.Bits;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 
@@ -128,6 +129,15 @@ public class TextField extends Widget {
 
 				matrixStack.popPose();
 			}
+		}
+	}
+
+	public Style getComponentStyleAt(Theme theme, int x, int y) {
+		int line = (y - getY()) / theme.getFontHeight();
+		if (line >= 0 && line < formattedText.length) {
+			return theme.getFont().getSplitter().componentStyleAtWidth(formattedText[line], x - getX());
+		} else {
+			return null;
 		}
 	}
 }
