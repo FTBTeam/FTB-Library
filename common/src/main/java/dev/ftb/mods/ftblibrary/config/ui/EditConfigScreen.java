@@ -316,11 +316,9 @@ public class EditConfigScreen extends BaseScreen {
 		if (super.keyPressed(key)) return true;
 
 		if (key.escOrInventory() || key.enter()) {
-			if (key.esc()) {
-				doCancel();
-			} else {
-				doAccept();
-			}
+			// technically, Esc should cancel, but it has historically always applied the changes before closing
+			// also it's much too easy to press Esc and lose a bunch of changes
+			doAccept();
 			return true;
 		}
 		return false;
