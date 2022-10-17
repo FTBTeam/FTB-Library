@@ -103,11 +103,11 @@ public class TextField extends Widget {
 		drawBackground(matrixStack, theme, x, y, w, h);
 
 		if (formattedText.length != 0) {
-			var centered = Bits.getFlag(textFlags, 4);
-			var centeredV = Bits.getFlag(textFlags, 32);
+			var centered = Bits.getFlag(textFlags, Theme.CENTERED);
+			var centeredV = Bits.getFlag(textFlags, Theme.CENTERED_V);
 			var col = textColor;
 			if (col.isEmpty()) {
-				col = theme.getContentColor(WidgetType.mouseOver(Bits.getFlag(textFlags, 16)));
+				col = theme.getContentColor(WidgetType.mouseOver(Bits.getFlag(textFlags, Theme.MOUSE_OVER)));
 			}
 
 			var tx = x + (centered ? w / 2 : 0);
@@ -131,12 +131,16 @@ public class TextField extends Widget {
 		}
 	}
 
-	public Style getComponentStyleAt(Theme theme, int x, int y) {
-		int line = (y - getY()) / theme.getFontHeight();
+	public Style getComponentStyleAt(Theme theme, int mouseX, int mouseY) {
+		int line = (mouseY - getY()) / theme.getFontHeight();
 		if (line >= 0 && line < formattedText.length) {
-			return theme.getFont().getSplitter().componentStyleAtWidth(formattedText[line], x - getX());
-		} else {
-			return null;
+			boolean centered = Bits.getFlag(textFlags, Theme.CENTERED);
+			int textWidth = theme.getFont().width(formattedText[line]);
+			int xStart = centered ? getX() + (width - textWidth) / 2: getX();
+			if (mouseX >= xStart && mouseX <= xStart + textWidth) {
+				return theme.getFont().getSplitter().componentStyleAtWidth(formattedText[line], mouseX - xStart);
+			}
 		}
+		return null;
 	}
 }
