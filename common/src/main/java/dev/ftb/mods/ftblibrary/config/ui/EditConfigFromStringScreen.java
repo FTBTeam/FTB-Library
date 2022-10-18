@@ -102,21 +102,6 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 		textBox.setFocused(true);
 	}
 
-	@Override
-	public boolean keyPressed(Key key) {
-		if (super.keyPressed(key)) return true;
-
-		if (key.escOrInventory() || key.enter()) {
-			if (key.esc()) {
-				doCancel();
-			} else {
-				doAccept();
-			}
-			return true;
-		}
-		return false;
-	}
-
 	private void doAccept() {
 		config.setCurrentValue(current);
 		callback.save(true);
@@ -131,7 +116,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 		if (super.onClosedByKey(key)) {
 			config.setCurrentValue(current);
 			callback.save(true);
-			return false;
+			return true;
 		}
 
 		return false;

@@ -432,25 +432,10 @@ public class SelectItemStackScreen extends BaseScreen {
 	}
 
 	@Override
-	public boolean keyPressed(Key key) {
-		if (super.keyPressed(key)) return true;
-
-		if (key.escOrInventory() || key.enter()) {
-			if (key.esc()) {
-				doCancel();
-			} else {
-				doAccept();
-			}
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			callback.save(false);
-			return false;
+			return true;
 		}
 
 		return false;
