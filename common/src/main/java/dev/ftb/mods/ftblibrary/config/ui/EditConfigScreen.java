@@ -190,6 +190,7 @@ public class EditConfigScreen extends BaseScreen {
 	private final Button buttonAccept, buttonCancel, buttonCollapseAll, buttonExpandAll;
 	private final PanelScrollBar scroll;
 	private int groupSize = 0;
+	private boolean autoclose = false;
 
 	public EditConfigScreen(ConfigGroup g) {
 		group = g;
@@ -311,32 +312,30 @@ public class EditConfigScreen extends BaseScreen {
 		}
 	}
 
-	@Override
-	public boolean keyPressed(Key key) {
-		if (super.keyPressed(key)) return true;
-
-		if (key.escOrInventory() || key.enter()) {
-			// technically, Esc should cancel, but it has historically always applied the changes before closing
-			// also it's much too easy to press Esc and lose a bunch of changes
-			doAccept();
-			return true;
-		}
-		return false;
+	/**
+	 * Set auto-close behaviour when Accept or Cancel buttons are clicked
+	 * @param autoclose true to close the config screen, false if the config group's save callback should handle it
+	 */
+	public EditConfigScreen setAutoclose(boolean autoclose) {
+		this.autoclose = autoclose;
+		return this;
 	}
 
 	private void doAccept() {
 		group.save(true);
+		if (autoclose) closeGui();
 	}
 
 	private void doCancel() {
 		group.save(false);
+		if (autoclose) closeGui();
 	}
 
 	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			group.save(true);
-			return false;
+			return true;
 		}
 
 		return false;

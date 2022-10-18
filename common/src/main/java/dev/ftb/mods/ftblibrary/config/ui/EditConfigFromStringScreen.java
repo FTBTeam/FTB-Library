@@ -4,11 +4,7 @@ import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ConfigFromString;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.icon.Icon;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
-import dev.ftb.mods.ftblibrary.ui.TextBox;
-import dev.ftb.mods.ftblibrary.ui.WidgetType;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -106,21 +102,6 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 		textBox.setFocused(true);
 	}
 
-	@Override
-	public boolean keyPressed(Key key) {
-		if (super.keyPressed(key)) return true;
-
-		if (key.escOrInventory() || key.enter()) {
-			if (key.esc()) {
-				doCancel();
-			} else {
-				doAccept();
-			}
-			return true;
-		}
-		return false;
-	}
-
 	private void doAccept() {
 		config.setCurrentValue(current);
 		callback.save(true);
@@ -135,7 +116,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 		if (super.onClosedByKey(key)) {
 			config.setCurrentValue(current);
 			callback.save(true);
-			return false;
+			return true;
 		}
 
 		return false;

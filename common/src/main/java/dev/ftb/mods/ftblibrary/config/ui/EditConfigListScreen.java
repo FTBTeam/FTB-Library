@@ -7,13 +7,7 @@ import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.config.ListConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.SimpleButton;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -196,21 +190,6 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		buttonCancel.setPos(width - 38, 2);
 	}
 
-	@Override
-	public boolean keyPressed(Key key) {
-		if (super.keyPressed(key)) return true;
-
-		if (key.escOrInventory() || key.enter()) {
-			if (key.esc()) {
-				doCancel();
-			} else {
-				doAccept();
-			}
-			return true;
-		}
-		return false;
-	}
-
 	private void doAccept() {
 		callback.save(true);
 	}
@@ -223,6 +202,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			buttonCancel.onClicked(MouseButton.LEFT);
+			return true;
 		}
 
 		return false;
