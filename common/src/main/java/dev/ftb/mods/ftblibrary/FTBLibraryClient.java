@@ -16,6 +16,7 @@ import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.ui.misc.SelectImageScreen;
 import dev.ftb.mods.ftblibrary.util.ClientUtils;
 import me.shedaniel.rei.api.client.config.ConfigObject;
 import net.minecraft.client.Minecraft;
@@ -61,6 +62,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		ClientTickEvent.CLIENT_POST.register(this::clientTick);
 
 		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
+		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageScreen.ResourceListener.INSTANCE);
 	}
 
 	private void textureStitch(TextureAtlas atlas, Consumer<ResourceLocation> addSprite) {
