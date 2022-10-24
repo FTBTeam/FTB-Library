@@ -6,7 +6,6 @@ import dev.ftb.mods.ftblibrary.config.ImageConfig;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.Theme;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class SelectImagePreScreen extends BaseScreen {
     private final ImageConfig i;
@@ -33,7 +32,7 @@ public class SelectImagePreScreen extends BaseScreen {
 
     @Override
     public void drawForeground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-        Component txt = new TranslatableComponent("ftblibrary.select_image.scanning");
+        Component txt = Component.translatable("ftblibrary.select_image.scanning");
         int width = theme.getFont().width(txt);
         theme.getFont().draw(matrixStack, txt, (getScreen().getGuiScaledWidth() - width) / 2f, (getScreen().getGuiScaledHeight() - theme.getFontHeight()) / 2f, 0xFFFFFFFF);
     }

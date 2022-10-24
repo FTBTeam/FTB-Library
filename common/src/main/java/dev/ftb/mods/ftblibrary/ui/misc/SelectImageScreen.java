@@ -14,6 +14,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,27 +45,27 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 			List<ResourceLocation> images = new ArrayList<>();
 
 			StringUtils.ignoreResourceLocationErrors = true;
-			Collection<ResourceLocation> textures = Collections.emptyList();
+			Map<ResourceLocation,Resource> textures = Collections.emptyMap();
 
 			try {
-				textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.endsWith(".png"));
+				textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.getPath().endsWith(".png"));
 			} catch (Exception ex) {
 				FTBLibrary.LOGGER.error("A mod has broken resource preventing this list from loading: " + ex);
 			}
 
 			StringUtils.ignoreResourceLocationErrors = false;
 
-			for (var rl : textures) {
+			textures.keySet().forEach(rl -> {
 				if (!ResourceLocation.isValidResourceLocation(rl.toString())) {
 					FTBLibrary.LOGGER.warn("Image " + rl + " has invalid path! Report this to author of '" + rl.getNamespace() + "'!");
 				} else if (isValidImage(rl)) {
 					images.add(rl);
 				}
-			}
+			});
 
 			cachedImages = images.stream().sorted().map(res -> new ImageDetails(res,
-					new TextComponent(res.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
-							.append(new TextComponent(res.getPath().substring(9, res.getPath().length() - 4)).withStyle(ChatFormatting.YELLOW)),
+					Component.literal(res.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
+							.append(Component.literal(res.getPath().substring(9, res.getPath().length() - 4)).withStyle(ChatFormatting.YELLOW)),
 					Icon.getIcon(res.toString())
 			)).toList();
 		}
