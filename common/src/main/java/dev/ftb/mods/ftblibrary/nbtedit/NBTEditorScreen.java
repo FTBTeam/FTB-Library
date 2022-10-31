@@ -1,28 +1,13 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.architectury.utils.NbtType;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.config.ConfigValue;
-import dev.ftb.mods.ftblibrary.config.DoubleConfig;
-import dev.ftb.mods.ftblibrary.config.IntConfig;
-import dev.ftb.mods.ftblibrary.config.LongConfig;
-import dev.ftb.mods.ftblibrary.config.StringConfig;
+import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigFromStringScreen;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
-import dev.ftb.mods.ftblibrary.icon.Color4I;
-import dev.ftb.mods.ftblibrary.icon.Icon;
-import dev.ftb.mods.ftblibrary.icon.IconWithBorder;
-import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.icon.ItemIcon;
+import dev.ftb.mods.ftblibrary.icon.*;
 import dev.ftb.mods.ftblibrary.net.EditNBTResponsePacket;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.SimpleButton;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
@@ -30,19 +15,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.FloatTag;
-import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.LongTag;
-import net.minecraft.nbt.NumericTag;
-import net.minecraft.nbt.ShortTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -130,13 +103,13 @@ public class NBTEditorScreen extends BaseScreen {
 			nbt = n;
 
 			switch (nbt.getId()) {
-				case NbtType.BYTE -> setIcon(NBT_BYTE);
-				case NbtType.SHORT -> setIcon(NBT_SHORT);
-				case NbtType.INT -> setIcon(NBT_INT);
-				case NbtType.LONG -> setIcon(NBT_LONG);
-				case NbtType.FLOAT -> setIcon(NBT_FLOAT);
-				case NbtType.DOUBLE, NbtType.NUMBER -> setIcon(NBT_DOUBLE);
-				case NbtType.STRING -> setIcon(NBT_STRING);
+				case Tag.TAG_BYTE -> setIcon(NBT_BYTE);
+				case Tag.TAG_SHORT -> setIcon(NBT_SHORT);
+				case Tag.TAG_INT -> setIcon(NBT_INT);
+				case Tag.TAG_LONG -> setIcon(NBT_LONG);
+				case Tag.TAG_FLOAT -> setIcon(NBT_FLOAT);
+				case Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> setIcon(NBT_DOUBLE);
+				case Tag.TAG_STRING -> setIcon(NBT_STRING);
 			}
 
 			parent.setTag(key, nbt);
@@ -145,10 +118,10 @@ public class NBTEditorScreen extends BaseScreen {
 
 		public void updateTitle() {
 			Object title = switch (nbt.getId()) {
-				case NbtType.BYTE, NbtType.SHORT, NbtType.INT -> ((NumericTag) nbt).getAsInt();
-				case NbtType.LONG -> ((NumericTag) nbt).getAsLong();
-				case NbtType.FLOAT, NbtType.DOUBLE, NbtType.NUMBER -> ((NumericTag) nbt).getAsDouble();
-				case NbtType.STRING -> nbt.getAsString();
+				case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT -> ((NumericTag) nbt).getAsInt();
+				case Tag.TAG_LONG -> ((NumericTag) nbt).getAsLong();
+				case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> ((NumericTag) nbt).getAsDouble();
+				case Tag.TAG_STRING -> nbt.getAsString();
 				default -> "";
 			};
 
@@ -178,19 +151,19 @@ public class NBTEditorScreen extends BaseScreen {
 
 		public void edit() {
 			switch (nbt.getId()) {
-				case NbtType.BYTE, NbtType.SHORT, NbtType.INT -> {
+				case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT -> {
 					var intConfig = new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE);
 					EditConfigFromStringScreen.open(intConfig, ((NumericTag) nbt).getAsInt(), 0, accepted -> onCallback(intConfig, accepted));
 				}
-				case NbtType.LONG -> {
+				case Tag.TAG_LONG -> {
 					var longConfig = new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE);
 					EditConfigFromStringScreen.open(longConfig, ((NumericTag) nbt).getAsLong(), 0L, accepted -> onCallback(longConfig, accepted));
 				}
-				case NbtType.FLOAT, NbtType.DOUBLE, NbtType.NUMBER -> {
+				case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> {
 					var doubleConfig = new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 					EditConfigFromStringScreen.open(doubleConfig, ((NumericTag) nbt).getAsDouble(), 0D, accepted -> onCallback(doubleConfig, accepted));
 				}
-				case NbtType.STRING -> {
+				case Tag.TAG_STRING -> {
 					var stringConfig = new StringConfig();
 					EditConfigFromStringScreen.open(stringConfig, nbt.getAsString(), "", accepted -> onCallback(stringConfig, accepted));
 				}
@@ -200,10 +173,10 @@ public class NBTEditorScreen extends BaseScreen {
 		public void onCallback(ConfigValue<?> value, boolean set) {
 			if (set) {
 				switch (nbt.getId()) {
-					case NbtType.BYTE, NbtType.SHORT, NbtType.INT -> nbt = IntTag.valueOf(((Number) value.value).intValue());
-					case NbtType.LONG -> nbt = LongTag.valueOf(((Number) value.value).longValue());
-					case NbtType.FLOAT, NbtType.DOUBLE, NbtType.NUMBER -> nbt = DoubleTag.valueOf(((Number) value.value).doubleValue());
-					case NbtType.STRING -> nbt = StringTag.valueOf(value.value.toString());
+					case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT -> nbt = IntTag.valueOf(((Number) value.value).intValue());
+					case Tag.TAG_LONG -> nbt = LongTag.valueOf(((Number) value.value).longValue());
+					case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> nbt = DoubleTag.valueOf(((Number) value.value).doubleValue());
+					case Tag.TAG_STRING -> nbt = StringTag.valueOf(value.value.toString());
 				}
 
 				parent.setTag(key, nbt);
@@ -318,7 +291,7 @@ public class NBTEditorScreen extends BaseScreen {
 		private void updateHoverIcon() {
 			hoverIcon = Icon.EMPTY;
 
-			if (map.contains("id", NbtType.STRING) && map.contains("Count", NbtType.NUMBER)) {
+			if (map.contains("id", Tag.TAG_STRING) && map.contains("Count", Tag.TAG_ANY_NUMERIC)) {
 				var stack = ItemStack.of(map);
 
 				if (!stack.isEmpty()) {
@@ -332,7 +305,7 @@ public class NBTEditorScreen extends BaseScreen {
 		@Override
 		public void addMouseOverText(TooltipList list) {
 			if (this == buttonNBTRoot) {
-				var infoList = info.getList("text", NbtType.STRING);
+				var infoList = info.getList("text", Tag.TAG_STRING);
 
 				if (infoList.size() > 0) {
 					list.add(new TranslatableComponent("gui.info").append(":"));
@@ -394,7 +367,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 			if (this == buttonNBTRoot) {
 				var infoList1 = new ListTag();
-				var infoList0 = info.getList("text", NbtType.STRING);
+				var infoList0 = info.getList("text", Tag.TAG_STRING);
 
 				if (infoList0.size() > 0) {
 					for (var i = 0; i < infoList0.size(); i++) {
@@ -514,7 +487,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public boolean canCreateNew(int id) {
-			return id == NbtType.BYTE;
+			return id == Tag.TAG_BYTE;
 		}
 
 		@Override
@@ -570,7 +543,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 		@Override
 		public boolean canCreateNew(int id) {
-			return id == NbtType.INT;
+			return id == Tag.TAG_INT;
 		}
 
 		@Override
@@ -585,10 +558,10 @@ public class NBTEditorScreen extends BaseScreen {
 		var nbt = b.getTag(key);
 
 		return switch (nbt.getId()) {
-			case NbtType.COMPOUND -> new ButtonNBTMap(panelNbt, b, key, (CompoundTag) nbt);
-			case NbtType.LIST -> new ButtonNBTList(panelNbt, b, key, (ListTag) nbt);
-			case NbtType.BYTE_ARRAY -> new ButtonNBTByteArray(panelNbt, b, key, (ByteArrayTag) nbt);
-			case NbtType.INT_ARRAY -> new ButtonNBTIntArray(panelNbt, b, key, (IntArrayTag) nbt);
+			case Tag.TAG_COMPOUND -> new ButtonNBTMap(panelNbt, b, key, (CompoundTag) nbt);
+			case Tag.TAG_LIST -> new ButtonNBTList(panelNbt, b, key, (ListTag) nbt);
+			case Tag.TAG_BYTE_ARRAY -> new ButtonNBTByteArray(panelNbt, b, key, (ByteArrayTag) nbt);
+			case Tag.TAG_INT_ARRAY -> new ButtonNBTIntArray(panelNbt, b, key, (IntArrayTag) nbt);
 			default -> new ButtonBasicTag(panelNbt, b, key, nbt);
 		};
 	}
@@ -668,47 +641,47 @@ public class NBTEditorScreen extends BaseScreen {
 					add(new SimpleButton(this, new TranslatableComponent("selectServer.edit"), Icons.FEATHER, (widget, button) -> ((ButtonBasicTag) selected).edit()));
 				}
 
-				if (selected.canCreateNew(NbtType.COMPOUND)) {
+				if (selected.canCreateNew(Tag.TAG_COMPOUND)) {
 					add(newTag(this, "Compound", NBT_MAP, CompoundTag::new));
 				}
 
-				if (selected.canCreateNew(NbtType.LIST)) {
+				if (selected.canCreateNew(Tag.TAG_LIST)) {
 					add(newTag(this, "List", NBT_LIST, ListTag::new));
 				}
 
-				if (selected.canCreateNew(NbtType.STRING)) {
+				if (selected.canCreateNew(Tag.TAG_STRING)) {
 					add(newTag(this, "String", NBT_STRING, () -> StringTag.valueOf("")));
 				}
 
-				if (selected.canCreateNew(NbtType.BYTE)) {
+				if (selected.canCreateNew(Tag.TAG_BYTE)) {
 					add(newTag(this, "Byte", NBT_BYTE, () -> ByteTag.valueOf((byte) 0)));
 				}
 
-				if (selected.canCreateNew(NbtType.SHORT)) {
+				if (selected.canCreateNew(Tag.TAG_SHORT)) {
 					add(newTag(this, "Short", NBT_SHORT, () -> ShortTag.valueOf((short) 0)));
 				}
 
-				if (selected.canCreateNew(NbtType.INT)) {
+				if (selected.canCreateNew(Tag.TAG_INT)) {
 					add(newTag(this, "Int", NBT_INT, () -> IntTag.valueOf(0)));
 				}
 
-				if (selected.canCreateNew(NbtType.LONG)) {
+				if (selected.canCreateNew(Tag.TAG_LONG)) {
 					add(newTag(this, "Long", NBT_LONG, () -> LongTag.valueOf(0L)));
 				}
 
-				if (selected.canCreateNew(NbtType.FLOAT)) {
+				if (selected.canCreateNew(Tag.TAG_FLOAT)) {
 					add(newTag(this, "Float", NBT_FLOAT, () -> FloatTag.valueOf(0F)));
 				}
 
-				if (selected.canCreateNew(NbtType.DOUBLE)) {
+				if (selected.canCreateNew(Tag.TAG_DOUBLE)) {
 					add(newTag(this, "Double", NBT_DOUBLE, () -> DoubleTag.valueOf(0D)));
 				}
 
-				if (selected.canCreateNew(NbtType.BYTE_ARRAY)) {
+				if (selected.canCreateNew(Tag.TAG_BYTE_ARRAY)) {
 					add(newTag(this, "Byte Array", NBT_BYTE_ARRAY, () -> new ByteArrayTag(new byte[0])));
 				}
 
-				if (selected.canCreateNew(NbtType.INT_ARRAY)) {
+				if (selected.canCreateNew(Tag.TAG_INT_ARRAY)) {
 					add(newTag(this, "Int Array", NBT_INT_ARRAY, () -> new IntArrayTag(new int[0])));
 				}
 			}

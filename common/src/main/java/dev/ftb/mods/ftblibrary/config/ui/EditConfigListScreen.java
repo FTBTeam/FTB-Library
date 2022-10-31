@@ -7,13 +7,7 @@ import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.config.ListConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.SimpleButton;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -169,8 +163,8 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		};
 
 		scroll = new PanelScrollBar(this, configPanel);
-		buttonAccept = new SimpleButton(this, new TranslatableComponent("gui.accept"), Icons.ACCEPT, (widget, button) -> callback.save(true));
-		buttonCancel = new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> callback.save(false));
+		buttonAccept = new SimpleButton(this, new TranslatableComponent("gui.accept"), Icons.ACCEPT, (widget, button) -> doAccept());
+		buttonCancel = new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> doCancel());
 	}
 
 	@Override
@@ -196,10 +190,19 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		buttonCancel.setPos(width - 38, 2);
 	}
 
+	private void doAccept() {
+		callback.save(true);
+	}
+
+	private void doCancel() {
+		callback.save(false);
+	}
+
 	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			buttonCancel.onClicked(MouseButton.LEFT);
+			return true;
 		}
 
 		return false;

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.ui.misc.SelectImageScreen;
+import dev.ftb.mods.ftblibrary.ui.misc.SelectImagePreScreen;
 
 /**
  * @author LatvianModder
@@ -13,6 +13,6 @@ public class ImageConfig extends StringConfig {
 
 	@Override
 	public void onClicked(MouseButton button, ConfigCallback callback) {
-		new SelectImageScreen(this, callback).openGui();
+		new SelectImagePreScreen(this, callback).openGui();
 	}
 }

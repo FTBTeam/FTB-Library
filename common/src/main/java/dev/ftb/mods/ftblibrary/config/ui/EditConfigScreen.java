@@ -7,27 +7,13 @@ import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.math.Bits;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.SimpleButton;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.Widget;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
-import dev.ftb.mods.ftblibrary.ui.WidgetType;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -204,6 +190,7 @@ public class EditConfigScreen extends BaseScreen {
 	private final Button buttonAccept, buttonCancel, buttonCollapseAll, buttonExpandAll;
 	private final PanelScrollBar scroll;
 	private int groupSize = 0;
+	private boolean autoclose = false;
 
 	public EditConfigScreen(ConfigGroup g) {
 		group = g;
@@ -255,8 +242,8 @@ public class EditConfigScreen extends BaseScreen {
 
 		scroll = new PanelScrollBar(this, configPanel);
 
-		buttonAccept = new SimpleButton(this, new TranslatableComponent("gui.close"), Icons.ACCEPT, (widget, button) -> group.save(true));
-		buttonCancel = new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> group.save(false));
+		buttonAccept = new SimpleButton(this, new TranslatableComponent("gui.accept"), Icons.ACCEPT, (widget, button) -> doAccept());
+		buttonCancel = new SimpleButton(this, new TranslatableComponent("gui.cancel"), Icons.CANCEL, (widget, button) -> doCancel());
 
 		buttonExpandAll = new SimpleButton(this, new TranslatableComponent("gui.expand_all"), Icons.ADD, (widget, button) ->
 		{
@@ -325,11 +312,30 @@ public class EditConfigScreen extends BaseScreen {
 		}
 	}
 
+	/**
+	 * Set auto-close behaviour when Accept or Cancel buttons are clicked
+	 * @param autoclose true to close the config screen, false if the config group's save callback should handle it
+	 */
+	public EditConfigScreen setAutoclose(boolean autoclose) {
+		this.autoclose = autoclose;
+		return this;
+	}
+
+	private void doAccept() {
+		group.save(true);
+		if (autoclose) closeGui();
+	}
+
+	private void doCancel() {
+		group.save(false);
+		if (autoclose) closeGui();
+	}
+
 	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			group.save(true);
-			return false;
+			return true;
 		}
 
 		return false;

@@ -86,6 +86,10 @@ public class TextBox extends Widget {
 		setSelectionPos(cursorPosition);
 	}
 
+	public int getCursorPosition() {
+		return cursorPosition;
+	}
+
 	public void moveCursorBy(int num) {
 		setCursorPosition(selectionEnd + num);
 	}
@@ -251,7 +255,11 @@ public class TextBox extends Widget {
 					var i = getMouseX() - getX();
 					var theme = getGui().getTheme();
 					var s = theme.trimStringToWidth(text.substring(lineScrollOffset), width);
-					setCursorPosition(theme.trimStringToWidth(s, i).length() + lineScrollOffset);
+					if (isShiftKeyDown()) {
+						setSelectionPos(theme.trimStringToWidth(s, i).length() + lineScrollOffset);
+					} else {
+						setCursorPosition(theme.trimStringToWidth(s, i).length() + lineScrollOffset);
+					}
 				}
 			} else if (button.isRight() && getText().length() > 0 && allowInput()) {
 				setText("");

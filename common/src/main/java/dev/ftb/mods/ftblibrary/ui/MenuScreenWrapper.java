@@ -83,7 +83,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 			if (key.backspace()) {
 				wrappedGui.onBack();
 			} else if (wrappedGui.onClosedByKey(key)) {
-				wrappedGui.closeGui(false);
+				wrappedGui.closeGui(true);
 			}
 
 			return super.keyPressed(keyCode, scanCode, modifiers);

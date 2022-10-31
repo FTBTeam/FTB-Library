@@ -13,18 +13,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
-import dev.ftb.mods.ftblibrary.ui.BaseScreen;
-import dev.ftb.mods.ftblibrary.ui.BlankPanel;
-import dev.ftb.mods.ftblibrary.ui.Button;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.PanelScrollBar;
-import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
-import dev.ftb.mods.ftblibrary.ui.TextBox;
-import dev.ftb.mods.ftblibrary.ui.Theme;
-import dev.ftb.mods.ftblibrary.ui.Widget;
-import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
-import dev.ftb.mods.ftblibrary.ui.WidgetType;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -40,11 +29,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -128,7 +113,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		public ButtonSwitchMode(Panel panel) {
 			super(panel);
-			activeMode = modeIterator.next();
+			if (activeMode == null) activeMode = modeIterator.next();
 		}
 
 		@Override
@@ -332,7 +317,7 @@ public class SelectItemStackScreen extends BaseScreen {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
-				callback.save(false);
+				doCancel();
 			}
 
 			@Override
@@ -347,8 +332,7 @@ public class SelectItemStackScreen extends BaseScreen {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
-				config.setCurrentValue(current);
-				callback.save(true);
+				doAccept();
 			}
 
 			@Override
@@ -417,6 +401,15 @@ public class SelectItemStackScreen extends BaseScreen {
 		updateItemWidgets(Collections.emptyList());
 	}
 
+	private void doCancel() {
+		callback.save(false);
+	}
+
+	private void doAccept() {
+		config.setCurrentValue(current);
+		callback.save(true);
+	}
+
 	private void updateItemWidgets(List<Widget> items) {
 		panelStacks.widgets.clear();
 		panelStacks.addAll(items);
@@ -444,7 +437,7 @@ public class SelectItemStackScreen extends BaseScreen {
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			callback.save(false);
-			return false;
+			return true;
 		}
 
 		return false;
