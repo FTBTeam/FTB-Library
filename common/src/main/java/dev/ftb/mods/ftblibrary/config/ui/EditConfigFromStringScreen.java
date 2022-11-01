@@ -10,7 +10,6 @@ import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.Nullable;
 
 public class EditConfigFromStringScreen<T> extends BaseScreen {
@@ -21,7 +20,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 		new EditConfigFromStringScreen<>(type, callback).setTitle(title).openGui();
 	}
 	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, ConfigCallback callback) {
-		open(type, value, defaultValue, TextComponent.EMPTY, callback);
+		open(type, value, defaultValue, Component.empty(), callback);
 	}
 
 	private final ConfigFromString<T> config;
@@ -31,7 +30,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 	private final Button buttonCancel, buttonAccept;
 	private final TextBox textBox;
 
-	private Component title = TextComponent.EMPTY;
+	private Component title = Component.empty();
 
 	public EditConfigFromStringScreen(ConfigFromString<T> c, ConfigCallback cb) {
 		setSize(230, 54);
@@ -114,7 +113,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 	public void drawForeground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 		super.drawForeground(matrixStack, theme, x, y, w, h);
 
-		if (title != TextComponent.EMPTY) {
+		if (!title.equals(Component.empty())) {
 			theme.drawString(matrixStack, title, getX() + (width / 2f), getY() - theme.getFontHeight() - 2, Color4I.WHITE, Theme.CENTERED);
 		}
 	}
