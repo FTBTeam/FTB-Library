@@ -20,11 +20,11 @@ import java.util.function.Supplier;
 
 public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	public static SNBTConfig create(String name) {
-		return new SNBTConfig(null, name);
+		return new SNBTConfig(null, name, new ArrayList<>());
 	}
 
-	private SNBTConfig(SNBTConfig c, String n) {
-		super(c, n, new ArrayList<>());
+	private SNBTConfig(SNBTConfig c, String n, List<BaseValue<?>> defaultValue) {
+		super(c, n, defaultValue);
 	}
 
 	@Override
@@ -155,7 +155,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	}
 
 	public SNBTConfig getGroup(String key) {
-		return add(new SNBTConfig(this, key));
+		return add(new SNBTConfig(this, key, new ArrayList<>()));
 	}
 
 	public BooleanValue getBoolean(String key, boolean def) {
