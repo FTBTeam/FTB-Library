@@ -1,8 +1,10 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ConfigFromString;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -11,11 +13,14 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 public class EditConfigFromStringScreen<T> extends BaseScreen {
-	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, ConfigCallback callback) {
+	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, Component title, ConfigCallback callback) {
 		var group = new ConfigGroup("group");
 		group.add("value", type, value, e -> {
 		}, defaultValue);
-		new EditConfigFromStringScreen<>(type, callback).openGui();
+		new EditConfigFromStringScreen<>(type, callback).setTitle(title).openGui();
+	}
+	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, ConfigCallback callback) {
+		open(type, value, defaultValue, Component.empty(), callback);
 	}
 
 	private final ConfigFromString<T> config;
@@ -24,6 +29,8 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 	private final Button buttonCancel, buttonAccept;
 	private final TextBox textBox;
+
+	private Component title = Component.empty();
 
 	public EditConfigFromStringScreen(ConfigFromString<T> c, ConfigCallback cb) {
 		setSize(230, 54);
@@ -37,7 +44,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
-				callback.save(false);
+				doCancel();
 			}
 
 			@Override
@@ -52,8 +59,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
-				config.setCurrentValue(current);
-				callback.save(true);
+				doAccept();
 			}
 
 			@Override
@@ -104,11 +110,34 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 	}
 
 	@Override
+	public void drawForeground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+		super.drawForeground(matrixStack, theme, x, y, w, h);
+
+		if (!title.equals(Component.empty())) {
+			theme.drawString(matrixStack, title, getX() + (width / 2f), getY() - theme.getFontHeight() - 2, Color4I.WHITE, Theme.CENTERED);
+		}
+	}
+
+	public EditConfigFromStringScreen<T> setTitle(Component title) {
+		this.title = title;
+		return this;
+	}
+
+	private void doAccept() {
+		config.setCurrentValue(current);
+		callback.save(true);
+	}
+
+	private void doCancel() {
+		callback.save(false);
+	}
+
+	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			config.setCurrentValue(current);
 			callback.save(true);
-			return false;
+			return true;
 		}
 
 		return false;

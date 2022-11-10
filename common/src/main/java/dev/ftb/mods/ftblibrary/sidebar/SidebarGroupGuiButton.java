@@ -79,8 +79,13 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			}
 		}
 
-		x -= 2;
-		y -= 2;
+		// Important: JEI doesn't like negative X/Y values and will silently clamp them,
+		// leading it to think the values have changed every frame, and do unnecessary updating
+		// of its GUI areas, including resetting the filter textfield's selection
+		// https://github.com/FTBTeam/FTB-Mods-Issues/issues/262
+		// https://github.com/mezz/JustEnoughItems/issues/2938
+		x = Math.max(0, x - 2);
+		y = Math.max(0, y - 2);
 		maxX += 2;
 		maxY += 2;
 

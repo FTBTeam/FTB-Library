@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigFromStringScreen;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;

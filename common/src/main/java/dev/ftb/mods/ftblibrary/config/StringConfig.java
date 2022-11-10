@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,6 +52,11 @@ public class StringConfig extends ConfigFromString<String> {
 
 	@Override
 	public void addInfo(TooltipList list) {
+		if (value != null && !value.equals(defaultValue)) {
+			list.add(Component.translatable("config.group.value").append(": ").withStyle(ChatFormatting.AQUA)
+					.append(Component.literal("\"" + value + "\"").withStyle(ChatFormatting.WHITE)));
+		}
+
 		super.addInfo(list);
 
 		if (pattern != null) {

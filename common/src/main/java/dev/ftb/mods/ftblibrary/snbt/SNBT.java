@@ -2,14 +2,7 @@ package dev.ftb.mods.ftblibrary.snbt;
 
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.CollectionTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.EndTag;
-import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.LongArrayTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;

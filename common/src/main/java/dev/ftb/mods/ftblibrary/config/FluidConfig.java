@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.config;
 
+import dev.architectury.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.config.ui.SelectFluidScreen;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.architectury.fluid.FluidStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;

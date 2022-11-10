@@ -190,6 +190,7 @@ public class EditConfigScreen extends BaseScreen {
 	private final Button buttonAccept, buttonCancel, buttonCollapseAll, buttonExpandAll;
 	private final PanelScrollBar scroll;
 	private int groupSize = 0;
+	private boolean autoclose = false;
 
 	public EditConfigScreen(ConfigGroup g) {
 		group = g;
@@ -241,8 +242,8 @@ public class EditConfigScreen extends BaseScreen {
 
 		scroll = new PanelScrollBar(this, configPanel);
 
-		buttonAccept = new SimpleButton(this, Component.translatable("gui.close"), Icons.ACCEPT, (widget, button) -> group.save(true));
-		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> group.save(false));
+		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, (widget, button) -> doAccept());
+		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> doCancel());
 
 		buttonExpandAll = new SimpleButton(this, Component.translatable("gui.expand_all"), Icons.ADD, (widget, button) ->
 		{
@@ -311,11 +312,30 @@ public class EditConfigScreen extends BaseScreen {
 		}
 	}
 
+	/**
+	 * Set auto-close behaviour when Accept or Cancel buttons are clicked
+	 * @param autoclose true to close the config screen, false if the config group's save callback should handle it
+	 */
+	public EditConfigScreen setAutoclose(boolean autoclose) {
+		this.autoclose = autoclose;
+		return this;
+	}
+
+	private void doAccept() {
+		group.save(true);
+		if (autoclose) closeGui();
+	}
+
+	private void doCancel() {
+		group.save(false);
+		if (autoclose) closeGui();
+	}
+
 	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			group.save(true);
-			return false;
+			return true;
 		}
 
 		return false;

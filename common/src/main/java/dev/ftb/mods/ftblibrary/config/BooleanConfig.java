@@ -4,7 +4,6 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 /**

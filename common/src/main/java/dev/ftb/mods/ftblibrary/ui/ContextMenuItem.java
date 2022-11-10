@@ -77,6 +77,6 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 			panel.getGui().closeContextMenu();
 		}
 
-		callback.run();
+		if (callback != null) callback.run();
 	}
 }

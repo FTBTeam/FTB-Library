@@ -1,11 +1,7 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
