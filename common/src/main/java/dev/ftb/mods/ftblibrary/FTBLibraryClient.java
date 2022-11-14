@@ -8,6 +8,8 @@ import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.ImageConfig;
+import dev.ftb.mods.ftblibrary.config.IntConfig;
+import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.icon.AtlasSpriteIcon;
 import dev.ftb.mods.ftblibrary.icon.IconPresets;
@@ -24,6 +26,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -31,6 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -131,6 +135,15 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 
 		group.addItemStack("item", ItemStack.EMPTY, v -> {
 		}, ItemStack.EMPTY, false, true);
+
+		ConfigGroup grp1 = group.getGroup("group1");
+		grp1.addInt("integer", 1, v -> {}, 0, 0, 10);
+		grp1.addBool("bool", true, v -> {}, false);
+
+		ConfigGroup grp2 = grp1.getGroup("subgroup1");
+		grp2.addEnum("enum", Direction.UP, v -> {}, NameMap.of(Direction.UP, Direction.values()).create());
+		List<Integer> integers = new ArrayList<>(List.of(1, 2, 3, 4));
+		grp2.addList("list", integers, new IntConfig(0, 10), 1);
 
 		new EditConfigScreen(group).openGuiLater();
 	}
