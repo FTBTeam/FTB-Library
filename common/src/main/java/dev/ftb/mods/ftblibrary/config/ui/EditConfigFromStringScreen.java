@@ -137,8 +137,11 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
-			config.setCurrentValue(current);
-			callback.save(true);
+			if (key.esc()) {
+				doCancel();
+			} else {
+				doAccept();
+			}
 			return true;
 		}
 
