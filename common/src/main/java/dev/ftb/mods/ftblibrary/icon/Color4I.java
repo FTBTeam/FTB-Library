@@ -395,7 +395,7 @@ public class Color4I extends Icon {
 		return rgb(HSBtoRGB(hsb[0], hsb[1], Mth.clamp(hsb[2] + percent, 0F, 1F))).withAlpha(alphai());
 	}
 
-	private static float[] RGBtoHSB(int r, int g, int b, float[] hsbvals) {
+	public static float[] RGBtoHSB(int r, int g, int b, float[] hsbvals) {
 		float hue, saturation, brightness;
 		if (hsbvals == null) {
 			hsbvals = new float[3];
