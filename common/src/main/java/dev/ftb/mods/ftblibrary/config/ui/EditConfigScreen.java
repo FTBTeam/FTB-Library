@@ -33,7 +33,7 @@ public class EditConfigScreen extends BaseScreen {
 		}
 	};
 
-	public class ConfigGroupButton extends Button {
+	public static class ConfigGroupButton extends Button {
 		public final ConfigGroup group;
 		public MutableComponent title, info;
 		public boolean collapsed = false;
@@ -45,8 +45,6 @@ public class EditConfigScreen extends BaseScreen {
 
 			if (group.parent != null) {
 				List<ConfigGroup> groups = new ArrayList<>();
-
-				g = group;
 
 				do {
 					groups.add(g);
@@ -68,6 +66,7 @@ public class EditConfigScreen extends BaseScreen {
 			} else {
 				title = Component.translatable("stat.generalButton");
 			}
+			title.withStyle(ChatFormatting.YELLOW);
 
 			var infoKey = group.getPath() + ".info";
 			info = I18n.exists(infoKey) ? Component.translatable(infoKey) : null;
@@ -82,9 +81,11 @@ public class EditConfigScreen extends BaseScreen {
 		@Override
 		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 			COLOR_BACKGROUND.draw(matrixStack, x, y, w, h);
-			theme.drawString(matrixStack, getTitle(), x + 2, y + 2);
+			theme.drawString(matrixStack, getTitle(), x + 3, y + 2);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
+			Color4I.GRAY.withAlpha(80).draw(matrixStack, 0, y, width, 1);
+			Color4I.GRAY.withAlpha(80).draw(matrixStack, 0, y, 1, height);
 			if (isMouseOver()) {
 				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
 			}
@@ -130,15 +131,16 @@ public class EditConfigScreen extends BaseScreen {
 				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
 			}
 
-			theme.drawString(matrixStack, keyText, x + 4, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
+			theme.drawString(matrixStack, keyText, 5, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
 			FormattedText s = inst.getStringForGUI(inst.value);
 			var slen = theme.getStringWidth(s);
 
-			if (slen > 150) {
-				s = Component.literal(theme.trimStringToWidth(s, 150).getString().trim() + "...");
-				slen = 152;
+			int maxLen = width - dividerX - 10;
+			if (slen > maxLen) {
+				s = Component.literal(theme.trimStringToWidth(s, maxLen).getString().trim() + "...");
+				slen = maxLen + 2;
 			}
 
 			var textCol = inst.getColor(inst.value).mutable();
@@ -152,7 +154,9 @@ public class EditConfigScreen extends BaseScreen {
 				}
 			}
 
-			theme.drawString(matrixStack, s, getGui().width - (slen + 20), y + 2, textCol, 0);
+			theme.drawString(matrixStack, s, dividerX + 5, y + 2, textCol, 0);
+
+			Color4I.GRAY.withAlpha(33).draw(matrixStack, dividerX, y, 1, height);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}
 
@@ -191,6 +195,7 @@ public class EditConfigScreen extends BaseScreen {
 	private final PanelScrollBar scroll;
 	private int groupSize = 0;
 	private boolean autoclose = false;
+	private int dividerX;
 
 	public EditConfigScreen(ConfigGroup g) {
 		group = g;
@@ -227,18 +232,22 @@ public class EditConfigScreen extends BaseScreen {
 
 			for (var value : list) {
 				if (group == null || group.group != value.group) {
+					configEntryButtons.add(new VerticalSpaceWidget(configPanel, 4));
 					group = new ConfigGroupButton(configPanel, value.group);
 					configEntryButtons.add(group);
 					groupSize++;
 				}
 
-				configEntryButtons.add(new ConfigEntryButton(configPanel, group, value));
+				ConfigEntryButton btn = new ConfigEntryButton(configPanel, group, value);
+				configEntryButtons.add(btn);
+				dividerX = Math.max(dividerX, getTheme().getStringWidth(btn.keyText));
 			}
 
 			if (groupSize == 1) {
 				configEntryButtons.remove(group);
 			}
 		}
+		dividerX += 10;
 
 		scroll = new PanelScrollBar(this, configPanel);
 
@@ -314,7 +323,7 @@ public class EditConfigScreen extends BaseScreen {
 
 	/**
 	 * Set auto-close behaviour when Accept or Cancel buttons are clicked
-	 * @param autoclose true to close the config screen, false if the config group's save callback should handle it
+	 * @param autoclose true to close the config screen, false if the config group's save-callback should handle it
 	 */
 	public EditConfigScreen setAutoclose(boolean autoclose) {
 		this.autoclose = autoclose;

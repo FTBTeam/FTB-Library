@@ -4,7 +4,9 @@ import dev.ftb.mods.ftblibrary.config.ui.EditConfigListScreen;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +71,13 @@ public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 
 	@Override
 	public Component getStringForGUI(List<E> v) {
-		return v == null ? NULL_TEXT : v.isEmpty() ? EMPTY_LIST : NON_EMPTY_LIST;
+		return v == null ? NULL_TEXT : v.isEmpty() ? EMPTY_LIST : formatListSize(v);
+	}
+
+	private Component formatListSize(List<E> v) {
+		MutableComponent main = v.size() == 1 ?
+				Component.translatable("ftblibrary.gui.listSize1") :
+				Component.translatable("ftblibrary.gui.listSize", v.size());
+		return Component.literal("[ ").append(main.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY)).append(" ]");
 	}
 }
