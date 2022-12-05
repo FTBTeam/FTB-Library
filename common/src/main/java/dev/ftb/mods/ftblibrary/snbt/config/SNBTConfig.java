@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.architectury.utils.NbtType;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
@@ -9,6 +8,7 @@ import dev.ftb.mods.ftblibrary.snbt.SNBTNet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.Util;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.IOException;
@@ -20,11 +20,11 @@ import java.util.function.Supplier;
 
 public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	public static SNBTConfig create(String name) {
-		return new SNBTConfig(null, name);
+		return new SNBTConfig(null, name, new ArrayList<>());
 	}
 
-	private SNBTConfig(SNBTConfig c, String n) {
-		super(c, n, new ArrayList<>());
+	private SNBTConfig(SNBTConfig c, String n, List<BaseValue<?>> defaultValue) {
+		super(c, n, defaultValue);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 			return;
 		}
 
-		if (tag.contains(key, NbtType.COMPOUND)) {
+		if (tag.contains(key, Tag.TAG_COMPOUND)) {
 			var tag1 = tag.getCompound(key);
 
 			for (var value : defaultValue) {
@@ -132,18 +132,18 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	}
 
 	public void load(Path path, Path defaultPath, Supplier<String[]> comment) {
-		if (Files.exists(defaultPath)) {
-			if (!Files.exists(path)) {
-				try {
-					Files.copy(defaultPath, path);
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-			}
-		} else {
-			var defaultConfigFile = SNBTConfig.create(key);
+		if (!Files.exists(defaultPath)) {
+			var defaultConfigFile = new SNBTConfig(null, key, new ArrayList<>(this.defaultValue));
 			defaultConfigFile.comment(comment.get());
 			defaultConfigFile.save(defaultPath);
+		}
+
+		if (!Files.exists(path)) {
+			try {
+				Files.copy(defaultPath, path);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
 
 		load(path);
@@ -155,7 +155,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	}
 
 	public SNBTConfig getGroup(String key) {
-		return add(new SNBTConfig(this, key));
+		return add(new SNBTConfig(this, key, new ArrayList<>()));
 	}
 
 	public BooleanValue getBoolean(String key, boolean def) {
