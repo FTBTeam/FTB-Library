@@ -88,7 +88,7 @@ public class TextComponentParser {
 			return TextComponent.EMPTY;
 		}
 
-		var c = text.toCharArray();
+		var c = text.replaceAll("\\\\n", "\n").toCharArray();
 		var hasSpecialCodes = false;
 
 		for (var c1 : c) {
@@ -99,7 +99,7 @@ public class TextComponentParser {
 		}
 
 		if (!hasSpecialCodes) {
-			return new TextComponent(text);
+			return new TextComponent(new String(c));
 		}
 
 		component = new TextComponent("");
