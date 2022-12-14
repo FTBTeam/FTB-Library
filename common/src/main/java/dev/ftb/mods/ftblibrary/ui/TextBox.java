@@ -358,7 +358,7 @@ public class TextBox extends Widget {
 					}
 					return true;
 				}
-				case GLFW.GLFW_KEY_ENTER -> {
+				case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
 					if (validText) {
 						setFocused(false);
 						onEnterPressed();
