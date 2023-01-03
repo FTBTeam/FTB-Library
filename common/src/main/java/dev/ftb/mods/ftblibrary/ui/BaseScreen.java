@@ -122,9 +122,13 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	protected boolean setFullscreen() {
-		setWidth(screen.getGuiScaledWidth());
-		setHeight(screen.getGuiScaledHeight());
-		return true;
+		if (screen == null) {
+			return false;
+		} else {
+			setWidth(screen.getGuiScaledWidth());
+			setHeight(screen.getGuiScaledHeight());
+			return true;
+		}
 	}
 
 	public void onPostInit() {
