@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.config.ui;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterators;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.IntConfig;
@@ -20,7 +20,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -70,7 +70,7 @@ public class SelectItemStackScreen extends BaseScreen {
 			}
 
 			if (!mod.isEmpty()) {
-				return Registries.getId(stack.getItem(), Registry.ITEM_REGISTRY).getNamespace().contains(mod);
+				return RegistrarManager.getId(stack.getItem(), Registries.ITEM).getNamespace().contains(mod);
 			}
 
 			return stack.getHoverName().getString().toLowerCase().contains(search);

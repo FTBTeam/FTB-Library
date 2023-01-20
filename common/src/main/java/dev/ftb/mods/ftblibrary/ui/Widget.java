@@ -240,7 +240,7 @@ public class Widget implements IScreenWrapper {
 	}
 
 	public void playClickSound() {
-		GuiHelper.playSound(SoundEvents.UI_BUTTON_CLICK, 1F);
+		GuiHelper.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1F);
 	}
 
 	@Nullable

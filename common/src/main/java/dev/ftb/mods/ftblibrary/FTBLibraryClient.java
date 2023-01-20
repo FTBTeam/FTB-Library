@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary;
 
 import dev.architectury.event.events.client.ClientGuiEvent;
-import dev.architectury.event.events.client.ClientTextureStitchEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.platform.Platform;
@@ -11,9 +10,6 @@ import dev.ftb.mods.ftblibrary.config.ImageConfig;
 import dev.ftb.mods.ftblibrary.config.IntConfig;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
-import dev.ftb.mods.ftblibrary.icon.AtlasSpriteIcon;
-import dev.ftb.mods.ftblibrary.icon.IconPresets;
-import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
@@ -25,17 +21,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @author LatvianModder
@@ -61,7 +53,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 			return;
 		}
 
-		ClientTextureStitchEvent.PRE.register(this::textureStitch);
+//		ClientTextureStitchEvent.PRE.register(this::textureStitch);
 		ClientGuiEvent.INIT_POST.register(this::guiInit);
 		ClientTickEvent.CLIENT_POST.register(this::clientTick);
 
@@ -69,24 +61,24 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageScreen.ResourceListener.INSTANCE);
 	}
 
-	private void textureStitch(TextureAtlas atlas, Consumer<ResourceLocation> addSprite) {
-		if (!atlas.location().equals(InventoryMenu.BLOCK_ATLAS)) {
-			return;
-		}
-
-		try {
-			for (var field : Icons.class.getDeclaredFields()) {
-				field.setAccessible(true);
-				var o = field.get(null);
-
-				if (o instanceof AtlasSpriteIcon a) {
-					addSprite.accept(a.id);
-					IconPresets.MAP.put(a.id.toString(), a);
-				}
-			}
-		} catch (Exception ignored) {
-		}
-	}
+//	private void textureStitch(TextureAtlas atlas, Consumer<ResourceLocation> addSprite) {
+//		if (!atlas.location().equals(InventoryMenu.BLOCK_ATLAS)) {
+//			return;
+//		}
+//
+//		try {
+//			for (var field : Icons.class.getDeclaredFields()) {
+//				field.setAccessible(true);
+//				var o = field.get(null);
+//
+//				if (o instanceof AtlasSpriteIcon a) {
+//					addSprite.accept(a.id);
+//					IconPresets.MAP.put(a.id.toString(), a);
+//				}
+//			}
+//		} catch (Exception ignored) {
+//		}
+//	}
 
 	@SuppressWarnings("rawtypes")
 	private void guiInit(Screen screen, ScreenAccess access) {

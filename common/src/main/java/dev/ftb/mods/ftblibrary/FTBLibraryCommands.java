@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
@@ -14,7 +14,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -136,9 +136,9 @@ public class FTBLibraryCommands {
 
 											var list = new ListTag();
 											addInfo(list, Component.literal("Class"), Component.literal(blockEntity.getClass().getName()));
-											var key = Registries.getId(blockEntity.getType(), Registry.BLOCK_ENTITY_TYPE_REGISTRY);
+											var key = RegistrarManager.getId(blockEntity.getType(), Registries.BLOCK_ENTITY_TYPE);
 											addInfo(list, Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()));
-											addInfo(list, Component.literal("Block"), Component.literal(String.valueOf(Registries.getId(blockEntity.getBlockState().getBlock(), Registry.BLOCK_REGISTRY))));
+											addInfo(list, Component.literal("Block"), Component.literal(String.valueOf(RegistrarManager.getId(blockEntity.getBlockState().getBlock(), Registries.BLOCK))));
 											addInfo(list, Component.literal("Block Class"), Component.literal(blockEntity.getBlockState().getBlock().getClass().getName()));
 											addInfo(list, Component.literal("Position"), Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"));
 											addInfo(list, Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
@@ -171,7 +171,7 @@ public class FTBLibraryCommands {
 
 											var list = new ListTag();
 											addInfo(list, Component.literal("Class"), Component.literal(entity.getClass().getName()));
-											var key = Registries.getId(entity.getType(), Registry.ENTITY_TYPE_REGISTRY);
+											var key = RegistrarManager.getId(entity.getType(), Registries.ENTITY_TYPE);
 											addInfo(list, Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()));
 											addInfo(list, Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
 											info.put("text", list);

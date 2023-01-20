@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author LatvianModder
  */
-public abstract class BaseScreen extends Panel implements IOpenableScreen {
+public abstract class BaseScreen extends Panel {
 	public static class PositionedTextData {
 		public final int posX, posY;
 		public final int width, height;

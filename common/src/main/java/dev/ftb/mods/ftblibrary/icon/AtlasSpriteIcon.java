@@ -46,7 +46,7 @@ public class AtlasSpriteIcon extends Icon {
 
 		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		RenderSystem.setShaderTexture(0, sprite.atlas().getId());
+		RenderSystem.setShaderTexture(0, sprite.atlasLocation());
 		var buffer = Tesselator.getInstance().getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 		buffer.vertex(m, x, y, 0F).color(r, g, b, a).uv(minU, minV).endVertex();

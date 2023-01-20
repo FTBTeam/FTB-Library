@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -10,6 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -47,7 +49,7 @@ public class ItemIcon extends Icon {
 
 		return new LazyIcon(() -> {
 			var s = lazyStackString.split(" ", 4);
-			var stack = Registry.ITEM.get(new ResourceLocation(s[0])).getDefaultInstance();
+			var stack = BuiltInRegistries.ITEM.get(new ResourceLocation(s[0])).getDefaultInstance();
 
 			if (s.length >= 2 && !s[1].equals("1")) {
 				stack.setCount(Integer.parseInt(s[1]));
@@ -132,7 +134,7 @@ public class ItemIcon extends Icon {
 	public String toString() {
 		var is = getStack();
 		var builder = new StringBuilder("item:");
-		builder.append(Registries.getId(is.getItem(), Registry.ITEM_REGISTRY));
+		builder.append(RegistrarManager.getId(is.getItem(), Registries.ITEM));
 		var count = is.getCount();
 		var damage = is.getDamageValue();
 		var nbt = is.getTag();

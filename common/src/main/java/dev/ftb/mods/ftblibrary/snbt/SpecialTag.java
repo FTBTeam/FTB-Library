@@ -52,6 +52,11 @@ public class SpecialTag implements Tag {
 	}
 
 	@Override
+	public int sizeInBytes() {
+		return 8 + wrappedTag.sizeInBytes();
+	}
+
+	@Override
 	public void accept(TagVisitor tagVisitor) {
 		wrappedTag.accept(tagVisitor);
 	}

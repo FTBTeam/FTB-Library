@@ -12,7 +12,7 @@ import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -52,7 +52,7 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 			});
 		}
 
-		for (var fluid : Registry.FLUID) {
+		for (var fluid : BuiltInRegistries.FLUID) {
 			if (fluid == Fluids.EMPTY || fluid.defaultFluidState().isSource()) {
 				continue;
 			}

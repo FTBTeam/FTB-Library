@@ -43,13 +43,11 @@ public class TextBox extends Widget {
 	public final void setFocused(boolean v) {
 		isFocused = v;
 		validText = isValid(text);
-		Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(isFocused);
 	}
 
-	@Override
-	public void onClosed() {
-		Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
-	}
+//	@Override
+//	public void onClosed() {
+//	}
 
 	public final String getText() {
 		return text;
@@ -248,7 +246,6 @@ public class TextBox extends Widget {
 	public boolean mousePressed(MouseButton button) {
 		if (isMouseOver()) {
 			setFocused(true);
-			Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(true);
 
 			if (button.isLeft()) {
 				if (isFocused) {
@@ -267,7 +264,6 @@ public class TextBox extends Widget {
 
 			return true;
 		} else {
-			Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
 			setFocused(false);
 		}
 

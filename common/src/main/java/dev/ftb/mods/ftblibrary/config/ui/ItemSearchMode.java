@@ -6,10 +6,12 @@ import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -51,18 +53,22 @@ public interface ItemSearchMode {
 		@Override
 		public Collection<ItemStack> getAllItems() {
 			if (allItemsCache == null) {
-				List<ItemStack> stacks = new ArrayList<>(Registry.ITEM.keySet().size() + 100);
-				for (var item : Registry.ITEM) {
-					NonNullList<ItemStack> list = NonNullList.create();
-					var category = item.getItemCategory();
-					item.fillItemCategory(MoreObjects.firstNonNull(category, CreativeModeTab.TAB_SEARCH), list);
-					if (list.isEmpty()) {
-						stacks.add(item.getDefaultInstance());
-						continue;
-					}
-					stacks.addAll(list);
-				}
-				allItemsCache = stacks;
+				allItemsCache = CreativeModeTabs.allTabs().stream()
+						.flatMap(tab -> tab.getDisplayItems().stream())
+						.toList();
+
+//				List<ItemStack> stacks = new ArrayList<>(BuiltInRegistries.ITEM.keySet().size() + 100);
+//				for (var item : BuiltInRegistries.ITEM) {
+//					NonNullList<ItemStack> list = NonNullList.create();
+//					var category = item.getItemCategory();
+//					item.fillItemCategory(MoreObjects.firstNonNull(category, CreativeModeTab.TAB_SEARCH), list);
+//					if (list.isEmpty()) {
+//						stacks.add(item.getDefaultInstance());
+//						continue;
+//					}
+//					stacks.addAll(list);
+//				}
+//				allItemsCache = stacks;
 			}
 			return allItemsCache;
 		}

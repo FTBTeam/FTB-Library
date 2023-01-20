@@ -22,11 +22,11 @@ import java.util.List;
 public class SidebarGroupGuiButton extends AbstractButton {
 	public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
 
-	private final AbstractContainerScreen gui;
+	private final AbstractContainerScreen<?> gui;
 	public final List<SidebarGuiButton> buttons;
 	private SidebarGuiButton mouseOver;
 
-	public SidebarGroupGuiButton(AbstractContainerScreen g) {
+	public SidebarGroupGuiButton(AbstractContainerScreen<?> g) {
 		super(0, 0, 0, 0, Component.empty());
 		gui = g;
 		buttons = new ArrayList<>();
@@ -61,15 +61,15 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			button.y = 1 + button.buttonY * 17;
 		}
 
-		x = Integer.MAX_VALUE;
-		y = Integer.MAX_VALUE;
+		setX(Integer.MAX_VALUE);
+		setY(Integer.MAX_VALUE);
 		var maxX = Integer.MIN_VALUE;
 		var maxY = Integer.MIN_VALUE;
 
 		for (var b : buttons) {
 			if (b.x >= 0 && b.y >= 0) {
-				x = Math.min(x, b.x);
-				y = Math.min(y, b.y);
+				setX(Math.min(getX(), b.x));
+				setY(Math.min(getY(), b.y));
 				maxX = Math.max(maxX, b.x + 16);
 				maxY = Math.max(maxY, b.y + 16);
 			}
@@ -84,13 +84,13 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		// of its GUI areas, including resetting the filter textfield's selection
 		// https://github.com/FTBTeam/FTB-Mods-Issues/issues/262
 		// https://github.com/mezz/JustEnoughItems/issues/2938
-		x = Math.max(0, x - 2);
-		y = Math.max(0, y - 2);
+		setX(Math.max(0, getX() - 2));
+		setY(Math.max(0, getY() - 2));
 		maxX += 2;
 		maxY += 2;
 
-		width = maxX - x;
-		height = maxY - y;
+		width = maxX - getX();
+		height = maxY - getY();
 		//zLevel = 0F;
 
 		matrixStack.pushPose();
@@ -149,7 +149,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		GuiHelper.setupDrawing();
 		//zLevel = 0F;
 
-		lastDrawnArea = new Rect2i(x, y, width, height);
+		lastDrawnArea = new Rect2i(getX(), getY(), width, height);
 		matrixStack.popPose();
 	}
 
@@ -161,7 +161,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	}
 
 	@Override
-	public void updateNarration(NarrationElementOutput narrationElementOutput) {
+	public void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
 		defaultButtonNarrationText(narrationElementOutput);
 	}
 }

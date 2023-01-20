@@ -44,7 +44,7 @@ public class ClientUtils {
 			Minecraft.getInstance().gui.getChat().addRecentChat(command);
 		}
 
-		Minecraft.getInstance().player.commandUnsigned(command.replace("/", ""));
+		Minecraft.getInstance().player.connection.sendUnsignedCommand(command.replace("/", ""));
 	}
 
 	public static void runLater(final Runnable runnable) {

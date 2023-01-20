@@ -19,7 +19,9 @@ public class SelectFluidScreenImpl {
 		if (sprites[0] == null) {
 			return null;
 		}
-		return sprites[0].getName();
+		try (final var c = sprites[0].contents()) {
+			return c.name();
+		}
 	}
 
 	public static int getColor(FluidStack stack) {

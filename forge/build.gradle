@@ -47,7 +47,7 @@ dependencies {
 
 	modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-plugin-compatibilities-forge:${rootProject.rei_version}"
+//	modCompileOnly "me.shedaniel:RoughlyEnoughItems-plugin-compatibilities-forge:${rootProject.rei_plugin_compat_version}"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
