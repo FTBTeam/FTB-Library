@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.nbt.*;
 import org.jetbrains.annotations.Nullable;
