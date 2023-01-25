@@ -78,7 +78,7 @@ shadowJar {
 }
 
 remapJar {
-	input.set shadowJar.archiveFile
+	inputFile.set shadowJar.archiveFile
 	dependsOn shadowJar
 	archiveBaseName.set "${rootProject.archives_base_name}-${project.name}"
 	archiveClassifier.set null
@@ -113,8 +113,8 @@ if (ENV.CURSEFORGE_KEY) {
 			id = project.curseforge_id_forge
 			releaseType = project.curseforge_type
 			addGameVersion "Forge"
-			addGameVersion "1.19.2"
-			mainArtifact(remapJar.archivePath)
+			addGameVersion "1.19.3"
+			mainArtifact(remapJar.archiveFile)
 			relations {
 				requiredDependency 'architectury-api'
 				optionalDependency 'jei'
