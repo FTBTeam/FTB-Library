@@ -127,7 +127,8 @@ public class SelectItemStackScreen extends BaseScreen {
 		@Override
 		public void addMouseOverText(TooltipList list) {
 			super.addMouseOverText(list);
-			list.add(activeMode.getDisplayName().withStyle(ChatFormatting.GRAY).append(Component.literal(" [" + panelStacks.widgets.size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
+			list.add(activeMode.getDisplayName().withStyle(ChatFormatting.GRAY)
+					.append(Component.literal(" [" + panelStacks.getWidgets().size() + "]").withStyle(ChatFormatting.DARK_GRAY)));
 		}
 
 		@Override
@@ -178,9 +179,9 @@ public class SelectItemStackScreen extends BaseScreen {
 			playClickSound();
 			var c = new NBTConfig();
 
-			EditConfigFromStringScreen.open(c, current.save(new CompoundTag()), config.defaultValue.save(new CompoundTag()), accepted -> {
+			EditConfigFromStringScreen.open(c, current.save(new CompoundTag()), config.getDefaultValue().save(new CompoundTag()), accepted -> {
 				if (accepted) {
-					current = ItemStack.of(c.value);
+					current = ItemStack.of(c.getValue());
 				}
 
 				run();
@@ -197,9 +198,9 @@ public class SelectItemStackScreen extends BaseScreen {
 		public void onClicked(MouseButton button) {
 			playClickSound();
 			var c = new IntConfig(0, current.getMaxStackSize());
-			EditConfigFromStringScreen.open(c, current.getCount(), config.defaultValue.getCount(), accepted -> {
+			EditConfigFromStringScreen.open(c, current.getCount(), config.getDefaultValue().getCount(), accepted -> {
 				if (accepted) {
-					current.setCount(c.value);
+					current.setCount(c.getValue());
 				}
 
 				run();
@@ -216,9 +217,9 @@ public class SelectItemStackScreen extends BaseScreen {
 		public void onClicked(MouseButton button) {
 			playClickSound();
 			var c = new NBTConfig();
-			EditConfigFromStringScreen.open(c, current.getTag(), config.defaultValue.getTag(), accepted -> {
+			EditConfigFromStringScreen.open(c, current.getTag(), config.getDefaultValue().getTag(), accepted -> {
 				if (accepted) {
-					current.setTag(c.value);
+					current.setTag(c.getValue());
 				}
 
 				run();
@@ -238,12 +239,12 @@ public class SelectItemStackScreen extends BaseScreen {
 			final var nbt = current.save(new CompoundTag());
 			var c = new NBTConfig();
 
-			EditConfigFromStringScreen.open(c, (CompoundTag) nbt.get("ForgeCaps"), (CompoundTag) config.defaultValue.save(new CompoundTag()).get("ForgeCaps"), accepted -> {
+			EditConfigFromStringScreen.open(c, (CompoundTag) nbt.get("ForgeCaps"), (CompoundTag) config.getDefaultValue().save(new CompoundTag()).get("ForgeCaps"), accepted -> {
 				if (accepted) {
-					if (c.value == null || c.value.isEmpty()) {
+					if (c.getValue() == null || c.getValue().isEmpty()) {
 						nbt.remove("ForgeCaps");
 					} else {
-						nbt.put("ForgeCaps", c.value);
+						nbt.put("ForgeCaps", c.getValue());
 					}
 
 					current = ItemStack.of(nbt);
@@ -307,7 +308,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		setSize(211, 150);
 		config = c;
 		callback = cb;
-		current = config.value.isEmpty() ? ItemStack.EMPTY : config.value.copy();
+		current = config.getValue().isEmpty() ? ItemStack.EMPTY : config.getValue().copy();
 
 		var bsize = width / 2 - 10;
 
@@ -409,11 +410,11 @@ public class SelectItemStackScreen extends BaseScreen {
 	}
 
 	private void updateItemWidgets(List<Widget> items) {
-		panelStacks.widgets.clear();
+		panelStacks.getWidgets().clear();
 		panelStacks.addAll(items);
 		scrollBar.setPosAndSize(panelStacks.posX + panelStacks.width + 6, panelStacks.posY - 1, 16, panelStacks.height + 2);
 		scrollBar.setValue(0);
-		scrollBar.setMaxValue(1 + Mth.ceil(panelStacks.widgets.size() / 9F) * 19);
+		scrollBar.setMaxValue(1 + Mth.ceil(panelStacks.getWidgets().size() / 9F) * 19);
 	}
 
 	@Override

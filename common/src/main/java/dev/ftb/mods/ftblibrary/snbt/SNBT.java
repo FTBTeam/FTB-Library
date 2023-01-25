@@ -27,10 +27,10 @@ public class SNBT {
 		try {
 			return readLines(Files.readAllLines(path, StandardCharsets.UTF_8));
 		} catch (SNBTSyntaxException ex) {
-			FTBLibrary.LOGGER.error("Failed to read " + Platform.getGameFolder().relativize(path) + ": " + ex.getMessage());
+			FTBLibrary.LOGGER.error("Failed to read " + path + ": " + ex.getMessage());
 			return null;
 		} catch (Exception ex) {
-			FTBLibrary.LOGGER.error("Failed to read " + Platform.getGameFolder().relativize(path) + ": " + ex);
+			FTBLibrary.LOGGER.error("Failed to read " + path + ": " + ex);
 			ex.printStackTrace();
 			return null;
 		}

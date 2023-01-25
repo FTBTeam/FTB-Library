@@ -27,7 +27,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	@Override
 	public void init() {
 		super.init();
-		wrappedGui.itemRenderer = itemRenderer;
+//		wrappedGui.itemRenderer = itemRenderer;
 		wrappedGui.initGui();
 	}
 
@@ -118,7 +118,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		wrappedGui.draw(matrixStack, theme, x, y, w, h);
 		wrappedGui.drawForeground(matrixStack, theme, x, y, w, h);
 
-		Objects.requireNonNullElse(wrappedGui.contextMenu, wrappedGui).addMouseOverText(tooltipList);
+		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			var object = wrappedGui.getIngredientUnderMouse();

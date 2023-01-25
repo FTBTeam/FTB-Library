@@ -87,7 +87,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 				}
 			}
 		} else {
-			var g = group.getGroup(key);
+			var g = group.getOrCreateSubgroup(key);
 
 			for (var value : defaultValue) {
 				if (!value.excluded) {

@@ -21,7 +21,7 @@ public class LoadingScreen extends BaseScreen {
 	private boolean startedLoading = false;
 	private boolean isLoading = true;
 	private Component[] title;
-	public float timer;
+	private float timer;
 
 	public LoadingScreen() {
 		setSize(128, 128);

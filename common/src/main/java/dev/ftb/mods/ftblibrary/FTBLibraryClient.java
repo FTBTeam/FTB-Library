@@ -80,11 +80,9 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 //		}
 //	}
 
-	@SuppressWarnings("rawtypes")
 	private void guiInit(Screen screen, ScreenAccess access) {
 		if (areButtonsVisible(screen)) {
-			var group = new SidebarGroupGuiButton((AbstractContainerScreen) screen);
-			access.addRenderableWidget(group);
+			access.addRenderableWidget(new SidebarGroupGuiButton());
 		}
 	}
 
@@ -122,17 +120,15 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	@Override
 	public void testScreen() {
 		var group = new ConfigGroup("test");
-		group.add("image", new ImageConfig(), "", v -> {
-		}, "");
+		group.add("image", new ImageConfig(), "", v -> { }, "");
 
-		group.addItemStack("item", ItemStack.EMPTY, v -> {
-		}, ItemStack.EMPTY, false, true);
+		group.addItemStack("item", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, true);
 
-		ConfigGroup grp1 = group.getGroup("group1");
+		ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
 		grp1.addInt("integer", 1, v -> {}, 0, 0, 10);
 		grp1.addBool("bool", true, v -> {}, false);
 
-		ConfigGroup grp2 = grp1.getGroup("subgroup1");
+		ConfigGroup grp2 = grp1.getOrCreateSubgroup("subgroup1");
 		grp2.addEnum("enum", Direction.UP, v -> {}, NameMap.of(Direction.UP, Direction.values()).create());
 		List<Integer> integers = new ArrayList<>(List.of(1, 2, 3, 4));
 		grp2.addList("list", integers, new IntConfig(0, 10), 1);

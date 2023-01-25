@@ -16,10 +16,12 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author LatvianModder
@@ -43,13 +45,13 @@ public abstract class BaseScreen extends Panel {
 		}
 	}
 
+	private final Screen prevScreen;
 	private int mouseX, mouseY;
 	private float partialTicks;
 	private boolean refreshWidgets;
 	private Window screen;
-	private final Screen prevScreen;
-	public Panel contextMenu = null;
-	public ItemRenderer itemRenderer;
+	private Panel contextMenu = null;
+//	public ItemRenderer itemRenderer;
 	private long lastClickTime = 0L;
 
 	public BaseScreen() {
@@ -224,8 +226,11 @@ public abstract class BaseScreen extends Panel {
 		super.draw(matrixStack, theme, x, y, w, h);
 	}
 
-	@Override
-	public void openContextMenu(@Nullable Panel panel) {
+	public Optional<Panel> getContextMenu() {
+		return Optional.ofNullable(contextMenu);
+	}
+
+	private void openContextMenu(@Nullable ContextMenu newContextMenu) {
 		int px = 0, py = 0;
 
 		if (contextMenu != null) {
@@ -235,7 +240,7 @@ public abstract class BaseScreen extends Panel {
 			widgets.remove(contextMenu);
 		}
 
-		if (panel == null) {
+		if (newContextMenu == null) {
 			contextMenu = null;
 			return;
 		}
@@ -248,20 +253,19 @@ public abstract class BaseScreen extends Panel {
 			py = getMouseY() - y;
 		}
 
-		contextMenu = panel;
-		contextMenu.parent = this;
+		contextMenu = newContextMenu;
 		widgets.add(contextMenu);
 		contextMenu.refreshWidgets();
 		px = Math.min(px, screen.getGuiScaledWidth() - contextMenu.width - x) - 3;
 		py = Math.min(py, screen.getGuiScaledHeight() - contextMenu.height - y) - 3;
 		contextMenu.setPos(px, py);
 
-		if (contextMenu instanceof BaseScreen) {
-			((BaseScreen) contextMenu).initGui();
+		if (contextMenu instanceof BaseScreen b) {
+			b.initGui();
 		}
 	}
 
-	public ContextMenu openContextMenu(List<ContextMenuItem> menu) {
+	public ContextMenu openContextMenu(@NotNull List<ContextMenuItem> menu) {
 		var contextMenu = new ContextMenu(this, menu);
 		openContextMenu(contextMenu);
 		return contextMenu;
@@ -269,7 +273,7 @@ public abstract class BaseScreen extends Panel {
 
 	@Override
 	public void closeContextMenu() {
-		openContextMenu((Panel) null);
+		openContextMenu((ContextMenu) null);
 		onInit();
 	}
 
@@ -336,7 +340,7 @@ public abstract class BaseScreen extends Panel {
 
 	@Override
 	public final void openGui() {
-		openContextMenu((Panel) null);
+		openContextMenu((ContextMenu) null);
 		Minecraft.getInstance().setScreen(new ScreenWrapper(this));
 	}
 

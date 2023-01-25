@@ -20,7 +20,8 @@ public class ScrollBar extends Widget {
 		}
 	}
 
-	public final Plane plane;
+	protected final Plane plane;
+
 	private final int scrollBarSize;
 	private double value = 0;
 	private double scrollStep = 20;
@@ -42,6 +43,10 @@ public class ScrollBar extends Widget {
 
 	public void setCanAlwaysScrollPlane(boolean v) {
 		canAlwaysScrollPlane = v;
+	}
+
+	public Plane getPlane() {
+		return plane;
 	}
 
 	public void setMinValue(double min) {

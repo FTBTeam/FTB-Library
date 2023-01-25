@@ -224,6 +224,7 @@ public class FTBLibraryCommands {
 	/**
 	 * @deprecated being moved to FTB Pack Companion in a more usable way.
 	 */
+	@Deprecated
 	private static int generateLootTables(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		CommandSourceStack source = context.getSource();
 

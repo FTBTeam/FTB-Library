@@ -4,7 +4,7 @@ package dev.ftb.mods.ftblibrary.ui;
  * @author LatvianModder
  */
 public class PanelScrollBar extends ScrollBar {
-	public final Panel panel;
+	private final Panel panel;
 
 	public PanelScrollBar(Panel parent, Plane plane, Panel p) {
 		super(parent, plane, 0);
@@ -14,6 +14,10 @@ public class PanelScrollBar extends ScrollBar {
 
 	public PanelScrollBar(Panel parent, Panel panel) {
 		this(parent, Plane.VERTICAL, panel);
+	}
+
+	public Panel getPanel() {
+		return panel;
 	}
 
 	@Override

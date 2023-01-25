@@ -19,8 +19,8 @@ public class BooleanConfig extends ConfigWithVariants<Boolean> {
 	}
 
 	@Override
-	public Boolean getIteration(Boolean v, boolean next) {
-		return !v;
+	public Boolean getIteration(Boolean currentValue, boolean next) {
+		return !currentValue;
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -22,13 +21,11 @@ import java.util.List;
 public class SidebarGroupGuiButton extends AbstractButton {
 	public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
 
-	private final AbstractContainerScreen<?> gui;
 	public final List<SidebarGuiButton> buttons;
 	private SidebarGuiButton mouseOver;
 
-	public SidebarGroupGuiButton(AbstractContainerScreen<?> g) {
+	public SidebarGroupGuiButton() {
 		super(0, 0, 0, 0, Component.empty());
-		gui = g;
 		buttons = new ArrayList<>();
 	}
 

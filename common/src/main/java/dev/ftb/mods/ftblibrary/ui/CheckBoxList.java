@@ -13,28 +13,29 @@ import java.util.List;
  */
 public class CheckBoxList extends Button {
 	public static class CheckBoxEntry {
-		public String name;
-		public int value = 0;
-		private CheckBoxList checkBoxList;
+		private final String name;
+		private final CheckBoxList checkBoxList;
+		private int index = 0;
 
-		public CheckBoxEntry(String n) {
-			name = n;
+		public CheckBoxEntry(String name, CheckBoxList checkBoxList) {
+			this.name = name;
+			this.checkBoxList = checkBoxList;
 		}
 
 		public void onClicked(MouseButton button, int index) {
-			select((value + 1) % checkBoxList.getValueCount());
+			select((this.index + 1) % checkBoxList.getValueCount());
 			checkBoxList.playClickSound();
 		}
 
 		public void addMouseOverText(List<String> list) {
 		}
 
-		public CheckBoxEntry select(int v) {
-			if (checkBoxList.radioButtons) {
-				if (v > 0) {
+		public CheckBoxEntry select(int index) {
+			if (checkBoxList.radioButtonBehaviour) {
+				if (index > 0) {
 					for (var entry : checkBoxList.entries) {
-						var old1 = entry.value > 0;
-						entry.value = 0;
+						var old1 = entry.index > 0;
+						entry.index = 0;
 
 						if (old1) {
 							entry.onValueChanged();
@@ -45,27 +46,31 @@ public class CheckBoxList extends Button {
 				}
 			}
 
-			var old = value;
-			value = v;
+			var old = this.index;
+			this.index = index;
 
-			if (old != value) {
+			if (old != this.index) {
 				onValueChanged();
 			}
 
 			return this;
 		}
 
+		public int getIndex() {
+			return index;
+		}
+
 		public void onValueChanged() {
 		}
 	}
 
-	public final boolean radioButtons;
+	private final boolean radioButtonBehaviour;
 	private final List<CheckBoxEntry> entries;
 
-	public CheckBoxList(BaseScreen gui, boolean radiobutton) {
+	public CheckBoxList(BaseScreen gui, boolean radioButtonBehaviour) {
 		super(gui);
 		setSize(10, 2);
-		radioButtons = radiobutton;
+		this.radioButtonBehaviour = radioButtonBehaviour;
 		entries = new ArrayList<>();
 	}
 
@@ -78,22 +83,21 @@ public class CheckBoxList extends Button {
 	}
 
 	public void drawCheckboxBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawCheckboxBackground(matrixStack, x, y, w, h, radioButtons);
+		theme.drawCheckboxBackground(matrixStack, x, y, w, h, radioButtonBehaviour);
 	}
 
 	public void getCheckboxIcon(PoseStack matrixStack, Theme theme, int x, int y, int w, int h, int index, int value) {
-		theme.drawCheckbox(matrixStack, x, y, w, h, WidgetType.mouseOver(isMouseOver()), value != 0, radioButtons);
+		theme.drawCheckbox(matrixStack, x, y, w, h, WidgetType.mouseOver(isMouseOver()), value != 0, radioButtonBehaviour);
 	}
 
 	public void addBox(CheckBoxEntry checkBox) {
-		checkBox.checkBoxList = this;
 		entries.add(checkBox);
 		setWidth(Math.max(width, getGui().getTheme().getStringWidth(checkBox.name)));
 		setHeight(height + 11);
 	}
 
 	public CheckBoxEntry addBox(String name) {
-		var entry = new CheckBoxEntry(name);
+		var entry = new CheckBoxEntry(name, this);
 		addBox(entry);
 		return entry;
 	}
@@ -125,7 +129,7 @@ public class CheckBoxList extends Button {
 			var entry = entries.get(i);
 			var ey = y + i * 11 + 1;
 			drawCheckboxBackground(matrixStack, theme, x, ey, 10, 10);
-			getCheckboxIcon(matrixStack, theme, x + 1, ey + 1, 8, 8, i, entry.value);
+			getCheckboxIcon(matrixStack, theme, x + 1, ey + 1, 8, 8, i, entry.index);
 			theme.drawString(matrixStack, entry.name, x + 12, ey + 1);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}

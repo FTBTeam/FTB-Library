@@ -18,66 +18,7 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 	private int borderH, borderV, borderW;
 
 	public ButtonListBaseScreen() {
-		panelButtons = new Panel(this) {
-			@Override
-			public void add(Widget widget) {
-				if (!hasSearchBox || searchBox.getText().isEmpty() || getFilterText(widget).contains(searchBox.getText().toLowerCase())) {
-					super.add(widget);
-				}
-			}
-
-			@Override
-			public void addWidgets() {
-				addButtons(this);
-			}
-
-			@Override
-			public void alignWidgets() {
-				setY(hasSearchBox ? 23 : 9);
-				var prevWidth = width;
-
-				if (widgets.isEmpty()) {
-					setWidth(100);
-				} else {
-					setWidth(100);
-
-					for (var w : widgets) {
-						setWidth(Math.max(width, w.width));
-					}
-				}
-
-				if (width > ButtonListBaseScreen.this.width - 40) {
-					width = ButtonListBaseScreen.this.width - 40;
-				}
-
-				if (hasSearchBox) {
-					setWidth(Math.max(width, prevWidth));
-				}
-
-				for (var w : widgets) {
-					w.setX(borderH);
-					w.setWidth(width - borderH * 2);
-				}
-
-				setHeight(140);
-
-				scrollBar.setPosAndSize(posX + width + 6, posY - 1, 16, height + 2);
-				scrollBar.setMaxValue(align(new WidgetLayout.Vertical(borderV, borderW, borderV)));
-
-				getGui().setWidth(scrollBar.posX + scrollBar.width + 8);
-				getGui().setHeight(height + 18 + (hasSearchBox ? 14 : 0));
-
-				if (hasSearchBox) {
-					searchBox.setPosAndSize(8, 6, getGui().width - 16, 12);
-				}
-			}
-
-			@Override
-			public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-				theme.drawPanelBackground(matrixStack, x, y, w, h);
-			}
-		};
-
+		panelButtons = new ButtonPanel();
 		panelButtons.setPosAndSize(9, 9, 0, 146);
 
 		scrollBar = new PanelScrollBar(this, panelButtons);
@@ -90,14 +31,13 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 				panelButtons.refreshWidgets();
 			}
 		};
-
 		searchBox.ghostText = I18n.get("gui.search_box");
 		hasSearchBox = false;
 	}
 
-	public void setHasSearchBox(boolean v) {
-		if (hasSearchBox != v) {
-			hasSearchBox = v;
+	public void setHasSearchBox(boolean newVal) {
+		if (hasSearchBox != newVal) {
+			hasSearchBox = newVal;
 			refreshWidgets();
 		}
 	}
@@ -121,6 +61,12 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 		panelButtons.alignWidgets();
 	}
 
+	/**
+	 * Override this method to add your button to the panel. Just add the buttons; the panel will take care of
+	 * button layout for you.
+	 *
+	 * @param panel the panel to add buttons to
+	 */
 	public abstract void addButtons(Panel panel);
 
 	public void setTitle(Component txt) {
@@ -151,5 +97,69 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 
 	public void focus() {
 		searchBox.setFocused(true);
+	}
+
+	private class ButtonPanel extends Panel {
+		public ButtonPanel() {
+			super(ButtonListBaseScreen.this);
+		}
+
+		@Override
+		public void add(Widget widget) {
+			if (!hasSearchBox || searchBox.getText().isEmpty() || getFilterText(widget).contains(searchBox.getText().toLowerCase())) {
+				super.add(widget);
+			}
+		}
+
+		@Override
+		public void addWidgets() {
+			addButtons(this);
+		}
+
+		@Override
+		public void alignWidgets() {
+			setY(hasSearchBox ? 23 : 9);
+			var prevWidth = width;
+
+			if (widgets.isEmpty()) {
+				setWidth(100);
+			} else {
+				setWidth(100);
+
+				for (var w : widgets) {
+					setWidth(Math.max(width, w.width));
+				}
+			}
+
+			if (width > ButtonListBaseScreen.this.width - 40) {
+				width = ButtonListBaseScreen.this.width - 40;
+			}
+
+			if (hasSearchBox) {
+				setWidth(Math.max(width, prevWidth));
+			}
+
+			for (var w : widgets) {
+				w.setX(borderH);
+				w.setWidth(width - borderH * 2);
+			}
+
+			setHeight(140);
+
+			scrollBar.setPosAndSize(posX + width + 6, posY - 1, 16, height + 2);
+			scrollBar.setMaxValue(align(new WidgetLayout.Vertical(borderV, borderW, borderV)));
+
+			getGui().setWidth(scrollBar.posX + scrollBar.width + 8);
+			getGui().setHeight(height + 18 + (hasSearchBox ? 14 : 0));
+
+			if (hasSearchBox) {
+				searchBox.setPosAndSize(8, 6, getGui().width - 16, 12);
+			}
+		}
+
+		@Override
+		public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+			theme.drawPanelBackground(matrixStack, x, y, w, h);
+		}
 	}
 }

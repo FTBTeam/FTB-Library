@@ -20,18 +20,18 @@ public interface IOpenableScreen extends Runnable {
 	default void closeGui(boolean openPrevScreen) {
 	}
 
-	default void openContextMenu(@Nullable Panel panel) {
-		if (this instanceof Widget) {
-			((Widget) this).getGui().openContextMenu(panel);
-		}
-	}
+//	default void openContextMenu(@Nullable Panel panel) {
+//		if (this instanceof Widget) {
+//			((Widget) this).getGui().openContextMenu(panel);
+//		}
+//	}
 
 	default void closeContextMenu() {
-		if (this instanceof Widget) {
-			((Widget) this).getGui().closeContextMenu();
-		} else {
+		if (this instanceof Widget w) {
+			w.getGui().closeContextMenu();
+		} /*else {
 			openContextMenu(null);
-		}
+		}*/
 	}
 
 	@Override

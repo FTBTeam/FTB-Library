@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Panel extends Widget {
-	public final List<Widget> widgets;
+	protected final List<Widget> widgets;
+
 	private double scrollX = 0, scrollY = 0;
 	private int offsetX = 0, offsetY = 0;
 	private boolean onlyRenderWidgetsInside = true;
@@ -43,6 +44,10 @@ public abstract class Panel extends Widget {
 
 	public void setOnlyInteractWithWidgetsInside(boolean value) {
 		onlyInteractWithWidgetsInside = value;
+	}
+
+	public List<Widget> getWidgets() {
+		return widgets;
 	}
 
 	public abstract void addWidgets();

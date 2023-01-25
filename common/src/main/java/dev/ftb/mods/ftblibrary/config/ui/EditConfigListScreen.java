@@ -18,112 +18,6 @@ import net.minecraft.network.chat.Component;
  * @author LatvianModder
  */
 public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScreen {
-	public static class ButtonConfigValue<E, CV extends ConfigValue<E>> extends Button {
-		public final ListConfig<E, CV> list;
-		public final int index;
-
-		public ButtonConfigValue(Panel panel, ListConfig<E, CV> l, int i) {
-			super(panel);
-			list = l;
-			index = i;
-			setHeight(12);
-		}
-
-		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			var mouseOver = getMouseY() >= 20 && isMouseOver();
-
-			var textCol = list.type.getColor(list.value.get(index)).mutable();
-			textCol.setAlpha(255);
-
-			if (mouseOver) {
-				textCol.addBrightness(60);
-
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
-
-				if (getMouseX() >= x + w - 19) {
-					Color4I.WHITE.withAlpha(33).draw(matrixStack, x + w - 19, y, 19, h);
-				}
-			}
-
-			theme.drawString(matrixStack, getGui().getTheme().trimStringToWidth(list.type.getStringForGUI(list.value.get(index)), width), x + 4, y + 2, textCol, 0);
-
-			if (mouseOver) {
-				theme.drawString(matrixStack, "[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
-			}
-
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		}
-
-		@Override
-		public void onClicked(MouseButton button) {
-			playClickSound();
-
-			if (getMouseX() >= getX() + width - 19) {
-				if (list.getCanEdit()) {
-					list.value.remove(index);
-					parent.refreshWidgets();
-				}
-			} else {
-				list.type.value = list.value.get(index);
-				list.type.onClicked(button, accepted -> {
-					if (accepted) {
-						list.value.set(index, list.type.value);
-					}
-
-					openGui();
-				});
-			}
-		}
-
-		@Override
-		public void addMouseOverText(TooltipList l) {
-			if (getMouseX() >= getX() + width - 19) {
-				l.translate("selectServer.delete");
-			} else {
-				list.type.value = list.value.get(index);
-				list.type.addInfo(l);
-			}
-		}
-	}
-
-	public class ButtonAddValue extends Button {
-		public ButtonAddValue(Panel panel) {
-			super(panel);
-			setHeight(12);
-			setTitle(Component.literal("+ ").append(Component.translatable("gui.add")));
-		}
-
-		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			var mouseOver = getMouseY() >= 20 && isMouseOver();
-
-			if (mouseOver) {
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
-			}
-
-			theme.drawString(matrixStack, getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		}
-
-		@Override
-		public void onClicked(MouseButton button) {
-			playClickSound();
-			list.type.value = list.type.defaultValue == null ? null : list.type.copy(list.type.defaultValue);
-			list.type.onClicked(button, accepted -> {
-				if (accepted) {
-					list.value.add(list.type.value);
-				}
-
-				openGui();
-			});
-		}
-
-		@Override
-		public void addMouseOverText(TooltipList list) {
-		}
-	}
-
 	private final ListConfig<E, CV> list;
 	private final ConfigCallback callback;
 
@@ -141,7 +35,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		configPanel = new Panel(this) {
 			@Override
 			public void addWidgets() {
-				for (var i = 0; i < list.value.size(); i++) {
+				for (var i = 0; i < list.getValue().size(); i++) {
 					add(new ButtonConfigValue<>(this, list, i));
 				}
 
@@ -220,5 +114,112 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 	@Override
 	public Theme getTheme() {
 		return EditConfigScreen.THEME;
+	}
+
+	public class ButtonAddValue extends Button {
+		public ButtonAddValue(Panel panel) {
+			super(panel);
+			setHeight(12);
+			setTitle(Component.literal("+ ").append(Component.translatable("gui.add")));
+		}
+
+		@Override
+		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+			var mouseOver = getMouseY() >= 20 && isMouseOver();
+
+			if (mouseOver) {
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
+			}
+
+			theme.drawString(matrixStack, getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+		}
+
+		@Override
+		public void onClicked(MouseButton button) {
+			playClickSound();
+			CV listType = list.type;
+			listType.setValue(listType.getDefaultValue() == null ? null : listType.copy(listType.getDefaultValue()));
+			listType.onClicked(button, accepted -> {
+				if (accepted) {
+					list.getValue().add(listType.getValue());
+				}
+
+				openGui();
+			});
+		}
+
+		@Override
+		public void addMouseOverText(TooltipList list) {
+		}
+	}
+
+	public static class ButtonConfigValue<E, CV extends ConfigValue<E>> extends Button {
+		public final ListConfig<E, CV> list;
+		public final int index;
+
+		public ButtonConfigValue(Panel panel, ListConfig<E, CV> list, int index) {
+			super(panel);
+			this.list = list;
+			this.index = index;
+			setHeight(12);
+		}
+
+		@Override
+		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+			var mouseOver = getMouseY() >= 20 && isMouseOver();
+
+			var textCol = list.type.getColor(list.getValue().get(index)).mutable();
+			textCol.setAlpha(255);
+
+			if (mouseOver) {
+				textCol.addBrightness(60);
+
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
+
+				if (getMouseX() >= x + w - 19) {
+					Color4I.WHITE.withAlpha(33).draw(matrixStack, x + w - 19, y, 19, h);
+				}
+			}
+
+			theme.drawString(matrixStack, getGui().getTheme().trimStringToWidth(list.type.getStringForGUI(list.getValue().get(index)), width), x + 4, y + 2, textCol, 0);
+
+			if (mouseOver) {
+				theme.drawString(matrixStack, "[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
+			}
+
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+		}
+
+		@Override
+		public void onClicked(MouseButton button) {
+			playClickSound();
+
+			if (getMouseX() >= getX() + width - 19) {
+				if (list.getCanEdit()) {
+					list.getValue().remove(index);
+					parent.refreshWidgets();
+				}
+			} else {
+				list.type.setValue(list.getValue().get(index));
+				list.type.onClicked(button, accepted -> {
+					if (accepted) {
+						list.getValue().set(index, list.type.getValue());
+					}
+
+					openGui();
+				});
+			}
+		}
+
+		@Override
+		public void addMouseOverText(TooltipList l) {
+			if (getMouseX() >= getX() + width - 19) {
+				l.translate("selectServer.delete");
+			} else {
+				list.type.setValue(list.getValue().get(index));
+				list.type.addInfo(l);
+			}
+		}
 	}
 }

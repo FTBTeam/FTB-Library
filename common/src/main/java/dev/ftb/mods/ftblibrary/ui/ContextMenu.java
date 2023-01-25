@@ -14,8 +14,9 @@ import java.util.List;
 public class ContextMenu extends Panel {
 	private static final int MARGIN = 3;
 
-	public final List<ContextMenuItem> items;
-	public boolean hasIcons;
+	private final List<ContextMenuItem> items;
+	private final boolean hasIcons;
+
 	private int nColumns;
 	private int columnWidth;
 
@@ -23,7 +24,7 @@ public class ContextMenu extends Panel {
 		super(panel);
 		items = i;
 
-		hasIcons = items.stream().anyMatch(item -> !item.icon.isEmpty());
+		hasIcons = items.stream().anyMatch(item -> !item.getIcon().isEmpty());
 	}
 
 	@Override
@@ -103,11 +104,11 @@ public class ContextMenu extends Panel {
 		public final ContextMenu contextMenu;
 		public final ContextMenuItem item;
 
-		public CButton(ContextMenu panel, ContextMenuItem i) {
-			super(panel, i.title, i.icon);
+		public CButton(ContextMenu panel, ContextMenuItem item) {
+			super(panel, item.getTitle(), item.getIcon());
 			contextMenu = panel;
-			item = i;
-			setSize(panel.getGui().getTheme().getStringWidth(item.title) + (contextMenu.hasIcons ? 14 : 4), 12);
+			this.item = item;
+			setSize(panel.getGui().getTheme().getStringWidth(item.getTitle()) + (contextMenu.hasIcons ? 14 : 4), 12);
 		}
 
 		@Override
@@ -117,7 +118,7 @@ public class ContextMenu extends Panel {
 
 		@Override
 		public WidgetType getWidgetType() {
-			return item.enabled.getAsBoolean() ? super.getWidgetType() : WidgetType.DISABLED;
+			return item.isEnabled() ? super.getWidgetType() : WidgetType.DISABLED;
 		}
 
 		@Override
@@ -141,16 +142,16 @@ public class ContextMenu extends Panel {
 		public void onClicked(MouseButton button) {
 			playClickSound();
 
-			if (item.yesNoText.getString().isEmpty()) {
+			if (item.getYesNoText().getString().isEmpty()) {
 				item.onClicked(contextMenu, button);
 			} else {
-				getGui().openYesNo(item.yesNoText, Component.literal(""), () -> item.onClicked(contextMenu, button));
+				getGui().openYesNo(item.getYesNoText(), Component.literal(""), () -> item.onClicked(contextMenu, button));
 			}
 		}
 	}
 
-	public static class CSeperator extends Button {
-		public CSeperator(Panel panel) {
+	public static class CSeparator extends Button {
+		public CSeparator(Panel panel) {
 			super(panel);
 			setHeight(5);
 		}

@@ -34,33 +34,31 @@ public class CompactGridLayout implements WidgetLayout {
 
 	@Override
 	public int align(Panel panel) {
-		var s = panel.widgets.size();
+		var nWidgets = panel.getWidgets().size();
 
-		if (s <= 0) {
+		if (nWidgets == 0) {
 			return 0;
-		} else if (s > LAYOUTS.length) {
-			for (var i = 0; i < s; i++) {
-				panel.widgets.get(i).setPosAndSize((i % 4) * size, (i / 4) * size, size, size);
+		} else if (nWidgets > LAYOUTS.length) {
+			for (var i = 0; i < nWidgets; i++) {
+				panel.getWidgets().get(i).setPosAndSize((i % 4) * size, (i / 4) * size, size, size);
 			}
 
-			return (s / 4) * size;
+			return (nWidgets / 4) * size;
 		}
 
-		var layout = LAYOUTS[s - 1];
-
-		var m = 0;
-
+		int[] layout = LAYOUTS[nWidgets - 1];
+		var max = 0;
 		for (var v : layout) {
-			m = Math.max(m, v);
+			max = Math.max(max, v);
 		}
 
 		var off = 0;
 
 		for (var l = 0; l < layout.length; l++) {
-			var o = ((layout[l] % 2) == (m % 2)) ? 0 : size / 2;
+			var o = ((layout[l] % 2) == (max % 2)) ? 0 : size / 2;
 
 			for (var i = 0; i < layout[l]; i++) {
-				panel.widgets.get(off + i).setPosAndSize(o + i * size, l * size, size, size);
+				panel.getWidgets().get(off + i).setPosAndSize(o + i * size, l * size, size, size);
 			}
 
 			off += layout[l];

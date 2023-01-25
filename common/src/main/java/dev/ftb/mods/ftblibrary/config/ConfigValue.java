@@ -19,10 +19,10 @@ import java.util.function.Consumer;
 public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	public static final Component NULL_TEXT = Component.literal("null");
 
-	public ConfigGroup group;
-	public T value;
-	public Consumer<T> setter;
-	public T defaultValue;
+	private ConfigGroup group;
+	protected T value;
+	private Consumer<T> setter;
+	protected T defaultValue;
 
 	public String id = "";
 	private int order = 0;
@@ -30,13 +30,24 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	private Icon icon = Icons.SETTINGS;
 	private boolean canEdit = true;
 
-	public ConfigValue<T> init(ConfigGroup g, String i, @Nullable T v, Consumer<T> c, @Nullable T def) {
-		group = g;
-		id = i;
-		value = v == null ? null : copy(v);
-		setter = c;
-		defaultValue = def;
-		order = g.getValues().size();
+	/**
+	 * Initialise this config value; called when it's added to a config group with
+	 * {@link ConfigGroup#add(String, ConfigValue, Object, Consumer, Object)}
+	 *
+	 * @param group the group being added to
+	 * @param id a unique id for this value
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param defaultValue the default value
+	 * @return the initialised config value
+	 */
+	public ConfigValue<T> init(ConfigGroup group, String id, @Nullable T value, Consumer<T> setter, @Nullable T defaultValue) {
+		this.group = group;
+		this.id = id;
+		this.value = value == null ? null : copy(value);
+		this.setter = setter;
+		this.defaultValue = defaultValue;
+		this.order = group.getValues().size();
 		return this;
 	}
 
@@ -47,6 +58,22 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 		}
 
 		return false;
+	}
+
+	public ConfigGroup getGroup() {
+		return group;
+	}
+
+	public T getValue() {
+		return value;
+	}
+
+	public void setValue(T value) {
+		this.value = value;
+	}
+
+	public T getDefaultValue() {
+		return defaultValue;
 	}
 
 	public boolean isEqual(@Nullable T v1, @Nullable T v2) {
@@ -126,6 +153,10 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 		return icon;
 	}
 
+	public void setDefaultValue(T defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
 	@Override
 	public int compareTo(ConfigValue<T> o) {
 		var i = group.getPath().compareToIgnoreCase(o.group.getPath());
@@ -135,5 +166,9 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 		}
 
 		return i;
+	}
+
+	public void applyValue() {
+		setter.accept(value);
 	}
 }

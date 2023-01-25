@@ -43,22 +43,21 @@ public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 
 	@Override
 	public void addInfo(TooltipList l) {
-		if (!value.isEmpty()) {
+		if (!getValue().isEmpty()) {
 			l.add(info("List"));
 
-			for (var value : value) {
+			for (var value : getValue()) {
 				l.add(type.getStringForGUI(value));
 			}
 
-			if (!defaultValue.isEmpty()) {
+			if (!getDefaultValue().isEmpty()) {
 				l.blankLine();
 			}
 		}
 
-		if (!defaultValue.isEmpty()) {
+		if (!getDefaultValue().isEmpty()) {
 			l.add(info("Default"));
-
-			for (var value : defaultValue) {
+			for (var value : getDefaultValue()) {
 				l.add(type.getStringForGUI(value));
 			}
 		}

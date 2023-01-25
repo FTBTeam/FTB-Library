@@ -15,12 +15,17 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 public class Widget implements IScreenWrapper {
-	public Panel parent;
+	protected final Panel parent;
+
 	public int posX, posY, width, height;
 	protected boolean isMouseOver;
 
 	public Widget(Panel p) {
 		parent = p;
+	}
+
+	public Panel getParent() {
+		return parent;
 	}
 
 	@Override

@@ -13,30 +13,29 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 public class EditConfigFromStringScreen<T> extends BaseScreen {
-	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, Component title, ConfigCallback callback) {
-		var group = new ConfigGroup("group");
-		group.add("value", type, value, e -> {
-		}, defaultValue);
-		new EditConfigFromStringScreen<>(type, callback).setTitle(title).openGui();
-	}
-	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, ConfigCallback callback) {
-		open(type, value, defaultValue, Component.empty(), callback);
-	}
-
 	private final ConfigFromString<T> config;
 	private final ConfigCallback callback;
-	private T current;
-
 	private final Button buttonCancel, buttonAccept;
 	private final TextBox textBox;
 
+	private T currentValue;
 	private Component title = Component.empty();
+
+	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, Component title, ConfigCallback callback) {
+		var group = new ConfigGroup("group");
+		group.add("value", type, value, e -> { }, defaultValue);
+		new EditConfigFromStringScreen<>(type, callback).setTitle(title).openGui();
+	}
+
+	public static <E> void open(ConfigFromString<E> type, @Nullable E value, @Nullable E defaultValue, ConfigCallback callback) {
+		open(type, value, defaultValue, Component.empty(), callback);
+	}
 
 	public EditConfigFromStringScreen(ConfigFromString<T> c, ConfigCallback cb) {
 		setSize(230, 54);
 		config = c;
 		callback = cb;
-		current = config.value == null ? null : config.copy(config.value);
+		currentValue = config.getValue() == null ? null : config.copy(config.getValue());
 
 		var bsize = width / 2 - 10;
 
@@ -89,7 +88,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 			@Override
 			public void onTextChanged() {
 				config.parse(t -> {
-					current = t;
+					currentValue = t;
 					textColor = config.getColor(t);
 				}, getText());
 			}
@@ -103,8 +102,8 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 		};
 
 		textBox.setPosAndSize(8, 8, width - 16, 16);
-		textBox.setText(config.getStringFromValue(current));
-		textBox.textColor = config.getColor(current);
+		textBox.setText(config.getStringFromValue(currentValue));
+		textBox.textColor = config.getColor(currentValue);
 		textBox.setCursorPosition(textBox.getText().length());
 		textBox.setFocused(true);
 	}
@@ -124,7 +123,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 	}
 
 	private void doAccept() {
-		config.setCurrentValue(current);
+		config.setCurrentValue(currentValue);
 		callback.save(true);
 	}
 

@@ -172,10 +172,10 @@ public class NBTEditorScreen extends BaseScreen {
 		public void onCallback(ConfigValue<?> value, boolean set) {
 			if (set) {
 				switch (nbt.getId()) {
-					case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT -> nbt = IntTag.valueOf(((Number) value.value).intValue());
-					case Tag.TAG_LONG -> nbt = LongTag.valueOf(((Number) value.value).longValue());
-					case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> nbt = DoubleTag.valueOf(((Number) value.value).doubleValue());
-					case Tag.TAG_STRING -> nbt = StringTag.valueOf(value.value.toString());
+					case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT -> nbt = IntTag.valueOf(((Number) value.getValue()).intValue());
+					case Tag.TAG_LONG -> nbt = LongTag.valueOf(((Number) value.getValue()).longValue());
+					case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> nbt = DoubleTag.valueOf(((Number) value.getValue()).doubleValue());
+					case Tag.TAG_STRING -> nbt = StringTag.valueOf(value.getValue().toString());
 				}
 
 				parent.setTag(key, nbt);
@@ -570,8 +570,8 @@ public class NBTEditorScreen extends BaseScreen {
 			if (selected instanceof ButtonNBTMap) {
 				var value = new StringConfig(Pattern.compile("^.+$"));
 				EditConfigFromStringScreen.open(value, "", "", set -> {
-					if (set && !value.value.isEmpty()) {
-						((ButtonNBTCollection) selected).setTag(value.value, supplier.get());
+					if (set && !value.getValue().isEmpty()) {
+						((ButtonNBTCollection) selected).setTag(value.getValue(), supplier.get());
 						selected.updateChildren(false);
 						panelNbt.refreshWidgets();
 					}
@@ -620,14 +620,14 @@ public class NBTEditorScreen extends BaseScreen {
 					if (canRename) {
 						var value = new StringConfig();
 						EditConfigFromStringScreen.open(value, selected.key, "", set -> {
-							if (set && !value.value.isEmpty()) {
+							if (set && !value.getValue().isEmpty()) {
 								var parent = selected.parent;
 								var s0 = selected.key;
 								var nbt = parent.getTag(s0);
 								parent.setTag(s0, null);
-								parent.setTag(value.value, nbt);
+								parent.setTag(value.getValue(), nbt);
 								parent.updateChildren(false);
-								selected = parent.children.get(value.value);
+								selected = parent.children.get(value.getValue());
 								panelNbt.refreshWidgets();
 							}
 
@@ -698,27 +698,11 @@ public class NBTEditorScreen extends BaseScreen {
 			public void addWidgets() {
 				add(new SimpleButton(this, Component.translatable("gui.copy"), ItemIcon.getItemIcon(Items.PAPER), (widget, button) -> setClipboardString(selected.copy().toString())));
 
-				add(new SimpleButton(this, Component.translatable("gui.collapse_all"), Icons.REMOVE, (widget, button) -> {
-					for (var w : panelNbt.widgets) {
-						if (w instanceof ButtonNBTCollection) {
-							((ButtonNBTCollection) w).setCollapsed(true);
-						}
-					}
+				add(new SimpleButton(this, Component.translatable("gui.collapse_all"), Icons.REMOVE,
+						(widget, button) -> collapseAll(true)));
 
-					scroll.setValue(0);
-					panelNbt.refreshWidgets();
-				}));
-
-				add(new SimpleButton(this, Component.translatable("gui.expand_all"), Icons.ADD, (widget, button) -> {
-					for (var w : panelNbt.widgets) {
-						if (w instanceof ButtonNBTCollection) {
-							((ButtonNBTCollection) w).setCollapsed(false);
-						}
-					}
-
-					scroll.setValue(0);
-					panelNbt.refreshWidgets();
-				}));
+				add(new SimpleButton(this, Component.translatable("gui.expand_all"), Icons.ADD,
+						(widget, button) -> collapseAll(false)));
 
 				add(new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> {
 					shouldClose = 2;
@@ -757,6 +741,17 @@ public class NBTEditorScreen extends BaseScreen {
 		selected = buttonNBTRoot;
 
 		scroll = new PanelScrollBar(this, panelNbt);
+	}
+
+	private void collapseAll(boolean collapse) {
+		for (var w : panelNbt.getWidgets()) {
+			if (w instanceof ButtonNBTCollection collection) {
+				collection.setCollapsed(collapse);
+			}
+		}
+
+		scroll.setValue(0);
+		panelNbt.refreshWidgets();
 	}
 
 	@Override

@@ -4,7 +4,7 @@ package dev.ftb.mods.ftblibrary.ui;
  * @author LatvianModder
  */
 public class BlankPanel extends Panel {
-	public String id;
+	private final String id;
 
 	public BlankPanel(Panel panel) {
 		this(panel, "");

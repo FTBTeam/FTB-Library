@@ -55,7 +55,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 	@Override
 	public void onClicked(MouseButton button, ConfigCallback callback) {
 		if (nameMap.values.size() > 16 || BaseScreen.isCtrlKeyDown()) {
-			var g = new ButtonListBaseScreen() {
+			var gui = new ButtonListBaseScreen() {
 				@Override
 				public void addButtons(Panel panel) {
 					for (var v : nameMap) {
@@ -71,8 +71,8 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 				}
 			};
 
-			g.setHasSearchBox(true);
-			g.openGui();
+			gui.setHasSearchBox(true);
+			gui.openGui();
 			return;
 		}
 
@@ -80,8 +80,8 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 	}
 
 	@Override
-	public E getIteration(E v, boolean next) {
-		return next ? nameMap.getNext(v) : nameMap.getPrevious(v);
+	public E getIteration(E currentValue, boolean next) {
+		return next ? nameMap.getNext(currentValue) : nameMap.getPrevious(currentValue);
 	}
 
 	@Override

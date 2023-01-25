@@ -12,8 +12,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Objects;
-
 /**
  * @author LatvianModder
  */
@@ -132,7 +130,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 		var theme = wrappedGui.getTheme();
 		wrappedGui.drawForeground(matrixStack, theme, leftPos, topPos, imageWidth, imageHeight);
 
-		Objects.requireNonNullElse(wrappedGui.contextMenu, wrappedGui).addMouseOverText(tooltipList);
+		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			var object = wrappedGui.getIngredientUnderMouse();
@@ -153,7 +151,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
 		tooltipList.reset();
 
-		if (wrappedGui.contextMenu == null) {
+		if (wrappedGui.getContextMenu().isEmpty()) {
 			renderTooltip(matrixStack, mouseX, mouseY);
 		}
 

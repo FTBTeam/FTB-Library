@@ -10,6 +10,8 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 
+import java.util.Optional;
+
 /**
  * @author LatvianModder
  */
@@ -131,16 +133,16 @@ public class TextField extends Widget {
 		}
 	}
 
-	public Style getComponentStyleAt(Theme theme, int mouseX, int mouseY) {
+	public Optional<Style> getComponentStyleAt(Theme theme, int mouseX, int mouseY) {
 		int line = (mouseY - getY()) / theme.getFontHeight();
 		if (line >= 0 && line < formattedText.length) {
 			boolean centered = Bits.getFlag(textFlags, Theme.CENTERED);
 			int textWidth = theme.getFont().width(formattedText[line]);
 			int xStart = centered ? getX() + (width - textWidth) / 2: getX();
 			if (mouseX >= xStart && mouseX <= xStart + textWidth) {
-				return theme.getFont().getSplitter().componentStyleAtWidth(formattedText[line], mouseX - xStart);
+				return Optional.ofNullable(theme.getFont().getSplitter().componentStyleAtWidth(formattedText[line], mouseX - xStart));
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 }

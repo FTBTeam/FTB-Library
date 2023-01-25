@@ -33,196 +33,25 @@ public class EditConfigScreen extends BaseScreen {
 		}
 	};
 
-	public static class ConfigGroupButton extends Button {
-		public final ConfigGroup group;
-		public MutableComponent title, info;
-		public boolean collapsed = false;
-
-		public ConfigGroupButton(Panel panel, ConfigGroup g) {
-			super(panel);
-			setHeight(12);
-			group = g;
-
-			if (group.parent != null) {
-				List<ConfigGroup> groups = new ArrayList<>();
-
-				do {
-					groups.add(g);
-					g = g.parent;
-				}
-				while (g != null);
-
-				groups.remove(groups.size() - 1);
-
-				title = Component.literal("");
-
-				for (var i = groups.size() - 1; i >= 0; i--) {
-					title.append(groups.get(i).getName());
-
-					if (i != 0) {
-						title.append(" > ");
-					}
-				}
-			} else {
-				title = Component.translatable("stat.generalButton");
-			}
-			title.withStyle(ChatFormatting.YELLOW);
-
-			var infoKey = group.getPath() + ".info";
-			info = I18n.exists(infoKey) ? Component.translatable(infoKey) : null;
-			setCollapsed(collapsed);
-		}
-
-		public void setCollapsed(boolean v) {
-			collapsed = v;
-			setTitle(Component.literal("").append(Component.literal(collapsed ? "[-] " : "[v] ").withStyle(collapsed ? ChatFormatting.RED : ChatFormatting.GREEN)).append(title));
-		}
-
-		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			COLOR_BACKGROUND.draw(matrixStack, x, y, w, h);
-			theme.drawString(matrixStack, getTitle(), x + 3, y + 2);
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-
-			Color4I.GRAY.withAlpha(80).draw(matrixStack, 0, y, width, 1);
-			Color4I.GRAY.withAlpha(80).draw(matrixStack, 0, y, 1, height);
-			if (isMouseOver()) {
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
-			}
-		}
-
-		@Override
-		public void addMouseOverText(TooltipList list) {
-			if (info != null) {
-				list.add(info);
-			}
-		}
-
-		@Override
-		public void onClicked(MouseButton button) {
-			setCollapsed(!collapsed);
-			getGui().refreshWidgets();
-		}
-	}
-
-	private class ConfigEntryButton extends Button {
-		public final ConfigGroupButton group;
-		public final ConfigValue inst;
-		public Component keyText;
-
-		public ConfigEntryButton(Panel panel, ConfigGroupButton g, ConfigValue i) {
-			super(panel);
-			setHeight(12);
-			group = g;
-			inst = i;
-
-			if (!inst.getCanEdit()) {
-				keyText = Component.literal(inst.getName()).withStyle(ChatFormatting.GRAY);
-			} else {
-				keyText = Component.literal(inst.getName());
-			}
-		}
-
-		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			var mouseOver = getMouseY() >= 20 && isMouseOver();
-
-			if (mouseOver) {
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
-			}
-
-			theme.drawString(matrixStack, keyText, 5, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-
-			FormattedText s = inst.getStringForGUI(inst.value);
-			var slen = theme.getStringWidth(s);
-
-			int maxLen = width - dividerX - 10;
-			if (slen > maxLen) {
-				s = Component.literal(theme.trimStringToWidth(s, maxLen).getString().trim() + "...");
-				slen = maxLen + 2;
-			}
-
-			var textCol = inst.getColor(inst.value).mutable();
-			textCol.setAlpha(255);
-
-			if (mouseOver) {
-				textCol.addBrightness(60);
-
-				if (getMouseX() > x + w - slen - 9) {
-					Color4I.WHITE.withAlpha(33).draw(matrixStack, x + w - slen - 8, y, slen + 8, h);
-				}
-			}
-
-			theme.drawString(matrixStack, s, dividerX + 5, y + 2, textCol, 0);
-
-			Color4I.GRAY.withAlpha(33).draw(matrixStack, dividerX, y, 1, height);
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		}
-
-		@Override
-		public void onClicked(MouseButton button) {
-			if (getMouseY() >= 20) {
-				playClickSound();
-				inst.onClicked(button, accepted -> run());
-			}
-		}
-
-		@Override
-		public void addMouseOverText(TooltipList list) {
-			if (getMouseY() > 18) {
-				list.add(keyText.copy().withStyle(ChatFormatting.UNDERLINE));
-				var tooltip = inst.getTooltip();
-
-				if (!tooltip.isEmpty()) {
-					for (var s : tooltip.split("\n")) {
-						list.styledString(s, Style.EMPTY.withItalic(true).withColor(TextColor.fromLegacyFormat(ChatFormatting.GRAY)));
-					}
-				}
-
-				list.blankLine();
-				inst.addInfo(list);
-			}
-		}
-	}
-
 	private final ConfigGroup group;
-
 	private final Component title;
-	private final List<Widget> configEntryButtons;
+	private final List<Widget> allConfigButtons; // both groups and entries
 	private final Panel configPanel;
 	private final Button buttonAccept, buttonCancel, buttonCollapseAll, buttonExpandAll;
 	private final PanelScrollBar scroll;
+
 	private int groupSize = 0;
 	private boolean autoclose = false;
 	private int dividerX;
 
-	public EditConfigScreen(ConfigGroup g) {
-		group = g;
-		title = g.getName().copy().withStyle(ChatFormatting.BOLD);
-		configEntryButtons = new ArrayList<>();
+	public EditConfigScreen(ConfigGroup configGroup) {
+		group = configGroup;
+		title = configGroup.getName().copy().withStyle(ChatFormatting.BOLD);
+		allConfigButtons = new ArrayList<>();
 
-		configPanel = new Panel(this) {
-			@Override
-			public void addWidgets() {
-				for (var w : configEntryButtons) {
-					if (!(w instanceof ConfigEntryButton) || !((ConfigEntryButton) w).group.collapsed) {
-						add(w);
-					}
-				}
-			}
+		configPanel = new ConfigPanel();
 
-			@Override
-			public void alignWidgets() {
-				for (var w : widgets) {
-					w.setWidth(width - 16);
-				}
-
-				scroll.setMaxValue(align(WidgetLayout.VERTICAL));
-			}
-		};
-
-		List<ConfigValue> list = new ArrayList<>();
+		List<ConfigValue<?>> list = new ArrayList<>();
 		collectAllConfigValues(group, list);
 
 		if (!list.isEmpty()) {
@@ -231,59 +60,52 @@ public class EditConfigScreen extends BaseScreen {
 			ConfigGroupButton group = null;
 
 			for (var value : list) {
-				if (group == null || group.group != value.group) {
-					configEntryButtons.add(new VerticalSpaceWidget(configPanel, 4));
-					group = new ConfigGroupButton(configPanel, value.group);
-					configEntryButtons.add(group);
+				if (group == null || group.group != value.getGroup()) {
+					allConfigButtons.add(new VerticalSpaceWidget(configPanel, 4));
+					group = new ConfigGroupButton(configPanel, value.getGroup());
+					allConfigButtons.add(group);
 					groupSize++;
 				}
 
 				ConfigEntryButton btn = new ConfigEntryButton(configPanel, group, value);
-				configEntryButtons.add(btn);
+				allConfigButtons.add(btn);
 				dividerX = Math.max(dividerX, getTheme().getStringWidth(btn.keyText));
 			}
 
 			if (groupSize == 1) {
-				configEntryButtons.remove(group);
+				allConfigButtons.remove(group);
 			}
 		}
 		dividerX += 10;
 
 		scroll = new PanelScrollBar(this, configPanel);
 
-		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, (widget, button) -> doAccept());
-		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> doCancel());
-
-		buttonExpandAll = new SimpleButton(this, Component.translatable("gui.expand_all"), Icons.ADD, (widget, button) ->
-		{
-			for (var w : configEntryButtons) {
-				if (w instanceof ConfigGroupButton) {
-					((ConfigGroupButton) w).setCollapsed(false);
-				}
-			}
-
-			scroll.setValue(0);
-			widget.getGui().refreshWidgets();
-		});
-
-		buttonCollapseAll = new SimpleButton(this, Component.translatable("gui.collapse_all"), Icons.REMOVE, (widget, button) ->
-		{
-			for (var w : configEntryButtons) {
-				if (w instanceof ConfigGroupButton) {
-					((ConfigGroupButton) w).setCollapsed(true);
-				}
-			}
-
-			scroll.setValue(0);
-			widget.getGui().refreshWidgets();
-		});
+		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT,
+				(widget, button) -> doAccept());
+		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL,
+				(widget, button) -> doCancel());
+		buttonExpandAll = new SimpleButton(this, Component.translatable("gui.expand_all"), Icons.ADD,
+				(widget, button) -> toggleAll(false));
+		buttonCollapseAll = new SimpleButton(this, Component.translatable("gui.collapse_all"), Icons.REMOVE,
+				(widget, button) -> toggleAll(true));
 	}
 
-	private void collectAllConfigValues(ConfigGroup group, List<ConfigValue> list) {
+	private void toggleAll(boolean collapsed) {
+		for (var w : allConfigButtons) {
+			if (w instanceof ConfigGroupButton cgb) {
+				cgb.setCollapsed(collapsed);
+			}
+		}
+
+		scroll.setValue(0);
+		getGui().refreshWidgets();
+	}
+
+	private void collectAllConfigValues(ConfigGroup group, List<ConfigValue<?>> list) {
 		list.addAll(group.getValues());
 
-		for (var group1 : group.getGroups()) {
-			collectAllConfigValues(group1, list);
+		for (var subgroup : group.getSubgroups()) {
+			collectAllConfigValues(subgroup, list);
 		}
 	}
 
@@ -364,5 +186,173 @@ public class EditConfigScreen extends BaseScreen {
 	@Override
 	public Theme getTheme() {
 		return THEME;
+	}
+
+	public static class ConfigGroupButton extends Button {
+		public final ConfigGroup group;
+		public MutableComponent title, info;
+		public boolean collapsed = false;
+
+		public ConfigGroupButton(Panel panel, ConfigGroup g) {
+			super(panel);
+			setHeight(12);
+			group = g;
+
+			if (group.getParent() != null) {
+				List<ConfigGroup> groups = new ArrayList<>();
+				do {
+					groups.add(g);
+					g = g.getParent();
+				} while (g != null);
+				groups.remove(groups.size() - 1);
+
+				title = Component.literal("");
+
+				for (var i = groups.size() - 1; i >= 0; i--) {
+					title.append(groups.get(i).getName());
+
+					if (i != 0) {
+						title.append(" > ");
+					}
+				}
+			} else {
+				title = Component.translatable("stat.generalButton");
+			}
+			title.withStyle(ChatFormatting.YELLOW);
+
+			var infoKey = group.getPath() + ".info";
+			info = I18n.exists(infoKey) ? Component.translatable(infoKey) : null;
+			setCollapsed(collapsed);
+		}
+
+		public void setCollapsed(boolean collapsed) {
+			this.collapsed = collapsed;
+			setTitle(Component.literal(this.collapsed ? "[-] " : "[v] ").withStyle(this.collapsed ? ChatFormatting.RED : ChatFormatting.GREEN).append(title));
+		}
+
+		@Override
+		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+			COLOR_BACKGROUND.draw(matrixStack, x, y, w, h);
+			theme.drawString(matrixStack, getTitle(), x + 3, y + 2);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+
+			Color4I.GRAY.withAlpha(80).draw(matrixStack, 0, y, width, 1);
+			Color4I.GRAY.withAlpha(80).draw(matrixStack, 0, y, 1, height);
+			if (isMouseOver()) {
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
+			}
+		}
+
+		@Override
+		public void addMouseOverText(TooltipList list) {
+			if (info != null) {
+				list.add(info);
+			}
+		}
+
+		@Override
+		public void onClicked(MouseButton button) {
+			setCollapsed(!collapsed);
+			getGui().refreshWidgets();
+		}
+	}
+
+	private class ConfigEntryButton extends Button {
+		private final ConfigGroupButton groupButton;
+		private final ConfigValue configValue;
+		private final Component keyText;
+
+		public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, ConfigValue configValue) {
+			super(panel);
+			setHeight(getTheme().getFontHeight() + 2);
+			this.groupButton = groupButton;
+			this.configValue = configValue;
+
+			keyText = this.configValue.getCanEdit() ?
+					Component.literal(this.configValue.getName()) :
+					Component.literal(this.configValue.getName()).withStyle(ChatFormatting.GRAY);
+		}
+
+		@Override
+		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+			var mouseOver = getMouseY() >= 20 && isMouseOver();
+
+			if (mouseOver) {
+				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
+			}
+
+			theme.drawString(matrixStack, keyText, 5, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+
+			Component s = configValue.getStringForGUI(configValue.getValue());
+			var slen = theme.getStringWidth(s);
+
+			int maxLen = width - dividerX - 10;
+			if (slen > maxLen) {
+				s = Component.literal(theme.trimStringToWidth(s, maxLen).getString().trim() + "...");
+				slen = maxLen + 2;
+			}
+
+			var textCol = configValue.getColor(configValue.getValue()).mutable();
+			textCol.setAlpha(255);
+
+			if (mouseOver) {
+				textCol.addBrightness(60);
+				if (getMouseX() > x + w - slen - 9) {
+					Color4I.WHITE.withAlpha(33).draw(matrixStack, x + w - slen - 8, y, slen + 8, h);
+				}
+			}
+
+			theme.drawString(matrixStack, s, dividerX + 5, y + 2, textCol, 0);
+
+			Color4I.GRAY.withAlpha(33).draw(matrixStack, dividerX, y, 1, height);
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+		}
+
+		@Override
+		public void onClicked(MouseButton button) {
+			if (getMouseY() >= 20) {
+				playClickSound();
+				configValue.onClicked(button, accepted -> run());
+			}
+		}
+
+		@Override
+		public void addMouseOverText(TooltipList list) {
+			if (getMouseY() > 18) {
+				list.add(keyText.copy().withStyle(ChatFormatting.UNDERLINE));
+				var tooltip = configValue.getTooltip();
+
+				if (!tooltip.isEmpty()) {
+					for (var s : tooltip.split("\n")) {
+						list.styledString(s, Style.EMPTY.withItalic(true).withColor(TextColor.fromLegacyFormat(ChatFormatting.GRAY)));
+					}
+				}
+
+				list.blankLine();
+				configValue.addInfo(list);
+			}
+		}
+	}
+
+	private class ConfigPanel extends Panel {
+		public ConfigPanel() {
+			super(EditConfigScreen.this);
+		}
+
+		@Override
+		public void addWidgets() {
+			for (var w : allConfigButtons) {
+				if (!(w instanceof ConfigEntryButton cgb) || !cgb.groupButton.collapsed) {
+					add(w);
+				}
+			}
+		}
+
+		@Override
+		public void alignWidgets() {
+			widgets.forEach(w -> w.setWidth(width - 16));
+			scroll.setMaxValue(align(WidgetLayout.VERTICAL));
+		}
 	}
 }

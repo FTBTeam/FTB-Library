@@ -7,8 +7,6 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BooleanSupplier;
-
 /**
  * @author LatvianModder
  */
@@ -17,24 +15,23 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 	}) {
 		@Override
 		public Widget createWidget(ContextMenu panel) {
-			return new ContextMenu.CSeperator(panel);
+			return new ContextMenu.CSeparator(panel);
 		}
 	};
 
-	public static final BooleanSupplier TRUE = () -> true;
-	public static final BooleanSupplier FALSE = () -> false;
 
-	public Component title;
-	public Icon icon;
-	public Runnable callback;
-	public BooleanSupplier enabled = TRUE;
-	public Component yesNoText = Component.literal("");
-	public boolean closeMenu = true;
+	private final Component title;
+	private final Icon icon;
+	private final Runnable callback;
 
-	public ContextMenuItem(Component t, Icon i, @Nullable Runnable c) {
-		title = t;
-		icon = i;
-		callback = c;
+	private boolean enabled = true;
+	private Component yesNoText = Component.literal("");
+	private boolean closeMenu = true;
+
+	public ContextMenuItem(Component title, Icon icon, @Nullable Runnable callback) {
+		this.title = title;
+		this.icon = icon;
+		this.callback = callback;
 	}
 
 	public void addMouseOverText(TooltipList list) {
@@ -44,16 +41,28 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 		icon.draw(matrixStack, x, y, w, h);
 	}
 
-	public ContextMenuItem setEnabled(boolean v) {
-		return setEnabled(v ? TRUE : FALSE);
+	public boolean isEnabled() {
+		return enabled;
 	}
 
-	public ContextMenuItem setEnabled(BooleanSupplier v) {
-		enabled = v;
+	public ContextMenuItem setEnabled(boolean enabled) {
+		this.enabled = enabled;
 		return this;
 	}
 
-	public ContextMenuItem setYesNo(Component s) {
+	public Component getTitle() {
+		return title;
+	}
+
+	public Icon getIcon() {
+		return icon;
+	}
+
+	public Component getYesNoText() {
+		return yesNoText;
+	}
+
+	public ContextMenuItem setYesNoText(Component s) {
 		yesNoText = s;
 		return this;
 	}

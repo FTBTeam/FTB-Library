@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.sidebar;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import dev.architectury.platform.Platform;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -11,6 +12,7 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +29,8 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	private JsonElement readJson(Resource resource) {
 		try (var reader = resource.openAsReader()) {
 			return JsonParser.parseReader(reader);
-		} catch (Exception ex) {
+		} catch (JsonParseException | IOException e) {
+			FTBLibrary.LOGGER.warn("can't read {}: {}", resource.sourcePackId(), e.getMessage());
 		}
 
 		return JsonNull.INSTANCE;
@@ -36,7 +39,8 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	private JsonElement readJson(File file) {
 		try (var reader = new FileReader(file)) {
 			return JsonParser.parseReader(reader);
-		} catch (Exception ex) {
+		} catch (JsonParseException | IOException e) {
+			FTBLibrary.LOGGER.warn("can't read {}: {}", file.getAbsolutePath(), e.getMessage());
 		}
 
 		return JsonNull.INSTANCE;
