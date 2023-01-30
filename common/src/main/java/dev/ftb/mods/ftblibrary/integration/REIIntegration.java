@@ -73,7 +73,7 @@ public class REIIntegration implements REIClientPlugin {
 	@Override
 	public void registerFavorites(FavoriteEntryType.Registry registry) {
 		registry.register(ID, SidebarButtonType.INSTANCE);
-		for (var group : SidebarButtonManager.INSTANCE.groups) {
+		for (var group : SidebarButtonManager.INSTANCE.getGroups()) {
 			List<SidebarButtonEntry> buttons = CollectionUtils.map(group.getButtons(), SidebarButtonEntry::new);
 			if (!buttons.isEmpty()) {
 				registry.getOrCrateSection(Component.translatable(group.getLangKey()))
@@ -93,8 +93,8 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public CompoundTag save(SidebarButtonEntry entry, CompoundTag tag) {
-			tag.putString("id", entry.button.id.toString());
-			tag.putString("json", new Gson().toJson(entry.button.json));
+			tag.putString("id", entry.button.getId().toString());
+			tag.putString("json", new Gson().toJson(entry.button.getJson()));
 			return tag;
 		}
 
@@ -129,9 +129,9 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public boolean isInvalid() {
-			for (var group : SidebarButtonManager.INSTANCE.groups) {
+			for (var group : SidebarButtonManager.INSTANCE.getGroups()) {
 				for (var groupButton : group.getButtons()) {
-					if (groupButton.id.equals(button.id) && groupButton.isActuallyVisible()) {
+					if (groupButton.getId().equals(button.getId()) && groupButton.isActuallyVisible()) {
 						return false;
 					}
 				}
@@ -190,12 +190,12 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public long hashIgnoreAmount() {
-			return this.button.id.hashCode();
+			return this.button.getId().hashCode();
 		}
 
 		@Override
 		public FavoriteEntry copy() {
-			return new SidebarButtonEntry(createSidebarButton(button.id, null, button.json));
+			return new SidebarButtonEntry(createSidebarButton(button.getId(), null, button.getJson()));
 		}
 
 		@Override
@@ -206,7 +206,7 @@ public class REIIntegration implements REIClientPlugin {
 		@Override
 		public boolean isSame(FavoriteEntry other) {
 			if (other instanceof SidebarButtonEntry entry) {
-				return entry.button.id.equals(button.id);
+				return entry.button.getId().equals(button.getId());
 			}
 			return false;
 		}

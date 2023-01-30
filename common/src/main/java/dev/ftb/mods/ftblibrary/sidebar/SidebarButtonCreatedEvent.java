@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 @ForgeEvent
 public class SidebarButtonCreatedEvent {
 	public static final Event<Consumer<SidebarButtonCreatedEvent>> EVENT = EventFactory.createConsumerLoop(SidebarButtonCreatedEvent.class);
+
 	private final SidebarButton button;
 
 	public SidebarButtonCreatedEvent(SidebarButton b) {

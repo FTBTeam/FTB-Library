@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
- * Represent a collection of {@link ConfigValue} objects, possibly recursively nested in one or subgroups.
+ * Represent a collection of {@link ConfigValue} objects, possibly recursively nested in one or more subgroups.
  *
  * @author LatvianModder
  */

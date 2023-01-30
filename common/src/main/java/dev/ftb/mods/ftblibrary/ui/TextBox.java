@@ -22,7 +22,7 @@ import org.lwjgl.glfw.GLFW;
 public class TextBox extends Widget {
 	private boolean isFocused = false;
 	public int charLimit = 2000;
-	public Color4I textColor = Icon.EMPTY;
+	public Color4I textColor = Icon.empty();
 
 	public String ghostText = "";
 	private String text = "";

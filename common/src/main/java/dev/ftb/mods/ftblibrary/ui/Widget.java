@@ -49,6 +49,22 @@ public class Widget implements IScreenWrapper {
 		height = Math.max(v, 0);
 	}
 
+	public int getPosX() {
+		return posX;
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
 	public final void setPos(int x, int y) {
 		setX(x);
 		setY(y);

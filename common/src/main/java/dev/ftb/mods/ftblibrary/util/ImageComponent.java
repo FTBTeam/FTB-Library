@@ -5,7 +5,7 @@ import net.minecraft.network.chat.ComponentContents;
 
 // TODO: Fix me
 public class ImageComponent implements ComponentContents {
-	public Icon image = Icon.EMPTY;
+	public Icon image = Icon.empty();
 	public int width = 100;
 	public int height = 100;
 	public int align = 1;

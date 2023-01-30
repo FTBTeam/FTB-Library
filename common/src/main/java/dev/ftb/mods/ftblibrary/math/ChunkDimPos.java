@@ -12,16 +12,16 @@ import java.util.Objects;
  * @author LatvianModder
  */
 public class ChunkDimPos implements Comparable<ChunkDimPos> {
-	public final ResourceKey<Level> dimension;
-	public final int x;
-	public final int z;
-	private ChunkPos chunkPos;
+	private final ResourceKey<Level> dimension;
+	private final ChunkPos chunkPos;
 	private int hash;
 
-	public ChunkDimPos(ResourceKey<Level> dim, int _x, int _z) {
+	public ChunkDimPos(ResourceKey<Level> dim, int x, int z) {
 		dimension = dim;
-		x = _x;
-		z = _z;
+		chunkPos = new ChunkPos(x, z);
+
+		int h = Objects.hash(dimension.location(), chunkPos);
+		hash = h == 0 ? 1 : h;
 	}
 
 	public ChunkDimPos(ResourceKey<Level> dim, ChunkPos pos) {
@@ -37,28 +37,24 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 	}
 
 	public ChunkPos getChunkPos() {
-		if (chunkPos == null) {
-			chunkPos = new ChunkPos(x, z);
-		}
-
 		return chunkPos;
+	}
+
+	public int x() {
+		return chunkPos.x;
+	}
+
+	public int z() {
+		return chunkPos.z;
 	}
 
 	@Override
 	public String toString() {
-		return "[" + dimension.location() + ":" + x + ":" + z + "]";
+		return "[" + dimension.location() + ":" + x() + ":" + z() + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		if (hash == 0) {
-			hash = Objects.hash(dimension.location(), x, z);
-
-			if (hash == 0) {
-				hash = 1;
-			}
-		}
-
 		return hash;
 	}
 
@@ -67,7 +63,7 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 		if (obj == this) {
 			return true;
 		} else if (obj instanceof ChunkDimPos p) {
-			return dimension == p.dimension && x == p.x && z == p.z;
+			return dimension == p.dimension && chunkPos.equals(p.chunkPos);
 		}
 
 		return false;
@@ -80,6 +76,6 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 	}
 
 	public ChunkDimPos offset(int ox, int oz) {
-		return new ChunkDimPos(dimension, x + ox, z + oz);
+		return new ChunkDimPos(dimension, x() + ox, z() + oz);
 	}
 }

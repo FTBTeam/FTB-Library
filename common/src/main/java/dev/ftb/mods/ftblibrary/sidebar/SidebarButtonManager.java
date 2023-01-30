@@ -24,7 +24,11 @@ import java.util.Map;
 public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	INSTANCE;
 
-	public final List<SidebarButtonGroup> groups = new ArrayList<>();
+	private final List<SidebarButtonGroup> groups = new ArrayList<>();
+
+	public List<SidebarButtonGroup> getGroups() {
+		return groups;
+	}
 
 	private JsonElement readJson(Resource resource) {
 		try (var reader = resource.openAsReader()) {
@@ -119,14 +123,14 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 								group.getButtons().add(button);
 
-								if (sidebarButtonConfig.has(button.id.getNamespace())) {
-									var e = sidebarButtonConfig.get(button.id.getNamespace());
+								if (sidebarButtonConfig.has(button.getId().getNamespace())) {
+									var e = sidebarButtonConfig.get(button.getId().getNamespace());
 
-									if (e.isJsonObject() && e.getAsJsonObject().has(button.id.getPath())) {
-										button.setConfig(e.getAsJsonObject().get(button.id.getPath()).getAsBoolean());
+									if (e.isJsonObject() && e.getAsJsonObject().has(button.getId().getPath())) {
+										button.setConfig(e.getAsJsonObject().get(button.getId().getPath()).getAsBoolean());
 									}
-								} else if (sidebarButtonConfig.has(button.id.toString())) {
-									button.setConfig(sidebarButtonConfig.get(button.id.toString()).getAsBoolean());
+								} else if (sidebarButtonConfig.has(button.getId().toString())) {
+									button.setConfig(sidebarButtonConfig.get(button.getId().toString()).getAsBoolean());
 								}
 							}
 						}
@@ -160,14 +164,14 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 		for (var group : groups) {
 			for (var button : group.getButtons()) {
-				var o1 = o.getAsJsonObject(button.id.getNamespace());
+				var o1 = o.getAsJsonObject(button.getId().getNamespace());
 
 				if (o1 == null) {
 					o1 = new JsonObject();
-					o.add(button.id.getNamespace(), o1);
+					o.add(button.getId().getNamespace(), o1);
 				}
 
-				o1.addProperty(button.id.getPath(), button.getConfig());
+				o1.addProperty(button.getId().getPath(), button.getConfig());
 			}
 		}
 

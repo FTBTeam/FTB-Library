@@ -10,6 +10,15 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class PixelBuffer {
+	private final int width, height;
+	private final int[] pixels;
+
+	public PixelBuffer(int w, int h) {
+		width = w;
+		height = h;
+		pixels = new int[w * h];
+	}
+
 	public static PixelBuffer from(BufferedImage img) {
 		var buffer = new PixelBuffer(img.getWidth(), img.getHeight());
 		buffer.setPixels(img.getRGB(0, 0, buffer.getWidth(), buffer.getHeight(), buffer.getPixels(), 0, buffer.getWidth()));
@@ -18,15 +27,6 @@ public class PixelBuffer {
 
 	public static PixelBuffer from(InputStream stream) throws Exception {
 		return from(ImageIO.read(stream));
-	}
-
-	private final int width, height;
-	private final int[] pixels;
-
-	public PixelBuffer(int w, int h) {
-		width = w;
-		height = h;
-		pixels = new int[w * h];
 	}
 
 	public int getWidth() {

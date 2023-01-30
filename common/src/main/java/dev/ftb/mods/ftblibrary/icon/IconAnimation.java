@@ -31,7 +31,7 @@ public class IconAnimation extends Icon {
 		}
 
 		if (list.isEmpty()) {
-			return EMPTY;
+			return empty();
 		} else if (list.size() == 1) {
 			return list.get(0);
 		}

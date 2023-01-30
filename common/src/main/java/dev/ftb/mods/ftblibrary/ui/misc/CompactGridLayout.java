@@ -7,7 +7,7 @@ import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
  * @author LatvianModder
  */
 public class CompactGridLayout implements WidgetLayout {
-	public static final int[][] LAYOUTS = {
+	private static final int[][] LAYOUTS = {
 			{1},
 			{2},
 			{3},
@@ -26,7 +26,7 @@ public class CompactGridLayout implements WidgetLayout {
 			{4, 4, 4, 4}
 	};
 
-	public final int size;
+	private final int size;
 
 	public CompactGridLayout(int s) {
 		size = s;

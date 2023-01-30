@@ -1,19 +1,43 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
 /**
  * @author LatvianModder
  */
 @FunctionalInterface
 public interface WidgetLayout {
+	Padding NO_PADDING = new Padding(0, 0);
+
 	int align(Panel panel);
 
-	class Vertical implements WidgetLayout {
-		private final int pre, spacing, post;
+	/**
+	 * This is called after {@link #align(Panel)} to get any extra padding that may have been allocated.
+	 *
+	 * @return any horizontal and vertical padding that might be needed
+	 */
+	@NotNull
+	default Padding getLayoutPadding() {
+		return NO_PADDING;
+	}
 
-		public Vertical(int _pre, int _spacing, int _post) {
+	abstract class _Simple implements WidgetLayout {
+		protected final int pre;
+		protected final int spacing;
+		protected final int post;
+		private final Function<Widget, Integer> sizeGetter;
+		private final BiConsumer<Widget, Integer> positionSetter;
+		protected int padding;
+
+		public _Simple(int _pre, int _spacing, int _post, Function<Widget, Integer> sizeGetter, BiConsumer<Widget, Integer> positionSetter) {
 			pre = _pre;
 			spacing = _spacing;
 			post = _post;
+			this.sizeGetter = sizeGetter;
+			this.positionSetter = positionSetter;
 		}
 
 		@Override
@@ -22,42 +46,40 @@ public interface WidgetLayout {
 
 			if (!panel.widgets.isEmpty()) {
 				for (var widget : panel.widgets) {
-					widget.setY(i);
-					i += widget.height + spacing;
+					positionSetter.accept(widget, i);
+					i += sizeGetter.apply(widget);
 				}
 
 				i -= spacing;
 			}
 
-			panel.contentHeightExtra = pre + post;
+			padding = pre + post;
 			return i + post;
 		}
 	}
 
-	class Horizontal implements WidgetLayout {
-		private final int pre, spacing, post;
 
-		public Horizontal(int _pre, int _spacing, int _post) {
-			pre = _pre;
-			spacing = _spacing;
-			post = _post;
+	class Vertical extends _Simple {
+		public Vertical(int _pre, int _spacing, int _post) {
+			super(_pre, _spacing, _post, Widget::getHeight, Widget::setY);
 		}
 
 		@Override
-		public int align(Panel panel) {
-			var i = pre;
+		@NotNull
+		public Padding getLayoutPadding() {
+			return new Padding(padding, 0);
+		}
+	}
 
-			if (!panel.widgets.isEmpty()) {
-				for (var widget : panel.widgets) {
-					widget.setX(i);
-					i += widget.width + spacing;
-				}
+	class Horizontal extends _Simple {
+		public Horizontal(int _pre, int _spacing, int _post) {
+			super(_pre, _spacing, _post, Widget::getWidth, Widget::setX);
+		}
 
-				i -= spacing;
-			}
-
-			panel.contentWidthExtra = pre + post;
-			return i + post;
+		@Override
+		@NotNull
+		public Padding getLayoutPadding() {
+			return new Padding(0, padding);
 		}
 	}
 
@@ -66,4 +88,7 @@ public interface WidgetLayout {
 	WidgetLayout VERTICAL = new Vertical(0, 0, 0);
 
 	WidgetLayout HORIZONTAL = new Horizontal(0, 0, 0);
+
+	record Padding(int vertical, int horizontal) {
+	}
 }

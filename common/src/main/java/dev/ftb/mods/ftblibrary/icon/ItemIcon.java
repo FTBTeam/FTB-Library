@@ -9,7 +9,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.TagParser;
@@ -30,7 +29,7 @@ public class ItemIcon extends Icon {
 
 	public static Icon getItemIcon(ItemStack stack) {
 		if (stack.isEmpty()) {
-			return EMPTY;
+			return empty();
 		} else if (stack.getItem() instanceof CustomIconItem) {
 			return ((CustomIconItem) stack.getItem()).getCustomIcon(stack);
 		}
@@ -39,12 +38,12 @@ public class ItemIcon extends Icon {
 	}
 
 	public static Icon getItemIcon(Item item) {
-		return item == Items.AIR ? EMPTY : getItemIcon(item.getDefaultInstance());
+		return item == Items.AIR ? empty() : getItemIcon(item.getDefaultInstance());
 	}
 
 	public static Icon getItemIcon(String lazyStackString) {
 		if (lazyStackString.isEmpty()) {
-			return EMPTY;
+			return empty();
 		}
 
 		return new LazyIcon(() -> {

@@ -23,7 +23,7 @@ public class TextField extends Widget {
 	public int maxWidth = 5000;
 	public int textSpacing = 10;
 	public float scale = 1.0F;
-	public Color4I textColor = Icon.EMPTY;
+	public Color4I textColor = Icon.empty();
 	public boolean trim = false;
 
 	public TextField(Panel panel) {

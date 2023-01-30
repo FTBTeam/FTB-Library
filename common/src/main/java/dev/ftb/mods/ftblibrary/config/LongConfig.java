@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -47,5 +48,15 @@ public class LongConfig extends NumberConfig<Long> {
 	@Override
 	protected String formatValue(Long v) {
 		return String.format("%,d", v);
+	}
+
+	@Override
+	public boolean scrollValue(boolean forward) {
+		long newVal = Mth.clamp(value + (forward ? 1L : -1L), min, max);
+		if (newVal != value) {
+			setValue(newVal);
+			return true;
+		}
+		return false;
 	}
 }

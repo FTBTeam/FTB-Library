@@ -11,8 +11,8 @@ import java.util.function.Consumer;
  */
 public class ColorConfig extends ConfigFromString<Color4I> {
 	public ColorConfig() {
-		defaultValue = Icon.EMPTY;
-		value = Icon.EMPTY;
+		defaultValue = Icon.empty();
+		value = Icon.empty();
 	}
 
 	@Override

@@ -114,7 +114,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 			}
 		}
 
-		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.groups.isEmpty();
+		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.getGroups().isEmpty();
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 /**
  * @author LatvianModder
  */
-public class XZ {
+public record XZ(int x, int z) {
 	public static XZ of(int x, int z) {
 		return new XZ(x, z);
 	}
@@ -45,13 +45,13 @@ public class XZ {
 		return regionFromBlock(pos.getX(), pos.getZ());
 	}
 
-	public final int x;
-	public final int z;
-
-	private XZ(int _x, int _z) {
-		x = _x;
-		z = _z;
-	}
+//	public final int x;
+//	public final int z;
+//
+//	private XZ(int _x, int _z) {
+//		x = _x;
+//		z = _z;
+//	}
 
 	public int hashCode() {
 		var x1 = 1664525 * x + 1013904223;

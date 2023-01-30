@@ -62,6 +62,42 @@ public class Color4I extends Icon {
 	private static final Color4I[] CHAT_FORMATTING_COLORS = new Color4I[16];
 	private static final Color4I[] COLORS_256 = new Color4I[256];
 
+	static final Color4I EMPTY_ICON = new Color4I(255, 255, 255, 255) {
+		@Override
+		public boolean isEmpty() {
+			return true;
+		}
+
+		@Override
+		@Environment(EnvType.CLIENT)
+		public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+		}
+
+		@Override
+		@Environment(EnvType.CLIENT)
+		public void draw3D(PoseStack matrixStack) {
+		}
+
+		@Override
+		public MutableColor4I mutable() {
+			return new MutableColor4I.None();
+		}
+
+		@Override
+		@Nullable
+		public PixelBuffer createPixelBuffer() {
+			return null;
+		}
+
+		public int hashCode() {
+			return 0;
+		}
+
+		public boolean equals(Object o) {
+			return o == this;
+		}
+	};
+
 	static {
 		for (var i = 0; i < 16; i++) {
 			var j = (i >> 3 & 1) * 85;
@@ -109,7 +145,7 @@ public class Color4I extends Icon {
 
 	public static Color4I fromString(@Nullable String s) {
 		if (s == null || s.isEmpty()) {
-			return EMPTY;
+			return empty();
 		} else if ((s.length() == 7 || s.length() == 9) && s.charAt(0) == '#') {
 			var hex = s.substring(1);
 			return hex.length() == 8 ? rgba((int) Long.parseLong(hex, 16)) : rgb((int) Long.parseLong(hex, 16));
@@ -137,12 +173,12 @@ public class Color4I extends Icon {
 			return LIGHT_BLUE;
 		}
 
-		return EMPTY;
+		return empty();
 	}
 
 	public static Color4I fromJson(@Nullable JsonElement element) {
 		if (element == null || element.isJsonNull()) {
-			return EMPTY;
+			return empty();
 		} else if (element.isJsonPrimitive()) {
 			return fromString(element.getAsString());
 		} else if (element.isJsonArray()) {
@@ -177,7 +213,7 @@ public class Color4I extends Icon {
 			return rgba(r, g, b, a);
 		}
 
-		return EMPTY;
+		return empty();
 	}
 
 	public static Color4I rgba(int r, int g, int b, int a) {
@@ -187,7 +223,7 @@ public class Color4I extends Icon {
 		a = a & 255;
 
 		if (a == 0) {
-			return EMPTY;
+			return empty();
 		} else if (r == 0 && g == 0 && b == 0) {
 			return BLACK_A[a];
 		} else if (r == 255 && g == 255 && b == 255) {
@@ -360,7 +396,7 @@ public class Color4I extends Icon {
 		if (isEmpty()) {
 			return this;
 		} else if (col.isEmpty()) {
-			return EMPTY;
+			return empty();
 		} else if (col.redi() == 255 && col.greeni() == 255 && col.bluei() == 255) {
 			return this;
 		}

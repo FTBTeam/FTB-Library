@@ -87,7 +87,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 	@Override
 	public void addButtons(Panel panel) {
 		if (allowNone()) {
-			panel.add(new SimpleTextButton(panel, Component.literal("None"), Icon.EMPTY) {
+			panel.add(new SimpleTextButton(panel, Component.literal("None"), Icon.empty()) {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
 					playClickSound();

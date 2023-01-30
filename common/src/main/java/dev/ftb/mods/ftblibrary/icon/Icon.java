@@ -2,10 +2,7 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.Nullable;
@@ -19,45 +16,13 @@ import java.util.List;
  * @author LatvianModder
  */
 public abstract class Icon implements Drawable {
-	public static final Color4I EMPTY = new Color4I(255, 255, 255, 255) {
-		@Override
-		public boolean isEmpty() {
-			return true;
-		}
-
-		@Override
-		@Environment(EnvType.CLIENT)
-		public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
-		}
-
-		@Override
-		@Environment(EnvType.CLIENT)
-		public void draw3D(PoseStack matrixStack) {
-		}
-
-		@Override
-		public MutableColor4I mutable() {
-			return new MutableColor4I.None();
-		}
-
-		@Override
-		@Nullable
-		public PixelBuffer createPixelBuffer() {
-			return null;
-		}
-
-		public int hashCode() {
-			return 0;
-		}
-
-		public boolean equals(Object o) {
-			return o == this;
-		}
-	};
+	public static Color4I empty() {
+		return Color4I.EMPTY_ICON;
+	}
 
 	public static Icon getIcon(@Nullable JsonElement json) {
 		if (json == null || json.isJsonNull()) {
-			return EMPTY;
+			return empty();
 		} else if (json.isJsonObject()) {
 			var o = json.getAsJsonObject();
 
@@ -81,8 +46,8 @@ public abstract class Icon implements Drawable {
 						return IconAnimation.fromList(icons, true);
 					}
 					case "border": {
-						Icon icon = EMPTY;
-						var outline = EMPTY;
+						Icon icon = empty();
+						var outline = empty();
 						var roundEdges = false;
 
 						if (o.has("icon")) {
@@ -100,7 +65,7 @@ public abstract class Icon implements Drawable {
 						return icon.withBorder(outline, roundEdges);
 					}
 					case "bullet": {
-						return new BulletIcon().withColor(o.has("color") ? Color4I.fromJson(o.get("color")) : EMPTY);
+						return new BulletIcon().withColor(o.has("color") ? Color4I.fromJson(o.get("color")) : empty());
 					}
 					case "part": {
 						var partIcon = new PartIcon(getIcon(o.get("parent")));
@@ -128,7 +93,7 @@ public abstract class Icon implements Drawable {
 		var s = json.getAsString();
 
 		if (s.isEmpty()) {
-			return EMPTY;
+			return empty();
 		}
 
 		var icon = IconPresets.MAP.get(s);
@@ -141,7 +106,7 @@ public abstract class Icon implements Drawable {
 
 	public static Icon getIcon(String id) {
 		if (id.isEmpty()) {
-			return EMPTY;
+			return empty();
 		}
 
 		var comb = id.split(" \\+ ");
@@ -200,7 +165,7 @@ public abstract class Icon implements Drawable {
 
 	private static Icon getIcon0(String id) {
 		if (id.isEmpty() || id.equals("none")) {
-			return Icon.EMPTY;
+			return Icon.empty();
 		}
 
 		var col = Color4I.fromString(id);

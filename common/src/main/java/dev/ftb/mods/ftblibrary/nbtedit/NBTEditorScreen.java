@@ -261,7 +261,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 	public class ButtonNBTMap extends ButtonNBTCollection {
 		private final CompoundTag map;
-		private Icon hoverIcon = Icon.EMPTY;
+		private Icon hoverIcon = Icon.empty();
 
 		public ButtonNBTMap(Panel panel, @Nullable ButtonNBTCollection b, String key, CompoundTag m) {
 			super(panel, b, key, NBT_MAP_OPEN, NBT_MAP_CLOSED);
@@ -288,7 +288,7 @@ public class NBTEditorScreen extends BaseScreen {
 		}
 
 		private void updateHoverIcon() {
-			hoverIcon = Icon.EMPTY;
+			hoverIcon = Icon.empty();
 
 			if (map.contains("id", Tag.TAG_STRING) && map.contains("Count", Tag.TAG_ANY_NUMERIC)) {
 				var stack = ItemStack.of(map);

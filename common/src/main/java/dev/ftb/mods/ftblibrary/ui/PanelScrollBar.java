@@ -9,7 +9,6 @@ public class PanelScrollBar extends ScrollBar {
 	public PanelScrollBar(Panel parent, Plane plane, Panel p) {
 		super(parent, plane, 0);
 		panel = p;
-		panel.attachedScrollbar = this;
 	}
 
 	public PanelScrollBar(Panel parent, Panel panel) {

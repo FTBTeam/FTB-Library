@@ -179,7 +179,7 @@ public class SelectItemStackScreen extends BaseScreen {
 			playClickSound();
 			var c = new NBTConfig();
 
-			EditConfigFromStringScreen.open(c, current.save(new CompoundTag()), config.getDefaultValue().save(new CompoundTag()), accepted -> {
+			EditConfigFromStringScreen.open(c, current.save(new CompoundTag()), config.getDefaultValue().save(new CompoundTag()), getTitle(), accepted -> {
 				if (accepted) {
 					current = ItemStack.of(c.getValue());
 				}
@@ -198,7 +198,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		public void onClicked(MouseButton button) {
 			playClickSound();
 			var c = new IntConfig(0, current.getMaxStackSize());
-			EditConfigFromStringScreen.open(c, current.getCount(), config.getDefaultValue().getCount(), accepted -> {
+			EditConfigFromStringScreen.open(c, current.getCount(), config.getDefaultValue().getCount(), getTitle(), accepted -> {
 				if (accepted) {
 					current.setCount(c.getValue());
 				}
@@ -217,7 +217,7 @@ public class SelectItemStackScreen extends BaseScreen {
 		public void onClicked(MouseButton button) {
 			playClickSound();
 			var c = new NBTConfig();
-			EditConfigFromStringScreen.open(c, current.getTag(), config.getDefaultValue().getTag(), accepted -> {
+			EditConfigFromStringScreen.open(c, current.getTag(), config.getDefaultValue().getTag(), getTitle(), accepted -> {
 				if (accepted) {
 					current.setTag(c.getValue());
 				}
@@ -239,7 +239,7 @@ public class SelectItemStackScreen extends BaseScreen {
 			final var nbt = current.save(new CompoundTag());
 			var c = new NBTConfig();
 
-			EditConfigFromStringScreen.open(c, (CompoundTag) nbt.get("ForgeCaps"), (CompoundTag) config.getDefaultValue().save(new CompoundTag()).get("ForgeCaps"), accepted -> {
+			EditConfigFromStringScreen.open(c, (CompoundTag) nbt.get("ForgeCaps"), (CompoundTag) config.getDefaultValue().save(new CompoundTag()).get("ForgeCaps"), getTitle(), accepted -> {
 				if (accepted) {
 					if (c.getValue() == null || c.getValue().isEmpty()) {
 						nbt.remove("ForgeCaps");
@@ -274,7 +274,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		var button = new ItemStackButton(panel, ItemStack.EMPTY);
 
-		if (config.allowEmpty && button.shouldAdd(search, mod)) {
+		if (config.allowEmptyItem() && button.shouldAdd(search, mod)) {
 			widgets.add(new ItemStackButton(panel, ItemStack.EMPTY));
 		}
 
@@ -312,7 +312,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		var bsize = width / 2 - 10;
 
-		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Icon.EMPTY) {
+		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Icon.empty()) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
@@ -327,7 +327,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		buttonCancel.setPosAndSize(8, height - 24, bsize, 16);
 
-		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Icon.EMPTY) {
+		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Icon.empty()) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
@@ -377,7 +377,7 @@ public class SelectItemStackScreen extends BaseScreen {
 				add(new ButtonSwitchMode(this));
 				add(new ButtonEditData(this));
 
-				if (!config.singleItemOnly) {
+				if (!config.isSingleItemOnly()) {
 					add(new ButtonCount(this));
 				}
 

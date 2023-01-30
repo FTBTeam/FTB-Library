@@ -14,6 +14,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
+import mezz.jei.api.runtime.IClickableIngredient;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 @JeiPlugin
 public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
@@ -75,6 +77,21 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
 		return null;
 	}
+
+	// FIXME need to redo how clickable ingredients are handled
+//	@Override
+//	public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(double mouseX, double mouseY) {
+//		var currentScreen = Minecraft.getInstance().screen;
+//
+//		if (currentScreen instanceof IScreenWrapper wrapper) {
+//			Object o = WrappedIngredient.unwrap(wrapper.getGui().getIngredientUnderMouse());
+//			if (o instanceof ItemStack stack) {
+//				return Optional.of();
+//			}
+//
+//		}
+//		return Optional.empty();
+//	}
 
 	private static final ItemSearchMode JEI_ITEMS = new ItemSearchMode() {
 		@Override

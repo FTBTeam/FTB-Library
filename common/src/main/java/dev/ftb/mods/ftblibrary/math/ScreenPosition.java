@@ -17,7 +17,7 @@ public enum ScreenPosition implements StringRepresentable {
 	BOTTOM_RIGHT("bottom_right", 1, 1);
 
 	private final String name;
-	public final int offsetX, offsetY;
+	private final int offsetX, offsetY;
 
 	ScreenPosition(String n, int ox, int oy) {
 		name = n;
@@ -28,6 +28,14 @@ public enum ScreenPosition implements StringRepresentable {
 	@Override
 	public String getSerializedName() {
 		return name;
+	}
+
+	public int getOffsetX() {
+		return offsetX;
+	}
+
+	public int getOffsetY() {
+		return offsetY;
 	}
 
 	public int getX(int screenWidth, int width, int offset) {

@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -89,6 +90,16 @@ public class DoubleConfig extends NumberConfig<Double> {
 		} catch (Exception ex) {
 		}
 
+		return false;
+	}
+
+	@Override
+	public boolean scrollValue(boolean forward) {
+		double newVal = Mth.clamp(value + (forward ? 1D : -1D), min, max);
+		if (newVal != value) {
+			setValue(newVal);
+			return true;
+		}
 		return false;
 	}
 }

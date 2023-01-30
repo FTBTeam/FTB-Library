@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @author LatvianModder
  */
 public class ContextMenuItem implements Comparable<ContextMenuItem> {
-	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(Component.empty(), Icon.EMPTY, () -> {
+	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(Component.empty(), Icon.empty(), () -> {
 	}) {
 		@Override
 		public Widget createWidget(ContextMenu panel) {

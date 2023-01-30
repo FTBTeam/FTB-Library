@@ -138,7 +138,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		@Override
 		public void onClicked(MouseButton button) {
 			playClickSound();
-			CV listType = list.type;
+			CV listType = list.getType();
 			listType.setValue(listType.getDefaultValue() == null ? null : listType.copy(listType.getDefaultValue()));
 			listType.onClicked(button, accepted -> {
 				if (accepted) {
@@ -169,7 +169,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
 			var mouseOver = getMouseY() >= 20 && isMouseOver();
 
-			var textCol = list.type.getColor(list.getValue().get(index)).mutable();
+			var textCol = list.getType().getColor(list.getValue().get(index)).mutable();
 			textCol.setAlpha(255);
 
 			if (mouseOver) {
@@ -182,7 +182,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 				}
 			}
 
-			theme.drawString(matrixStack, getGui().getTheme().trimStringToWidth(list.type.getStringForGUI(list.getValue().get(index)), width), x + 4, y + 2, textCol, 0);
+			theme.drawString(matrixStack, getGui().getTheme().trimStringToWidth(list.getType().getStringForGUI(list.getValue().get(index)), width), x + 4, y + 2, textCol, 0);
 
 			if (mouseOver) {
 				theme.drawString(matrixStack, "[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
@@ -201,10 +201,10 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 					parent.refreshWidgets();
 				}
 			} else {
-				list.type.setValue(list.getValue().get(index));
-				list.type.onClicked(button, accepted -> {
+				list.getType().setValue(list.getValue().get(index));
+				list.getType().onClicked(button, accepted -> {
 					if (accepted) {
-						list.getValue().set(index, list.type.getValue());
+						list.getValue().set(index, list.getType().getValue());
 					}
 
 					openGui();
@@ -217,8 +217,8 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 			if (getMouseX() >= getX() + width - 19) {
 				l.translate("selectServer.delete");
 			} else {
-				list.type.setValue(list.getValue().get(index));
-				list.type.addInfo(l);
+				list.getType().setValue(list.getValue().get(index));
+				list.getType().addInfo(l);
 			}
 		}
 	}

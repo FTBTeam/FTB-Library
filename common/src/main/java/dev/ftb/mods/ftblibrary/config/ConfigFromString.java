@@ -26,4 +26,8 @@ public abstract class ConfigFromString<T> extends ConfigValue<T> {
 	public void onClicked(MouseButton button, ConfigCallback callback) {
 		new EditConfigFromStringScreen<>(this, callback).openGui();
 	}
+
+	public boolean scrollValue(boolean forward) {
+		return false;
+	}
 }

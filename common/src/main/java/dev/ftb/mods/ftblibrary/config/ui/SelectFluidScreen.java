@@ -34,7 +34,7 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 
 	@Override
 	public void addButtons(Panel panel) {
-		if (config.allowEmpty) {
+		if (config.allowEmptyFluid()) {
 			var fluidStack = FluidStack.create(Fluids.EMPTY, FluidStack.bucketAmount());
 
 			panel.add(new SimpleTextButton(panel, fluidStack.getName(), ItemIcon.getItemIcon(Items.BUCKET)) {

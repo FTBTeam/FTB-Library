@@ -19,7 +19,7 @@ public abstract class Button extends Widget {
 	}
 
 	public Button(Panel panel) {
-		this(panel, Component.empty(), Icon.EMPTY);
+		this(panel, Component.empty(), Icon.empty());
 	}
 
 	@Override

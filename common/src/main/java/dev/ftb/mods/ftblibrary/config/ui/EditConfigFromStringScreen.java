@@ -39,7 +39,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 		var bsize = width / 2 - 10;
 
-		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Icon.EMPTY) {
+		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Icon.empty()) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
@@ -54,7 +54,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 		buttonCancel.setPosAndSize(8, height - 24, bsize, 16);
 
-		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Icon.EMPTY) {
+		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Icon.empty()) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
@@ -97,6 +97,16 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 			public void onEnterPressed() {
 				if (config.getCanEdit()) {
 					buttonAccept.onClicked(MouseButton.LEFT);
+				}
+			}
+
+			@Override
+			public boolean mouseScrolled(double scroll) {
+				if (config.scrollValue(scroll > 0)) {
+					textBox.setText(config.getStringFromValue(config.getValue()));
+					return true;
+				} else {
+					return super.mouseScrolled(scroll);
 				}
 			}
 		};

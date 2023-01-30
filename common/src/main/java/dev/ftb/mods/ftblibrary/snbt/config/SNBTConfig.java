@@ -19,12 +19,17 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
+	/**
+	 * Create a new SNBT config object
+	 * @param name the name for the config
+	 * @return the new config object
+	 */
 	public static SNBTConfig create(String name) {
 		return new SNBTConfig(null, name, new ArrayList<>());
 	}
 
-	private SNBTConfig(SNBTConfig c, String n, List<BaseValue<?>> defaultValue) {
-		super(c, n, defaultValue);
+	private SNBTConfig(SNBTConfig parent, String name, List<BaseValue<?>> defaultValue) {
+		super(parent, name, defaultValue);
 	}
 
 	@Override
@@ -97,12 +102,21 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		}
 	}
 
+	/**
+	 * Write this config to network. This can be used to sync configs between client and server
+	 * @param buf the byte buffer
+	 */
 	public void write(FriendlyByteBuf buf) {
 		var tag = new SNBTCompoundTag();
 		write(tag);
 		SNBTNet.write(buf, tag);
 	}
 
+	/**
+	 * Read a config from network, written by {@link #write(FriendlyByteBuf)}. This can be used to sync configs
+	 * between client and server
+	 * @param buf the byte buffer
+	 */
 	public void read(FriendlyByteBuf buf) {
 		read(SNBTNet.readCompound(buf));
 	}
@@ -154,51 +168,51 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		return value;
 	}
 
-	public SNBTConfig getGroup(String key) {
+	public SNBTConfig addGroup(String key) {
 		return add(new SNBTConfig(this, key, new ArrayList<>()));
 	}
 
-	public BooleanValue getBoolean(String key, boolean def) {
+	public BooleanValue addBoolean(String key, boolean def) {
 		return add(new BooleanValue(this, key, def));
 	}
 
-	public IntValue getInt(String key, int def) {
+	public IntValue addInt(String key, int def) {
 		return add(new IntValue(this, key, def));
 	}
 
-	public IntValue getInt(String key, int def, int min, int max) {
-		return getInt(key, def).range(min, max);
+	public IntValue addInt(String key, int def, int min, int max) {
+		return addInt(key, def).range(min, max);
 	}
 
-	public LongValue getLong(String key, long def) {
+	public LongValue addLong(String key, long def) {
 		return add(new LongValue(this, key, def));
 	}
 
-	public LongValue getLong(String key, long def, long min, long max) {
-		return getLong(key, def).range(min, max);
+	public LongValue addLong(String key, long def, long min, long max) {
+		return addLong(key, def).range(min, max);
 	}
 
-	public DoubleValue getDouble(String key, double def) {
+	public DoubleValue addDouble(String key, double def) {
 		return add(new DoubleValue(this, key, def));
 	}
 
-	public DoubleValue getDouble(String key, double def, double min, double max) {
-		return getDouble(key, def).range(min, max);
+	public DoubleValue addDouble(String key, double def, double min, double max) {
+		return addDouble(key, def).range(min, max);
 	}
 
-	public StringValue getString(String key, String def) {
+	public StringValue addString(String key, String def) {
 		return add(new StringValue(this, key, def));
 	}
 
-	public StringListValue getStringList(String key, List<String> def) {
+	public StringListValue addStringList(String key, List<String> def) {
 		return add(new StringListValue(this, key, def));
 	}
 
-	public <T> EnumValue<T> getEnum(String key, NameMap<T> nameMap) {
+	public <T> EnumValue<T> addEnum(String key, NameMap<T> nameMap) {
 		return add(new EnumValue<>(this, key, nameMap));
 	}
 
-	public IntArrayValue getIntArray(String key, int[] def) {
+	public IntArrayValue addIntArray(String key, int[] def) {
 		return add(new IntArrayValue(this, key, def));
 	}
 }

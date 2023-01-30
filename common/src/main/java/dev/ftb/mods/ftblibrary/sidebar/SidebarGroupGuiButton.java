@@ -21,7 +21,7 @@ import java.util.List;
 public class SidebarGroupGuiButton extends AbstractButton {
 	public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
 
-	public final List<SidebarGuiButton> buttons;
+	private final List<SidebarGuiButton> buttons;
 	private SidebarGuiButton mouseOver;
 
 	public SidebarGroupGuiButton() {
@@ -36,7 +36,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		int rx, ry = 0;
 		boolean addedAny;
 
-		for (var group : SidebarButtonManager.INSTANCE.groups) {
+		for (var group : SidebarButtonManager.INSTANCE.getGroups()) {
 			rx = 0;
 			addedAny = false;
 

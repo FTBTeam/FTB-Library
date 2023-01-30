@@ -11,12 +11,16 @@ import net.minecraft.world.level.material.Fluids;
  * @author LatvianModder
  */
 public class FluidConfig extends ConfigValue<Fluid> {
-	public final boolean allowEmpty;
+	private final boolean allowEmpty;
 
-	public FluidConfig(boolean empty) {
-		allowEmpty = empty;
+	public FluidConfig(boolean allowEmpty) {
+		this.allowEmpty = allowEmpty;
 		defaultValue = Fluids.EMPTY;
 		value = Fluids.EMPTY;
+	}
+
+	public boolean allowEmptyFluid() {
+		return allowEmpty;
 	}
 
 	@Override

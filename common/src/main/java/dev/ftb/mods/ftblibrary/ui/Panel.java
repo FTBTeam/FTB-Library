@@ -22,8 +22,8 @@ public abstract class Panel extends Widget {
 	private boolean onlyInteractWithWidgetsInside = true;
 	private double scrollStep = 20;
 	private int contentWidth = -1, contentHeight = -1;
-	public int contentWidthExtra, contentHeightExtra;
-	public PanelScrollBar attachedScrollbar = null;
+	private int contentWidthExtra, contentHeightExtra;
+	private PanelScrollBar attachedScrollbar = null;
 
 	public Panel(Panel panel) {
 		super(panel);
@@ -84,6 +84,9 @@ public abstract class Panel extends Widget {
 		if (widget.parent != this) {
 			throw new MismatchingParentPanelException(this, widget);
 		}
+		if (widget instanceof PanelScrollBar psb) {
+			attachedScrollbar = psb;
+		}
 
 		widgets.add(widget);
 		contentWidth = contentHeight = -1;
@@ -97,7 +100,10 @@ public abstract class Panel extends Widget {
 
 	public final int align(WidgetLayout layout) {
 		contentWidth = contentHeight = -1;
-		return layout.align(this);
+		int res = layout.align(this);
+		contentHeightExtra = layout.getLayoutPadding().vertical();
+		contentWidthExtra = layout.getLayoutPadding().horizontal();
+		return res;
 	}
 
 	@Override

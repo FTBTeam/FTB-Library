@@ -10,14 +10,22 @@ import org.jetbrains.annotations.Nullable;
  * @author LatvianModder
  */
 public class ItemStackConfig extends ConfigValue<ItemStack> {
-	public final boolean singleItemOnly;
-	public final boolean allowEmpty;
+	private final boolean singleItemOnly;
+	private final boolean allowEmpty;
 
 	public ItemStackConfig(boolean single, boolean empty) {
 		singleItemOnly = single;
 		allowEmpty = empty;
 		defaultValue = ItemStack.EMPTY;
 		value = ItemStack.EMPTY;
+	}
+
+	public boolean isSingleItemOnly() {
+		return singleItemOnly;
+	}
+
+	public boolean allowEmptyItem() {
+		return allowEmpty;
 	}
 
 	@Override

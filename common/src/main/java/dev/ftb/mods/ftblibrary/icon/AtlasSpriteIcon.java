@@ -15,12 +15,16 @@ import org.jetbrains.annotations.Nullable;
  * @author LatvianModder
  */
 public class AtlasSpriteIcon extends Icon {
-	public final ResourceLocation id;
-	public Color4I color;
+	private final ResourceLocation id;
+	private final Color4I color;
 
-	AtlasSpriteIcon(ResourceLocation n) {
-		id = n;
-		color = Color4I.WHITE;
+	AtlasSpriteIcon(ResourceLocation id) {
+		this(id, Color4I.WHITE);
+	}
+
+	AtlasSpriteIcon(ResourceLocation id, Color4I color) {
+		this.id = id;
+		this.color = color;
 	}
 
 	@Override
@@ -83,9 +87,7 @@ public class AtlasSpriteIcon extends Icon {
 
 	@Override
 	public AtlasSpriteIcon withColor(Color4I color) {
-		var icon = copy();
-		icon.color = color;
-		return icon;
+		return new AtlasSpriteIcon(id, color);
 	}
 
 	@Override

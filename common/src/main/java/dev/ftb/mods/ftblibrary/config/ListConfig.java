@@ -19,10 +19,15 @@ public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 	public static final Component NON_EMPTY_LIST = Component.literal("[...]");
 
 	public static final Color4I COLOR = Color4I.rgb(0xFFAA49);
-	public final CV type;
+
+	private final CV type;
 
 	public ListConfig(CV t) {
 		type = t;
+	}
+
+	public CV getType() {
+		return type;
 	}
 
 	@Override

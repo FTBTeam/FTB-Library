@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
@@ -10,6 +11,7 @@ import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import dev.ftb.mods.ftblibrary.util.ClientUtils;
 import net.minecraft.Util;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -28,10 +30,11 @@ import java.util.function.Supplier;
 public class SidebarButton implements Comparable<SidebarButton> {
 	private static final BooleanSupplier NEI_NOT_LOADED = () -> !Platform.isModLoaded("notenoughitems");
 
-	public final ResourceLocation id;
-	public final JsonObject json;
-	public final SidebarButtonGroup group;
-	private Icon icon = Icon.EMPTY;
+	private final ResourceLocation id;
+	private final JsonObject json;
+	private final SidebarButtonGroup group;
+
+	private Icon icon = Icon.empty();
 	private int x = 0;
 	private boolean defaultConfig = true;
 	private boolean configValue = true;
@@ -42,9 +45,9 @@ public class SidebarButton implements Comparable<SidebarButton> {
 	private Supplier<String> customTextHandler = null;
 	private Consumer<List<String>> tooltipHandler = null;
 
-	public SidebarButton(ResourceLocation _id, SidebarButtonGroup g, JsonObject json) {
-		group = g;
-		id = _id;
+	public SidebarButton(ResourceLocation id, SidebarButtonGroup group, JsonObject json) {
+		this.group = group;
+		this.id = id;
 		this.json = json;
 
 		if (json.has("icon")) {
@@ -106,6 +109,22 @@ public class SidebarButton implements Comparable<SidebarButton> {
 		}
 
 		loadingScreen = json.has("loading_screen") && json.get("loading_screen").getAsBoolean();
+	}
+
+	public static SidebarButton copyWithoutGroup(SidebarButton toCopy) {
+		return new SidebarButton(toCopy.id, null, toCopy.json);
+	}
+
+	public ResourceLocation getId() {
+		return id;
+	}
+
+	public SidebarButtonGroup getGroup() {
+		return group;
+	}
+
+	public JsonObject getJson() {
+		return json;
 	}
 
 	public void addVisibilityCondition(BooleanSupplier supplier) {
