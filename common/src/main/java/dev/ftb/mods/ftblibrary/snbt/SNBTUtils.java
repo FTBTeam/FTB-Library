@@ -1,6 +1,10 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import dev.architectury.utils.NbtType;
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Floats;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+import net.minecraft.nbt.Tag;
 
 import java.util.function.BooleanSupplier;
 
@@ -44,43 +48,35 @@ public class SNBTUtils {
 	}
 
 	public static int getNumberType(String s) {
-		if (s.length() == 0) {
-			return 0;
+		if (s.isEmpty()) {
+			return Tag.TAG_STRING;
 		}
 
-		var last = s.charAt(s.length() - 1);
+		var last = Character.toLowerCase(s.charAt(s.length() - 1));
 
-		if (isDigit(last)) {
-			return NbtType.INT;
-		} else if (last == 'B' || last == 'b') {
-			if (isInt(s, 1)) {
-				return NbtType.BYTE;
-			}
-		} else if (last == 'S' || last == 's') {
-			if (isInt(s, 1)) {
-				return NbtType.SHORT;
-			}
-		} else if (last == 'L' || last == 'l') {
-			if (isInt(s, 1)) {
-				return NbtType.LONG;
-			}
-		} else if (last == 'F' || last == 'f') {
-			if (isFloat(s, 1)) {
-				return NbtType.FLOAT;
-			}
-		} else if (last == 'D' || last == 'd') {
-			if (isFloat(s, 1)) {
-				return NbtType.DOUBLE;
-			}
-		} else if (isInt(s, 0)) {
-			return NbtType.INT;
-		} else if (isFloat(s, 0)) {
-			return -NbtType.DOUBLE;
+		if (Character.isDigit(last) && Ints.tryParse(s) != null) {
+			return Tag.TAG_INT;
 		}
 
-		return 0;
+		String start = s.substring(0, s.length() - 1);
+		if (last == 'b' && Ints.tryParse(start) != null) {
+			return Tag.TAG_BYTE;
+		} else if (last == 's' && Ints.tryParse(start) != null) {
+			return Tag.TAG_SHORT;
+		} else if (last == 'l' && Longs.tryParse(start) != null) {
+			return Tag.TAG_LONG;
+		} else if (last == 'f' && Floats.tryParse(start) != null) {
+			return Tag.TAG_FLOAT;
+		} else if (last == 'd' && Doubles.tryParse(start) != null) {
+			return Tag.TAG_DOUBLE;
+		} else if (Floats.tryParse(s) != null) {
+			return -Tag.TAG_DOUBLE;
+		} else {
+			return Tag.TAG_STRING;
+		}
 	}
 
+	@Deprecated(forRemoval = true)
 	public static boolean isInt(String s, int off) {
 		var len = s.length() - off;
 
@@ -103,6 +99,7 @@ public class SNBTUtils {
 		return true;
 	}
 
+	@Deprecated(forRemoval = true)
 	public static boolean isFloat(String s, int off) {
 		var len = s.length() - off;
 
