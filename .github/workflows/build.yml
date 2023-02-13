@@ -23,13 +23,13 @@ jobs:
           java-version: '17'
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Build and Publish with Gradle
+      - name: Build/Test/Publish with Gradle
         uses: gradle/gradle-build-action@v2
         env:
           FTB_MAVEN_TOKEN: ${{ secrets.FTB_MAVEN_TOKEN }}
           SAPS_TOKEN: ${{ secrets.SAPS_TOKEN }}
         with:
-          arguments: build publish --stacktrace --no-daemon
+          arguments: build test publish --stacktrace --no-daemon
       - name: Release to CurseForge
         uses: gradle/gradle-build-action@v2
         if: |

@@ -10,9 +10,12 @@ import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
 import dev.ftb.mods.ftblibrary.snbt.config.StringListValue;
 import dev.ftb.mods.ftblibrary.snbt.config.StringValue;
 import net.minecraft.Util;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SNBTConfigTest {
 	public interface General {
@@ -31,16 +34,18 @@ public class SNBTConfigTest {
 		IntArrayValue INT_ARRAY = SUB_TEST.getIntArray("int_array", new int[]{3, 59});
 	}
 
-	public static void main(String[] args) {
+	@Test
+	void testConfig() {
 		General.CONFIG.load(Paths.get("config/ftblibrary-config-test.snbt"));
 
-		System.out.println(General.TEST_2.get());
-		System.out.println(General.SUB_TEST_BOOLEAN.get());
-		System.out.println(General.SUB_TEST_INT.get());
-		System.out.println(General.SUB_TEST_DOUBLE.get());
-		System.out.println(General.SUB_TEST_STRING.get());
-		System.out.println(General.STRING_LIST.get());
-		System.out.println(Arrays.toString(General.INT_ARRAY.get()));
+		assertEquals(General.TEST_2.get(), true);
+		assertEquals(General.TEST_3.get(), false);
+		assertEquals(General.SUB_TEST_BOOLEAN.get(), false);
+		assertEquals(General.SUB_TEST_INT.get(), 50);
+		assertEquals(General.SUB_TEST_DOUBLE.get(), 0.5D);
+		assertEquals(General.SUB_TEST_STRING.get(), "hello");
+		assertEquals(General.STRING_LIST.get().get(1), "b");
+		assertEquals(General.INT_ARRAY.get()[1], 59);
 
 		Util.shutdownExecutors();
 	}

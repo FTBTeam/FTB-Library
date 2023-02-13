@@ -31,6 +31,11 @@
     	  'b $%*& "string" 2'
     	  "c $##@! 'string' 3"
     	]
+    testCompound: {
+        s1: 5
+        s2: "hello!"
+        s3: -4.435345e-2d
+    }
 }
 
 # Normalized version of the same file:
@@ -65,4 +70,9 @@
 		"b $%*& \"string\" 2",
 		"c $##@! 'string' 3"
 	]
+	testCompound: {
+        s1: 5
+        s2: "hello!"
+        s3: -4.435345e-2d
+    }
 }
