@@ -1,13 +1,11 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
 import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Floats;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import net.minecraft.nbt.Tag;
-import org.spongepowered.include.com.google.common.primitives.Floats;
-import org.spongepowered.include.com.google.common.primitives.Ints;
-import org.spongepowered.include.com.google.common.primitives.Longs;
 
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.function.BooleanSupplier;
 
 public class SNBTUtils {
