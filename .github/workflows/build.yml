@@ -26,10 +26,10 @@ jobs:
           java-version: '17'
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Build with Gradle
+      - name: Build/Test/Publish with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build --no-daemon
+          arguments: build test --no-daemon
       - name: Publish to Maven
         uses: gradle/gradle-build-action@v2
         if: github.event.inputs.skip_maven_publish != 'true'
