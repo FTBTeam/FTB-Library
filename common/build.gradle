@@ -13,6 +13,10 @@ dependencies {
 
 def ENV = System.getenv()
 
+test {
+	useJUnitPlatform()
+}
+
 architectury {
 	common()
 }
