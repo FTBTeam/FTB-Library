@@ -53,7 +53,7 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 		}
 
 		for (var fluid : BuiltInRegistries.FLUID) {
-			if (fluid == Fluids.EMPTY || fluid.defaultFluidState().isSource()) {
+			if (fluid == Fluids.EMPTY || !fluid.defaultFluidState().isSource()) {
 				continue;
 			}
 
