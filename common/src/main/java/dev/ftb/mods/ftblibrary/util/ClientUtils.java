@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.util;
 
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientChatEvent;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import net.minecraft.Util;
@@ -138,9 +139,15 @@ public class ClientUtils {
 				return false;
 			}
 			case "custom":
-				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(path))).isPresent();
+				if (ResourceLocation.isValidResourceLocation(path)) {
+					return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(path))).isPresent();
+				}
 			default:
-				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(scheme, path))).isPresent();
+				if (ResourceLocation.isValidResourceLocation(scheme + ":" + path)) {
+					return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(scheme, path))).isPresent();
+				}
 		}
+		FTBLibrary.LOGGER.warn("invalid scheme/path resourcelocation for handleClick(): {}:{}", scheme, path);
+		return false;
 	}
 }
