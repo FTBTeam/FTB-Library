@@ -11,11 +11,14 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.world.inventory.InventoryMenu;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,11 +66,16 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				}
 			});
 
-			cachedImages = images.stream().sorted().map(res -> new ImageDetails(res,
-					Component.literal(res.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
-							.append(Component.literal(res.getPath().substring(9, res.getPath().length() - 4)).withStyle(ChatFormatting.YELLOW)),
-					Icon.getIcon(res.toString())
-			)).toList();
+			cachedImages = images.stream().sorted().map(res -> {
+				// shorten <mod>:textures/A/B.png to <mod>:A/B
+				ResourceLocation res1 = new ResourceLocation(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
+				TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
+				return new ImageDetails(
+						Component.literal(res1.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
+								.append(Component.literal(res1.getPath()).withStyle(ChatFormatting.YELLOW)),
+						Icon.getIcon(sprite instanceof MissingTextureAtlasSprite ? res : res1)
+				);
+			}).toList();
 		}
 		return cachedImages;
 	}
@@ -102,7 +110,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
 					playClickSound();
-					imageConfig.setCurrentValue(res.rl.toString());
+					imageConfig.setCurrentValue(res.icon.toString());
 					callback.save(true);
 				}
 			});
@@ -119,7 +127,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		return false;
 	}
 
-	private record ImageDetails(ResourceLocation rl, Component label, Icon icon) {
+	private record ImageDetails(Component label, Icon icon) {
 	}
 
 	public enum ResourceListener implements ResourceManagerReloadListener {
