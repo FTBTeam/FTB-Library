@@ -73,7 +73,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				return new ImageDetails(
 						Component.literal(res1.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
 								.append(Component.literal(res1.getPath()).withStyle(ChatFormatting.YELLOW)),
-						Icon.getIcon(sprite instanceof MissingTextureAtlasSprite ? res : res1)
+						Icon.getIcon(sprite.atlasLocation().equals(MissingTextureAtlasSprite.getLocation()) ? res : res1)
 				);
 			}).toList();
 		}
