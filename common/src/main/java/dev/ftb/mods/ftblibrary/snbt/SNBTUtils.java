@@ -6,8 +6,6 @@ import org.spongepowered.include.com.google.common.primitives.Floats;
 import org.spongepowered.include.com.google.common.primitives.Ints;
 import org.spongepowered.include.com.google.common.primitives.Longs;
 
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.function.BooleanSupplier;
 
 public class SNBTUtils {
@@ -76,75 +74,6 @@ public class SNBTUtils {
 		} else {
 			return Tag.TAG_STRING;
 		}
-	}
-
-	@Deprecated(forRemoval = true)
-	public static boolean isInt(String s, int off) {
-		var len = s.length() - off;
-
-		if (len <= 0) {
-			return false;
-		}
-
-		for (var i = 0; i < len; i++) {
-			var c = s.charAt(i);
-
-			if (c == '-') {
-				if (i != 0) {
-					return false;
-				}
-			} else if (!isDigit(c)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Deprecated(forRemoval = true)
-	public static boolean isFloat(String s, int off) {
-		var len = s.length() - off;
-
-		if (len <= 0) {
-			return false;
-		}
-
-		var p = 0;
-		var e = 0;
-
-		for (var i = 0; i < len; i++) {
-			var c = s.charAt(i);
-
-			if (c == '-') {
-				if (i != 0) {
-					return false;
-				}
-			} else if (c == '.') {
-				if (i == 0 || i == len - 1) {
-					return false;
-				}
-
-				p++;
-
-				if (p >= 2) {
-					return false;
-				}
-			} else if (c == 'E') {
-				if (i == 0 || i == len - 1) {
-					return false;
-				}
-
-				e++;
-
-				if (e >= 2) {
-					return false;
-				}
-			} else if (!isDigit(c)) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	public static String handleEscape(String string) {
