@@ -54,6 +54,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		// we'll be using REI's system favourites instead.
 		if (Platform.isModLoaded("roughlyenoughitems")) {
 			showButtons = 3;
+			REIEventHandler.init();
 		}
 
 		// Datagens hahayes
@@ -118,8 +119,8 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 			return false;
 		}
 
-		if(showButtons == 3 && Platform.isModLoaded("roughlyenoughitems")) {
-			if(ConfigObject.getInstance().isFavoritesEnabled()) {
+		if (showButtons == 3 && Platform.isModLoaded("roughlyenoughitems")) {
+			if (!REIEventHandler.isReiReady() || ConfigObject.getInstance().isFavoritesEnabled()) {
 				return false;
 			}
 		}
