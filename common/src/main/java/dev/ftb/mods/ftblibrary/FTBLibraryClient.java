@@ -54,7 +54,6 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		// we'll be using REI's system favourites instead.
 		if (Platform.isModLoaded("roughlyenoughitems")) {
 			showButtons = 3;
-			REIEventHandler.init();
 		}
 
 		// Datagens hahayes
@@ -115,12 +114,15 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	}
 
 	public static boolean areButtonsVisible(@Nullable Screen gui) {
+		if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
+			return false;
+		}
 		if (showButtons == 0 || showButtons == 2 && !(gui instanceof EffectRenderingInventoryScreen)) {
 			return false;
 		}
 
 		if (showButtons == 3 && Platform.isModLoaded("roughlyenoughitems")) {
-			if (!REIEventHandler.isReiReady() || ConfigObject.getInstance().isFavoritesEnabled()) {
+			if (ConfigObject.getInstance().isFavoritesEnabled()) {
 				return false;
 			}
 		}
