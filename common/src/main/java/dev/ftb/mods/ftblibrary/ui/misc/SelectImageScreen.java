@@ -48,6 +48,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		refreshButton = new SimpleTextButton(this, Component.translatable("ftblibrary.select_image.rescan"), Icons.REFRESH) {
 			@Override
 			public void onClicked(MouseButton button) {
+				playClickSound();
 				clearCachedImages();
 				refreshWidgets();
 			}
