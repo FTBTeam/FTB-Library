@@ -46,6 +46,7 @@
 	"ftblibrary.select_item.caps": "Edit Capabilities",
 	"ftblibrary.select_item.display_name": "Set Display Name",
 	"ftblibrary.select_image.scanning": "Scanning for images: this could take a few seconds...",
+	"ftblibrary.select_image.rescan": "Rescan Images",
 	"config.group.value": "Value",
 	"sidebar_button.ftblibrary.toggle.gamemode": "Toggle Gamemode",
 	"sidebar_button.ftblibrary.toggle.gamemode.tooltip": "Toggles between survival and creative mode",

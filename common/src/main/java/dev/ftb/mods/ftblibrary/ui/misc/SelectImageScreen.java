@@ -4,11 +4,14 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ImageConfig;
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.Panel;
+import dev.ftb.mods.ftblibrary.ui.SimpleButton;
 import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
+import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -31,6 +34,7 @@ import java.util.Map;
 public class SelectImageScreen extends ButtonListBaseScreen {
 	private final ImageConfig imageConfig;
 	private final ConfigCallback callback;
+	private final SimpleTextButton refreshButton;
 
 	private static List<ImageDetails> cachedImages = null;
 
@@ -41,6 +45,14 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		setHasSearchBox(true);
 		focus();
 		setBorder(1, 1, 1);
+		refreshButton = new SimpleTextButton(this, Component.translatable("ftblibrary.select_image.rescan"), Icons.REFRESH) {
+			@Override
+			public void onClicked(MouseButton button) {
+				clearCachedImages();
+				refreshWidgets();
+			}
+		};
+		refreshButton.setSize(20, 20);
 	}
 
 	private List<ImageDetails> getImageList() {
@@ -78,6 +90,20 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 			}).toList();
 		}
 		return cachedImages;
+	}
+
+	@Override
+	public void alignWidgets() {
+		super.alignWidgets();
+
+		refreshButton.setPos(width + 2, 0);
+	}
+
+	@Override
+	public void addWidgets() {
+		super.addWidgets();
+
+		add(refreshButton);
 	}
 
 	public static void clearCachedImages() {
