@@ -104,6 +104,10 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	}
 
 	public static boolean areButtonsVisible(@Nullable Screen gui) {
+		if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
+			return false;
+		}
+
 		if (showButtons == 0 || showButtons == 2 && !(gui instanceof EffectRenderingInventoryScreen)) {
 			return false;
 		}
