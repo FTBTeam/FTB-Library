@@ -84,6 +84,10 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 		return value;
 	}
 
+	public final Color4I getColor() {
+		return getColor(value);
+	}
+
 	public Color4I getColor(@Nullable T v) {
 		return Color4I.GRAY;
 	}
@@ -102,6 +106,10 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	}
 
 	public abstract void onClicked(MouseButton button, ConfigCallback callback);
+
+	public final Component getStringForGUI() {
+		return Component.literal(String.valueOf(value));
+	}
 
 	public Component getStringForGUI(@Nullable T v) {
 		return Component.literal(String.valueOf(v));

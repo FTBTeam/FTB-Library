@@ -259,10 +259,10 @@ public class EditConfigScreen extends BaseScreen {
 
 	private class ConfigEntryButton extends Button {
 		private final ConfigGroupButton groupButton;
-		private final ConfigValue configValue;
+		private final ConfigValue<?> configValue;
 		private final Component keyText;
 
-		public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, ConfigValue configValue) {
+		public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, ConfigValue<?> configValue) {
 			super(panel);
 			setHeight(getTheme().getFontHeight() + 2);
 			this.groupButton = groupButton;
@@ -284,7 +284,7 @@ public class EditConfigScreen extends BaseScreen {
 			theme.drawString(matrixStack, keyText, 5, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
-			Component s = configValue.getStringForGUI(configValue.getValue());
+			Component s = configValue.getStringForGUI();
 			var slen = theme.getStringWidth(s);
 
 			int maxLen = width - dividerX - 10;
@@ -293,7 +293,7 @@ public class EditConfigScreen extends BaseScreen {
 				slen = maxLen + 2;
 			}
 
-			var textCol = configValue.getColor(configValue.getValue()).mutable();
+			var textCol = configValue.getColor().mutable();
 			textCol.setAlpha(255);
 
 			if (mouseOver) {
