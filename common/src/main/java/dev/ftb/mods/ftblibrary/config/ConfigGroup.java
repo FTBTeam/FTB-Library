@@ -103,7 +103,8 @@ public class ConfigGroup {
 	}
 
 	/**
-	 * Get, or create, a subgroup in this group
+	 * Get, or create, a subgroup in this group. The subgroup will use the same on-save callback as this group.
+	 *
 	 * @param id unique id of the subgroup
 	 * @return the subgroup, which may have just been created
 	 */
@@ -111,7 +112,7 @@ public class ConfigGroup {
 		var index = id.indexOf('.');
 
 		if (index == -1) {
-			return subgroups.computeIfAbsent(id, k -> new ConfigGroup(id, this, null));
+			return subgroups.computeIfAbsent(id, k -> new ConfigGroup(id, this, savedCallback));
 		} else {
 			return getOrCreateSubgroup(id.substring(0, index)).getOrCreateSubgroup(id.substring(index + 1));
 		}
