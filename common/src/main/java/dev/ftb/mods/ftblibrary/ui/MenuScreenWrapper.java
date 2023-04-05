@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -133,18 +132,17 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
-			var object = wrappedGui.getIngredientUnderMouse();
-
-			if (object instanceof WrappedIngredient && ((WrappedIngredient) object).tooltip) {
-				var ingredient = WrappedIngredient.unwrap(object);
-
-				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty()) {
-					matrixStack.pushPose();
-					matrixStack.translate(0, 0, tooltipList.zOffsetItemTooltip);
-					renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
-					matrixStack.popPose();
+			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
+				if (underMouse.tooltip()) {
+					var ingredient = underMouse.ingredient();
+					if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
+						matrixStack.pushPose();
+						matrixStack.translate(0, 0, tooltipList.zOffsetItemTooltip);
+						renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
+						matrixStack.popPose();
+					}
 				}
-			}
+			});
 		} else {
 			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}

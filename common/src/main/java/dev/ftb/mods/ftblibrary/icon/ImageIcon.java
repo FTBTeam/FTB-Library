@@ -85,7 +85,6 @@ public class ImageIcon extends Icon {
 			var b = color.bluei();
 			var a = color.alphai();
 
-			RenderSystem.enableTexture();
 			var m = matrixStack.last().pose();
 			var tesselator = Tesselator.getInstance();
 			var buffer = tesselator.getBuilder();

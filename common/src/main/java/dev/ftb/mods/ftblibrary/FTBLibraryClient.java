@@ -15,7 +15,7 @@ import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.ui.misc.SelectImageScreen;
-import dev.ftb.mods.ftblibrary.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import me.shedaniel.rei.api.client.config.ConfigObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

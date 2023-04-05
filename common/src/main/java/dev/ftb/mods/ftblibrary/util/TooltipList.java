@@ -165,7 +165,6 @@ public class TooltipList {
 		mStack.translate(0, 0, zOffset);
 		var mat = mStack.last().pose();
 		RenderSystem.enableDepthTest();
-		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
@@ -185,13 +184,12 @@ public class TooltipList {
 		tesselator.end();
 
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
 		var renderType = MultiBufferSource.immediate(buffer);
 
 		for (var lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
 			var line = textLines.get(lineNumber);
 			if (line != null) {
-				font.drawInBatch(line, (float) tooltipX, (float) tooltipY, -1, true, mat, renderType, false, 0, 15728880);
+				font.drawInBatch(line, (float) tooltipX, (float) tooltipY, -1, true, mat, renderType, Font.DisplayMode.NORMAL, 0, 15728880);
 			}
 
 			if (lineNumber + 1 == titleLinesCount) {

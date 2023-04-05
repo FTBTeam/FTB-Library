@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.config.ui;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
+import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -47,7 +48,7 @@ public interface ItemSearchMode {
 
 		@Override
 		public Collection<ItemStack> getAllItems() {
-			CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false);
+			CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false, ClientUtils.registryAccess());
 			if (allItemsCache == null) {
 				allItemsCache = CreativeModeTabs.allTabs().stream()
 						.flatMap(tab -> tab.getDisplayItems().stream())

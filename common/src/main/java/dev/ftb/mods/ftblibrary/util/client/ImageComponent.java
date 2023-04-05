@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.util;
+package dev.ftb.mods.ftblibrary.util.client;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.network.chat.ComponentContents;

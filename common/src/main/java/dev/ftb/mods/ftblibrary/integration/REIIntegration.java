@@ -108,13 +108,13 @@ public class REIIntegration implements REIClientPlugin {
 		@Override
 		public DataResult<SidebarButtonEntry> fromArgs(Object... args) {
 			if (args.length == 0) {
-				return DataResult.error("Cannot create SidebarButtonEntry from empty args!");
+				return DataResult.error(() -> "Cannot create SidebarButtonEntry from empty args!");
 			}
 			if (!(args[0] instanceof ResourceLocation id)) {
-				return DataResult.error("Creation of SidebarButtonEntry from args expected ResourceLocation as the first argument!");
+				return DataResult.error(() -> "Creation of SidebarButtonEntry from args expected ResourceLocation as the first argument!");
 			}
 			if (!(args[1] instanceof SidebarButton) && !(args[1] instanceof JsonObject)) {
-				return DataResult.error("Creation of SidebarButtonEntry from args expected SidebarButton or JsonObject as the second argument!");
+				return DataResult.error(() -> "Creation of SidebarButtonEntry from args expected SidebarButton or JsonObject as the second argument!");
 			}
 			return DataResult.success(new SidebarButtonEntry(args[1] instanceof SidebarButton button ? button : createSidebarButton(id, null, (JsonObject) args[1])), Lifecycle.stable());
 		}

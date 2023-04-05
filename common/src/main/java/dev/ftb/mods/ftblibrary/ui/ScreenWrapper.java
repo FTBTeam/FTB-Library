@@ -6,11 +6,8 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Objects;
 
 /**
  * @author LatvianModder
@@ -74,11 +71,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 				wrappedGui.closeGui(true);
 				return true;
 			} else if (Platform.isModLoaded("jei")) {
-				var object = WrappedIngredient.unwrap(wrappedGui.getIngredientUnderMouse());
-
-				if (object != null) {
-					handleIngredientKey(key, object);
-				}
+				wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> handleIngredientKey(key, underMouse.ingredient()));
 			}
 
 			return super.keyPressed(keyCode, scanCode, modifiers);
@@ -121,18 +114,17 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
-			var object = wrappedGui.getIngredientUnderMouse();
-
-			if (object instanceof WrappedIngredient && ((WrappedIngredient) object).tooltip) {
-				var ingredient = WrappedIngredient.unwrap(object);
-
-				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty()) {
-					matrixStack.pushPose();
-					matrixStack.translate(0, 0, tooltipList.zOffsetItemTooltip);
-					renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
-					matrixStack.popPose();
+			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
+				if (underMouse.tooltip()) {
+					var ingredient = underMouse.ingredient();
+					if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
+						matrixStack.pushPose();
+						matrixStack.translate(0, 0, tooltipList.zOffsetItemTooltip);
+						renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
+						matrixStack.popPose();
+					}
 				}
-			}
+			});
 		} else {
 			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}

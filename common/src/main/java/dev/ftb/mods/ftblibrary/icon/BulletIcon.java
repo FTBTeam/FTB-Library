@@ -94,7 +94,6 @@ public class BulletIcon extends Icon {
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		RenderSystem.disableTexture();
 		var tesselator = Tesselator.getInstance();
 		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -106,7 +105,6 @@ public class BulletIcon extends Icon {
 		GuiHelper.addRectToBuffer(matrixStack, buffer, x + 1, y + 1, w - 2, h - 2, c);
 
 		tesselator.end();
-		RenderSystem.enableTexture();
 	}
 
 	@Override

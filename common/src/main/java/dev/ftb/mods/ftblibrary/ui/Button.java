@@ -3,9 +3,10 @@ package dev.ftb.mods.ftblibrary.ui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public abstract class Button extends Widget {
 	protected Component title;
@@ -69,9 +70,8 @@ public abstract class Button extends Widget {
 	public abstract void onClicked(MouseButton button);
 
 	@Override
-	@Nullable
-	public Object getIngredientUnderMouse() {
-		return new WrappedIngredient(icon.getIngredient()).tooltip();
+	public Optional<PositionedIngredient> getIngredientUnderMouse() {
+		return PositionedIngredient.of(icon.getIngredient(), this, true);
 	}
 
 	@Override

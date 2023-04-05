@@ -8,9 +8,9 @@ import com.mojang.blaze3d.vertex.*;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
@@ -18,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
@@ -84,7 +85,6 @@ public class GuiHelper {
 	}
 
 	public static void drawTexturedRect(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
-		RenderSystem.enableTexture();
 		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		var tesselator = Tesselator.getInstance();
@@ -133,7 +133,6 @@ public class GuiHelper {
 		}
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		RenderSystem.disableTexture();
 		var tesselator = Tesselator.getInstance();
 		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -150,12 +149,10 @@ public class GuiHelper {
 		}
 
 		tesselator.end();
-		RenderSystem.enableTexture();
 	}
 
 	public static void drawRectWithShade(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, int intensity) {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		RenderSystem.disableTexture();
 		var tesselator = Tesselator.getInstance();
 		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -168,7 +165,6 @@ public class GuiHelper {
 		addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, col);
 		addRectToBuffer(matrixStack, buffer, x + 1, y + h - 1, w - 1, 1, col);
 		tesselator.end();
-		RenderSystem.enableTexture();
 	}
 
 	public static void drawItem(PoseStack poseStack, ItemStack stack, int hash, boolean renderOverlay, @Nullable String text) {
@@ -199,7 +195,7 @@ public class GuiHelper {
 			Lighting.setupForFlatItems();
 		}
 
-		itemRenderer.render(stack, ItemTransforms.TransformType.GUI, false, new PoseStack(), bufferSource, 0xF000F0, OverlayTexture.NO_OVERLAY, bakedModel);
+		itemRenderer.render(stack, ItemDisplayContext.GUI, false, new PoseStack(), bufferSource, 0xF000F0, OverlayTexture.NO_OVERLAY, bakedModel);
 		bufferSource.endBatch();
 		RenderSystem.enableDepthTest();
 
@@ -218,21 +214,19 @@ public class GuiHelper {
 				var s = text == null ? String.valueOf(stack.getCount()) : text;
 				poseStack.pushPose();
 				poseStack.translate(9D - font.width(s), 1D, 20D);
-				font.drawInBatch(s, 0F, 0F, 0xFFFFFF, true, poseStack.last().pose(), bufferSource, false, 0, 0xF000F0);
+				font.drawInBatch(s, 0F, 0F, 0xFFFFFF, true, poseStack.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
 				bufferSource.endBatch();
 				poseStack.popPose();
 			}
 
 			if (stack.isBarVisible()) {
 				RenderSystem.disableDepthTest();
-				RenderSystem.disableTexture();
 				RenderSystem.disableBlend();
 				var barWidth = stack.getBarWidth();
 				var barColor = stack.getBarColor();
 				draw(poseStack, t, -6, 5, 13, 2, 0, 0, 0, 255);
 				draw(poseStack, t, -6, 5, barWidth, 1, barColor >> 16 & 255, barColor >> 8 & 255, barColor & 255, 255);
 				RenderSystem.enableBlend();
-				RenderSystem.enableTexture();
 				RenderSystem.enableDepthTest();
 			}
 
@@ -240,11 +234,9 @@ public class GuiHelper {
 
 			if (cooldown > 0F) {
 				RenderSystem.disableDepthTest();
-				RenderSystem.disableTexture();
 				RenderSystem.enableBlend();
 				RenderSystem.defaultBlendFunc();
 				draw(poseStack, t, -8, Mth.floor(16F * (1F - cooldown)) - 8, 16, Mth.ceil(16F * cooldown), 255, 255, 255, 127);
-				RenderSystem.enableTexture();
 				RenderSystem.enableDepthTest();
 			}
 		}

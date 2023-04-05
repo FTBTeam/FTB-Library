@@ -6,12 +6,14 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Panel extends Widget {
 	protected final List<Widget> widgets;
@@ -473,25 +475,25 @@ public abstract class Panel extends Widget {
 	}
 
 	@Override
-	@Nullable
-	public Object getIngredientUnderMouse() {
+	public Optional<PositionedIngredient> getIngredientUnderMouse() {
 		setOffset(true);
+
+		Optional<PositionedIngredient> result = Optional.empty();
 
 		for (var i = widgets.size() - 1; i >= 0; i--) {
 			var widget = widgets.get(i);
-
 			if (widget.isEnabled() && widget.isMouseOver()) {
-				var object = widget.getIngredientUnderMouse();
-
-				if (object != null) {
-					setOffset(false);
-					return object;
+				var ingredient = widget.getIngredientUnderMouse();
+				if (ingredient.isPresent()) {
+					result = ingredient;
+					break;
 				}
 			}
 		}
 
 		setOffset(false);
-		return null;
+
+		return result;
 	}
 
 	@Override
