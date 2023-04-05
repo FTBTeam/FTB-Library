@@ -6,12 +6,10 @@ import dev.ftb.mods.ftblibrary.config.ImageConfig;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.SimpleButton;
 import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
-import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -56,6 +54,11 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		refreshButton.setSize(20, 20);
 	}
 
+	@Override
+	public boolean onInit() {
+		return setSizeProportional(0.8f, 0.8f);
+	}
+
 	private List<ImageDetails> getImageList() {
 		if (cachedImages == null) {
 			List<ResourceLocation> images = new ArrayList<>();
@@ -83,10 +86,13 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				// shorten <mod>:textures/A/B.png to <mod>:A/B
 				ResourceLocation res1 = new ResourceLocation(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
 				TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
+				if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
+					res1 = res;
+				}
 				return new ImageDetails(
 						Component.literal(res1.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
 								.append(Component.literal(res1.getPath()).withStyle(ChatFormatting.YELLOW)),
-						Icon.getIcon(sprite.atlasLocation().equals(MissingTextureAtlasSprite.getLocation()) ? res : res1)
+						Icon.getIcon(res1)
 				);
 			}).toList();
 		}
@@ -110,7 +116,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 	public static void clearCachedImages() {
 		cachedImages = null;
 	}
-	
+
 	public boolean allowNone() {
 		return true;
 	}

@@ -15,6 +15,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -121,11 +122,17 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	protected boolean setFullscreen() {
+		return setSizeProportional(1f, 1f);
+	}
+
+	protected boolean setSizeProportional(float w, float h) {
+		Validate.isTrue(w > 0f && w <= 1f && h > 0f && h <= 1f, "width and height must be > 0 and <= 1");
+
 		if (screen == null) {
 			return false;
 		} else {
-			setWidth(screen.getGuiScaledWidth());
-			setHeight(screen.getGuiScaledHeight());
+			setWidth((int) (screen.getGuiScaledWidth() * w));
+			setHeight((int) (screen.getGuiScaledHeight() * h));
 			return true;
 		}
 	}

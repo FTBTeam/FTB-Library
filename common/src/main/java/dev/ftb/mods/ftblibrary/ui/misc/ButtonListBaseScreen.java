@@ -144,7 +144,7 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 				w.setWidth(width - borderH * 2);
 			}
 
-			setHeight(140);
+			setHeight(parent.height - 26);
 
 			scrollBar.setPosAndSize(posX + width + 6, posY - 1, 16, height + 2);
 			scrollBar.setMaxValue(align(new WidgetLayout.Vertical(borderV, borderW, borderV)));
