@@ -49,7 +49,7 @@ dependencies {
 
 //	modCompileOnly "me.shedaniel:RoughlyEnoughItems-plugin-compatibilities-forge:${rootProject.rei_plugin_compat_version}"
 	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
-	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-fabric-api:${rootProject.jei_version}")
+	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }

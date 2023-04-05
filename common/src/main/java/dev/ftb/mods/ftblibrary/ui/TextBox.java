@@ -476,7 +476,6 @@ public class TextBox extends Widget {
 			var bufferBuilder = tesselator.getBuilder();
 			RenderSystem.setShader(GameRenderer::getPositionShader);
 			RenderSystem.setShaderColor(0, 0, 1, 1);
-			RenderSystem.disableTexture();
 			RenderSystem.enableColorLogicOp();
 			RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
 			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
@@ -486,7 +485,6 @@ public class TextBox extends Widget {
 			bufferBuilder.vertex(startX, startY, 0).endVertex();
 			tesselator.end();
 			RenderSystem.disableColorLogicOp();
-			RenderSystem.enableTexture();
 		}
 
 		GuiHelper.popScissor(getScreen());

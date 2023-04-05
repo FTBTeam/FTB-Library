@@ -12,7 +12,7 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.nbt.*;
@@ -21,10 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -330,9 +327,8 @@ public class NBTEditorScreen extends BaseScreen {
 		}
 
 		@Override
-		@Nullable
-		public Object getIngredientUnderMouse() {
-			return new WrappedIngredient(hoverIcon.getIngredient()).tooltip();
+		public Optional<PositionedIngredient> getIngredientUnderMouse() {
+			return PositionedIngredient.of(hoverIcon.getIngredient(), this, true);
 		}
 
 		@Override

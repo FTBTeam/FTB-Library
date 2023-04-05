@@ -12,11 +12,14 @@ import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
+
+import java.util.Optional;
 
 /**
  * @author LatvianModder
@@ -46,8 +49,8 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 				}
 
 				@Override
-				public Object getIngredientUnderMouse() {
-					return FluidStack.create(Fluids.EMPTY, FluidStack.bucketAmount());
+				public Optional<PositionedIngredient> getIngredientUnderMouse() {
+					return PositionedIngredient.of(FluidStack.create(Fluids.EMPTY, FluidStack.bucketAmount()), this);
 				}
 			});
 		}
@@ -68,8 +71,8 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 				}
 
 				@Override
-				public Object getIngredientUnderMouse() {
-					return FluidStack.create(fluid, FluidStack.bucketAmount());
+				public Optional<PositionedIngredient> getIngredientUnderMouse() {
+					return PositionedIngredient.of(FluidStack.create(fluid, FluidStack.bucketAmount()), this);
 				}
 			});
 		}

@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.util;
+package dev.ftb.mods.ftblibrary.util.client;
 
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientChatEvent;
@@ -9,6 +9,7 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,10 +17,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
@@ -150,4 +148,9 @@ public class ClientUtils {
 		FTBLibrary.LOGGER.warn("invalid scheme/path resourcelocation for handleClick(): {}:{}", scheme, path);
 		return false;
 	}
+
+	public static HolderLookup.Provider registryAccess() {
+		return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
+	}
+
 }

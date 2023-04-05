@@ -4,8 +4,11 @@ package dev.ftb.mods.ftblibrary.ui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+
+import java.util.Optional;
 
 /**
  * @author LatvianModder
@@ -29,8 +32,8 @@ public abstract class SimpleTextButton extends Button {
 	}
 
 	@Override
-	public Object getIngredientUnderMouse() {
-		return icon.getIngredient();
+	public Optional<PositionedIngredient> getIngredientUnderMouse() {
+		return PositionedIngredient.of(icon.getIngredient(), this);
 	}
 
 	public boolean hasIcon() {

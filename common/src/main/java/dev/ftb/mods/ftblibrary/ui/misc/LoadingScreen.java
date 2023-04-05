@@ -53,7 +53,6 @@ public class LoadingScreen extends BaseScreen {
 			var h1 = 16;
 
 			var col = Color4I.WHITE;
-			RenderSystem.disableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 			var tesselator = Tesselator.getInstance();
 			var buffer = tesselator.getBuilder();
@@ -85,7 +84,6 @@ public class LoadingScreen extends BaseScreen {
 			}
 
 			tesselator.end();
-			GlStateManager._enableTexture();
 
 			var s = getText();
 
