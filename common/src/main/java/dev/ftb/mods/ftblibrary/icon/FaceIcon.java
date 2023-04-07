@@ -32,7 +32,7 @@ public class FaceIcon extends Icon {
 		profile = p;
 		skin = new ImageIcon(DefaultPlayerSkin.getDefaultSkin(profile.getId()));
 		head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
-		hat = Icon.EMPTY;
+		hat = Color4I.EMPTY;
 
 		Minecraft.getInstance().getSkinManager().registerSkins(profile, (type, resourceLocation, minecraftProfileTexture) -> {
 			if (type == MinecraftProfileTexture.Type.SKIN) {

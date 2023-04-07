@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
@@ -19,7 +20,7 @@ public abstract class Button extends Widget {
 	}
 
 	public Button(Panel panel) {
-		this(panel, Component.empty(), Icon.EMPTY);
+		this(panel, Component.empty(), Color4I.EMPTY);
 	}
 
 	@Override

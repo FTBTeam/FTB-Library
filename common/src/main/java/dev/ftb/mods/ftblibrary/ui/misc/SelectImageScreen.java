@@ -3,15 +3,14 @@ package dev.ftb.mods.ftblibrary.ui.misc;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ImageConfig;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.SimpleButton;
 import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
-import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -110,7 +109,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 	public static void clearCachedImages() {
 		cachedImages = null;
 	}
-	
+
 	public boolean allowNone() {
 		return true;
 	}
@@ -122,7 +121,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 	@Override
 	public void addButtons(Panel panel) {
 		if (allowNone()) {
-			panel.add(new SimpleTextButton(panel, Component.literal("None"), Icon.EMPTY) {
+			panel.add(new SimpleTextButton(panel, Component.literal("None"), Color4I.EMPTY) {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
 					playClickSound();

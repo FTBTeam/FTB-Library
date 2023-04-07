@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.sidebar;
 import com.google.gson.JsonObject;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
@@ -31,7 +32,7 @@ public class SidebarButton implements Comparable<SidebarButton> {
 	public final ResourceLocation id;
 	public final JsonObject json;
 	public final SidebarButtonGroup group;
-	private Icon icon = Icon.EMPTY;
+	private Icon icon = Color4I.EMPTY;
 	private int x = 0;
 	private boolean defaultConfig = true;
 	private boolean configValue = true;

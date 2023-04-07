@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -13,7 +14,7 @@ import java.util.function.BooleanSupplier;
  * @author LatvianModder
  */
 public class ContextMenuItem implements Comparable<ContextMenuItem> {
-	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(Component.empty(), Icon.EMPTY, () -> {
+	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(Component.empty(), Color4I.EMPTY, () -> {
 	}) {
 		@Override
 		public Widget createWidget(ContextMenu panel) {

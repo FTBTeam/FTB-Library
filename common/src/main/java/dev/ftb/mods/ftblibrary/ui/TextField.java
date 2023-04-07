@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.math.Bits;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.network.chat.Component;
@@ -21,7 +20,7 @@ public class TextField extends Widget {
 	public int maxWidth = 5000;
 	public int textSpacing = 10;
 	public float scale = 1.0F;
-	public Color4I textColor = Icon.EMPTY;
+	public Color4I textColor = Color4I.EMPTY;
 	public boolean trim = false;
 
 	public TextField(Panel panel) {

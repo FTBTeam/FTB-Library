@@ -1,11 +1,12 @@
 package dev.ftb.mods.ftblibrary.util;
 
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.network.chat.ComponentContents;
 
 // TODO: Fix me
 public class ImageComponent implements ComponentContents {
-	public Icon image = Icon.EMPTY;
+	public Icon image = Color4I.EMPTY;
 	public int width = 100;
 	public int height = 100;
 	public int align = 1;
