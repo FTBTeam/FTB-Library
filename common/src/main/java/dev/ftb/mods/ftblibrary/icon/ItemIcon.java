@@ -28,7 +28,7 @@ public class ItemIcon extends Icon {
 
 	public static Icon getItemIcon(ItemStack stack) {
 		if (stack.isEmpty()) {
-			return EMPTY;
+			return Color4I.EMPTY;
 		} else if (stack.getItem() instanceof CustomIconItem) {
 			return ((CustomIconItem) stack.getItem()).getCustomIcon(stack);
 		}
@@ -37,12 +37,12 @@ public class ItemIcon extends Icon {
 	}
 
 	public static Icon getItemIcon(Item item) {
-		return item == Items.AIR ? EMPTY : getItemIcon(item.getDefaultInstance());
+		return item == Items.AIR ? Color4I.EMPTY : getItemIcon(item.getDefaultInstance());
 	}
 
 	public static Icon getItemIcon(String lazyStackString) {
 		if (lazyStackString.isEmpty()) {
-			return EMPTY;
+			return Color4I.EMPTY;
 		}
 
 		return new LazyIcon(() -> {

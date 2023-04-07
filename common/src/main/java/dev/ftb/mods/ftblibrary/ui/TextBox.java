@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
@@ -22,7 +21,7 @@ import org.lwjgl.glfw.GLFW;
 public class TextBox extends Widget {
 	private boolean isFocused = false;
 	public int charLimit = 2000;
-	public Color4I textColor = Icon.EMPTY;
+	public Color4I textColor = Color4I.EMPTY;
 
 	public String ghostText = "";
 	private String text = "";

@@ -22,7 +22,7 @@ public class LazyIcon extends Icon {
 			cachedIcon = iconSupplier.get();
 
 			if (cachedIcon == null || cachedIcon.isEmpty()) {
-				cachedIcon = Icon.EMPTY;
+				cachedIcon = Color4I.EMPTY;
 			}
 		}
 

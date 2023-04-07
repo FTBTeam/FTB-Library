@@ -24,7 +24,7 @@ public class CombinedIcon extends Icon {
 		}
 
 		if (list.isEmpty()) {
-			return EMPTY;
+			return Color4I.EMPTY;
 		} else if (list.size() == 1) {
 			return list.get(0);
 		}

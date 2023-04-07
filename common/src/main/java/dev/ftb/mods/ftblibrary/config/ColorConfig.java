@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import dev.ftb.mods.ftblibrary.icon.Icon;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -11,8 +10,8 @@ import java.util.function.Consumer;
  */
 public class ColorConfig extends ConfigFromString<Color4I> {
 	public ColorConfig() {
-		defaultValue = Icon.EMPTY;
-		value = Icon.EMPTY;
+		defaultValue = Color4I.EMPTY;
+		value = Color4I.EMPTY;
 	}
 
 	@Override

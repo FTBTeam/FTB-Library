@@ -24,9 +24,9 @@ public class BulletIcon extends Icon {
 	private boolean inverse;
 
 	public BulletIcon() {
-		color = Icon.EMPTY;
-		colorB = Icon.EMPTY;
-		colorD = Icon.EMPTY;
+		color = Color4I.EMPTY;
+		colorB = Color4I.EMPTY;
+		colorD = Color4I.EMPTY;
 		inverse = false;
 	}
 

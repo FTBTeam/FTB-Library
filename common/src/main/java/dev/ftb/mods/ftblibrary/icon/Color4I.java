@@ -28,6 +28,41 @@ import org.jetbrains.annotations.Nullable;
  * @author LatvianModder
  */
 public class Color4I extends Icon {
+	public static final Color4I EMPTY = new Color4I(255, 255, 255, 255) {
+		@Override
+		public boolean isEmpty() {
+			return true;
+		}
+
+		@Override
+		@Environment(EnvType.CLIENT)
+		public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+		}
+
+		@Override
+		@Environment(EnvType.CLIENT)
+		public void draw3D(PoseStack matrixStack) {
+		}
+
+		@Override
+		public MutableColor4I mutable() {
+			return new MutableColor4I.None();
+		}
+
+		@Override
+		@Nullable
+		public PixelBuffer createPixelBuffer() {
+			return null;
+		}
+
+		public int hashCode() {
+			return 0;
+		}
+
+		public boolean equals(Object o) {
+			return o == this;
+		}
+	};
 	private static final Color4I[] BLACK_A = new Color4I[256];
 	private static final Color4I[] WHITE_A = new Color4I[256];
 

@@ -311,7 +311,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		var bsize = width / 2 - 10;
 
-		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Icon.EMPTY) {
+		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Color4I.EMPTY) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
@@ -326,7 +326,7 @@ public class SelectItemStackScreen extends BaseScreen {
 
 		buttonCancel.setPosAndSize(8, height - 24, bsize, 16);
 
-		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Icon.EMPTY) {
+		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Color4I.EMPTY) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();

@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ConfigFromString;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
@@ -40,7 +39,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 		var bsize = width / 2 - 10;
 
-		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Icon.EMPTY) {
+		buttonCancel = new SimpleTextButton(this, Component.translatable("gui.cancel"), Color4I.EMPTY) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
@@ -55,7 +54,7 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 		buttonCancel.setPosAndSize(8, height - 24, bsize, 16);
 
-		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Icon.EMPTY) {
+		buttonAccept = new SimpleTextButton(this, Component.translatable("gui.accept"), Color4I.EMPTY) {
 			@Override
 			public void onClicked(MouseButton button) {
 				playClickSound();
