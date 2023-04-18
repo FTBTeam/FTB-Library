@@ -307,11 +307,9 @@ public abstract class Panel extends Widget {
 		for (var i = widgets.size() - 1; i >= 0; i--) {
 			var widget = widgets.get(i);
 
-			if (widget.isEnabled()) {
-				if (widget.mouseDoubleClicked(button)) {
-					setOffset(false);
-					return true;
-				}
+			if (widget.isEnabled() && widget.mouseDoubleClicked(button)) {
+				setOffset(false);
+				return true;
 			}
 		}
 
@@ -341,17 +339,32 @@ public abstract class Panel extends Widget {
 		for (var i = widgets.size() - 1; i >= 0; i--) {
 			var widget = widgets.get(i);
 
-			if (widget.isEnabled()) {
-				if (widget.mouseScrolled(scroll)) {
-					setOffset(false);
-					return true;
-				}
+			if (widget.isEnabled() && widget.mouseScrolled(scroll)) {
+				setOffset(false);
+				return true;
 			}
 		}
 
 		var scrollPanel = scrollPanel(scroll);
 		setOffset(false);
 		return scrollPanel;
+	}
+
+	@Override
+	public boolean mouseDragged(int button, double dragX, double dragY) {
+		setOffset(true);
+
+		for (var i = widgets.size() - 1; i >= 0; i--) {
+			var widget = widgets.get(i);
+
+			if (widget.isEnabled() && widget.mouseDragged(button, dragX, dragY)) {
+				setOffset(false);
+				return true;
+			}
+		}
+
+		setOffset(false);
+		return false;
 	}
 
 	public boolean scrollPanel(double scroll) {
