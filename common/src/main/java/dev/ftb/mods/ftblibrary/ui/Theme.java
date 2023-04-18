@@ -174,7 +174,7 @@ public class Theme {
 
 	public final int drawString(PoseStack matrixStack, @Nullable Object text, float x, float y, Color4I color, int flags) {
 		if (text == null || text == FormattedCharSequence.EMPTY || text == Component.EMPTY || (text instanceof String && ((String) text).isEmpty()) || color.isEmpty()) {
-			return 0;
+			return (int) x;
 		}
 
 		if (text instanceof FormattedCharSequence) {
