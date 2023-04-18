@@ -22,6 +22,10 @@ architectury {
 	common("forge", "fabric")
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/ftblibrary.accesswidener")
+}
+
 configurations {
 	dev
 }
