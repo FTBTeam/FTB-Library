@@ -61,6 +61,11 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	}
 
 	@Override
+	public boolean mouseDragged(double x, double y, int button, double dragX, double dragY) {
+		return wrappedGui.mouseDragged(button, dragX, dragY) || super.mouseDragged(x, y, button, dragX, dragY);
+	}
+
+	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		var key = new Key(keyCode, scanCode, modifiers);
 
