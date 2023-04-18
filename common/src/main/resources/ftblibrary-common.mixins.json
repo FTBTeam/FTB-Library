@@ -9,6 +9,7 @@
 		"ResourceLocationMixin"
 	],
 	"client": [
+		"MultilineTextFieldAccess"
 	],
 	"injectors": {
 		"defaultRequire": 1
