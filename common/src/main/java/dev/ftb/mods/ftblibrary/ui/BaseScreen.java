@@ -304,19 +304,11 @@ public abstract class BaseScreen extends Panel implements IOpenableScreen {
 		}
 
 		var now = System.currentTimeMillis();
-
-		if (lastClickTime == 0L) {
-			lastClickTime = now;
-		} else {
-			if ((now - lastClickTime) <= 300L) {
-				if (mouseDoubleClicked(button)) {
-					lastClickTime = 0L;
-					return true;
-				}
-			}
-
+		if (lastClickTime != 0L && (now - lastClickTime) <= 300L && mouseDoubleClicked(button)) {
 			lastClickTime = 0L;
+			return true;
 		}
+		lastClickTime = now;
 
 		return super.mousePressed(button);
 	}
