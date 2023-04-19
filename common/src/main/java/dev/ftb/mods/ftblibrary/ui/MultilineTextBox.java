@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.ui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.ftb.mods.ftblibrary.core.mixin.common.MultilineTextFieldAccess;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
@@ -15,12 +16,15 @@ import net.minecraft.client.gui.components.Whence;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.function.Consumer;
+
 public class MultilineTextBox extends Widget {
     private final Font font;
     private boolean isFocused = false;
     private MultilineTextField textField;
     private Component placeHolder = Component.empty();
     private int frame;
+    private Consumer<String> valueListener = str -> {};
 
     public MultilineTextBox(Panel panel) {
         super(panel);
@@ -40,6 +44,12 @@ public class MultilineTextBox extends Widget {
         textField = new MultilineTextField(font, width);
         textField.setCursorListener(this::scrollToCursor);
         textField.setValue(text);
+        textField.setValueListener(valueListener);
+    }
+
+    public void setValueListener(Consumer<String> valueListener) {
+        this.valueListener = valueListener;
+        textField.setValueListener(valueListener);
     }
 
     public final boolean isFocused() {
@@ -72,6 +82,26 @@ public class MultilineTextBox extends Widget {
         this.placeHolder = placeHolder;
     }
 
+    public void setSelecting(boolean selecting) {
+        textField.setSelecting(selecting);
+    }
+
+    public boolean hasSelection() {
+        return textField.hasSelection();
+    }
+
+    public String getSelectedText() {
+        return textField.getSelectedText();
+    }
+
+    public void insertText(String toInsert) {
+        textField.insertText(toInsert);
+    }
+
+    public int cursorPos() {
+        return textField.cursor();
+    }
+
     @Override
     public void tick() {
         ++frame;
@@ -95,6 +125,21 @@ public class MultilineTextBox extends Widget {
             setFocused(false);
             return false;
         }
+    }
+
+    @Override
+    public boolean mouseDoubleClicked(MouseButton button) {
+        if (super.mouseDoubleClicked(button)) {
+            return true;
+        } else if (isMouseOver() && button.isLeft()) {
+            // double-click to select word
+            setCursorPos(getMouseX(), (int) (getMouseY() - parent.getScrollY()));
+            MultilineTextField.StringView view = textField.getPreviousWord();
+            textField.seekCursor(Whence.ABSOLUTE, view.beginIndex());
+            ((MultilineTextFieldAccess) textField).setSelectCursor(view.endIndex());
+            return true;
+        }
+        return false;
     }
 
     @Override
