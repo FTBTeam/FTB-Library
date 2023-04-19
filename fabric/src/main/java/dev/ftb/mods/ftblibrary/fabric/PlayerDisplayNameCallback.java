@@ -13,6 +13,9 @@ public interface PlayerDisplayNameCallback {
 
     Event<PlayerDisplayNameCallback> EVENT = EventFactory.createWithPhases(PlayerDisplayNameCallback.class,
             (listeners) -> ((player, oldDisplayName) -> {
+                if (listeners.length == 0) {
+                    return null;
+                }
                 for (PlayerDisplayNameCallback event : listeners) {
                     oldDisplayName = event.modifyDisplayName(player, oldDisplayName);
                 }
