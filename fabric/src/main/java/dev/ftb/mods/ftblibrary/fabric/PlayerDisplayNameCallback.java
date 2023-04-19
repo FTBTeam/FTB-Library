@@ -12,14 +12,17 @@ public interface PlayerDisplayNameCallback {
     ResourceLocation LATE = new ResourceLocation(FTBLibrary.MOD_ID, "late");
 
     Event<PlayerDisplayNameCallback> EVENT = EventFactory.createWithPhases(PlayerDisplayNameCallback.class,
-            (listeners) -> ((player, oldDisplayName) -> {
+            (listeners) -> ((player, originalName) -> {
+                // returning null means that no display name will be cached
                 if (listeners.length == 0) {
                     return null;
                 }
+                Component modified = originalName;
                 for (PlayerDisplayNameCallback event : listeners) {
-                    oldDisplayName = event.modifyDisplayName(player, oldDisplayName);
+                    modified = event.modifyDisplayName(player, modified);
                 }
-                return oldDisplayName;
+                // if no handler modified anything, don't do any caching
+                return modified == originalName ? null : modified;
             }), EARLY, Event.DEFAULT_PHASE, LATE);
 
     Component modifyDisplayName(Player player, Component oldDisplayName);
