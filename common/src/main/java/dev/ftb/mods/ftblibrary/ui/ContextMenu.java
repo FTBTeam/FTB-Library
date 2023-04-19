@@ -18,12 +18,22 @@ public class ContextMenu extends Panel {
 	public boolean hasIcons;
 	private int nColumns;
 	private int columnWidth;
+	private int maxRows;
+	private boolean drawVerticalSeparators = true;
 
 	public ContextMenu(Panel panel, List<ContextMenuItem> i) {
 		super(panel);
 		items = i;
 
 		hasIcons = items.stream().anyMatch(item -> !item.icon.isEmpty());
+	}
+
+	public void setMaxRows(int maxRows) {
+		this.maxRows = maxRows;
+	}
+
+	public void setDrawVerticalSeparators(boolean drawVerticalSeparators) {
+		this.drawVerticalSeparators = drawVerticalSeparators;
 	}
 
 	@Override
@@ -58,7 +68,10 @@ public class ContextMenu extends Panel {
 
 		// if there are too many menu items to fit vertically on-screen, use a multi-column layout
 		nColumns = parent.getScreen().getGuiScaledHeight() > 0 ? (totalHeight / parent.getScreen().getGuiScaledHeight()) + 1 : 1;
-		int nRows = nColumns == 1 ? widgets.size() : (widgets.size() / nColumns) + 1;
+		if (maxRows > 0) {
+			nColumns = Math.max(nColumns, widgets.size() / maxRows);
+		}
+		int nRows = nColumns == 1 ? widgets.size() : (widgets.size() / (nColumns + 1)) + 1;
 
 		columnWidth = maxWidth + MARGIN * 2;
 		setWidth(columnWidth * nColumns);
@@ -92,9 +105,11 @@ public class ContextMenu extends Panel {
 		matrixStack.pushPose();
 		matrixStack.translate(0, 0, 900);
 		super.draw(matrixStack, theme, x, y, w, h);
-		for (int i = 1; i < nColumns; i++) {
-			// vertical separator line between columns (only in multi-column layouts)
-			Color4I.WHITE.withAlpha(130).draw(matrixStack, x + columnWidth * i, y + MARGIN, 1, height - MARGIN * 2);
+		if (drawVerticalSeparators) {
+			for (int i = 1; i < nColumns; i++) {
+				// vertical separator line between columns (only in multi-column layouts)
+				Color4I.WHITE.withAlpha(130).draw(matrixStack, x + columnWidth * i, y + MARGIN, 1, height - MARGIN * 2);
+			}
 		}
 		matrixStack.popPose();
 	}
