@@ -38,6 +38,7 @@ public class MultilineTextBox extends Widget {
         super.setWidth(v);
 
         createTextField(textField.value(), width);
+        recalculateHeight();
     }
 
     private void createTextField(String text, int width) {
@@ -178,7 +179,7 @@ public class MultilineTextBox extends Widget {
     public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
         String s = getText();
 
-        if (s.isEmpty() && !isMouseOver()) {
+        if (s.isEmpty() && !isFocused()) {
             theme.drawString(matrixStack, placeHolder, x + 4, y + 4, Theme.DARK);
             return;
         }
