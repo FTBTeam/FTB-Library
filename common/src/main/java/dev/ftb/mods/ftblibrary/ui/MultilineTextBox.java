@@ -15,6 +15,7 @@ import net.minecraft.client.gui.components.MultilineTextField;
 import net.minecraft.client.gui.components.Whence;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 import java.util.function.Consumer;
 
@@ -97,6 +98,7 @@ public class MultilineTextBox extends Widget {
 
     public void insertText(String toInsert) {
         textField.insertText(toInsert);
+        recalculateHeight();
     }
 
     public int cursorPos() {
@@ -255,7 +257,30 @@ public class MultilineTextBox extends Widget {
     private void setCursorPos(int mouseX, int mouseY) {
         double x = mouseX - (double) this.getX() - this.innerPadding();
         double y = mouseY - (double) this.getY() - this.innerPadding() + parent.getScrollY();
-        this.textField.seekCursorToPoint(x, y);
+        seekCursorToPoint(x, y);
+    }
+
+    public void seekCursorToPoint(double x, double y) {
+        // NOTE: not using MultiLineTextField#seekCursorToPoint() here. Clicking the right-hand side of a character
+        // should put the cursor after the character for usability purposes, but the vanilla method doesn't do that :(
+
+        int x1 = Mth.floor(x);
+        int y1 = Mth.floor(y / 9.0);
+        MultilineTextField.StringView stringView = textField.getLineView(Mth.clamp(y1, 0, textField.getLineCount() - 1));
+
+        String lineSection = font.plainSubstrByWidth(textField.value().substring(stringView.beginIndex(), stringView.endIndex()), x1);
+        int k = lineSection.length();
+        textField.seekCursor(Whence.ABSOLUTE, stringView.beginIndex() + k);
+
+        if (textField.cursor() < textField.value().length()) {
+            // move the cursor right a character if we clicked the right-hand side of the character
+            int w1 = font.width(lineSection);
+            String c = String.valueOf(textField.value().charAt(textField.cursor()));
+            int w2 = font.width(c) / 2;
+            if (x1 - w1 >= w2) {
+                textField.seekCursor(Whence.RELATIVE, 1);
+            }
+        }
     }
 
     private void scrollToCursor() {
