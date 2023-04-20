@@ -13,7 +13,10 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +70,7 @@ public class EditConfigScreen extends BaseScreen {
 					groupSize++;
 				}
 
-				ConfigEntryButton btn = new ConfigEntryButton(configPanel, group, value);
+				ConfigEntryButton<?> btn = new ConfigEntryButton<>(configPanel, group, value);
 				allConfigButtons.add(btn);
 				dividerX = Math.max(dividerX, getTheme().getStringWidth(btn.keyText));
 			}
@@ -257,12 +260,12 @@ public class EditConfigScreen extends BaseScreen {
 		}
 	}
 
-	private class ConfigEntryButton extends Button {
+	private class ConfigEntryButton<T> extends Button {
 		private final ConfigGroupButton groupButton;
-		private final ConfigValue<?> configValue;
+		private final ConfigValue<T> configValue;
 		private final Component keyText;
 
-		public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, ConfigValue<?> configValue) {
+		public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, ConfigValue<T> configValue) {
 			super(panel);
 			setHeight(getTheme().getFontHeight() + 2);
 			this.groupButton = groupButton;
@@ -284,7 +287,7 @@ public class EditConfigScreen extends BaseScreen {
 			theme.drawString(matrixStack, keyText, 5, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
-			Component s = configValue.getStringForGUI();
+			Component s = configValue.getStringForGUI(configValue.getValue());
 			var slen = theme.getStringWidth(s);
 
 			int maxLen = width - dividerX - 10;
@@ -343,7 +346,7 @@ public class EditConfigScreen extends BaseScreen {
 		@Override
 		public void addWidgets() {
 			for (var w : allConfigButtons) {
-				if (!(w instanceof ConfigEntryButton cgb) || !cgb.groupButton.collapsed) {
+				if (!(w instanceof ConfigEntryButton<?> cgb) || !cgb.groupButton.collapsed) {
 					add(w);
 				}
 			}
@@ -352,7 +355,7 @@ public class EditConfigScreen extends BaseScreen {
 		@Override
 		public void alignWidgets() {
 			widgets.forEach(w -> w.setWidth(width - 16));
-			scroll.setMaxValue(align(WidgetLayout.VERTICAL));
+			align(WidgetLayout.VERTICAL);
 		}
 	}
 }

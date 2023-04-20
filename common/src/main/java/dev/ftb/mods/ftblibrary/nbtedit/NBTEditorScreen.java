@@ -726,7 +726,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 			@Override
 			public void alignWidgets() {
-				scroll.setMaxValue(align(WidgetLayout.VERTICAL) + 2);
+				align(WidgetLayout.VERTICAL);
 			}
 		};
 

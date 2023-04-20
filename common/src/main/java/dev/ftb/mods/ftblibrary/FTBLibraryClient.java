@@ -2,13 +2,11 @@ package dev.ftb.mods.ftblibrary;
 
 import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
-import dev.ftb.mods.ftblibrary.config.ImageConfig;
-import dev.ftb.mods.ftblibrary.config.IntConfig;
-import dev.ftb.mods.ftblibrary.config.NameMap;
+import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -127,6 +125,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		group.add("image", new ImageConfig(), "", v -> { }, "");
 
 		group.addItemStack("item", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, true);
+		group.add("fluid", new FluidConfig(true), FluidStack.empty(), v -> {}, FluidStack.empty());
 
 		ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
 		grp1.addInt("integer", 1, v -> {}, 0, 0, 10);

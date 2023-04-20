@@ -7,28 +7,30 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 
 /**
- * @author LatvianModder
+ * Base class for a screen which displays a scrollable list of buttons, with an optional search text box.
  */
 public abstract class ButtonListBaseScreen extends BaseScreen {
-	private final Panel panelButtons;
+	private final Panel buttonPanel;
 	private final PanelScrollBar scrollBar;
 	private Component title = Component.empty();
 	private final TextBox searchBox;
 	private boolean hasSearchBox;
 	private int borderH, borderV, borderW;
 
-	public ButtonListBaseScreen() {
-		panelButtons = new ButtonPanel();
-		panelButtons.setPosAndSize(9, 9, 0, 146);
+	private static final int SCROLLBAR_WIDTH = 16;
+	private static final int GUTTER_SIZE = 6;
 
-		scrollBar = new PanelScrollBar(this, panelButtons);
+	public ButtonListBaseScreen() {
+		buttonPanel = new ButtonPanel();
+
+		scrollBar = new PanelScrollBar(this, buttonPanel);
 		scrollBar.setCanAlwaysScroll(true);
 		scrollBar.setScrollStep(20);
 
 		searchBox = new TextBox(this) {
 			@Override
 			public void onTextChanged() {
-				panelButtons.refreshWidgets();
+				buttonPanel.refreshWidgets();
 			}
 		};
 		searchBox.ghostText = I18n.get("gui.search_box");
@@ -48,9 +50,8 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 
 	@Override
 	public void addWidgets() {
-		add(panelButtons);
+		add(buttonPanel);
 		add(scrollBar);
-
 		if (hasSearchBox) {
 			add(searchBox);
 		}
@@ -58,12 +59,22 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 
 	@Override
 	public void alignWidgets() {
-		panelButtons.alignWidgets();
+		int buttonPanelWidth = getGui().width - GUTTER_SIZE * 3 - SCROLLBAR_WIDTH;
+		if (hasSearchBox) {
+			searchBox.setPosAndSize(GUTTER_SIZE, GUTTER_SIZE, getGui().width - GUTTER_SIZE * 2, getTheme().getFontHeight() + 2);
+			buttonPanel.setPosAndSize(GUTTER_SIZE, GUTTER_SIZE * 2 + searchBox.getHeight(), buttonPanelWidth, getGui().height - searchBox.height - GUTTER_SIZE * 3);
+		} else {
+			buttonPanel.setPosAndSize(GUTTER_SIZE, GUTTER_SIZE, buttonPanelWidth, getGui().height - GUTTER_SIZE * 2);
+		}
+
+		buttonPanel.alignWidgets();
+
+		scrollBar.setPosAndSize(getGui().width - GUTTER_SIZE - SCROLLBAR_WIDTH, buttonPanel.getPosY(), SCROLLBAR_WIDTH, buttonPanel.getHeight());
 	}
 
 	/**
-	 * Override this method to add your button to the panel. Just add the buttons; the panel will take care of
-	 * button layout for you.
+	 * Override this method to add your buttons to the panel. Just add the buttons; the panel will take care of
+	 * the vertical button layout for you.
 	 *
 	 * @param panel the panel to add buttons to
 	 */
@@ -118,43 +129,12 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 
 		@Override
 		public void alignWidgets() {
-			setY(hasSearchBox ? 23 : 9);
-			var prevWidth = width;
+			align(new WidgetLayout.Vertical(borderV, borderW, borderV));
 
-			if (widgets.isEmpty()) {
-				setWidth(100);
-			} else {
-				setWidth(100);
-
-				for (var w : widgets) {
-					setWidth(Math.max(width, w.width));
-				}
-			}
-
-			if (width > ButtonListBaseScreen.this.width - 40) {
-				width = ButtonListBaseScreen.this.width - 40;
-			}
-
-			if (hasSearchBox) {
-				setWidth(Math.max(width, prevWidth));
-			}
-
-			for (var w : widgets) {
+			widgets.forEach(w -> {
 				w.setX(borderH);
 				w.setWidth(width - borderH * 2);
-			}
-
-			setHeight(parent.height - 26);
-
-			scrollBar.setPosAndSize(posX + width + 6, posY - 1, 16, height + 2);
-			scrollBar.setMaxValue(align(new WidgetLayout.Vertical(borderV, borderW, borderV)));
-
-			getGui().setWidth(scrollBar.posX + scrollBar.width + 8);
-			getGui().setHeight(height + 18 + (hasSearchBox ? 14 : 0));
-
-			if (hasSearchBox) {
-				searchBox.setPosAndSize(8, 6, getGui().width - 16, 12);
-			}
+			});
 		}
 
 		@Override
