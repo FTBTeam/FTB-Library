@@ -49,8 +49,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 				for (var w : widgets) {
 					w.setWidth(width - 16);
 				}
-
-				scroll.setMaxValue(align(WidgetLayout.VERTICAL));
+				align(WidgetLayout.VERTICAL);
 			}
 		};
 

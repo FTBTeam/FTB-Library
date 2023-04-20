@@ -284,7 +284,7 @@ public abstract class BaseScreen extends Panel {
 	@Override
 	public void closeContextMenu() {
 		openContextMenu((ContextMenu) null);
-		onInit();
+//		onInit();
 	}
 
 	@Override

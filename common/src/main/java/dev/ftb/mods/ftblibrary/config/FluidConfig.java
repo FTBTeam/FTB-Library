@@ -4,19 +4,17 @@ import dev.architectury.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.config.ui.SelectFluidScreen;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 
 /**
  * @author LatvianModder
  */
-public class FluidConfig extends ConfigValue<Fluid> {
+public class FluidConfig extends ConfigValue<FluidStack> {
 	private final boolean allowEmpty;
 
 	public FluidConfig(boolean allowEmpty) {
 		this.allowEmpty = allowEmpty;
-		defaultValue = Fluids.EMPTY;
-		value = Fluids.EMPTY;
+		defaultValue = FluidStack.empty();
+		value = FluidStack.empty();
 	}
 
 	public boolean allowEmptyFluid() {
@@ -24,12 +22,14 @@ public class FluidConfig extends ConfigValue<Fluid> {
 	}
 
 	@Override
-	public Component getStringForGUI(Fluid v) {
-		return FluidStack.create(v, FluidStack.bucketAmount()).getName();
+	public Component getStringForGUI(FluidStack v) {
+		return v == null ? Component.empty() : v.getName();
 	}
 
 	@Override
 	public void onClicked(MouseButton button, ConfigCallback callback) {
-		new SelectFluidScreen(this, callback).openGui();
+		if (getCanEdit()) {
+			new SelectFluidScreen(this, callback).openGui();
+		}
 	}
 }

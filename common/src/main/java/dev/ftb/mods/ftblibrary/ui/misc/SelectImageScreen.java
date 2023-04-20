@@ -56,7 +56,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 
 	@Override
 	public boolean onInit() {
-		return setSizeProportional(0.8f, 0.8f);
+		return setSizeProportional(0.5f, 0.8f);
 	}
 
 	private List<ImageDetails> getImageList() {
@@ -86,6 +86,11 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				// shorten <mod>:textures/A/B.png to <mod>:A/B
 				ResourceLocation res1 = new ResourceLocation(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
 				TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
+//				try (SpriteContents s = sprite.contents()) {
+//					if (s.name().equals(MissingTextureAtlasSprite.getLocation())) {
+//						res1 = res;
+//					}
+//				}
 				if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
 					res1 = res;
 				}
