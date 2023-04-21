@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.integration.forge;
 
+import dev.architectury.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.config.ui.ItemSearchMode;
@@ -70,7 +71,11 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 		var currentScreen = Minecraft.getInstance().screen;
 
 		if (currentScreen instanceof IScreenWrapper) {
-			return WrappedIngredient.unwrap(((IScreenWrapper) currentScreen).getGui().getIngredientUnderMouse());
+			Object o = WrappedIngredient.unwrap(((IScreenWrapper) currentScreen).getGui().getIngredientUnderMouse());
+			if (o instanceof FluidStack archFluidStack) {
+				return new net.minecraftforge.fluids.FluidStack(archFluidStack.getFluid(), (int) archFluidStack.getAmount(), archFluidStack.getTag());
+			}
+			return o;
 		}
 
 		return null;

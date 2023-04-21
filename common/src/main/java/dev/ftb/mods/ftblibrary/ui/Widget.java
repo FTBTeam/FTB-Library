@@ -146,6 +146,10 @@ public class Widget implements IScreenWrapper {
 		return false;
 	}
 
+	public boolean mouseDragged(int button, double dragX, double dragY) {
+		return false;
+	}
+
 	public boolean keyPressed(Key key) {
 		return false;
 	}
