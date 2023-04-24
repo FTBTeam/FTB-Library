@@ -20,3 +20,4 @@ jobs:
       maven-snapshots: true
     secrets:
       ftb-maven-token: ${{ secrets.FTB_MAVEN_TOKEN }}
+      saps-token: ${{ secrets.SAPS_TOKEN }}
