@@ -14,6 +14,7 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -295,7 +296,7 @@ public class TextBox extends Widget {
 					return true;
 				}
 				case GLFW.GLFW_KEY_BACKSPACE -> {
-					if (key.modifiers.control()) {
+					if (Screen.hasControlDown()) {
 						deleteWords(-1);
 					} else {
 						deleteFromCursor(-1);
@@ -303,7 +304,7 @@ public class TextBox extends Widget {
 					return true;
 				}
 				case GLFW.GLFW_KEY_HOME -> {
-					if (key.modifiers.shift()) {
+					if (Screen.hasShiftDown()) {
 						setSelectionPos(0);
 					} else {
 						setCursorPosition(0);
@@ -311,13 +312,13 @@ public class TextBox extends Widget {
 					return true;
 				}
 				case GLFW.GLFW_KEY_LEFT -> {
-					if (key.modifiers.shift()) {
-						if (key.modifiers.control()) {
+					if (Screen.hasShiftDown()) {
+						if (Screen.hasControlDown()) {
 							setSelectionPos(getNthWordFromPos(-1, selectionEnd));
 						} else {
 							setSelectionPos(selectionEnd - 1);
 						}
-					} else if (key.modifiers.control()) {
+					} else if (Screen.hasControlDown()) {
 						setCursorPosition(getNthWordFromCursor(-1));
 					} else {
 						moveCursorBy(-1);
@@ -325,13 +326,13 @@ public class TextBox extends Widget {
 					return true;
 				}
 				case GLFW.GLFW_KEY_RIGHT -> {
-					if (key.modifiers.shift()) {
-						if (key.modifiers.control()) {
+					if (Screen.hasShiftDown()) {
+						if (Screen.hasControlDown()) {
 							setSelectionPos(getNthWordFromPos(1, selectionEnd));
 						} else {
 							setSelectionPos(selectionEnd + 1);
 						}
-					} else if (key.modifiers.control()) {
+					} else if (Screen.hasControlDown()) {
 						setCursorPosition(getNthWordFromCursor(1));
 					} else {
 						moveCursorBy(1);
@@ -339,7 +340,7 @@ public class TextBox extends Widget {
 					return true;
 				}
 				case GLFW.GLFW_KEY_END -> {
-					if (key.modifiers.shift()) {
+					if (Screen.hasShiftDown()) {
 						setSelectionPos(text.length());
 					} else {
 						setCursorPosition(text.length());
@@ -347,7 +348,7 @@ public class TextBox extends Widget {
 					return true;
 				}
 				case GLFW.GLFW_KEY_DELETE -> {
-					if (key.modifiers.control()) {
+					if (Screen.hasControlDown()) {
 						deleteWords(1);
 					} else {
 						deleteFromCursor(1);
