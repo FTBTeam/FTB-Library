@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -49,22 +50,22 @@ public class Key {
 	}
 
 	public boolean cut() {
-		return is(GLFW.GLFW_KEY_X) && modifiers.onlyControl();
+		return Screen.isCut(keyCode);
 	}
 
 	public boolean paste() {
-		return is(GLFW.GLFW_KEY_V) && modifiers.onlyControl();
+		return Screen.isPaste(keyCode);
 	}
 
 	public boolean copy() {
-		return is(GLFW.GLFW_KEY_C) && modifiers.onlyControl();
+		return Screen.isCopy(keyCode);
 	}
 
 	public boolean selectAll() {
-		return is(GLFW.GLFW_KEY_A) && modifiers.onlyControl();
+		return Screen.isSelectAll(keyCode);
 	}
 
 	public boolean deselectAll() {
-		return is(GLFW.GLFW_KEY_D) && modifiers.onlyControl();
+		return keyCode == GLFW.GLFW_KEY_D && Screen.hasControlDown() && !Screen.hasShiftDown() && !Screen.hasAltDown();
 	}
 }
