@@ -44,9 +44,8 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 			switch (info.getString("type")) {
 				case "block" -> {
 					var pos = new BlockPos(info.getInt("x"), info.getInt("y"), info.getInt("z"));
-
-					if (player.level.isLoaded(pos)) {
-						var blockEntity = player.level.getBlockEntity(pos);
+					if (player.level().isLoaded(pos)) {
+						var blockEntity = player.level().getBlockEntity(pos);
 
 						if (blockEntity != null) {
 							tag.putInt("x", pos.getX());
@@ -55,12 +54,12 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 							tag.putString("id", info.getString("id"));
 							blockEntity.load(tag);
 							blockEntity.setChanged();
-							player.level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
+							player.level().sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
 						}
 					}
 				}
 				case "entity" -> {
-					var entity = player.level.getEntity(info.getInt("id"));
+					var entity = player.level().getEntity(info.getInt("id"));
 
 					if (entity != null) {
 						var uUID = entity.getUUID();
@@ -69,7 +68,7 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 					}
 				}
 				case "player" -> {
-					var player1 = player.level.getServer().getPlayerList().getPlayer(info.getUUID("id"));
+					var player1 = player.level().getServer().getPlayerList().getPlayer(info.getUUID("id"));
 
 					if (player1 != null) {
 						var uUID = player1.getUUID();

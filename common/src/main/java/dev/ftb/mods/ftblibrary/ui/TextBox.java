@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.ui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -13,7 +12,7 @@ import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -402,8 +401,8 @@ public class TextBox extends Widget {
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		drawTextBox(matrixStack, theme, x, y, w, h);
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		drawTextBox(graphics, theme, x, y, w, h);
 		var drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
 		var textToDraw = getFormattedText();
 		GuiHelper.pushScissor(getScreen(), x, y, w, h);
@@ -422,7 +421,7 @@ public class TextBox extends Widget {
 
 		if (!s.isEmpty()) {
 			var s1 = j > 0 && j <= s.length() ? s.substring(0, j) : s;
-			textX1 = theme.drawString(matrixStack, Component.literal(s1), textX, textY, col, 0);
+			textX1 = theme.drawString(graphics, Component.literal(s1), textX, textY, col, 0);
 		}
 
 		var drawCursor = cursorPosition < textToDraw.length() || textToDraw.length() >= charLimit;
@@ -436,14 +435,14 @@ public class TextBox extends Widget {
 		}
 
 		if (j > 0 && j < s.length()) {
-			theme.drawString(matrixStack, Component.literal(s.substring(j)), textX1, textY, col, 0);
+			theme.drawString(graphics, Component.literal(s.substring(j)), textX1, textY, col, 0);
 		}
 
 		if (j >= 0 && j <= s.length() && isFocused() && System.currentTimeMillis() % 1000L > 500L) {
 			if (drawCursor) {
-				col.draw(matrixStack, cursorX, textY - 1, 1, theme.getFontHeight() + 2);
+				col.draw(graphics, cursorX, textY - 1, 1, theme.getFontHeight() + 2);
 			} else {
-				col.draw(matrixStack, cursorX, textY + theme.getFontHeight() - 2, 5, 1);
+				col.draw(graphics, cursorX, textY + theme.getFontHeight() - 2, 5, 1);
 			}
 		}
 
@@ -492,8 +491,8 @@ public class TextBox extends Widget {
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 	}
 
-	public void drawTextBox(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawTextBox(matrixStack, x, y, w, h);
+	public void drawTextBox(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		theme.drawTextBox(graphics, x, y, w, h);
 	}
 
 	public boolean isValid(String txt) {

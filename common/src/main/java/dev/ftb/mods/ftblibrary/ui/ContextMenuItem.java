@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,8 +37,8 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 	public void addMouseOverText(TooltipList list) {
 	}
 
-	public void drawIcon(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		icon.draw(matrixStack, x, y, w, h);
+	public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		icon.draw(graphics, x, y, w, h);
 	}
 
 	public boolean isEnabled() {

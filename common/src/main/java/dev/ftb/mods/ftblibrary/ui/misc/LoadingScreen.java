@@ -1,9 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -11,6 +9,7 @@ import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.Theme;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 
@@ -38,14 +37,14 @@ public class LoadingScreen extends BaseScreen {
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		if (!startedLoading) {
 			startLoading();
 			startedLoading = true;
 		}
 
 		if (isLoading()) {
-			GuiHelper.drawHollowRect(matrixStack, x + width / 2 - 48, y + height / 2 - 8, 96, 16, Color4I.WHITE, true);
+			GuiHelper.drawHollowRect(graphics, x + width / 2 - 48, y + height / 2 - 8, 96, 16, Color4I.WHITE, true);
 
 			var x1 = x + width / 2 - 48;
 			var y1 = y + height / 2 - 8;
@@ -58,10 +57,10 @@ public class LoadingScreen extends BaseScreen {
 			var buffer = tesselator.getBuilder();
 			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-			GuiHelper.addRectToBuffer(matrixStack, buffer, x1, y1 + 1, 1, h1 - 2, col);
-			GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
-			GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + 1, y1, w1 - 2, 1, col);
-			GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + 1, y1 + h1 - 1, w1 - 2, 1, col);
+			GuiHelper.addRectToBuffer(graphics, buffer, x1, y1 + 1, 1, h1 - 2, col);
+			GuiHelper.addRectToBuffer(graphics, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
+			GuiHelper.addRectToBuffer(graphics, buffer, x1 + 1, y1, w1 - 2, 1, col);
+			GuiHelper.addRectToBuffer(graphics, buffer, x1 + 1, y1 + h1 - 1, w1 - 2, 1, col);
 
 			x1 += 1;
 			y1 += 1;
@@ -78,7 +77,7 @@ public class LoadingScreen extends BaseScreen {
 					if (index % (h1 * 2) < h1) {
 						col = Color4I.WHITE.withAlpha(200 - (index % h1) * 9);
 
-						GuiHelper.addRectToBuffer(matrixStack, buffer, x1 + ox, y1 + oy, 1, 1, col);
+						GuiHelper.addRectToBuffer(graphics, buffer, x1 + ox, y1 + oy, 1, 1, col);
 					}
 				}
 			}
@@ -89,7 +88,7 @@ public class LoadingScreen extends BaseScreen {
 
 			if (s.length > 0) {
 				for (var i = 0; i < s.length; i++) {
-					theme.drawString(matrixStack, s[i], x + width / 2, y - 26 + i * 12, Theme.CENTERED);
+					theme.drawString(graphics, s[i], x + width / 2, y - 26 + i * 12, Theme.CENTERED);
 				}
 			}
 		} else {

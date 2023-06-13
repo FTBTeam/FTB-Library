@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.ui.*;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -96,13 +96,13 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		super.drawBackground(matrixStack, theme, x, y, w, h);
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		super.drawBackground(graphics, theme, x, y, w, h);
 
 		var title = getTitle();
 
 		if (title.getContents() != ComponentContents.EMPTY) {
-			theme.drawString(matrixStack, title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);
+			theme.drawString(graphics, title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);
 		}
 	}
 
@@ -138,8 +138,8 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 		}
 
 		@Override
-		public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			theme.drawPanelBackground(matrixStack, x, y, w, h);
+		public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			theme.drawPanelBackground(graphics, x, y, w, h);
 		}
 	}
 }

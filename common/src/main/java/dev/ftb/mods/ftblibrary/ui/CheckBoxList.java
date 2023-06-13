@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,15 +79,15 @@ public class CheckBoxList extends Button {
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
-	public void drawCheckboxBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawCheckboxBackground(matrixStack, x, y, w, h, radioButtonBehaviour);
+	public void drawCheckboxBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		theme.drawCheckboxBackground(graphics, x, y, w, h, radioButtonBehaviour);
 	}
 
-	public void getCheckboxIcon(PoseStack matrixStack, Theme theme, int x, int y, int w, int h, int index, int value) {
-		theme.drawCheckbox(matrixStack, x, y, w, h, WidgetType.mouseOver(isMouseOver()), value != 0, radioButtonBehaviour);
+	public void getCheckboxIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h, int index, int value) {
+		theme.drawCheckbox(graphics, x, y, w, h, WidgetType.mouseOver(isMouseOver()), value != 0, radioButtonBehaviour);
 	}
 
 	public void addBox(CheckBoxEntry checkBox) {
@@ -122,15 +122,15 @@ public class CheckBoxList extends Button {
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		drawBackground(matrixStack, theme, x, y, w, h);
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		drawBackground(graphics, theme, x, y, w, h);
 
 		for (var i = 0; i < entries.size(); i++) {
 			var entry = entries.get(i);
 			var ey = y + i * 11 + 1;
-			drawCheckboxBackground(matrixStack, theme, x, ey, 10, 10);
-			getCheckboxIcon(matrixStack, theme, x + 1, ey + 1, 8, 8, i, entry.index);
-			theme.drawString(matrixStack, entry.name, x + 12, ey + 1);
+			drawCheckboxBackground(graphics, theme, x, ey, 10, 10);
+			getCheckboxIcon(graphics, theme, x + 1, ey + 1, 8, 8, i, entry.index);
+			theme.drawString(graphics, entry.name, x + 12, ey + 1);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}
 	}

@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
@@ -11,6 +10,7 @@ import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import it.unimi.dsi.fastutil.booleans.BooleanStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -77,59 +77,59 @@ public class Theme {
 		return CONTENT_COLOR_DARK;
 	}
 
-	public void drawGui(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type) {
-		(type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(matrixStack, x, y, w, h);
+	public void drawGui(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+		(type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(graphics, x, y, w, h);
 	}
 
-	public void drawWidget(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type) {
-		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : type == WidgetType.DISABLED ? WIDGET_DISABLED : WIDGET).draw(matrixStack, x, y, w, h);
+	public void drawWidget(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : type == WidgetType.DISABLED ? WIDGET_DISABLED : WIDGET).draw(graphics, x, y, w, h);
 	}
 
-	public void drawSlot(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type) {
-		(type == WidgetType.MOUSE_OVER ? SLOT_MOUSE_OVER : SLOT).draw(matrixStack, x, y, w, h);
+	public void drawSlot(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+		(type == WidgetType.MOUSE_OVER ? SLOT_MOUSE_OVER : SLOT).draw(graphics, x, y, w, h);
 	}
 
-	public void drawContainerSlot(PoseStack matrixStack, int x, int y, int w, int h) {
-		SLOT.draw(matrixStack, x - 1, y - 1, w + 2, h + 2);
+	public void drawContainerSlot(GuiGraphics graphics, int x, int y, int w, int h) {
+		SLOT.draw(graphics, x - 1, y - 1, w + 2, h + 2);
 	}
 
-	public void drawButton(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type) {
-		(type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON).draw(matrixStack, x, y, w, h);
+	public void drawButton(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+		(type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON).draw(graphics, x, y, w, h);
 	}
 
-	public void drawScrollBarBackground(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type) {
-		(type == WidgetType.DISABLED ? SCROLL_BAR_BG_DISABLED : SCROLL_BAR_BG).draw(matrixStack, x, y, w, h);
+	public void drawScrollBarBackground(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+		(type == WidgetType.DISABLED ? SCROLL_BAR_BG_DISABLED : SCROLL_BAR_BG).draw(graphics, x, y, w, h);
 	}
 
-	public void drawScrollBar(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type, boolean vertical) {
-		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : WIDGET).draw(matrixStack, x + 1, y + 1, w - 2, h - 2);
+	public void drawScrollBar(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean vertical) {
+		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : WIDGET).draw(graphics, x + 1, y + 1, w - 2, h - 2);
 	}
 
-	public void drawTextBox(PoseStack matrixStack, int x, int y, int w, int h) {
-		TEXT_BOX.draw(matrixStack, x, y, w, h);
+	public void drawTextBox(GuiGraphics graphics, int x, int y, int w, int h) {
+		TEXT_BOX.draw(graphics, x, y, w, h);
 	}
 
-	public void drawCheckboxBackground(PoseStack matrixStack, int x, int y, int w, int h, boolean radioButton) {
-		drawSlot(matrixStack, x, y, w, h, WidgetType.NORMAL);
+	public void drawCheckboxBackground(GuiGraphics graphics, int x, int y, int w, int h, boolean radioButton) {
+		drawSlot(graphics, x, y, w, h, WidgetType.NORMAL);
 	}
 
-	public void drawCheckbox(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type, boolean selected, boolean radioButton) {
+	public void drawCheckbox(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean selected, boolean radioButton) {
 		if (selected) {
-			drawWidget(matrixStack, x, y, w, h, type);
+			drawWidget(graphics, x, y, w, h, type);
 		}
 	}
 
-	public void drawPanelBackground(PoseStack matrixStack, int x, int y, int w, int h) {
-		drawContainerSlot(matrixStack, x, y, w, h);
+	public void drawPanelBackground(GuiGraphics graphics, int x, int y, int w, int h) {
+		drawContainerSlot(graphics, x, y, w, h);
 	}
 
-	public void drawHorizontalTab(PoseStack matrixStack, int x, int y, int w, int h, boolean selected) {
-		(selected ? TAB_H_SELECTED : TAB_H_UNSELECTED).draw(matrixStack, x, y, w, h);
+	public void drawHorizontalTab(GuiGraphics graphics, int x, int y, int w, int h, boolean selected) {
+		(selected ? TAB_H_SELECTED : TAB_H_UNSELECTED).draw(graphics, x, y, w, h);
 	}
 
-	public void drawContextMenuBackground(PoseStack matrixStack, int x, int y, int w, int h) {
-		drawGui(matrixStack, x, y, w, h, WidgetType.NORMAL);
-		Color4I.BLACK.withAlpha(90).draw(matrixStack, x, y, w, h);
+	public void drawContextMenuBackground(GuiGraphics graphics, int x, int y, int w, int h) {
+		drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
+		Color4I.BLACK.withAlpha(90).draw(graphics, x, y, w, h);
 	}
 
 	public Font getFont() {
@@ -172,69 +172,44 @@ public class Theme {
 		return getFont().getSplitter().splitLines(text, width, Style.EMPTY);
 	}
 
-	public final int drawString(PoseStack matrixStack, @Nullable Object text, float x, float y, Color4I color, int flags) {
-		if (text == null || text == FormattedCharSequence.EMPTY || text == Component.EMPTY || (text instanceof String && ((String) text).isEmpty()) || color.isEmpty()) {
-			return (int) x;
+	public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y, Color4I color, int flags) {
+		if (text == null || text == FormattedCharSequence.EMPTY || text == Component.EMPTY || (text instanceof String s && s.isEmpty()) || color.isEmpty()) {
+			return x;
 		}
 
-		if (text instanceof FormattedCharSequence) {
+		if (text instanceof FormattedCharSequence fcs) {
 			if (Bits.getFlag(flags, CENTERED)) {
-				x -= getStringWidth((FormattedCharSequence) text) / 2F;
+				x -= getStringWidth(fcs) / 2F;
 			}
-
-			int i;
-
-			if (Bits.getFlag(flags, SHADOW)) {
-				i = getFont().drawShadow(matrixStack, (FormattedCharSequence) text, x, y, color.rgba());
-			} else {
-				i = getFont().draw(matrixStack, (FormattedCharSequence) text, x, y, color.rgba());
-			}
-
+			int i = graphics.drawString(getFont(), (FormattedCharSequence) text, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
 			GuiHelper.setupDrawing();
 			return i;
-		} else if (text instanceof Component) {
+		} else if (text instanceof Component comp) {
 			if (Bits.getFlag(flags, CENTERED)) {
-				x -= getStringWidth((Component) text) / 2F;
+				x -= getStringWidth(comp) / 2F;
 			}
-
-			int i;
-
-			if (Bits.getFlag(flags, SHADOW)) {
-				i = getFont().drawShadow(matrixStack, (Component) text, x, y, color.rgba());
-			} else {
-				i = getFont().draw(matrixStack, (Component) text, x, y, color.rgba());
-			}
-
+			int i = graphics.drawString(getFont(), comp, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
 			GuiHelper.setupDrawing();
 			return i;
 		} else if (text instanceof FormattedText) {
-			return drawString(matrixStack, Language.getInstance().getVisualOrder((FormattedText) text), x, y, color, flags);
+			return drawString(graphics, Language.getInstance().getVisualOrder((FormattedText) text), x, y, color, flags);
 		} else {
 			var s = String.valueOf(text);
-
 			if (Bits.getFlag(flags, CENTERED)) {
 				x -= getStringWidth(s) / 2F;
 			}
-
-			int i;
-
-			if (Bits.getFlag(flags, SHADOW)) {
-				i = getFont().drawShadow(matrixStack, s, x, y, color.rgba());
-			} else {
-				i = getFont().draw(matrixStack, s, x, y, color.rgba());
-			}
-
+			int i = graphics.drawString(getFont(), s, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
 			GuiHelper.setupDrawing();
 			return i;
 		}
 	}
 
-	public final int drawString(PoseStack matrixStack, @Nullable Object text, int x, int y, int flags) {
-		return drawString(matrixStack, text, x, y, getContentColor(WidgetType.mouseOver(Bits.getFlag(flags, MOUSE_OVER))), flags);
+	public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y, int flags) {
+		return drawString(graphics, text, x, y, getContentColor(WidgetType.mouseOver(Bits.getFlag(flags, MOUSE_OVER))), flags);
 	}
 
-	public final int drawString(PoseStack matrixStack, @Nullable Object text, int x, int y) {
-		return drawString(matrixStack, text, x, y, getContentColor(WidgetType.NORMAL), 0);
+	public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y) {
+		return drawString(graphics, text, x, y, getContentColor(WidgetType.NORMAL), 0);
 	}
 
 	/*

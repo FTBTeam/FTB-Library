@@ -7,7 +7,7 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -91,44 +91,46 @@ public class ItemIcon extends Icon {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
-		matrixStack.pushPose();
-		matrixStack.translate(x + w / 2D, y + h / 2D, 100);
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(x + w / 2D, y + h / 2D, 100);
 
 		if (w != 16 || h != 16) {
 			int s = Math.min(w, h);
-			matrixStack.scale(s / 16F, s / 16F, s / 16F);
+			poseStack.scale(s / 16F, s / 16F, s / 16F);
 		}
 
-		GuiHelper.drawItem(matrixStack, getStack(), 0, true, null);
-		matrixStack.popPose();
+		GuiHelper.drawItem(graphics, getStack(), 0, true, null);
+		poseStack.popPose();
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void drawStatic(PoseStack matrixStack, int x, int y, int w, int h) {
-		matrixStack.pushPose();
-		matrixStack.translate(x + w / 2D, y + h / 2D, 100);
+	public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(x + w / 2D, y + h / 2D, 100);
 
 		if (w != 16 || h != 16) {
 			int s = Math.min(w, h);
-			matrixStack.scale(s / 16F, s / 16F, s / 16F);
+			poseStack.scale(s / 16F, s / 16F, s / 16F);
 		}
 
-		GuiHelper.drawItem(matrixStack, getStack(), 0, false, null);
-		matrixStack.popPose();
+		GuiHelper.drawItem(graphics, getStack(), 0, false, null);
+		poseStack.popPose();
 	}
 
 	@Environment(EnvType.CLIENT)
-	public static void drawItem3D(PoseStack matrixStack, ItemStack stack) {
+	public static void drawItem3D(GuiGraphics graphics, ItemStack stack) {
 		//FIXME: Draw flat 3D item
-		Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, matrixStack, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
+		Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, graphics.pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw3D(PoseStack matrixStack) {
-		drawItem3D(matrixStack, getStack());
+	public void draw3D(GuiGraphics graphics) {
+		drawItem3D(graphics, getStack());
 	}
 
 	public String toString() {

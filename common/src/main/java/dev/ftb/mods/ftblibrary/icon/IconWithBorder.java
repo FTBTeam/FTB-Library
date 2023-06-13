@@ -3,10 +3,10 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * @author LatvianModder
@@ -33,10 +33,10 @@ public class IconWithBorder extends IconWithParent {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
-		parent.draw(matrixStack, x + 1, y + 1, w - 2, h - 2);
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
+		parent.draw(graphics, x + 1, y + 1, w - 2, h - 2);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		GuiHelper.drawHollowRect(matrixStack, x, y, w, h, color, roundEdges);
+		GuiHelper.drawHollowRect(graphics, x, y, w, h, color, roundEdges);
 	}
 
 	@Override

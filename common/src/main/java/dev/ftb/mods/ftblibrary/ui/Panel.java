@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
@@ -8,6 +7,7 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -190,23 +190,23 @@ public abstract class Panel extends Widget {
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		var renderInside = getOnlyRenderWidgetsInside();
 
-		drawBackground(matrixStack, theme, x, y, w, h);
+		drawBackground(graphics, theme, x, y, w, h);
 
 		if (renderInside) {
 			GuiHelper.pushScissor(getScreen(), x, y, w, h);
 		}
 
 		setOffset(true);
-		drawOffsetBackground(matrixStack, theme, x + offsetX, y + offsetY, w, h);
+		drawOffsetBackground(graphics, theme, x + offsetX, y + offsetY, w, h);
 
 		for (var i = 0; i < widgets.size(); i++) {
 			var widget = widgets.get(i);
 
 			if (widget.shouldDraw() && (!renderInside || widget.collidesWith(x, y, w, h))) {
-				drawWidget(matrixStack, theme, widget, i, x + offsetX, y + offsetY, w, h);
+				drawWidget(graphics, theme, widget, i, x + offsetX, y + offsetY, w, h);
 			}
 		}
 
@@ -217,24 +217,24 @@ public abstract class Panel extends Widget {
 		}
 	}
 
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
-	public void drawOffsetBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void drawOffsetBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
-	public void drawWidget(PoseStack matrixStack, Theme theme, Widget widget, int index, int x, int y, int w, int h) {
+	public void drawWidget(GuiGraphics graphics, Theme theme, Widget widget, int index, int x, int y, int w, int h) {
 		var wx = widget.getX();
 		var wy = widget.getY();
 		var ww = widget.width;
 		var wh = widget.height;
 
-		widget.draw(matrixStack, theme, wx, wy, ww, wh);
+		widget.draw(graphics, theme, wx, wy, ww, wh);
 
 		if (Theme.renderDebugBoxes) {
 			var col = Color4I.rgb(Color4I.HSBtoRGB((widget.hashCode() & 255) / 255F, 1F, 1F));
-			GuiHelper.drawHollowRect(matrixStack, wx, wy, ww, wh, col.withAlpha(150), false);
-			col.withAlpha(30).draw(matrixStack, wx + 1, wy + 1, ww - 2, wh - 2);
+			GuiHelper.drawHollowRect(graphics, wx, wy, ww, wh, col.withAlpha(150), false);
+			col.withAlpha(30).draw(graphics, wx + 1, wy + 1, ww - 2, wh - 2);
 		}
 	}
 

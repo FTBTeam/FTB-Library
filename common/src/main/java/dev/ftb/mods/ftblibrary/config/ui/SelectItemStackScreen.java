@@ -19,6 +19,7 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -94,8 +95,8 @@ public class SelectItemStackScreen extends BaseScreen {
 		}
 
 		@Override
-		public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			(getWidgetType() == WidgetType.MOUSE_OVER ? Color4I.LIGHT_GREEN.withAlpha(70) : Color4I.BLACK.withAlpha(50)).draw(matrixStack, x, y, w, h);
+		public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			(getWidgetType() == WidgetType.MOUSE_OVER ? Color4I.LIGHT_GREEN.withAlpha(70) : Color4I.BLACK.withAlpha(50)).draw(graphics, x, y, w, h);
 		}
 
 		@Override
@@ -114,8 +115,8 @@ public class SelectItemStackScreen extends BaseScreen {
 		}
 
 		@Override
-		public void drawIcon(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			activeMode.getIcon().draw(matrixStack, x, y, w, h);
+		public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			activeMode.getIcon().draw(graphics, x, y, w, h);
 		}
 
 		@Override
@@ -155,17 +156,18 @@ public class SelectItemStackScreen extends BaseScreen {
 		}
 
 		@Override
-		public void drawIcon(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			matrixStack.pushPose();
-			matrixStack.translate(x + w / 2D, y + h / 2D, 100);
+		public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			PoseStack poseStack = graphics.pose();
+			poseStack.pushPose();
+			poseStack.translate(x + w / 2D, y + h / 2D, 100);
 
 			if (w != 16 || h != 16) {
 				int s = Math.min(w, h);
-				matrixStack.scale(s / 16F, s / 16F, s / 16F);
+				poseStack.scale(s / 16F, s / 16F, s / 16F);
 			}
 
-			GuiHelper.drawItem(matrixStack, current, 0, true, null);
-			matrixStack.popPose();
+			GuiHelper.drawItem(graphics, current, 0, true, null);
+			poseStack.popPose();
 		}
 
 		@Override
@@ -348,8 +350,8 @@ public class SelectItemStackScreen extends BaseScreen {
 			}
 
 			@Override
-			public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-				theme.drawPanelBackground(matrixStack, x, y, w, h);
+			public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+				theme.drawPanelBackground(graphics, x, y, w, h);
 			}
 		};
 
@@ -441,8 +443,8 @@ public class SelectItemStackScreen extends BaseScreen {
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		super.drawBackground(matrixStack, theme, x, y, w, h);
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		super.drawBackground(graphics, theme, x, y, w, h);
 
 		var now = System.currentTimeMillis();
 

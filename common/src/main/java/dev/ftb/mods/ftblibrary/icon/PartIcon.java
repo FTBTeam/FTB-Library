@@ -2,9 +2,9 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * @author LatvianModder
@@ -100,9 +100,9 @@ public class PartIcon extends IconWithParent {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		if (w == width && h == height) {
-			all.draw(matrixStack, x, y, w, h);
+			all.draw(graphics, x, y, w, h);
 			return;
 		}
 
@@ -110,17 +110,17 @@ public class PartIcon extends IconWithParent {
 		var mw = w - c * 2;
 		var mh = h - c * 2;
 
-		middleU.draw(matrixStack, x + c, y, mw, c);
-		middleR.draw(matrixStack, x + w - c, y + c, c, mh);
-		middleD.draw(matrixStack, x + c, y + h - c, mw, c);
-		middleL.draw(matrixStack, x, y + c, c, mh);
+		middleU.draw(graphics, x + c, y, mw, c);
+		middleR.draw(graphics, x + w - c, y + c, c, mh);
+		middleD.draw(graphics, x + c, y + h - c, mw, c);
+		middleL.draw(graphics, x, y + c, c, mh);
 
-		cornerNN.draw(matrixStack, x, y, c, c);
-		cornerNP.draw(matrixStack, x, y + h - c, c, c);
-		cornerPN.draw(matrixStack, x + w - c, y, c, c);
-		cornerPP.draw(matrixStack, x + w - c, y + h - c, c, c);
+		cornerNN.draw(graphics, x, y, c, c);
+		cornerNP.draw(graphics, x, y + h - c, c, c);
+		cornerPN.draw(graphics, x + w - c, y, c, c);
+		cornerPP.draw(graphics, x + w - c, y + h - c, c, c);
 
-		center.draw(matrixStack, x + c, y + c, mw, mh);
+		center.draw(graphics, x + c, y + c, mw, mh);
 	}
 
 	@Override

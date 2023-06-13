@@ -3,9 +3,9 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -52,25 +52,25 @@ public class IconAnimation extends Icon {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		if (!list.isEmpty()) {
-			list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw(matrixStack, x, y, w, h);
+			list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw(graphics, x, y, w, h);
 		}
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void drawStatic(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
 		if (!list.isEmpty()) {
-			list.get(0).drawStatic(matrixStack, x, y, w, h);
+			list.get(0).drawStatic(graphics, x, y, w, h);
 		}
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw3D(PoseStack matrixStack) {
+	public void draw3D(GuiGraphics graphics) {
 		if (!list.isEmpty()) {
-			list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw3D(matrixStack);
+			list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw3D(graphics);
 		}
 	}
 

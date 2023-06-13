@@ -2,9 +2,9 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * @author LatvianModder
@@ -19,12 +19,12 @@ public class IconWithPadding extends IconWithParent {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		x += padding;
 		y += padding;
 		w -= padding * 2;
 		h -= padding * 2;
-		parent.draw(matrixStack, x, y, w, h);
+		parent.draw(graphics, x, y, w, h);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
+import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -18,7 +18,7 @@ public class ColorWidget extends Widget {
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		((mouseOverColor != null && isMouseOver()) ? mouseOverColor : color).draw(matrixStack, x, y, w, h);
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		((mouseOverColor != null && isMouseOver()) ? mouseOverColor : color).draw(graphics, x, y, w, h);
 	}
 }

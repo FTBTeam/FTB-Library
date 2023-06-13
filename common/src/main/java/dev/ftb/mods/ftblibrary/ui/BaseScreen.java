@@ -1,13 +1,13 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.BooleanConsumer;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -232,8 +232,8 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	@Override
-	public final void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		super.draw(matrixStack, theme, x, y, w, h);
+	public final void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		super.draw(graphics, theme, x, y, w, h);
 	}
 
 	public Optional<Panel> getContextMenu() {
@@ -295,15 +295,15 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawGui(matrixStack, x, y, w, h, WidgetType.NORMAL);
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		theme.drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
 	}
 
-	public boolean drawDefaultBackground(PoseStack matrixStack) {
+	public boolean drawDefaultBackground(GuiGraphics graphics) {
 		return true;
 	}
 
-	public void drawForeground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
 	@Override
