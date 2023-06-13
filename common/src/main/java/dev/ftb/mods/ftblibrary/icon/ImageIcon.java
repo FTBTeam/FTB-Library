@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.common.base.Objects;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
@@ -12,6 +11,7 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -74,18 +74,18 @@ public class ImageIcon extends Icon {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		bindTexture();
 
 		if (tileSize <= 0D) {
-			GuiHelper.drawTexturedRect(matrixStack, x, y, w, h, color, minU, minV, maxU, maxV);
+			GuiHelper.drawTexturedRect(graphics, x, y, w, h, color, minU, minV, maxU, maxV);
 		} else {
 			var r = color.redi();
 			var g = color.greeni();
 			var b = color.bluei();
 			var a = color.alphai();
 
-			var m = matrixStack.last().pose();
+			var m = graphics.pose().last().pose();
 			var tesselator = Tesselator.getInstance();
 			var buffer = tesselator.getBuilder();
 			RenderSystem.setShader(GameRenderer::getPositionColorTexShader);

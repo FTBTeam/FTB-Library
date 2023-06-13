@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.util.Mth;
 
@@ -114,7 +114,7 @@ public class ScrollBar extends Widget {
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		var scrollBarSize = getScrollBarSize();
 
 		if (scrollBarSize > 0) {
@@ -135,23 +135,23 @@ public class ScrollBar extends Widget {
 			setValue(v);
 		}
 
-		drawBackground(matrixStack, theme, x, y, width, height);
+		drawBackground(graphics, theme, x, y, width, height);
 
 		if (scrollBarSize > 0) {
 			if (plane.isVertical) {
-				drawScrollBar(matrixStack, theme, x, (int) (y + getMappedValue(height - scrollBarSize)), width, scrollBarSize);
+				drawScrollBar(graphics, theme, x, (int) (y + getMappedValue(height - scrollBarSize)), width, scrollBarSize);
 			} else {
-				drawScrollBar(matrixStack, theme, (int) (x + getMappedValue(width - scrollBarSize)), y, scrollBarSize, height);
+				drawScrollBar(graphics, theme, (int) (x + getMappedValue(width - scrollBarSize)), y, scrollBarSize, height);
 			}
 		}
 	}
 
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawScrollBarBackground(matrixStack, x, y, w, h, getWidgetType());
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		theme.drawScrollBarBackground(graphics, x, y, w, h, getWidgetType());
 	}
 
-	public void drawScrollBar(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawScrollBar(matrixStack, x, y, w, h, WidgetType.mouseOver(grab != -10000), plane.isVertical);
+	public void drawScrollBar(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		theme.drawScrollBar(graphics, x, y, w, h, WidgetType.mouseOver(grab != -10000), plane.isVertical);
 	}
 
 	public void onMoved() {

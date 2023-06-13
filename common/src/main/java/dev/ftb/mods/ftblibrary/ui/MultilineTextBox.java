@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.core.mixin.common.MultilineTextFieldAccess;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -10,6 +9,7 @@ import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultilineTextField;
 import net.minecraft.client.gui.components.Whence;
 import net.minecraft.client.gui.screens.Screen;
@@ -174,11 +174,11 @@ public class MultilineTextBox extends Widget {
     }
 
     @Override
-    public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         String s = getText();
 
         if (s.isEmpty() && !isFocused()) {
-            theme.drawString(matrixStack, placeHolder, x + 4, y + 4, Theme.DARK);
+            theme.drawString(graphics, placeHolder, x + 4, y + 4, Theme.DARK);
             return;
         }
 
@@ -193,13 +193,13 @@ public class MultilineTextBox extends Widget {
             boolean shouldDrawLine = withinContentArea(yPos, yPos + font.lineHeight);
             if (drawCursor && cursorInRange && cursorPos >= stringview.beginIndex() && cursorPos <= stringview.endIndex()) {
                 if (shouldDrawLine) {
-                    xPos = theme.drawString(matrixStack, s.substring(stringview.beginIndex(), cursorPos), getX() + innerPadding(), yPos, Color4I.rgb(0xE0E0E0), 0);
-                    Color4I.rgb(0xA0A0A0).draw(matrixStack, xPos - 1, yPos, 1, font.lineHeight);
-                    theme.drawString(matrixStack, s.substring(cursorPos, stringview.endIndex()), xPos, yPos, Color4I.rgb(0xE0E0E0), 0);
+                    xPos = theme.drawString(graphics, s.substring(stringview.beginIndex(), cursorPos), getX() + innerPadding(), yPos, Color4I.rgb(0xE0E0E0), 0);
+                    Color4I.rgb(0xA0A0A0).draw(graphics, xPos - 1, yPos, 1, font.lineHeight);
+                    theme.drawString(graphics, s.substring(cursorPos, stringview.endIndex()), xPos, yPos, Color4I.rgb(0xE0E0E0), 0);
                 }
             } else {
                 if (shouldDrawLine) {
-                    xPos = theme.drawString(matrixStack, s.substring(stringview.beginIndex(), stringview.endIndex()), getX() + innerPadding(), yPos, Color4I.rgb(0xE0E0E0), 0);
+                    xPos = theme.drawString(graphics, s.substring(stringview.beginIndex(), stringview.endIndex()), getX() + innerPadding(), yPos, Color4I.rgb(0xE0E0E0), 0);
                 }
 
                 k = yPos;
@@ -209,7 +209,7 @@ public class MultilineTextBox extends Widget {
         }
 
         if (drawCursor && !cursorInRange && withinContentArea(k, k + 9)) {
-            theme.drawString(matrixStack, "_", xPos, k, Color4I.rgb(0xA0A0A0), 0);
+            theme.drawString(graphics, "_", xPos, k, Color4I.rgb(0xA0A0A0), 0);
         }
 
         if (textField.hasSelection()) {
@@ -229,7 +229,7 @@ public class MultilineTextBox extends Widget {
                                 width - innerPadding() :
                                 font.width(s.substring(stringView1.beginIndex(), stringView.endIndex()));
 
-                        renderHighlight(matrixStack, xPos1 + xOff1, yPos, xPos1 + xOff2, yPos + font.lineHeight);
+                        renderHighlight(graphics, xPos1 + xOff1, yPos, xPos1 + xOff2, yPos + font.lineHeight);
                     }
 
                 }
@@ -238,11 +238,11 @@ public class MultilineTextBox extends Widget {
         }
     }
 
-    private void renderHighlight(PoseStack matrixStack, int x1, int y1, int x2, int y2) {
+    private void renderHighlight(GuiGraphics graphics, int x1, int y1, int x2, int y2) {
         RenderSystem.enableColorLogicOp();
         RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
 
-        Color4I.rgb(0x0000FF).draw(matrixStack, x1, y1, x2 - x1, y2 - y1);
+        Color4I.rgb(0x0000FF).draw(graphics, x1, y1, x2 - x1, y2 - y1);
         RenderSystem.disableColorLogicOp();
     }
 

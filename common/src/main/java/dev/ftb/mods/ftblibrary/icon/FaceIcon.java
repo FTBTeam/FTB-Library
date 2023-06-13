@@ -2,8 +2,8 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class FaceIcon extends Icon {
 	}
 
 	@Override
-	public void draw(PoseStack poseStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics poseStack, int x, int y, int w, int h) {
 		head.draw(poseStack, x, y, w, h);
 		hat.draw(poseStack, x, y, w, h);
 	}

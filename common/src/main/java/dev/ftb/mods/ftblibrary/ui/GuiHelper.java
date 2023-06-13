@@ -9,6 +9,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -84,22 +85,22 @@ public class GuiHelper {
 		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(event, pitch));
 	}
 
-	public static void drawTexturedRect(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
+	public static void drawTexturedRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
 		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		var tesselator = Tesselator.getInstance();
 		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-		addRectToBufferWithUV(matrixStack, buffer, x, y, w, h, col, u0, v0, u1, v1);
+		addRectToBufferWithUV(graphics, buffer, x, y, w, h, col, u0, v0, u1, v1);
 		tesselator.end();
 	}
 
-	public static void addRectToBuffer(PoseStack matrixStack, BufferBuilder buffer, int x, int y, int w, int h, Color4I col) {
+	public static void addRectToBuffer(GuiGraphics graphics, BufferBuilder buffer, int x, int y, int w, int h, Color4I col) {
 		if (w <= 0 || h <= 0) {
 			return;
 		}
 
-		var m = matrixStack.last().pose();
+		var m = graphics.pose().last().pose();
 		var r = col.redi();
 		var g = col.greeni();
 		var b = col.bluei();
@@ -110,12 +111,12 @@ public class GuiHelper {
 		buffer.vertex(m, x, y, 0).color(r, g, b, a).endVertex();
 	}
 
-	public static void addRectToBufferWithUV(PoseStack matrixStack, BufferBuilder buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
+	public static void addRectToBufferWithUV(GuiGraphics graphics, BufferBuilder buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
 		if (w <= 0 || h <= 0) {
 			return;
 		}
 
-		var m = matrixStack.last().pose();
+		var m = graphics.pose().last().pose();
 		var r = col.redi();
 		var g = col.greeni();
 		var b = col.bluei();
@@ -126,9 +127,9 @@ public class GuiHelper {
 		buffer.vertex(m, x, y, 0).color(r, g, b, a).uv(u0, v0).endVertex();
 	}
 
-	public static void drawHollowRect(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, boolean roundEdges) {
+	public static void drawHollowRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, boolean roundEdges) {
 		if (w <= 1 || h <= 1 || col.isEmpty()) {
-			col.draw(matrixStack, x, y, w, h);
+			col.draw(graphics, x, y, w, h);
 			return;
 		}
 
@@ -137,37 +138,37 @@ public class GuiHelper {
 		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-		addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 2, col);
-		addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, col);
+		addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, col);
+		addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
 
 		if (roundEdges) {
-			addRectToBuffer(matrixStack, buffer, x + 1, y, w - 2, 1, col);
-			addRectToBuffer(matrixStack, buffer, x + 1, y + h - 1, w - 2, 1, col);
+			addRectToBuffer(graphics, buffer, x + 1, y, w - 2, 1, col);
+			addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 2, 1, col);
 		} else {
-			addRectToBuffer(matrixStack, buffer, x, y, w, 1, col);
-			addRectToBuffer(matrixStack, buffer, x, y + h - 1, w, 1, col);
+			addRectToBuffer(graphics, buffer, x, y, w, 1, col);
+			addRectToBuffer(graphics, buffer, x, y + h - 1, w, 1, col);
 		}
 
 		tesselator.end();
 	}
 
-	public static void drawRectWithShade(PoseStack matrixStack, int x, int y, int w, int h, Color4I col, int intensity) {
+	public static void drawRectWithShade(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, int intensity) {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		var tesselator = Tesselator.getInstance();
 		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-		addRectToBuffer(matrixStack, buffer, x, y, w - 1, 1, col);
-		addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 1, col);
+		addRectToBuffer(graphics, buffer, x, y, w - 1, 1, col);
+		addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 1, col);
 		col = col.mutable().addBrightness(-intensity);
-		addRectToBuffer(matrixStack, buffer, x + w - 1, y, 1, 1, col);
-		addRectToBuffer(matrixStack, buffer, x, y + h - 1, 1, 1, col);
+		addRectToBuffer(graphics, buffer, x + w - 1, y, 1, 1, col);
+		addRectToBuffer(graphics, buffer, x, y + h - 1, 1, 1, col);
 		col = col.mutable().addBrightness(-intensity);
-		addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, col);
-		addRectToBuffer(matrixStack, buffer, x + 1, y + h - 1, w - 1, 1, col);
+		addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
+		addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 1, 1, col);
 		tesselator.end();
 	}
 
-	public static void drawItem(PoseStack poseStack, ItemStack stack, int hash, boolean renderOverlay, @Nullable String text) {
+	public static void drawItem(GuiGraphics graphics, ItemStack stack, int hash, boolean renderOverlay, @Nullable String text) {
 		if (stack.isEmpty()) {
 			return;
 		}
@@ -183,7 +184,7 @@ public class GuiHelper {
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		PoseStack modelViewStack = RenderSystem.getModelViewStack();
 		modelViewStack.pushPose();
-		modelViewStack.mulPoseMatrix(poseStack.last().pose());
+		modelViewStack.mulPoseMatrix(graphics.pose().last().pose());
 		// modelViewStack.translate(x, y, 100.0D + this.blitOffset);
 		modelViewStack.scale(1F, -1F, 1F);
 		modelViewStack.scale(16F, 16F, 16F);
@@ -212,11 +213,11 @@ public class GuiHelper {
 
 			if (stack.getCount() != 1 || text != null) {
 				var s = text == null ? String.valueOf(stack.getCount()) : text;
-				poseStack.pushPose();
-				poseStack.translate(9D - font.width(s), 1D, 20D);
-				font.drawInBatch(s, 0F, 0F, 0xFFFFFF, true, poseStack.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+				graphics.pose().pushPose();
+				graphics.pose().translate(9D - font.width(s), 1D, 20D);
+				font.drawInBatch(s, 0F, 0F, 0xFFFFFF, true, graphics.pose().last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
 				bufferSource.endBatch();
-				poseStack.popPose();
+				graphics.pose().popPose();
 			}
 
 			if (stack.isBarVisible()) {
@@ -224,8 +225,8 @@ public class GuiHelper {
 				RenderSystem.disableBlend();
 				var barWidth = stack.getBarWidth();
 				var barColor = stack.getBarColor();
-				draw(poseStack, t, -6, 5, 13, 2, 0, 0, 0, 255);
-				draw(poseStack, t, -6, 5, barWidth, 1, barColor >> 16 & 255, barColor >> 8 & 255, barColor & 255, 255);
+				draw(graphics, t, -6, 5, 13, 2, 0, 0, 0, 255);
+				draw(graphics, t, -6, 5, barWidth, 1, barColor >> 16 & 255, barColor >> 8 & 255, barColor & 255, 255);
 				RenderSystem.enableBlend();
 				RenderSystem.enableDepthTest();
 			}
@@ -236,19 +237,19 @@ public class GuiHelper {
 				RenderSystem.disableDepthTest();
 				RenderSystem.enableBlend();
 				RenderSystem.defaultBlendFunc();
-				draw(poseStack, t, -8, Mth.floor(16F * (1F - cooldown)) - 8, 16, Mth.ceil(16F * cooldown), 255, 255, 255, 127);
+				draw(graphics, t, -8, Mth.floor(16F * (1F - cooldown)) - 8, 16, Mth.ceil(16F * cooldown), 255, 255, 255, 127);
 				RenderSystem.enableDepthTest();
 			}
 		}
 	}
 
-	private static void draw(PoseStack matrixStack, Tesselator t, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+	private static void draw(GuiGraphics graphics, Tesselator t, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
 		if (width <= 0 || height <= 0) {
 			return;
 		}
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		var m = matrixStack.last().pose();
+		var m = graphics.pose().last().pose();
 		var renderer = t.getBuilder();
 		renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		renderer.vertex(m, x, y, 0).color(red, green, blue, alpha).endVertex();

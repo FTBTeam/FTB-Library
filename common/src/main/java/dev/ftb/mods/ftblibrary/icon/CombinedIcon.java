@@ -2,9 +2,9 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,25 +52,25 @@ public class CombinedIcon extends Icon {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		for (var icon : list) {
-			icon.draw(matrixStack, x, y, w, h);
+			icon.draw(graphics, x, y, w, h);
 		}
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void drawStatic(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
 		for (var icon : list) {
-			icon.drawStatic(matrixStack, x, y, w, h);
+			icon.drawStatic(graphics, x, y, w, h);
 		}
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw3D(PoseStack matrixStack) {
+	public void draw3D(GuiGraphics graphics) {
 		for (var icon : list) {
-			icon.draw3D(matrixStack);
+			icon.draw3D(graphics);
 		}
 	}
 

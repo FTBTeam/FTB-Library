@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.integration;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import dev.ftb.mods.ftblibrary.config.ui.ItemSearchMode;
@@ -28,6 +27,7 @@ import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.CollectionUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
@@ -143,16 +143,16 @@ public class REIIntegration implements REIClientPlugin {
 		public Renderer getRenderer(boolean showcase) {
 			return new Renderer() {
 				@Override
-				public void render(PoseStack matrices, Rectangle bounds, int mouseX, int mouseY, float delta) {
+				public void render(GuiGraphics graphics, Rectangle bounds, int mouseX, int mouseY, float delta) {
 					GuiHelper.setupDrawing();
-					button.getIcon().draw(matrices, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+					button.getIcon().draw(graphics, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
 					if (button.getCustomTextHandler() != null) {
 						String text = button.getCustomTextHandler().get();
 						Font font  = Minecraft.getInstance().font;
 						if (!text.isEmpty()) {
 							var width = font.width(text);
-							Color4I.LIGHT_RED.draw(matrices, bounds.getX() + bounds.getWidth() - width, bounds.getY() - 1, width + 1, font.lineHeight);
-							font.draw(matrices, text, bounds.getX() + bounds.getWidth() - width + 1, bounds.getY(), 0xFFFFFFFF);
+							Color4I.LIGHT_RED.draw(graphics, bounds.getX() + bounds.getWidth() - width, bounds.getY() - 1, width + 1, font.lineHeight);
+							graphics.drawString(font, text, bounds.getX() + bounds.getWidth() - width + 1, bounds.getY(), 0xFFFFFFFF);
 						}
 					}
 				}
@@ -168,16 +168,6 @@ public class REIIntegration implements REIClientPlugin {
 					}
 
 					return Tooltip.create(context.getPoint(), CollectionUtils.map(list, Component::literal));
-				}
-
-				@Override
-				public int getZ() {
-					return 0;
-				}
-
-				@Override
-				public void setZ(int z) {
-
 				}
 			};
 		}

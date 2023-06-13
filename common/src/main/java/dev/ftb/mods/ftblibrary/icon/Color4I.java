@@ -7,7 +7,6 @@ import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.math.MathUtils;
@@ -17,6 +16,7 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
@@ -70,12 +70,12 @@ public class Color4I extends Icon {
 
 		@Override
 		@Environment(EnvType.CLIENT)
-		public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+		public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		}
 
 		@Override
 		@Environment(EnvType.CLIENT)
-		public void draw3D(PoseStack matrixStack) {
+		public void draw3D(GuiGraphics graphics) {
 		}
 
 		@Override
@@ -368,7 +368,7 @@ public class Color4I extends Icon {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		if (w <= 0 || h <= 0) {
 			return;
 		}
@@ -380,7 +380,7 @@ public class Color4I extends Icon {
 		var tesselator = Tesselator.getInstance();
 		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-		GuiHelper.addRectToBuffer(matrixStack, buffer, x, y, w, h, this);
+		GuiHelper.addRectToBuffer(graphics, buffer, x, y, w, h, this);
 		tesselator.end();
 	}
 
