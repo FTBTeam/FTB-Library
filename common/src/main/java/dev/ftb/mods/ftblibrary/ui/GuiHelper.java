@@ -88,11 +88,10 @@ public class GuiHelper {
 	public static void drawTexturedRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
 		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		var tesselator = Tesselator.getInstance();
-		var buffer = tesselator.getBuilder();
+		var buffer = Tesselator.getInstance().getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 		addRectToBufferWithUV(graphics, buffer, x, y, w, h, col, u0, v0, u1, v1);
-		tesselator.end();
+		BufferUploader.drawWithShader(buffer.end());
 	}
 
 	public static void addRectToBuffer(GuiGraphics graphics, BufferBuilder buffer, int x, int y, int w, int h, Color4I col) {
