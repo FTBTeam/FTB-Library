@@ -78,7 +78,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 
 	@Override
 	public int compareTo(ContextMenuItem o) {
-		return title.getString().compareToIgnoreCase(o.title.getString());
+		return getTitle().getString().compareToIgnoreCase(o.getTitle().getString());
 	}
 
 	public void onClicked(Panel panel, MouseButton button) {

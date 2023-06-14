@@ -48,6 +48,10 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 		return chunkPos.z;
 	}
 
+	public ResourceKey<Level> dimension() {
+		return dimension;
+	}
+
 	@Override
 	public String toString() {
 		return "[" + dimension.location() + ":" + x() + ":" + z() + "]";
