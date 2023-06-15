@@ -15,10 +15,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
 public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
+
 	/**
 	 * Create a new SNBT config object
 	 * @param name the name for the config
@@ -85,21 +87,13 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		if (parent == null) {
-			for (var value : defaultValue) {
-				if (!value.excluded) {
-					value.createClientConfig(group);
-				}
-			}
-		} else {
-			var g = group.getOrCreateSubgroup(key);
+		List<BaseValue<?>> sorted = defaultValue.stream()
+				.filter(v -> !v.excluded)
+				.sorted(Comparator.comparingInt(o -> o.displayOrder))
+				.toList();
 
-			for (var value : defaultValue) {
-				if (!value.excluded) {
-					value.createClientConfig(g);
-				}
-			}
-		}
+		var g = parent == null ? group : group.getOrCreateSubgroup(key);
+		sorted.forEach(value -> value.createClientConfig(g));
 	}
 
 	/**
