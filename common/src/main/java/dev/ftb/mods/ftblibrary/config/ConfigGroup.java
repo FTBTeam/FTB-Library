@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -14,21 +15,23 @@ import java.util.regex.Pattern;
  *
  * @author LatvianModder
  */
-public class ConfigGroup {
+public class ConfigGroup implements Comparable<ConfigGroup> {
 	private final String id;
 	private final ConfigGroup parent;
 	private final Map<String, ConfigValue<?>> values;
 	private final Map<String, ConfigGroup> subgroups;
 	private final ConfigCallback savedCallback;
+	private final int displayOrder;
 	private String nameKey;
 
-	private ConfigGroup(String id, ConfigGroup parent, ConfigCallback savedCallback) {
+	private ConfigGroup(String id, ConfigGroup parent, ConfigCallback savedCallback, int displayOrder) {
 		this.id = id;
 		this.parent = parent;
 		this.values = new LinkedHashMap<>();
 		this.subgroups = new LinkedHashMap<>();
 		this.savedCallback = savedCallback;
 		this.nameKey = "";
+		this.displayOrder = displayOrder;
 	}
 
 	/**
@@ -36,7 +39,7 @@ public class ConfigGroup {
 	 * @param id a unique id for this group
 	 */
 	public ConfigGroup(String id) {
-		this(id, null, null);
+		this(id, null, null, 0);
 	}
 
 	/**
@@ -45,7 +48,7 @@ public class ConfigGroup {
 	 * @param savedCallback a callback to be run when the {@link #save(boolean)} method is called
 	 */
 	public ConfigGroup(String id, ConfigCallback savedCallback) {
-		this(id, null, savedCallback);
+		this(id, null, savedCallback, 0);
 	}
 
 	/**
@@ -106,16 +109,27 @@ public class ConfigGroup {
 	 * Get, or create, a subgroup in this group. The subgroup will use the same on-save callback as this group.
 	 *
 	 * @param id unique id of the subgroup
+	 * @param displayOrder order in which groups are displayed in the GUI (higher numbers come after)
 	 * @return the subgroup, which may have just been created
 	 */
-	public ConfigGroup getOrCreateSubgroup(String id) {
+	public ConfigGroup getOrCreateSubgroup(String id, int displayOrder) {
 		var index = id.indexOf('.');
 
 		if (index == -1) {
-			return subgroups.computeIfAbsent(id, k -> new ConfigGroup(id, this, savedCallback));
+			return subgroups.computeIfAbsent(id, k -> new ConfigGroup(id, this, savedCallback, displayOrder));
 		} else {
-			return getOrCreateSubgroup(id.substring(0, index)).getOrCreateSubgroup(id.substring(index + 1));
+			return getOrCreateSubgroup(id.substring(0, index), displayOrder).getOrCreateSubgroup(id.substring(index + 1), displayOrder);
 		}
+	}
+
+	/**
+	 * Get, or create, a subgroup in this group. The subgroup will use the same on-save callback as this group.
+	 *
+	 * @param id unique id of the subgroup
+	 * @return the subgroup, which may have just been created
+	 */
+	public ConfigGroup getOrCreateSubgroup(String id) {
+		return getOrCreateSubgroup(id, 0);
 	}
 
 	/**
@@ -230,5 +244,11 @@ public class ConfigGroup {
 		if (savedCallback != null) {
 			savedCallback.save(accepted);
 		}
+	}
+
+	@Override
+	public int compareTo(@NotNull ConfigGroup o) {
+		int i = Integer.compare(displayOrder, o.displayOrder);
+		return i == 0 ? getPath().compareToIgnoreCase(o.getPath()) : i;
 	}
 }
