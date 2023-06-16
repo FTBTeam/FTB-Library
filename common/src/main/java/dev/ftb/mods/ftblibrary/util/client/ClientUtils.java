@@ -1,11 +1,15 @@
-package dev.ftb.mods.ftblibrary.util;
+package dev.ftb.mods.ftblibrary.util.client;
 
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.client.ClientChatEvent;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,10 +17,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
@@ -26,25 +27,16 @@ public class ClientUtils {
 	private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
 
 	public static void execClientCommand(String command, boolean printChat) {
-		// FIXME: find what replaces this...
-//		ChatProcessorImpl processor = new ChatProcessorImpl(command, null);
-//		var process = ClientChatEvent.PROCESS.invoker().process(processor);
-//		if (process.isFalse()) {
-//			command = "";
-//		} else {
-//			// TODO: validate this still works
-////				command = process.object() != null ? process.object() : command;
-//		}
+		if (!command.isEmpty() && Minecraft.getInstance().player != null) {
+			EventResult res = ClientChatEvent.SEND.invoker().send(command, null);
 
-		if (command.isEmpty()) {
-			return;
+			if (!res.interruptsFurtherEvaluation()) {
+				if (printChat) {
+					Minecraft.getInstance().gui.getChat().addRecentChat(command);
+				}
+				Minecraft.getInstance().player.connection.sendCommand(command.replace("/", ""));
+			}
 		}
-
-		if (printChat) {
-			Minecraft.getInstance().gui.getChat().addRecentChat(command);
-		}
-
-		Minecraft.getInstance().player.connection.sendUnsignedCommand(command.replace("/", ""));
 	}
 
 	public static void runLater(final Runnable runnable) {
@@ -123,7 +115,7 @@ public class ClientUtils {
 					var s = path.split(":", 2);
 
 					try {
-						Class c = Class.forName(s[0]);
+						Class<?> c = Class.forName(s[0]);
 						var h = MethodHandles.publicLookup().findStatic(c, s[1], EMPTY_METHOD_TYPE);
 						handle = Optional.ofNullable(h);
 					} catch (Throwable ex) {
@@ -145,9 +137,20 @@ public class ClientUtils {
 				return false;
 			}
 			case "custom":
-				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(path))).isPresent();
+				if (ResourceLocation.isValidResourceLocation(path)) {
+					return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(path))).isPresent();
+				}
 			default:
-				return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(scheme, path))).isPresent();
+				if (ResourceLocation.isValidResourceLocation(scheme + ":" + path)) {
+					return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(scheme, path))).isPresent();
+				}
 		}
+		FTBLibrary.LOGGER.warn("invalid scheme/path resourcelocation for handleClick(): {}:{}", scheme, path);
+		return false;
 	}
+
+	public static HolderLookup.Provider registryAccess() {
+		return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
+	}
+
 }

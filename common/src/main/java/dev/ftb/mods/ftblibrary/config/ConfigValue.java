@@ -84,6 +84,10 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 		return value;
 	}
 
+	public final Color4I getColor() {
+		return getColor(value);
+	}
+
 	public Color4I getColor(@Nullable T v) {
 		return Color4I.GRAY;
 	}
@@ -102,6 +106,10 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	}
 
 	public abstract void onClicked(MouseButton button, ConfigCallback callback);
+
+	public final Component getStringForGUI() {
+		return Component.literal(String.valueOf(value));
+	}
 
 	public Component getStringForGUI(@Nullable T v) {
 		return Component.literal(String.valueOf(v));
@@ -159,13 +167,8 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 
 	@Override
 	public int compareTo(ConfigValue<T> o) {
-		var i = group.getPath().compareToIgnoreCase(o.group.getPath());
-
-		if (i == 0) {
-			i = Integer.compare(order, o.order);
-		}
-
-		return i;
+		var i = group.compareTo(o.group);
+		return i == 0 ? Integer.compare(order, o.order) : i;
 	}
 
 	public void applyValue() {

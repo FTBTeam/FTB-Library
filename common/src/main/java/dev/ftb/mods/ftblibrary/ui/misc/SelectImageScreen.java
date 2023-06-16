@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ImageConfig;
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -11,11 +12,14 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.world.inventory.InventoryMenu;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +32,7 @@ import java.util.Map;
 public class SelectImageScreen extends ButtonListBaseScreen {
 	private final ImageConfig imageConfig;
 	private final ConfigCallback callback;
+	private final SimpleTextButton refreshButton;
 
 	private static List<ImageDetails> cachedImages = null;
 
@@ -38,6 +43,20 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		setHasSearchBox(true);
 		focus();
 		setBorder(1, 1, 1);
+		refreshButton = new SimpleTextButton(this, Component.translatable("ftblibrary.select_image.rescan"), Icons.REFRESH) {
+			@Override
+			public void onClicked(MouseButton button) {
+				playClickSound();
+				clearCachedImages();
+				refreshWidgets();
+			}
+		};
+		refreshButton.setSize(20, 20);
+	}
+
+	@Override
+	public boolean onInit() {
+		return setSizeProportional(0.5f, 0.8f);
 	}
 
 	private List<ImageDetails> getImageList() {
@@ -63,19 +82,46 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				}
 			});
 
-			cachedImages = images.stream().sorted().map(res -> new ImageDetails(res,
-					Component.literal(res.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
-							.append(Component.literal(res.getPath().substring(9, res.getPath().length() - 4)).withStyle(ChatFormatting.YELLOW)),
-					Icon.getIcon(res.toString())
-			)).toList();
+			cachedImages = images.stream().sorted().map(res -> {
+				// shorten <mod>:textures/A/B.png to <mod>:A/B
+				ResourceLocation res1 = new ResourceLocation(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
+				TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
+//				try (SpriteContents s = sprite.contents()) {
+//					if (s.name().equals(MissingTextureAtlasSprite.getLocation())) {
+//						res1 = res;
+//					}
+//				}
+				if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
+					res1 = res;
+				}
+				return new ImageDetails(
+						Component.literal(res1.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
+								.append(Component.literal(res1.getPath()).withStyle(ChatFormatting.YELLOW)),
+						Icon.getIcon(res1)
+				);
+			}).toList();
 		}
 		return cachedImages;
+	}
+
+	@Override
+	public void alignWidgets() {
+		super.alignWidgets();
+
+		refreshButton.setPos(width + 2, 0);
+	}
+
+	@Override
+	public void addWidgets() {
+		super.addWidgets();
+
+		add(refreshButton);
 	}
 
 	public static void clearCachedImages() {
 		cachedImages = null;
 	}
-	
+
 	public boolean allowNone() {
 		return true;
 	}
@@ -102,7 +148,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
 					playClickSound();
-					imageConfig.setCurrentValue(res.rl.toString());
+					imageConfig.setCurrentValue(res.icon.toString());
 					callback.save(true);
 				}
 			});
@@ -119,7 +165,7 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		return false;
 	}
 
-	private record ImageDetails(ResourceLocation rl, Component label, Icon icon) {
+	private record ImageDetails(Component label, Icon icon) {
 	}
 
 	public enum ResourceListener implements ResourceManagerReloadListener {

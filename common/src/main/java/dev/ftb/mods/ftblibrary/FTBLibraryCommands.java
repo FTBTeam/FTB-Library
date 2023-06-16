@@ -324,7 +324,8 @@ public class FTBLibraryCommands {
 			}
 
 			Files.writeString(outputDir.resolve(outputFileName), output);
-			source.sendSuccess(Component.literal("Loot table stored at " + outputDir.resolve(outputFileName).toString().replace(path.toAbsolutePath().toString(), "")), true);
+			final Path dir = outputDir.resolve(outputFileName);
+			source.sendSuccess(() -> Component.literal("Loot table stored at " + dir.toString().replace(path.toAbsolutePath().toString(), "")), true);
 		} catch (Exception e) {
 			source.sendFailure(Component.literal("Something went wrong, check the logs"));
 			FTBLibrary.LOGGER.error(e);

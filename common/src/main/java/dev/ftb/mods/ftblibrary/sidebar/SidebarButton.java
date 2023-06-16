@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
@@ -9,9 +8,8 @@ import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
-import dev.ftb.mods.ftblibrary.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.Util;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;

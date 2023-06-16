@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -12,8 +11,12 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +26,13 @@ public class EditConfigScreen extends BaseScreen {
 
 	public static Theme THEME = new Theme() {
 		@Override
-		public void drawScrollBarBackground(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type) {
-			Color4I.BLACK.withAlpha(70).draw(matrixStack, x, y, w, h);
+		public void drawScrollBarBackground(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+			Color4I.BLACK.withAlpha(70).draw(graphics, x, y, w, h);
 		}
 
 		@Override
-		public void drawScrollBar(PoseStack matrixStack, int x, int y, int w, int h, WidgetType type, boolean vertical) {
-			getContentColor(WidgetType.NORMAL).withAlpha(100).withBorder(Color4I.GRAY.withAlpha(100), false).draw(matrixStack, x, y, w, h);
+		public void drawScrollBar(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean vertical) {
+			getContentColor(WidgetType.NORMAL).withAlpha(100).withBorder(Color4I.GRAY.withAlpha(100), false).draw(graphics, x, y, w, h);
 		}
 	};
 
@@ -67,7 +70,7 @@ public class EditConfigScreen extends BaseScreen {
 					groupSize++;
 				}
 
-				ConfigEntryButton btn = new ConfigEntryButton(configPanel, group, value);
+				ConfigEntryButton<?> btn = new ConfigEntryButton<>(configPanel, group, value);
 				allConfigButtons.add(btn);
 				dividerX = Math.max(dividerX, getTheme().getStringWidth(btn.keyText));
 			}
@@ -173,9 +176,9 @@ public class EditConfigScreen extends BaseScreen {
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		COLOR_BACKGROUND.draw(matrixStack, 0, 0, w, 20);
-		theme.drawString(matrixStack, getTitle(), 6, 6, Theme.SHADOW);
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		COLOR_BACKGROUND.draw(graphics, 0, 0, w, 20);
+		theme.drawString(graphics, getTitle(), 6, 6, Theme.SHADOW);
 	}
 
 	@Override
@@ -231,15 +234,15 @@ public class EditConfigScreen extends BaseScreen {
 		}
 
 		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			COLOR_BACKGROUND.draw(matrixStack, x, y, w, h);
-			theme.drawString(matrixStack, getTitle(), x + 3, y + 2);
+		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			COLOR_BACKGROUND.draw(graphics, x, y, w, h);
+			theme.drawString(graphics, getTitle(), x + 3, y + 2);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
-			Color4I.GRAY.withAlpha(80).draw(matrixStack, 0, y, width, 1);
-			Color4I.GRAY.withAlpha(80).draw(matrixStack, 0, y, 1, height);
+			Color4I.GRAY.withAlpha(80).draw(graphics, 0, y, width, 1);
+			Color4I.GRAY.withAlpha(80).draw(graphics, 0, y, 1, height);
 			if (isMouseOver()) {
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
+				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
 			}
 		}
 
@@ -257,12 +260,12 @@ public class EditConfigScreen extends BaseScreen {
 		}
 	}
 
-	private class ConfigEntryButton extends Button {
+	private class ConfigEntryButton<T> extends Button {
 		private final ConfigGroupButton groupButton;
-		private final ConfigValue configValue;
+		private final ConfigValue<T> configValue;
 		private final Component keyText;
 
-		public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, ConfigValue configValue) {
+		public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, ConfigValue<T> configValue) {
 			super(panel);
 			setHeight(getTheme().getFontHeight() + 2);
 			this.groupButton = groupButton;
@@ -274,14 +277,14 @@ public class EditConfigScreen extends BaseScreen {
 		}
 
 		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 			var mouseOver = getMouseY() >= 20 && isMouseOver();
 
 			if (mouseOver) {
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
+				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
 			}
 
-			theme.drawString(matrixStack, keyText, 5, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
+			theme.drawString(graphics, keyText, 5, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
 			Component s = configValue.getStringForGUI(configValue.getValue());
@@ -293,19 +296,19 @@ public class EditConfigScreen extends BaseScreen {
 				slen = maxLen + 2;
 			}
 
-			var textCol = configValue.getColor(configValue.getValue()).mutable();
+			var textCol = configValue.getColor().mutable();
 			textCol.setAlpha(255);
 
 			if (mouseOver) {
 				textCol.addBrightness(60);
 				if (getMouseX() > x + w - slen - 9) {
-					Color4I.WHITE.withAlpha(33).draw(matrixStack, x + w - slen - 8, y, slen + 8, h);
+					Color4I.WHITE.withAlpha(33).draw(graphics, x + w - slen - 8, y, slen + 8, h);
 				}
 			}
 
-			theme.drawString(matrixStack, s, dividerX + 5, y + 2, textCol, 0);
+			theme.drawString(graphics, s, dividerX + 5, y + 2, textCol, 0);
 
-			Color4I.GRAY.withAlpha(33).draw(matrixStack, dividerX, y, 1, height);
+			Color4I.GRAY.withAlpha(33).draw(graphics, dividerX, y, 1, height);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}
 
@@ -343,7 +346,7 @@ public class EditConfigScreen extends BaseScreen {
 		@Override
 		public void addWidgets() {
 			for (var w : allConfigButtons) {
-				if (!(w instanceof ConfigEntryButton cgb) || !cgb.groupButton.collapsed) {
+				if (!(w instanceof ConfigEntryButton<?> cgb) || !cgb.groupButton.collapsed) {
 					add(w);
 				}
 			}
@@ -352,7 +355,7 @@ public class EditConfigScreen extends BaseScreen {
 		@Override
 		public void alignWidgets() {
 			widgets.forEach(w -> w.setWidth(width - 16));
-			scroll.setMaxValue(align(WidgetLayout.VERTICAL));
+			align(WidgetLayout.VERTICAL);
 		}
 	}
 }

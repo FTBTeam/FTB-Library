@@ -2,7 +2,7 @@ name: Java CI - Build on Push
 
 on:
   push:
-    branches: [ main, "1.*" ]
+    branches: [ main, dev, "1.*" ]
   workflow_dispatch:
     inputs:
       skip_maven_publish:
@@ -12,30 +12,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     if: |
-      !contains(github.event.head_commit.message, '[ci skip]')
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 30 # Gets the last 30 commits so the changelog might work
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - name: Build/Test/Publish with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build test --no-daemon
-      - name: Publish to Maven
-        uses: gradle/gradle-build-action@v2
-        if: github.event.inputs.skip_maven_publish != 'true'
-        env:
-          FTB_MAVEN_TOKEN: ${{ secrets.FTB_MAVEN_TOKEN }}
-          SAPS_TOKEN: ${{ secrets.SAPS_TOKEN }}
-          SNAPSHOT: true
-        with:
-          arguments: publish --no-daemon
+      !contains(github.event.head_commit.message, '[ciskip]')
+    uses: FTBTeam/mods-meta/.github/workflows/standard-release.yml@main
+    with:
+      curse-publish-task: ""
+      maven-snapshots: true
+    secrets:
+      ftb-maven-token: ${{ secrets.FTB_MAVEN_TOKEN }}
+      saps-token: ${{ secrets.SAPS_TOKEN }}

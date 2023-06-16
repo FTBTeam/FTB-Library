@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigFromStringScreen;
@@ -12,19 +11,17 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -83,7 +80,7 @@ public class NBTEditorScreen extends BaseScreen {
 		}
 
 		@Override
-		public void draw(PoseStack pose, Theme theme, int x, int y, int w, int h) {
+		public void draw(GuiGraphics pose, Theme theme, int x, int y, int w, int h) {
 			if (selected == this) {
 				Color4I.WHITE.withAlpha(33).draw(pose, x, y, w, h);
 			}
@@ -321,7 +318,7 @@ public class NBTEditorScreen extends BaseScreen {
 		}
 
 		@Override
-		public void draw(PoseStack pose, Theme theme, int x, int y, int w, int h) {
+		public void draw(GuiGraphics pose, Theme theme, int x, int y, int w, int h) {
 			super.draw(pose, theme, x, y, w, h);
 
 			if (!hoverIcon.isEmpty()) {
@@ -330,9 +327,8 @@ public class NBTEditorScreen extends BaseScreen {
 		}
 
 		@Override
-		@Nullable
-		public Object getIngredientUnderMouse() {
-			return new WrappedIngredient(hoverIcon.getIngredient()).tooltip();
+		public Optional<PositionedIngredient> getIngredientUnderMouse() {
+			return PositionedIngredient.of(hoverIcon.getIngredient(), this, true);
 		}
 
 		@Override
@@ -585,7 +581,7 @@ public class NBTEditorScreen extends BaseScreen {
 			}
 		}) {
 			@Override
-			public void drawBackground(PoseStack stack, Theme theme, int x, int y, int w, int h) {
+			public void drawBackground(GuiGraphics stack, Theme theme, int x, int y, int w, int h) {
 				IconWithBorder.BUTTON_ROUND_GRAY.draw(stack, x, y, w, h);
 			}
 		};
@@ -730,7 +726,7 @@ public class NBTEditorScreen extends BaseScreen {
 
 			@Override
 			public void alignWidgets() {
-				scroll.setMaxValue(align(WidgetLayout.VERTICAL) + 2);
+				align(WidgetLayout.VERTICAL);
 			}
 		};
 
@@ -790,7 +786,7 @@ public class NBTEditorScreen extends BaseScreen {
 	}
 
 	@Override
-	public void drawBackground(PoseStack stack, Theme theme, int x, int y, int w, int h) {
+	public void drawBackground(GuiGraphics stack, Theme theme, int x, int y, int w, int h) {
 		EditConfigScreen.COLOR_BACKGROUND.draw(stack, 0, 0, w, 20);
 	}
 

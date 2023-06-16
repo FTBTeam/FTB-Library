@@ -1,6 +1,6 @@
 plugins {
 	id "architectury-plugin" version "3.4-SNAPSHOT"
-	id "dev.architectury.loom" version "1.0-SNAPSHOT" apply false
+	id "dev.architectury.loom" version "1.2-SNAPSHOT" apply false
 }
 
 architectury {
@@ -24,12 +24,15 @@ allprojects {
 	apply plugin: "java"
 	apply plugin: "architectury-plugin"
 	apply plugin: "maven-publish"
-	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
+	apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/git-md-changelog.gradle"
 
 	def ENV = System.getenv()
 	version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}"
 	group = project.maven_group
 	archivesBaseName = project.archives_base_name
+
+	// needs to be done AFTER version is set
+	apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/publishing.gradle"
 
 	sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = 17
 
@@ -61,7 +64,7 @@ allprojects {
 	}
 
 	dependencies {
-		testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+		testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
 	}
 
 	java {

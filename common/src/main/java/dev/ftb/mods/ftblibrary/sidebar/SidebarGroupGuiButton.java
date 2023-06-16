@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
@@ -30,7 +30,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	}
 
 	@Override
-	public void render(PoseStack matrixStack, int mx, int my, float partialTicks) {
+	public void render(GuiGraphics graphics, int mx, int my, float partialTicks) {
 		buttons.clear();
 		mouseOver = null;
 		int rx, ry = 0;
@@ -90,17 +90,17 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		height = maxY - getY();
 		//zLevel = 0F;
 
-		matrixStack.pushPose();
-		matrixStack.translate(0, 0, 500);
+		graphics.pose().pushPose();
+		graphics.pose().translate(0, 0, 500);
 
 		var font = Minecraft.getInstance().font;
 
 		for (var b : buttons) {
 			GuiHelper.setupDrawing();
-			b.button.getIcon().draw(matrixStack, b.x, b.y, 16, 16);
+			b.button.getIcon().draw(graphics, b.x, b.y, 16, 16);
 
 			if (b == mouseOver) {
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, b.x, b.y, 16, 16);
+				Color4I.WHITE.withAlpha(33).draw(graphics, b.x, b.y, 16, 16);
 			}
 
 			if (b.button.getCustomTextHandler() != null) {
@@ -109,8 +109,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				if (!text.isEmpty()) {
 					var nw = font.width(text);
 					var width = 16;
-					Color4I.LIGHT_RED.draw(matrixStack, b.x + width - nw, b.y - 1, nw + 1, 9);
-					font.draw(matrixStack, text, b.x + width - nw + 1, b.y, 0xFFFFFFFF);
+					Color4I.LIGHT_RED.draw(graphics, b.x + width - nw, b.y - 1, nw + 1, 9);
+					graphics.drawString(font, text, b.x + width - nw + 1, b.y, 0xFFFFFFFF);
 					RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 				}
 			}
@@ -134,12 +134,12 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				tw = Math.max(tw, font.width(s));
 			}
 
-			matrixStack.translate(0, 0, 500);
+			graphics.pose().translate(0, 0, 500);
 
-			Color4I.DARK_GRAY.draw(matrixStack, mx1 - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
+			Color4I.DARK_GRAY.draw(graphics, mx1 - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
 
 			for (var i = 0; i < list.size(); i++) {
-				font.draw(matrixStack, list.get(i), mx1, my1 + i * 10, 0xFFFFFFFF);
+				graphics.drawString(font, list.get(i), mx1, my1 + i * 10, 0xFFFFFFFF);
 			}
 		}
 
@@ -147,7 +147,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		//zLevel = 0F;
 
 		lastDrawnArea = new Rect2i(getX(), getY(), width, height);
-		matrixStack.popPose();
+		graphics.pose().popPose();
 	}
 
 	@Override

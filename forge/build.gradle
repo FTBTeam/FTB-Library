@@ -49,7 +49,7 @@ dependencies {
 
 //	modCompileOnly "me.shedaniel:RoughlyEnoughItems-plugin-compatibilities-forge:${rootProject.rei_plugin_compat_version}"
 	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
-	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-fabric-api:${rootProject.jei_version}")
+	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
@@ -74,7 +74,7 @@ shadowJar {
 	exclude "fabric.mod.json"
 
 	configurations = [project.configurations.shadowCommon]
-	classifier "dev-shadow"
+	setArchiveClassifier("dev-shadow")
 }
 
 remapJar {
@@ -97,7 +97,7 @@ jar {
 		])
 	}
 
-	classifier "dev"
+	setArchiveClassifier("dev")
 }
 
 components.java {
@@ -111,16 +111,16 @@ if (ENV.CURSEFORGE_KEY) {
 		apiKey = ENV.CURSEFORGE_KEY
 		project {
 			id = project.curseforge_id_forge
-			releaseType = project.curseforge_type
+			releaseType = ftbPublishing.relType
 			addGameVersion "Forge"
-			addGameVersion "1.19.3"
+			addGameVersion rootProject.minecraft_version
 			mainArtifact(remapJar.archiveFile)
 			relations {
 				requiredDependency 'architectury-api'
 				optionalDependency 'jei'
 				optionalDependency 'roughly-enough-items'
 			}
-			changelog = getGitChangelog
+			changelog = ENV.CHANGELOG  // expected to exist if ENV.CURSEFORGE does
 			changelogType = 'markdown'
 		}
 	}
@@ -130,27 +130,28 @@ publishing {
 	publications {
 		mavenForge(MavenPublication) {
 			artifactId = "${rootProject.archives_base_name}-${project.name}"
+			version ftbPublishing.mavenVersion
 			from components.java
 		}
 	}
 
 	repositories {
-		if (ENV.FTB_MAVEN_TOKEN) {
+		if (ftbPublishing.ftbToken) {
 			maven {
-				url "https://maven.ftb.dev/release"
+				url ftbPublishing.ftbURL
 				credentials {
-					username = "ftb"
-					password = "${ENV.FTB_MAVEN_TOKEN}"
+					username = ftbPublishing.ftbUser
+					password = ftbPublishing.ftbToken
 				}
 			}
 		}
 
-		if (ENV.SAPS_TOKEN) {
+		if (ftbPublishing.sapsToken) {
 			maven {
-				url "https://maven.saps.dev/minecraft"
+				url ftbPublishing.sapsURL
 				credentials {
-					username = "ftb"
-					password = "${ENV.SAPS_TOKEN}"
+					username = ftbPublishing.sapsUser
+					password = ftbPublishing.sapsToken
 				}
 			}
 		}

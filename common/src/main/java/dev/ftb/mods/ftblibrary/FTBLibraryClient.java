@@ -2,20 +2,18 @@ package dev.ftb.mods.ftblibrary;
 
 import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
-import dev.ftb.mods.ftblibrary.config.ImageConfig;
-import dev.ftb.mods.ftblibrary.config.IntConfig;
-import dev.ftb.mods.ftblibrary.config.NameMap;
+import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.ui.misc.SelectImageScreen;
-import dev.ftb.mods.ftblibrary.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import me.shedaniel.rei.api.client.config.ConfigObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -104,6 +102,10 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 	}
 
 	public static boolean areButtonsVisible(@Nullable Screen gui) {
+		if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
+			return false;
+		}
+
 		if (showButtons == 0 || showButtons == 2 && !(gui instanceof EffectRenderingInventoryScreen)) {
 			return false;
 		}
@@ -123,6 +125,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		group.add("image", new ImageConfig(), "", v -> { }, "");
 
 		group.addItemStack("item", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, true);
+		group.add("fluid", new FluidConfig(true), FluidStack.empty(), v -> {}, FluidStack.empty());
 
 		ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
 		grp1.addInt("integer", 1, v -> {}, 0, 0, 10);

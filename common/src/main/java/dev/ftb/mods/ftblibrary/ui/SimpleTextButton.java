@@ -1,11 +1,14 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+
+import java.util.Optional;
 
 /**
  * @author LatvianModder
@@ -29,8 +32,8 @@ public abstract class SimpleTextButton extends Button {
 	}
 
 	@Override
-	public Object getIngredientUnderMouse() {
-		return icon.getIngredient();
+	public Optional<PositionedIngredient> getIngredientUnderMouse() {
+		return PositionedIngredient.of(icon.getIngredient(), this);
 	}
 
 	public boolean hasIcon() {
@@ -45,8 +48,8 @@ public abstract class SimpleTextButton extends Button {
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		drawBackground(matrixStack, theme, x, y, w, h);
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		drawBackground(graphics, theme, x, y, w, h);
 		var s = h >= 16 ? 16 : 8;
 		var off = (h - s) / 2;
 		FormattedText title = getTitle();
@@ -68,10 +71,10 @@ public abstract class SimpleTextButton extends Button {
 		}
 
 		if (hasIcon()) {
-			drawIcon(matrixStack, theme, x + off, y + off, s, s);
+			drawIcon(graphics, theme, x + off, y + off, s, s);
 			textX += off + s;
 		}
 
-		theme.drawString(matrixStack, title, textX, textY, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+		theme.drawString(graphics, title, textX, textY, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 	}
 }

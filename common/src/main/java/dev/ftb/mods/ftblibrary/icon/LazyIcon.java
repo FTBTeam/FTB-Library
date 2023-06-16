@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -87,20 +87,20 @@ public class LazyIcon extends Icon {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
-		getIcon().draw(matrixStack, x, y, w, h);
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
+		getIcon().draw(graphics, x, y, w, h);
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void drawStatic(PoseStack matrixStack, int x, int y, int w, int h) {
-		getIcon().drawStatic(matrixStack, x, y, w, h);
+	public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
+		getIcon().drawStatic(graphics, x, y, w, h);
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw3D(PoseStack matrixStack) {
-		getIcon().draw3D(matrixStack);
+	public void draw3D(GuiGraphics graphics) {
+		getIcon().draw3D(graphics);
 	}
 
 	@Override

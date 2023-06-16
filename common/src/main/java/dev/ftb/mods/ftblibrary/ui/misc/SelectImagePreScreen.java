@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ImageConfig;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.Theme;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 public class SelectImagePreScreen extends BaseScreen {
@@ -27,14 +27,14 @@ public class SelectImagePreScreen extends BaseScreen {
     }
 
     @Override
-    public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
     }
 
     @Override
-    public void drawForeground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+    public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         Component txt = Component.translatable("ftblibrary.select_image.scanning");
         int width = theme.getFont().width(txt);
-        theme.getFont().draw(matrixStack, txt, (getScreen().getGuiScaledWidth() - width) / 2f, (getScreen().getGuiScaledHeight() - theme.getFontHeight()) / 2f, 0xFFFFFFFF);
+        graphics.drawString(theme.getFont(), txt, (getScreen().getGuiScaledWidth() - width) / 2, (getScreen().getGuiScaledHeight() - theme.getFontHeight()) / 2, 0xFFFFFFFF);
     }
 
     @Override

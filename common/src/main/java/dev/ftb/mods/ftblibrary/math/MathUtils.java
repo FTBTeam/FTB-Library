@@ -172,4 +172,8 @@ public class MathUtils {
 		return XZ.of(x, z);
 
 	}
+
+    public static long clamp(long f, long g, long h) {
+        return f < g ? g : Math.min(f, h);
+    }
 }

@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.config.ListConfig;
@@ -12,6 +11,7 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -49,8 +49,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 				for (var w : widgets) {
 					w.setWidth(width - 16);
 				}
-
-				scroll.setMaxValue(align(WidgetLayout.VERTICAL));
+				align(WidgetLayout.VERTICAL);
 			}
 		};
 
@@ -101,9 +100,9 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		EditConfigScreen.COLOR_BACKGROUND.draw(matrixStack, 0, 0, w, 20);
-		theme.drawString(matrixStack, getTitle(), 6, 6, Theme.SHADOW);
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		EditConfigScreen.COLOR_BACKGROUND.draw(graphics, 0, 0, w, 20);
+		theme.drawString(graphics, getTitle(), 6, 6, Theme.SHADOW);
 	}
 
 	@Override
@@ -124,14 +123,14 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		}
 
 		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 			var mouseOver = getMouseY() >= 20 && isMouseOver();
 
 			if (mouseOver) {
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
+				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
 			}
 
-			theme.drawString(matrixStack, getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+			theme.drawString(graphics, getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		}
 
@@ -166,7 +165,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		}
 
 		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 			var mouseOver = getMouseY() >= 20 && isMouseOver();
 
 			var textCol = list.getType().getColor(list.getValue().get(index)).mutable();
@@ -175,17 +174,17 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 			if (mouseOver) {
 				textCol.addBrightness(60);
 
-				Color4I.WHITE.withAlpha(33).draw(matrixStack, x, y, w, h);
+				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
 
 				if (getMouseX() >= x + w - 19) {
-					Color4I.WHITE.withAlpha(33).draw(matrixStack, x + w - 19, y, 19, h);
+					Color4I.WHITE.withAlpha(33).draw(graphics, x + w - 19, y, 19, h);
 				}
 			}
 
-			theme.drawString(matrixStack, getGui().getTheme().trimStringToWidth(list.getType().getStringForGUI(list.getValue().get(index)), width), x + 4, y + 2, textCol, 0);
+			theme.drawString(graphics, getGui().getTheme().trimStringToWidth(list.getType().getStringForGUI(list.getValue().get(index)), width), x + 4, y + 2, textCol, 0);
 
 			if (mouseOver) {
-				theme.drawString(matrixStack, "[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
+				theme.drawString(graphics, "[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
 			}
 
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);

@@ -1,18 +1,21 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.Optional;
 
 public class Widget implements IScreenWrapper {
 	protected final Panel parent;
@@ -149,7 +152,7 @@ public class Widget implements IScreenWrapper {
 		return isEnabled() && isMouseOver();
 	}
 
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
 	public boolean mousePressed(MouseButton button) {
@@ -164,6 +167,10 @@ public class Widget implements IScreenWrapper {
 	}
 
 	public boolean mouseScrolled(double scroll) {
+		return false;
+	}
+
+	public boolean mouseDragged(int button, double dragX, double dragY) {
 		return false;
 	}
 
@@ -211,9 +218,8 @@ public class Widget implements IScreenWrapper {
 	public void onClosed() {
 	}
 
-	@Nullable
-	public Object getIngredientUnderMouse() {
-		return null;
+	public Optional<PositionedIngredient> getIngredientUnderMouse() {
+		return Optional.empty();
 	}
 
 	public boolean isGhostIngredientTarget(Object ingredient) {

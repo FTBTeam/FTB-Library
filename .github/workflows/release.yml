@@ -6,40 +6,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Export release tag as environment variable
-        env:
-          TAG: ${{ github.event.release.tag_name }}
-        run: |
-          echo "TAG=${TAG}" >> $GITHUB_ENV
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 30 # Gets the last 30 commits so the changelog might work
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build --no-daemon
-      - name: Publish to Maven
-        uses: gradle/gradle-build-action@v2
-        env:
-          FTB_MAVEN_TOKEN: ${{ secrets.FTB_MAVEN_TOKEN}}
-          SAPS_TOKEN: ${{ secrets.SAPS_TOKEN }}
-        with:
-          arguments: publish --no-daemon
-      - name: Release to CurseForge
-        uses: gradle/gradle-build-action@v2
-        env:
-          GIT_COMMIT: ${{ github.event.after }}
-          GIT_PREVIOUS_COMMIT: ${{ github.event.before }}
-          CURSEFORGE_KEY: ${{ secrets.CURSEFORGE_KEY }}
-          CHANGELOG: ${{ github.event.release.body }}
-        with:
-          arguments: curseforge --no-daemon
+    if: |
+      !contains(github.event.head_commit.message, '[ciskip]')
+    uses: FTBTeam/mods-meta/.github/workflows/standard-release.yml@main
+    with:
+      curse-publish-task: curseforge
+    secrets:
+      ftb-maven-token: ${{ secrets.FTB_MAVEN_TOKEN }}
+      saps-token: ${{ secrets.SAPS_TOKEN }}
+      curse-token: ${{ secrets.CURSEFORGE_KEY }}

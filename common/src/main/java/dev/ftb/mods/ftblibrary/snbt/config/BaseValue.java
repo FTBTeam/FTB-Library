@@ -19,6 +19,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 	private T value;
 	boolean excluded;
 	BooleanSupplier enabled = SNBTUtils.ALWAYS_TRUE;
+	protected int displayOrder = 0;
 
 	List<String> comment = new ArrayList<>(0);
 
@@ -70,6 +71,11 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 
 	private int getOrder() {
 		return this instanceof SNBTConfig ? 1 : 0;
+	}
+
+	public BaseValue<T> withDisplayOrder(int order) {
+		this.displayOrder = order;
+		return this;
 	}
 
 	@Override

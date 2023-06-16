@@ -30,7 +30,13 @@ public class PanelScrollBar extends ScrollBar {
 
 	@Override
 	public void setMaxValue(double max) {
-		super.setMaxValue(max - (plane.isVertical ? panel.height : panel.width));
+		// max value is auto-calculated from panel dimensions; don't change it
+		throw new UnsupportedOperationException("attempt to set max value of panel scrollbar");
+	}
+
+	@Override
+	public double getMaxValue() {
+		return plane.isVertical ? panel.getContentHeight() - panel.getHeight() : panel.getContentWidth() - panel.getWidth();
 	}
 
 	@Override

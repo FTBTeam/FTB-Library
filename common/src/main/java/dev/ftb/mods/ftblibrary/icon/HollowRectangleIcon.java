@@ -2,10 +2,10 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * @author LatvianModder
@@ -42,8 +42,8 @@ public class HollowRectangleIcon extends Icon {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
-		GuiHelper.drawHollowRect(matrixStack, x, y, w, h, color, roundEdges);
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
+		GuiHelper.drawHollowRect(graphics, x, y, w, h, color, roundEdges);
 	}
 
 	@Override

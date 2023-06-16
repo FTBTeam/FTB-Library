@@ -10,9 +10,8 @@ public class SelectFluidScreenImpl {
 		var forgeStack = new net.minecraftforge.fluids.FluidStack(stack.getFluid(), (int) stack.getAmount(), stack.getTag());
 		TextureAtlasSprite stillTexture = FluidStackHooks.getStillTexture(forgeStack.getFluid());
 		if (stillTexture == null) return null;
-		try (final var c = stillTexture.contents()) {
-			return c.name();
-		}
+		// don't use try-with-resources here, it will cause a "image not allocated" crash
+		return stillTexture.contents().name();
 	}
 
 	public static int getColor(FluidStack stack) {
