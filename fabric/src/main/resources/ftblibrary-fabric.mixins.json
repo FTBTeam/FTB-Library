@@ -3,10 +3,10 @@
 	"package": "dev.ftb.mods.ftblibrary.core.mixin.fabric",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"KeyMappingAccessor",
 		"PlayerMixin"
 	],
 	"client": [
+		"KeyMappingAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
