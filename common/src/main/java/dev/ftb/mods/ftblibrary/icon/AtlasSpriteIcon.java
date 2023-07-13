@@ -31,6 +31,10 @@ public class AtlasSpriteIcon extends Icon {
 		this.color = color;
 	}
 
+	public ResourceLocation getId() {
+		return id;
+	}
+
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
