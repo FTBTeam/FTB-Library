@@ -2,6 +2,8 @@ package dev.ftb.mods.ftblibrary.integration.permissions;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 
+import java.util.Objects;
+
 public enum PermissionHelper {
     INSTANCE;
 
@@ -23,6 +25,6 @@ public enum PermissionHelper {
     }
 
     public PermissionProvider getProvider() {
-        return activeImpl;
+        return Objects.requireNonNullElse(activeImpl, FALLBACK_PROVIDER);
     }
 }
