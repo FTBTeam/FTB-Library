@@ -275,10 +275,12 @@ public class MultilineTextBox extends Widget {
         if (textField.cursor() < textField.value().length()) {
             // move the cursor right a character if we clicked the right-hand side of the character
             int w1 = font.width(lineSection);
-            String c = String.valueOf(textField.value().charAt(textField.cursor()));
-            int w2 = font.width(c) / 2;
-            if (x1 - w1 >= w2) {
-                textField.seekCursor(Whence.RELATIVE, 1);
+            if (x1 <= font.width(textField.value().substring(stringView.beginIndex(), stringView.endIndex()))) {
+                String c = String.valueOf(textField.value().charAt(textField.cursor()));
+                int w2 = font.width(c) / 2;
+                if (x1 - w1 >= w2) {
+                    textField.seekCursor(Whence.RELATIVE, 1);
+                }
             }
         }
     }
