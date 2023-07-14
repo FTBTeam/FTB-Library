@@ -157,6 +157,10 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 		return this;
 	}
 
+	public Icon getIcon() {
+		return getIcon(getValue());
+	}
+
 	public Icon getIcon(@Nullable T v) {
 		return icon;
 	}

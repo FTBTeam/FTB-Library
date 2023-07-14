@@ -132,6 +132,10 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		if (Files.exists(defaultPath)) {
 			if (!Files.exists(path)) {
 				try {
+					// it's possible for the destination directory to not exist yet
+					// in particular when creating a new world on Fabric
+					// https://github.com/FTBTeam/FTB-Mods-Issues/issues/867
+					Files.createDirectories(path.getParent());
 					Files.copy(defaultPath, path);
 				} catch (IOException ex) {
 					ex.printStackTrace();

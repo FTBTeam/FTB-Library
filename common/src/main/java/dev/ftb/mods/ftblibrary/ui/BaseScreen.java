@@ -240,7 +240,7 @@ public abstract class BaseScreen extends Panel {
 		return Optional.ofNullable(contextMenu);
 	}
 
-	private void openContextMenu(@Nullable ContextMenu newContextMenu) {
+	public void openContextMenu(@Nullable ContextMenu newContextMenu) {
 		int px = 0, py = 0;
 
 		if (contextMenu != null) {
