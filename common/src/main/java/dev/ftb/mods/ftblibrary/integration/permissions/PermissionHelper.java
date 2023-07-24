@@ -11,7 +11,7 @@ public enum PermissionHelper {
 
     private PermissionProvider activeImpl = null;
 
-    public PermissionHelper getInstance() {
+    public static PermissionHelper getInstance() {
         return INSTANCE;
     }
 
