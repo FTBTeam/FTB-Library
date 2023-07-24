@@ -10,5 +10,8 @@ public interface StageProvider {
 
     void remove(ServerPlayer player, String stage);
 
+    default void sync(ServerPlayer player) {
+    }
+
     String getName();
 }
