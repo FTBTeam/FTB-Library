@@ -106,7 +106,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
 	}
 
 	/**
-	 * Get, or create, a subgroup in this group. The subgroup will use the same on-save callback as this group.
+	 * Get, or create, a subgroup in this group.
 	 *
 	 * @param id unique id of the subgroup
 	 * @param displayOrder order in which groups are displayed in the GUI (higher numbers come after)
@@ -116,14 +116,14 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
 		var index = id.indexOf('.');
 
 		if (index == -1) {
-			return subgroups.computeIfAbsent(id, k -> new ConfigGroup(id, this, savedCallback, displayOrder));
+			return subgroups.computeIfAbsent(id, k -> new ConfigGroup(id, this, null, displayOrder));
 		} else {
 			return getOrCreateSubgroup(id.substring(0, index), displayOrder).getOrCreateSubgroup(id.substring(index + 1), displayOrder);
 		}
 	}
 
 	/**
-	 * Get, or create, a subgroup in this group. The subgroup will use the same on-save callback as this group.
+	 * Get, or create, a subgroup in this group.
 	 *
 	 * @param id unique id of the subgroup
 	 * @return the subgroup, which may have just been created
