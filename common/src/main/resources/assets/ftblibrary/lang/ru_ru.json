@@ -46,6 +46,7 @@
 	"ftblibrary.select_item.caps": "Править Capabilities",
 	"ftblibrary.select_item.display_name": "Показывать названия",
 	"ftblibrary.select_image.scanning": "Сканирование изображений: это может занять несколько секунд...",
+	"ftblibrary.select_image.rescan": "Повторное сканирование изображений",
 	"config.group.value": "Значение",
 	"sidebar_button.ftblibrary.toggle.gamemode": "Переключить игровой режим",
 	"sidebar_button.ftblibrary.toggle.gamemode.tooltip": "Переключает режим между Выживанием и Творческим.",
