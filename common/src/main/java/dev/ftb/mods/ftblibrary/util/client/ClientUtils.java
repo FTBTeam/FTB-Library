@@ -2,6 +2,8 @@ package dev.ftb.mods.ftblibrary.util.client;
 
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientChatEvent;
+import dev.architectury.fluid.FluidStack;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
@@ -151,6 +153,16 @@ public class ClientUtils {
 
 	public static HolderLookup.Provider registryAccess() {
 		return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
+	}
+
+	@ExpectPlatform
+	public static ResourceLocation getStillTexture(FluidStack stack) {
+		throw new AssertionError();
+	}
+
+	@ExpectPlatform
+	public static int getFluidColor(FluidStack stack) {
+		throw new AssertionError();
 	}
 
 }
