@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.nbt.*;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +19,18 @@ public class SNBT {
 
 	public static SNBTCompoundTag readLines(List<String> lines) {
 		return SNBTParser.read(lines);
+	}
+
+	public static SNBTCompoundTag tryRead(Path path) throws IOException {
+		return readLines(Files.readAllLines(path, StandardCharsets.UTF_8));
+	}
+
+	public static void tryWrite(Path path, CompoundTag tag) throws IOException {
+		if (Files.notExists(path.getParent())) {
+			Files.createDirectories(path.getParent());
+		}
+
+		Files.write(path, writeLines(tag));
 	}
 
 	@Nullable

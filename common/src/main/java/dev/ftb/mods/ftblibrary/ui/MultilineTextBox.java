@@ -103,6 +103,26 @@ public class MultilineTextBox extends Widget {
         return textField.cursor();
     }
 
+    public void selectCurrentLine() {
+        MultilineTextField.StringView view = textField.getLineView(textField.getLineAtCursor());
+        textField.setSelecting(false);
+        textField.seekCursor(Whence.ABSOLUTE, view.beginIndex());
+        textField.setSelecting(true);
+        textField.seekCursor(Whence.ABSOLUTE, view.endIndex());
+    }
+
+    public StringExtents getLineView() {
+        return StringExtents.of(textField.getLineView(textField.getLineAtCursor()));
+    }
+
+    public StringExtents getLineView(int line) {
+        return StringExtents.of(textField.getLineView(line));
+    }
+
+    public StringExtents getSelected() {
+        return StringExtents.of(textField.getSelected());
+    }
+
     @Override
     public void tick() {
         ++frame;
@@ -300,5 +320,11 @@ public class MultilineTextBox extends Widget {
 
     private int innerPadding() {
         return 4;
+    }
+
+    public record StringExtents(int start, int end) {
+        public static StringExtents of (MultilineTextField.StringView view) {
+            return new StringExtents(view.beginIndex(), view.endIndex());
+        }
     }
 }
