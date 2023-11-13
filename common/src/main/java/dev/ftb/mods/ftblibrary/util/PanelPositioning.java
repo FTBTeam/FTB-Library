@@ -14,8 +14,8 @@ public enum PanelPositioning {
 
     public static final NameMap<PanelPositioning> NAME_MAP = NameMap.of(TOP_RIGHT, values()).baseNameKey("ftbquests.panel.position").create();
 
-    public final int posX;
-    public final int posY;
+    private final int posX;
+    private final int posY;
 
     PanelPositioning(int x, int y) {
         posX = x;
