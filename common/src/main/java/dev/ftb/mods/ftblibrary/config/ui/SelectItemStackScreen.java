@@ -274,7 +274,9 @@ public class SelectItemStackScreen extends BaseScreen {
 		var button = new ItemStackButton(panel, ItemStack.EMPTY);
 
 		if (config.allowEmptyItem() && button.shouldAdd(search, mod)) {
-			widgets.add(new ItemStackButton(panel, ItemStack.EMPTY));
+			ItemStackButton btn1 = new ItemStackButton(panel, ItemStack.EMPTY);
+			btn1.setPos(1, 1);
+			widgets.add(btn1);
 		}
 
 		for (var stack : items) {
