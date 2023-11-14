@@ -1,7 +1,9 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
+import com.google.common.base.Suppliers;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
+import dev.ftb.mods.ftblibrary.util.SetOfItemStack;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -12,10 +14,8 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 
 public interface ItemSearchMode {
 	/**
@@ -34,7 +34,7 @@ public interface ItemSearchMode {
 	Collection<ItemStack> getAllItems();
 
 	ItemSearchMode ALL_ITEMS = new ItemSearchMode() {
-		private List<ItemStack> allItemsCache = null;
+		private final Supplier<Collection<ItemStack>> supplier = Suppliers.memoize(this::computeStacks);
 
 		@Override
 		public Icon getIcon() {
@@ -48,13 +48,14 @@ public interface ItemSearchMode {
 
 		@Override
 		public Collection<ItemStack> getAllItems() {
+			return supplier.get();
+		}
+
+		private Set<ItemStack> computeStacks() {
 			CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false, ClientUtils.registryAccess());
-			if (allItemsCache == null) {
-				allItemsCache = CreativeModeTabs.allTabs().stream()
-						.flatMap(tab -> tab.getDisplayItems().stream())
-						.toList();
-			}
-			return allItemsCache;
+			return new SetOfItemStack(CreativeModeTabs.allTabs().stream()
+					.flatMap(tab -> tab.getDisplayItems().stream())
+					.toList());
 		}
 	};
 
