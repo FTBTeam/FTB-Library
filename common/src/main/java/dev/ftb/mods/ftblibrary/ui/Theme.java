@@ -38,21 +38,33 @@ public class Theme {
 	private static final Color4I CONTENT_COLOR_DARK = Color4I.rgb(4210752);
 
 	public static final ImageIcon BACKGROUND_SQUARES = (ImageIcon) Icon.getIcon(FTBLibrary.MOD_ID + ":textures/gui/background_squares.png");
-	private static final ImageIcon TEXTURE_BEACON = (ImageIcon) Icon.getIcon("textures/gui/container/beacon.png");
-	private static final ImageIcon TEXTURE_WIDGETS = (ImageIcon) Icon.getIcon("textures/gui/widgets.png");
-	private static final ImageIcon TEXTURE_RECIPE_BOOK = (ImageIcon) Icon.getIcon("textures/gui/recipe_book.png");
-	private static final ImageIcon TEXTURE_ENCHANTING_TABLE = (ImageIcon) Icon.getIcon("textures/gui/container/enchanting_table.png");
 
-	private static final Icon GUI = new PartIcon(TEXTURE_RECIPE_BOOK, 82, 208, 32, 32, 8);
+	private static final ImageIcon TEXTURE_BEACON = (ImageIcon) Icon.getIcon("textures/gui/container/beacon.png");
+	private static final ImageIcon TEXTURE_RECIPE_BOOK = (ImageIcon) Icon.getIcon("textures/gui/recipe_book.png");
+
+	private static final Icon GUI = new PartIcon("ftblibrary:textures/gui/background.png",
+			0, 0, 16, 16, 4, 16, 16);
+
 	private static final Icon GUI_MOUSE_OVER = GUI.withTint(Color4I.rgb(0xAFB6DA));
 
-	private static final Icon BUTTON = new PartIcon(TEXTURE_WIDGETS, 0, 66, 200, 20, 4);
-	private static final Icon BUTTON_MOUSE_OVER = new PartIcon(TEXTURE_WIDGETS, 0, 86, 200, 20, 4);
-	private static final Icon BUTTON_DISABLED = new PartIcon(TEXTURE_WIDGETS, 0, 46, 200, 20, 4);
+	private static final Icon BUTTON = PartIcon.wholeTexture("textures/gui/sprites/widget/button.png",
+			200, 20, 4);
+	private static final Icon BUTTON_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/widget/button_highlighted.png",
+			200, 20, 4);
+	private static final Icon BUTTON_DISABLED = PartIcon.wholeTexture("textures/gui/sprites/widget/button_disabled.png",
+			200, 20, 4);
 
-	private static final Icon WIDGET = new PartIcon(TEXTURE_BEACON, 0, 219, 22, 22, 6);
-	private static final Icon WIDGET_MOUSE_OVER = new PartIcon(TEXTURE_BEACON, 66, 219, 22, 22, 6);
-	private static final Icon WIDGET_DISABLED = new PartIcon(TEXTURE_BEACON, 44, 219, 22, 22, 6);
+	private static final Icon WIDGET = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button.png",
+			22, 22, 4);
+	private static final Icon WIDGET_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button_highlighted.png",
+			22, 22, 4);
+	private static final Icon WIDGET_DISABLED = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button_disabled.png",
+			22, 22, 4);
+
+	private static final Icon SCROLLER = PartIcon.wholeTexture("textures/gui/sprites/widget/slider_handle.png",
+			8, 20, 2);
+	private static final Icon SCROLLER_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/widget/slider_handle_highlighted.png",
+			8, 20, 2);
 
 	private static final Icon SLOT = new PartIcon(TEXTURE_BEACON, 35, 136, 18, 18, 3);
 	private static final Icon SLOT_MOUSE_OVER = SLOT.combineWith(Color4I.WHITE.withAlpha(33));
@@ -60,7 +72,8 @@ public class Theme {
 	private static final Icon SCROLL_BAR_BG = SLOT;
 	private static final Icon SCROLL_BAR_BG_DISABLED = SCROLL_BAR_BG.withTint(Color4I.BLACK.withAlpha(100));
 
-	private static final Icon TEXT_BOX = new PartIcon(TEXTURE_ENCHANTING_TABLE, 0, 185, 108, 19, 6);
+	private static final Icon TEXT_BOX = PartIcon.wholeTexture("textures/gui/sprites/container/enchanting_table/enchantment_slot_disabled.png",
+			108, 19, 4);
 
 	private static final Icon TAB_H_UNSELECTED = TEXTURE_RECIPE_BOOK.withUV(150, 2, 35, 26, 256, 256);
 	private static final Icon TAB_H_SELECTED = TEXTURE_RECIPE_BOOK.withUV(188, 2, 35, 26, 256, 256);
@@ -100,7 +113,7 @@ public class Theme {
 	}
 
 	public void drawScrollBar(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean vertical) {
-		(type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : WIDGET).draw(graphics, x + 1, y + 1, w - 2, h - 2);
+		(type == WidgetType.MOUSE_OVER ? SCROLLER_MOUSE_OVER : SCROLLER).draw(graphics, x + 1, y + 1, w - 2, h - 2);
 	}
 
 	public void drawTextBox(GuiGraphics graphics, int x, int y, int w, int h) {

@@ -10,21 +10,33 @@ import net.minecraft.client.gui.GuiGraphics;
 public class PartIcon extends IconWithParent {
 	public final Icon parent;
 	public int textureWidth, textureHeight;
-	public int posX, posY, corner, width, height;
+	public int textureU, textureV, corner, subWidth, subHeight;
 
 	private Icon all, middleU, middleD, middleL, middleR, cornerNN, cornerPN, cornerNP, cornerPP, center;
 
-	public PartIcon(Icon icon, int x, int y, int w, int h, int c) {
+	public static PartIcon wholeTexture(String textureId, int textureWidth, int textureHeight, int corner) {
+		return new PartIcon(textureId, 0, 0, textureWidth, textureHeight, corner, textureWidth, textureHeight);
+	}
+
+	public PartIcon(Icon icon, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {
 		super(icon);
 		parent = icon;
-		textureWidth = 256;
-		textureHeight = 256;
-		posX = x;
-		posY = y;
-		width = w;
-		height = h;
-		corner = c;
+		this.textureWidth = textureWidth;
+		this.textureHeight = textureHeight;
+		this.textureU = textureU;
+		this.textureV = textureV;
+		this.subWidth = subWidth;
+		this.subHeight = subHeight;
+		this.corner = corner;
 		updateParts();
+	}
+
+	public PartIcon(String iconId, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {
+		this(Icon.getIcon(iconId), textureU, textureV, subWidth, subHeight, corner, textureWidth, textureHeight);
+	}
+
+	public PartIcon(Icon icon, int x, int y, int w, int h, int c) {
+		this(icon, x, y, w, h, c, 256, 256);
 	}
 
 	public PartIcon(Icon icon) {
@@ -38,31 +50,31 @@ public class PartIcon extends IconWithParent {
 	}
 
 	private Icon get(int x, int y, int w, int h) {
-		return parent.withUV(posX + x, posY + y, w, h, textureWidth, textureHeight);
+		return parent.withUV(textureU + x, textureV + y, w, h, textureWidth, textureHeight);
 	}
 
 	public void updateParts() {
-		var mw = width - corner * 2;
-		var mh = height - corner * 2;
-		all = get(0, 0, width, height);
+		var mw = subWidth - corner * 2;
+		var mh = subHeight - corner * 2;
+		all = get(0, 0, subWidth, subHeight);
 		middleU = get(corner, 0, mw, corner);
-		middleD = get(corner, height - corner, mw, corner);
+		middleD = get(corner, subHeight - corner, mw, corner);
 		middleL = get(0, corner, corner, mh);
-		middleR = get(width - corner, corner, corner, mh);
+		middleR = get(subWidth - corner, corner, corner, mh);
 		cornerNN = get(0, 0, corner, corner);
-		cornerPN = get(width - corner, 0, corner, corner);
-		cornerNP = get(0, height - corner, corner, corner);
-		cornerPP = get(width - corner, height - corner, corner, corner);
+		cornerPN = get(subWidth - corner, 0, corner, corner);
+		cornerNP = get(0, subHeight - corner, corner, corner);
+		cornerPP = get(subWidth - corner, subHeight - corner, corner, corner);
 		center = get(corner, corner, mw, mh);
 	}
 
 	@Override
 	public PartIcon copy() {
 		var icon = new PartIcon(parent.copy());
-		icon.posX = posX;
-		icon.posY = posY;
-		icon.width = width;
-		icon.height = height;
+		icon.textureU = textureU;
+		icon.textureV = textureV;
+		icon.subWidth = subWidth;
+		icon.subHeight = subHeight;
 		icon.corner = corner;
 		icon.textureWidth = textureWidth;
 		icon.textureHeight = textureHeight;
@@ -72,10 +84,10 @@ public class PartIcon extends IconWithParent {
 	@Override
 	protected void setProperties(IconProperties properties) {
 		super.setProperties(properties);
-		posX = properties.getInt("x", posX);
-		posY = properties.getInt("y", posY);
-		width = properties.getInt("width", height);
-		height = properties.getInt("height", height);
+		textureU = properties.getInt("x", textureU);
+		textureV = properties.getInt("y", textureV);
+		subWidth = properties.getInt("width", subHeight);
+		subHeight = properties.getInt("height", subHeight);
 		corner = properties.getInt("corner", corner);
 		textureWidth = properties.getInt("texture_w", textureWidth);
 		textureHeight = properties.getInt("texture_h", textureHeight);
@@ -86,10 +98,10 @@ public class PartIcon extends IconWithParent {
 			var s1 = s.split(",", 4);
 
 			if (s1.length == 4) {
-				posX = Integer.parseInt(s1[0]);
-				posY = Integer.parseInt(s1[1]);
-				width = Integer.parseInt(s1[2]);
-				height = Integer.parseInt(s1[3]);
+				textureU = Integer.parseInt(s1[0]);
+				textureV = Integer.parseInt(s1[1]);
+				subWidth = Integer.parseInt(s1[2]);
+				subHeight = Integer.parseInt(s1[3]);
 			}
 		}
 
@@ -99,7 +111,7 @@ public class PartIcon extends IconWithParent {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-		if (w == width && h == height) {
+		if (w == subWidth && h == subHeight) {
 			all.draw(graphics, x, y, w, h);
 			return;
 		}
@@ -126,10 +138,10 @@ public class PartIcon extends IconWithParent {
 		var json = new JsonObject();
 		json.addProperty("id", "part");
 		json.add("parent", parent.getJson());
-		json.addProperty("x", posX);
-		json.addProperty("y", posY);
-		json.addProperty("width", width);
-		json.addProperty("height", height);
+		json.addProperty("x", textureU);
+		json.addProperty("y", textureV);
+		json.addProperty("width", subWidth);
+		json.addProperty("height", subHeight);
 		json.addProperty("corner", corner);
 		json.addProperty("texture_width", textureWidth);
 		json.addProperty("texture_height", textureHeight);

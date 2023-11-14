@@ -67,10 +67,10 @@ public abstract class Icon implements Drawable {
 					}
 					case "part": {
 						var partIcon = new PartIcon(getIcon(o.get("parent")));
-						partIcon.posX = o.get("x").getAsInt();
-						partIcon.posY = o.get("y").getAsInt();
-						partIcon.width = o.get("width").getAsInt();
-						partIcon.height = o.get("height").getAsInt();
+						partIcon.textureU = o.get("x").getAsInt();
+						partIcon.textureV = o.get("y").getAsInt();
+						partIcon.subWidth = o.get("width").getAsInt();
+						partIcon.subHeight = o.get("height").getAsInt();
 						partIcon.corner = o.get("corner").getAsInt();
 						partIcon.textureWidth = o.get("texture_width").getAsInt();
 						partIcon.textureHeight = o.get("texture_height").getAsInt();
