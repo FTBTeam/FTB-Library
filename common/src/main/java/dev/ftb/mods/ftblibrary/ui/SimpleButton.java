@@ -5,9 +5,7 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-/**
- * @author LatvianModder
- */
+
 public class SimpleButton extends Button {
 	public interface Callback {
 		void onClicked(SimpleButton widget, MouseButton button);

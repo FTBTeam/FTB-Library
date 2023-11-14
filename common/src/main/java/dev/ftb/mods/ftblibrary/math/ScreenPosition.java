@@ -2,9 +2,7 @@ package dev.ftb.mods.ftblibrary.math;
 
 import net.minecraft.util.StringRepresentable;
 
-/**
- * @author LatvianModder
- */
+
 public enum ScreenPosition implements StringRepresentable {
 	CENTER("center", 0, 0),
 	TOP("top", 0, -1),

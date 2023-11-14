@@ -13,9 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 
-/**
- * @author LatvianModder
- */
+
 public class LoadingScreen extends BaseScreen {
 	private boolean startedLoading = false;
 	private boolean isLoading = true;

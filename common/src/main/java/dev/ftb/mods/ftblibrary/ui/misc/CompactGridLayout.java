@@ -3,9 +3,7 @@ package dev.ftb.mods.ftblibrary.ui.misc;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
 
-/**
- * @author LatvianModder
- */
+
 public class CompactGridLayout implements WidgetLayout {
 	private static final int[][] LAYOUTS = {
 			{1},

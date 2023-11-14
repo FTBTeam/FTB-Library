@@ -24,9 +24,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
+
 public class Color4I extends Icon {
 	private static final Color4I[] BLACK_A = new Color4I[256];
 	private static final Color4I[] WHITE_A = new Color4I[256];

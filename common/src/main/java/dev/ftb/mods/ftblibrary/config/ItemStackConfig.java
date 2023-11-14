@@ -6,9 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
+
 public class ItemStackConfig extends ConfigValue<ItemStack> {
 	private final boolean singleItemOnly;
 	private final boolean allowEmpty;

@@ -1,8 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-/**
- * @author LatvianModder
- */
+
 public class BlankPanel extends Panel {
 	private final String id;
 

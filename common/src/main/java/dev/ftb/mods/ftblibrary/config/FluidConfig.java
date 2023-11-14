@@ -5,9 +5,7 @@ import dev.ftb.mods.ftblibrary.config.ui.SelectFluidScreen;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
 
-/**
- * @author LatvianModder
- */
+
 public class FluidConfig extends ConfigValue<FluidStack> {
 	private final boolean allowEmpty;
 

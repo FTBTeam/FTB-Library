@@ -7,9 +7,7 @@ import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
+
 public class MutableColor4I extends Color4I {
 	public static final Color4I TEMP = new MutableColor4I(255, 255, 255, 255);
 

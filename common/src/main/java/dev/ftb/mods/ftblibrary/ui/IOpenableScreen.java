@@ -2,9 +2,7 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 
-/**
- * @author LatvianModder
- */
+
 public interface IOpenableScreen extends Runnable {
 	void openGui();
 

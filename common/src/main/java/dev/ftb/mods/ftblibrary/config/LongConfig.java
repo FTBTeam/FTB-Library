@@ -6,9 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
+
 public class LongConfig extends NumberConfig<Long> {
 	public LongConfig(long mn, long mx) {
 		super(mn, mx);

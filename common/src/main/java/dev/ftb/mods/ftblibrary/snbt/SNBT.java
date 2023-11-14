@@ -11,9 +11,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class SNBT {
 	private static boolean shouldSortKeysOnWrite = false;
 

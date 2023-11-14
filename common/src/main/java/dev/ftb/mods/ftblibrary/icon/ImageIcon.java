@@ -17,9 +17,7 @@ import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
+
 public class ImageIcon extends Icon {
 	public static final ResourceLocation MISSING_IMAGE = new ResourceLocation(FTBLibrary.MOD_ID, "textures/gui/missing_image.png");
 

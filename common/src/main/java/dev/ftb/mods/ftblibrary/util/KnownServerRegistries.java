@@ -2,6 +2,8 @@ package dev.ftb.mods.ftblibrary.util;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.core.DisplayInfoFTBL;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -61,11 +63,14 @@ public class KnownServerRegistries {
 		List<AdvancementInfo> advancementList = new ArrayList<>();
 
 		for (var advancement : server.getAdvancements().getAllAdvancements()) {
-			if (advancement.getDisplay() instanceof DisplayInfoFTBL) {
+			Advancement value = advancement.value();
+			Optional<DisplayInfo> displayOpt = value.display();
+			if (displayOpt.isPresent() && value.display().get() instanceof DisplayInfoFTBL) {
+				var display = displayOpt.get();
 				var info = new AdvancementInfo();
-				info.id = advancement.getId();
-				info.name = advancement.getDisplay().getTitle();
-				info.icon = ((DisplayInfoFTBL) advancement.getDisplay()).getIconStackFTBL();
+				info.id = advancement.id();
+				info.name = display.getTitle();
+				info.icon = ((DisplayInfoFTBL) display).getIconStackFTBL();
 				advancementList.add(info);
 			}
 		}

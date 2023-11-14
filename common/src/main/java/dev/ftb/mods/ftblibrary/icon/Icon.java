@@ -12,9 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public abstract class Icon implements Drawable {
 	public static Color4I empty() {
 		return Color4I.EMPTY_ICON;

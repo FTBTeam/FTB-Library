@@ -1,8 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-/**
- * @author LatvianModder
- */
+
 public class MismatchingParentPanelException extends IllegalArgumentException {
 	public final Panel panel;
 	public final Widget widget;

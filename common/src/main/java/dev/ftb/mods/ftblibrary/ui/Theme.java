@@ -21,9 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class Theme {
 	public static final Theme DEFAULT = new Theme();
 	public static boolean renderDebugBoxes = false;

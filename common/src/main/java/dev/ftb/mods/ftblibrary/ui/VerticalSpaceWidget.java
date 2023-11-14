@@ -1,8 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-/**
- * @author LatvianModder
- */
+
 public class VerticalSpaceWidget extends Widget {
 	public VerticalSpaceWidget(Panel p, int h) {
 		super(p);

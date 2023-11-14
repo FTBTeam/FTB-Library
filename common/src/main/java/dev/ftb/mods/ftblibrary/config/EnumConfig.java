@@ -12,9 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
+
 public class EnumConfig<E> extends ConfigWithVariants<E> {
 	public final NameMap<E> nameMap;
 

@@ -11,9 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * @author LatvianModder
- */
+
 public class MenuScreenWrapper<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements IScreenWrapper {
 	private final BaseScreen wrappedGui;
 	private boolean drawSlots = true;
@@ -65,9 +63,9 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	}
 
 	@Override
-	public boolean mouseScrolled(double x, double y, double scroll) {
+	public boolean mouseScrolled(double x, double y, double scroll, double direction) {
 		wrappedGui.mouseScrolled(scroll);
-		return super.mouseScrolled(x, y, scroll);
+		return super.mouseScrolled(x, y, scroll, direction);
 	}
 
 	@Override
@@ -107,7 +105,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	protected void renderBg(GuiGraphics graphics, float f, int mx, int my) {
 		var theme = wrappedGui.getTheme();
 		GuiHelper.setupDrawing();
-		renderBackground(graphics);
+		renderBackground(graphics, mx, my, f);
 		GuiHelper.setupDrawing();
 		wrappedGui.draw(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
@@ -157,15 +155,15 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics graphics) {
+	public void renderBackground(GuiGraphics graphics, int x, int y, float partialTicks) {
 		if (wrappedGui.drawDefaultBackground(graphics)) {
-			super.renderBackground(graphics);
+			super.renderBackground(graphics, x, y, partialTicks);
 		}
 	}
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(graphics);
+		renderBackground(graphics, mouseX, mouseY, partialTicks);
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
 	}

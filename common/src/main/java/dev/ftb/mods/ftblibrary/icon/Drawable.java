@@ -4,9 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 
-/**
- * @author LatvianModder
- */
+
 public interface Drawable {
 	@Environment(EnvType.CLIENT)
 	void draw(GuiGraphics graphics, int x, int y, int w, int h);

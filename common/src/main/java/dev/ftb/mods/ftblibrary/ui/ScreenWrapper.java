@@ -9,9 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * @author LatvianModder
- */
+
 public class ScreenWrapper extends Screen implements IScreenWrapper {
 	private final BaseScreen wrappedGui;
 	private final TooltipList tooltipList = new TooltipList();
@@ -53,8 +51,8 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	}
 
 	@Override
-	public boolean mouseScrolled(double x, double y, double scroll) {
-		return wrappedGui.mouseScrolled(scroll) || super.mouseScrolled(x, y, scroll);
+	public boolean mouseScrolled(double x, double y, double scroll, double direction) {
+		return wrappedGui.mouseScrolled(scroll) || super.mouseScrolled(x, y, scroll, direction);
 	}
 
 	@Override
@@ -106,7 +104,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
-		renderBackground(graphics);
+		renderBackground(graphics, mouseX, mouseY, partialTicks);
 		GuiHelper.setupDrawing();
 		var x = wrappedGui.getX();
 		var y = wrappedGui.getY();
@@ -138,9 +136,9 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics matrixStack) {
+	public void renderBackground(GuiGraphics matrixStack, int x, int y, float partialTicks) {
 		if (wrappedGui.drawDefaultBackground(matrixStack)) {
-			super.renderBackground(matrixStack);
+			super.renderBackground(matrixStack, x, y, partialTicks);
 		}
 	}
 

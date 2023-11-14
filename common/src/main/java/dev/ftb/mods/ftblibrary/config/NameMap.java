@@ -11,9 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
-/**
- * @author LatvianModder
- */
+
 public final class NameMap<E> implements Iterable<E> {
 	public static final class Builder<T> {
 		private final T defaultValue;

@@ -14,9 +14,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-/**
- * @author LatvianModder
- */
+
 public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScreen {
 	private final ListConfig<E, CV> list;
 	private final ConfigCallback callback;

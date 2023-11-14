@@ -1,8 +1,6 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-/**
- * @author LatvianModder
- */
+
 public class SidebarGuiButton {
 	public final int buttonX, buttonY;
 	public final SidebarButton button;

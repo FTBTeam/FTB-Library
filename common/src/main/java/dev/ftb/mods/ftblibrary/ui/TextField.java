@@ -12,9 +12,7 @@ import net.minecraft.util.Mth;
 
 import java.util.Optional;
 
-/**
- * @author LatvianModder
- */
+
 public class TextField extends Widget {
 	public Component component = Component.empty();
 	private FormattedText[] formattedText = new FormattedText[0];

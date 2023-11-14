@@ -13,7 +13,7 @@ public class EditNBTPacket extends BaseS2CMessage {
 
 	public EditNBTPacket(FriendlyByteBuf buf) {
 		info = buf.readNbt();
-		tag = buf.readAnySizeNbt();
+		tag = buf.readNbt();
 	}
 
 	public EditNBTPacket(CompoundTag i, CompoundTag t) {

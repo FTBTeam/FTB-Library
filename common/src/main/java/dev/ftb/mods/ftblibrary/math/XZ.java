@@ -5,9 +5,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
-/**
- * @author LatvianModder
- */
+
 public record XZ(int x, int z) {
 	public static XZ of(int x, int z) {
 		return new XZ(x, z);

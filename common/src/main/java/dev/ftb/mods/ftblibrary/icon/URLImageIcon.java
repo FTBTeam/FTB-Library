@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.util.UUIDTypeAdapter;
+import com.mojang.util.UndashedUuid;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,9 +15,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-/**
- * @author LatvianModder
- */
+
 public class URLImageIcon extends ImageIcon {
 	public final URI uri;
 	private final String url;
@@ -29,7 +27,7 @@ public class URLImageIcon extends ImageIcon {
 	}
 
 	public URLImageIcon(URI uri) {
-		this(new ResourceLocation("remote_image:" + UUIDTypeAdapter.fromUUID(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
+		this(new ResourceLocation("remote_image:" + UndashedUuid.toString(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
 	}
 
 	@Override

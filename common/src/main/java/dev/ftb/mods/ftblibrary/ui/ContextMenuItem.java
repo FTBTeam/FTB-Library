@@ -7,9 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
+
 public class ContextMenuItem implements Comparable<ContextMenuItem> {
 	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(Component.empty(), Icon.empty(), () -> {
 	}) {
