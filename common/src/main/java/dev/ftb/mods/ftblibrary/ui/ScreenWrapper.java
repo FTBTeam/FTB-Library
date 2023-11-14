@@ -51,8 +51,8 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	}
 
 	@Override
-	public boolean mouseScrolled(double x, double y, double scroll, double direction) {
-		return wrappedGui.mouseScrolled(scroll) || super.mouseScrolled(x, y, scroll, direction);
+	public boolean mouseScrolled(double x, double y, double dirX, double dirY) {
+		return wrappedGui.mouseScrolled(dirY) || super.mouseScrolled(x, y, dirX, dirY);
 	}
 
 	@Override

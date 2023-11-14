@@ -63,9 +63,9 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	}
 
 	@Override
-	public boolean mouseScrolled(double x, double y, double scroll, double direction) {
-		wrappedGui.mouseScrolled(scroll);
-		return super.mouseScrolled(x, y, scroll, direction);
+	public boolean mouseScrolled(double x, double y, double dirX, double dirY) {
+		wrappedGui.mouseScrolled(dirY);
+		return super.mouseScrolled(x, y, dirX, dirY);
 	}
 
 	@Override
