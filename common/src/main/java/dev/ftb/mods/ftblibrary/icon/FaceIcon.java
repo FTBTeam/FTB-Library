@@ -37,22 +37,18 @@ public class FaceIcon extends Icon {
 		head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
 		hat = Icon.empty();
 
-		try {
-			PlayerSkin playerSkin = Minecraft.getInstance().getSkinManager().getOrLoad(profile).get();
-			var texture = playerSkin.texture();
-			skin = new ImageIcon(texture);
-			head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
-			hat = skin.withUV(40F, 8F, 8F, 8F, 64F, 64F);
-		} catch (Exception ex) {
-			LOGGER.warn("Failed to load skin for " + profile.getName());
-		}
-//		playerSkin.registerSkins(profile, (type, resourceLocation, minecraftProfileTexture) -> {
-//			if (type == MinecraftProfileTexture.Type.SKIN) {
-//				skin = new ImageIcon(resourceLocation);
-//				head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
-//				hat = skin.withUV(40F, 8F, 8F, 8F, 64F, 64F);
-//			}
-//		}, true);
+		Minecraft.getInstance().getSkinManager().getOrLoad(profile).whenComplete((playerSkin, throwable) -> {
+			if (playerSkin != null) {
+				var texture = playerSkin.texture();
+				skin = new ImageIcon(texture);
+				head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
+				hat = skin.withUV(40F, 8F, 8F, 8F, 64F, 64F);
+			} else if (throwable != null) {
+				LOGGER.warn("Failed to load skin for {}: {} ", profile.getName(), throwable.getMessage());
+			} else {
+				LOGGER.warn("Failed to load skin for {} ?", profile.getName());
+			}
+		});
 	}
 
 	@Override
