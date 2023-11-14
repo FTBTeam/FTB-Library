@@ -6,9 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author LatvianModder
- */
+
 public class IconProperties {
 	private final Map<String, String> map = new LinkedHashMap<>();
 

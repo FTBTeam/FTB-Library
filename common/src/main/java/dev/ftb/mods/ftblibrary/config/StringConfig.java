@@ -9,9 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-/**
- * @author LatvianModder
- */
+
 public class StringConfig extends ConfigFromString<String> {
 	public static final Color4I COLOR = Color4I.rgb(0xFFAA49);
 

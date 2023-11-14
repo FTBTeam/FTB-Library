@@ -2,9 +2,7 @@ package dev.ftb.mods.ftblibrary.ui.input;
 
 import org.lwjgl.glfw.GLFW;
 
-/**
- * @author LatvianModder
- */
+
 public class KeyModifiers {
 	public static final KeyModifiers NONE = new KeyModifiers(0);
 

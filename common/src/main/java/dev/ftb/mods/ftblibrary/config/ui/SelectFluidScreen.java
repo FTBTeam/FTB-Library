@@ -20,9 +20,7 @@ import net.minecraft.world.level.material.Fluids;
 
 import java.util.Optional;
 
-/**
- * @author LatvianModder
- */
+
 public class SelectFluidScreen extends ButtonListBaseScreen {
 	private final FluidConfig config;
 	private final ConfigCallback callback;

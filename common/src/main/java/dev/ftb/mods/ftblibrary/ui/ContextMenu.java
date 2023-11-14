@@ -8,9 +8,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class ContextMenu extends Panel {
 	private static final int MARGIN = 3;
 

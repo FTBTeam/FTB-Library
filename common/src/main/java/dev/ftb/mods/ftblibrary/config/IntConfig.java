@@ -6,9 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
+
 public class IntConfig extends NumberConfig<Integer> {
 	public IntConfig(int mn, int mx) {
 		super(mn, mx);

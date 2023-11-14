@@ -33,9 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author LatvianModder
- */
+
 public class SelectItemStackScreen extends BaseScreen {
 
 	public static final ExecutorService ITEM_SEARCH = Executors.newSingleThreadExecutor(task -> {

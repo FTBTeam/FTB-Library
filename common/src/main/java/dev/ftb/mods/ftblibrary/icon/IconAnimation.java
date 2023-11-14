@@ -11,9 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class IconAnimation extends Icon {
 	public static Icon fromList(List<Icon> icons, boolean includeEmpty) {
 		List<Icon> list = new ArrayList<>(icons.size());

@@ -8,9 +8,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.Objects;
 
-/**
- * @author LatvianModder
- */
+
 public class ChunkDimPos implements Comparable<ChunkDimPos> {
 	private final ResourceKey<Level> dimension;
 	private final ChunkPos chunkPos;

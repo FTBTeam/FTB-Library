@@ -6,9 +6,7 @@ import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
+
 public class BooleanConfig extends ConfigWithVariants<Boolean> {
 	public static final Component TRUE_TEXT = Component.literal("True");
 	public static final Component FALSE_TEXT = Component.literal("False");

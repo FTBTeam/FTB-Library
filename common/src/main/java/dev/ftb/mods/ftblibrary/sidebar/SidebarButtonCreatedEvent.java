@@ -6,9 +6,7 @@ import dev.architectury.event.EventFactory;
 
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
+
 @ForgeEvent
 public class SidebarButtonCreatedEvent {
 	public static final Event<Consumer<SidebarButtonCreatedEvent>> EVENT = EventFactory.createConsumerLoop(SidebarButtonCreatedEvent.class);

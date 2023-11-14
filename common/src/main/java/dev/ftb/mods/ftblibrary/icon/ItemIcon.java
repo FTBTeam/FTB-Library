@@ -22,9 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-/**
- * @author LatvianModder
- */
+
 public class ItemIcon extends Icon {
 	private final ItemStack stack;
 

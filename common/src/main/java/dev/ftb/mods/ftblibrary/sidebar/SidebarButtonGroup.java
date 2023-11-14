@@ -6,9 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class SidebarButtonGroup implements Comparable<SidebarButtonGroup> {
 	private final ResourceLocation id;
 	private final int y;

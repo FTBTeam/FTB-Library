@@ -10,9 +10,7 @@ import net.minecraft.network.chat.FormattedText;
 
 import java.util.Optional;
 
-/**
- * @author LatvianModder
- */
+
 public abstract class SimpleTextButton extends Button {
 	public SimpleTextButton(Panel panel, Component txt, Icon icon) {
 		super(panel, txt, icon);

@@ -6,9 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
+
 public class DoubleConfig extends NumberConfig<Double> {
 	public DoubleConfig(double mn, double mx) {
 		super(mn, mx);

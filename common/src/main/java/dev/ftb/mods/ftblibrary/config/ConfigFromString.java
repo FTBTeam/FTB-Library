@@ -7,9 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
+
 public abstract class ConfigFromString<T> extends ConfigValue<T> {
 	public abstract boolean parse(@Nullable Consumer<T> callback, String string);
 

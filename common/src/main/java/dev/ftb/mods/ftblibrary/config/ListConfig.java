@@ -11,9 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E>> {
 	public static final Component EMPTY_LIST = Component.literal("[]");
 	public static final Component NON_EMPTY_LIST = Component.literal("[...]");

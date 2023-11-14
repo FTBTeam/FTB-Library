@@ -13,9 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
+
 public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	public static final Component NULL_TEXT = Component.literal("null");
 

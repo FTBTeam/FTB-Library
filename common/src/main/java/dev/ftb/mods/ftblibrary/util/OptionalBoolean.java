@@ -6,9 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-/**
- * @author LatvianModder
- */
+
 public class OptionalBoolean {
 	public static final OptionalBoolean EMPTY = new OptionalBoolean(null);
 	public static final OptionalBoolean TRUE = new OptionalBoolean(true);

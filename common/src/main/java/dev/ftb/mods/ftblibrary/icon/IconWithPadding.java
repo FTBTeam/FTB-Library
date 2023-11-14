@@ -6,9 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 
-/**
- * @author LatvianModder
- */
+
 public class IconWithPadding extends IconWithParent {
 	public int padding;
 

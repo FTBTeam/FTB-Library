@@ -3,9 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.SelectImagePreScreen;
 
-/**
- * @author LatvianModder
- */
+
 public class ImageConfig extends StringConfig {
 	public ImageConfig() {
 		super(null);

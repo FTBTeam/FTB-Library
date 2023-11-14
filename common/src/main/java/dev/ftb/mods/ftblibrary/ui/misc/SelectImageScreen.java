@@ -26,9 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author LatvianModder
- */
+
 public class SelectImageScreen extends ButtonListBaseScreen {
 	private final ImageConfig imageConfig;
 	private final ConfigCallback callback;

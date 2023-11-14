@@ -2,9 +2,7 @@ package dev.ftb.mods.ftblibrary.util;
 
 import java.util.function.BooleanSupplier;
 
-/**
- * @author LatvianModder
- */
+
 @FunctionalInterface
 public interface ChainedBooleanSupplier extends BooleanSupplier {
 	ChainedBooleanSupplier TRUE = () -> true;

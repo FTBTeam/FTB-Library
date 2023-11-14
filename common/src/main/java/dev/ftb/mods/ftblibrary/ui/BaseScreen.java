@@ -23,9 +23,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author LatvianModder
- */
+
 public abstract class BaseScreen extends Panel {
 	public static class PositionedTextData {
 		public final int posX, posY;

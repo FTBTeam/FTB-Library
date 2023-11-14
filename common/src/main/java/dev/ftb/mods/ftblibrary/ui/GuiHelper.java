@@ -28,9 +28,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.List;
 import java.util.Stack;
 
-/**
- * @author LatvianModder
- */
+
 public class GuiHelper {
 	private static class Scissor {
 		private final int x, y, w, h;

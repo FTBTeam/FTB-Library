@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class CombinedIcon extends Icon {
 	public static Icon getCombined(Collection<Icon> icons) {
 		List<Icon> list = new ArrayList<>(icons.size());

@@ -8,9 +8,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
+
 public abstract class BaseContainer extends AbstractContainerMenu {
 	public BaseContainer(@Nullable MenuType<?> type, int id, Inventory playerInventory) {
 		super(type, id);

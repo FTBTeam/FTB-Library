@@ -1,8 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-/**
- * @author LatvianModder
- */
+
 public class PanelScrollBar extends ScrollBar {
 	private final Panel panel;
 

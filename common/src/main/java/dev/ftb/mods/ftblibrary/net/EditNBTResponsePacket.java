@@ -17,7 +17,7 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 
 	public EditNBTResponsePacket(FriendlyByteBuf buf) {
 		info = buf.readNbt();
-		tag = buf.readAnySizeNbt();
+		tag = buf.readNbt();
 	}
 
 	public EditNBTResponsePacket(CompoundTag i, CompoundTag t) {

@@ -17,9 +17,7 @@ import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class TooltipList {
 	private final List<Component> lines = new ArrayList<>();
 	public int zOffset = 950;

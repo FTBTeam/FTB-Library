@@ -8,9 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class CheckBoxList extends Button {
 	public static class CheckBoxEntry {
 		private final String name;

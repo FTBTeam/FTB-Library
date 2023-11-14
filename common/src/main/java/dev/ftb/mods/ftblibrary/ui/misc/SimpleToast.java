@@ -1,22 +1,19 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-/**
- * @author LatvianModder
- */
 public class SimpleToast implements Toast {
+	private static final ResourceLocation BACKGROUND_SPRITE = new ResourceLocation("toast/advancement");
 	private boolean hasPlayedSound = false;
 
 	@Override
@@ -24,10 +21,7 @@ public class SimpleToast implements Toast {
 		GuiHelper.setupDrawing();
 		var mc = gui.getMinecraft();
 
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, TEXTURE);
-		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		graphics.blit(TEXTURE, 0, 0, 0, 0, 160, 32);
+		graphics.blitSprite(BACKGROUND_SPRITE, 0, 0, 160, 32);
 
 		var list = mc.font.split(getSubtitle(), 125);
 		var i = isImportant() ? 16746751 : 16776960;

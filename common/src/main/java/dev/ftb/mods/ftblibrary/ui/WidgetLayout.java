@@ -5,9 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-/**
- * @author LatvianModder
- */
+
 @FunctionalInterface
 public interface WidgetLayout {
 	Padding NO_PADDING = new Padding(0, 0);

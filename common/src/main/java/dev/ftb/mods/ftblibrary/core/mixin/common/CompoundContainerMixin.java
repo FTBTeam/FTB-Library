@@ -6,9 +6,7 @@ import net.minecraft.world.Container;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-/**
- * @author LatvianModder
- */
+
 @Mixin(CompoundContainer.class)
 public abstract class CompoundContainerMixin implements CompoundContainerFTBL {
 	@Override
