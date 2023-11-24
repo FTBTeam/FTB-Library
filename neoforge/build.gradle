@@ -7,7 +7,9 @@ def ENV = System.getenv()
 
 architectury {
 	platformSetupLoomIde()
-	neoForge()
+	neoForge {
+		platformPackage = "forge"
+	}
 }
 
 configurations {
@@ -15,7 +17,7 @@ configurations {
 	shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 	compileClasspath.extendsFrom common
 	runtimeClasspath.extendsFrom common
-	developmentForge.extendsFrom common
+	developmentNeoForge.extendsFrom common
 	dev
 }
 
@@ -51,12 +53,12 @@ dependencies {
 	modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 
 //	modCompileOnly "me.shedaniel:RoughlyEnoughItems-plugin-compatibilities-forge:${rootProject.rei_plugin_compat_version}"
-	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
-	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
+//	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
+//	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rootProject.rei_version}"
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
-	shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
+	shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
 }
 
 processResources {
