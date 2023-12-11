@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -123,7 +124,7 @@ public class Widget implements IScreenWrapper {
 	public void addMouseOverText(TooltipList list) {
 		var title = getTitle();
 
-		if (title.getContents() != ComponentContents.EMPTY) {
+		if (title.getContents() != PlainTextContents.EMPTY) {
 			list.add(title);
 		}
 	}

@@ -19,8 +19,8 @@ public final class ItemKey {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		var itemKey = (ItemKey) o;
-		return stack.getItem() == itemKey.stack.getItem() && stack.areShareTagsEqual(itemKey.stack);
+
+		return ItemStack.isSameItemSameTags(stack, ((ItemKey) o).stack);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.util;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -49,7 +50,7 @@ public class TextComponentParser {
 			return c;
 		}
 
-		while (c.getContents() == ComponentContents.EMPTY && c.getStyle().equals(Style.EMPTY) && c.getSiblings().size() == 1) {
+		while (c.getContents() == PlainTextContents.EMPTY && c.getStyle().equals(Style.EMPTY) && c.getSiblings().size() == 1) {
 			c = c.getSiblings().get(0);
 		}
 
@@ -131,7 +132,7 @@ public class TextComponentParser {
 						rrggbb[0] = '#';
 						System.arraycopy(c, i + 1, rrggbb, 1, 6);
 						i += 6;
-						style = style.withColor(TextColor.parseColor(new String(rrggbb)));
+						style = style.withColor(TextColor.parseColor(new String(rrggbb)).result().orElse(TextColor.fromRgb(0xFFFFFF)));
 					} else {
 						if (c[i] == ' ') {
 							throw new BadFormatException("Invalid formatting! You must escape whitespace after & with \\&!");

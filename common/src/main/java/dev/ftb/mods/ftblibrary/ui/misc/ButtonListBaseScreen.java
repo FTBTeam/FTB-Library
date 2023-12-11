@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 
 /**
  * Base class for a screen which displays a scrollable list of buttons, with an optional search text box.
@@ -101,7 +102,7 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 
 		var title = getTitle();
 
-		if (title.getContents() != ComponentContents.EMPTY) {
+		if (title.getContents() != PlainTextContents.EMPTY) {
 			theme.drawString(graphics, title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);
 		}
 	}
