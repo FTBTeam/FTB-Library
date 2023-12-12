@@ -19,14 +19,9 @@ configurations {
 	dev
 }
 
-//loom {
-//	forge {
-//		mixinConfigs = [
-//				/*"ftblibrary-forge.mixins.json", */
-//				"ftblibrary-common.mixins.json"
-//		]
-//	}
-//}
+loom {
+	accessWidenerPath = project(":common").file("src/main/resources/ftblibrary.accesswidener")
+}
 
 artifacts {
 	dev(jar)
