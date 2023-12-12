@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.util.forge;
+package dev.ftb.mods.ftblibrary.util.neoforge;
 
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.CommonHooks;

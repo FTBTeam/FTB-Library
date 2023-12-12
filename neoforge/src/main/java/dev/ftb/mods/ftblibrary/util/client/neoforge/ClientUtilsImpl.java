@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.util.client.forge;
+package dev.ftb.mods.ftblibrary.util.client.neoforge;
 
 import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.fluid.FluidStackHooks;

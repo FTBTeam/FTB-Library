@@ -1,9 +1,7 @@
-package dev.ftb.mods.ftblibrary.forge;
+package dev.ftb.mods.ftblibrary.neoforge;
 
-import dev.architectury.platform.hooks.EventBusesHooks;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(FTBLibrary.MOD_ID)
 public class FTBLibraryNeoForge {

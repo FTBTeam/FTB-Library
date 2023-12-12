@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.integration.forge;
+package dev.ftb.mods.ftblibrary.integration.neoforge;
 
 //@JeiPlugin
 public class JEIIntegration /*implements IModPlugin, IGlobalGuiHandler*/ {

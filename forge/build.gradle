@@ -53,7 +53,7 @@ dependencies {
 
 	modCompileOnlyApi("mezz.jei:jei-1.20.2-common-api:${rootProject.jei_version}")
 	modCompileOnlyApi("mezz.jei:jei-1.20.2-forge-api:${rootProject.jei_version}")
-//	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }

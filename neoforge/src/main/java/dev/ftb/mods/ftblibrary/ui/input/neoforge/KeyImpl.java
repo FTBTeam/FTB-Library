@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.ui.input.forge;
+package dev.ftb.mods.ftblibrary.ui.input.neoforge;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
