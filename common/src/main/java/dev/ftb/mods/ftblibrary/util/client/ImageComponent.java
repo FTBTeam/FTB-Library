@@ -44,6 +44,30 @@ public class ImageComponent implements ComponentContents {
 		return image.toString();
 	}
 
+	public Icon getImage() {
+		return image;
+	}
+
+	public void setImage(Icon image) {
+		this.image = image;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public void setAlign(ImageAlign align) {
+		this.align = align;
+	}
+
+	public void setFit(boolean fit) {
+		this.fit = fit;
+	}
+
 	public int getWidth() {
 		return width;
 	}
