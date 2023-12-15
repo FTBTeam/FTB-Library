@@ -91,7 +91,7 @@ public class ImageComponent implements ComponentContents {
 
 		sb.append(" width:").append(width);
 		sb.append(" height:").append(height);
-		sb.append(" align:").append(align);
+		sb.append(" align:").append(align.getName());
 
 		if (fit) {
 			sb.append(" fit:true");
@@ -118,6 +118,10 @@ public class ImageComponent implements ComponentContents {
 
 		ImageAlign(String name) {
 			this.name = name;
+		}
+
+		public String getName() {
+			return name;
 		}
 
 		public static ImageAlign byName(String name) {
