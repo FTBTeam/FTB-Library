@@ -17,21 +17,21 @@ FTB Library adds nothing.
 
 [[dependencies.ftblibrary]]
 modId = "neoforge"
-mandatory = true
+type = "required"
 versionRange = "[${neoforgeversion},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.ftblibrary]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "[1.20.2,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.ftblibrary]]
 modId = "architectury"
-mandatory = true
+type = "required"
 versionRange = "[${archversion},)"
 ordering = "AFTER"
 side = "BOTH"
