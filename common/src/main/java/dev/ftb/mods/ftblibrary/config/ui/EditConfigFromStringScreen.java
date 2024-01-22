@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ConfigFromString;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
@@ -9,6 +8,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,11 +119,11 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 	}
 
 	@Override
-	public void drawForeground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		super.drawForeground(matrixStack, theme, x, y, w, h);
+	public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		super.drawForeground(graphics, theme, x, y, w, h);
 
 		if (!title.equals(Component.empty())) {
-			theme.drawString(matrixStack, title, getX() + (width / 2f), getY() - theme.getFontHeight() - 2, Color4I.WHITE, Theme.CENTERED);
+			theme.drawString(graphics, title, getX() + (width / 2), getY() - theme.getFontHeight() - 2, Color4I.WHITE, Theme.CENTERED);
 		}
 	}
 

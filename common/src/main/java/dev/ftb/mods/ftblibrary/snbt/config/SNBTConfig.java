@@ -15,10 +15,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
 public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
+	private int displayOrder = 0;
+
 	/**
 	 * Create a new SNBT config object
 	 * @param name the name for the config
@@ -36,27 +39,17 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	public void write(SNBTCompoundTag tag) {
 		if (parent == null) {
 			tag.comment("", String.join("\n", comment));
-
-			defaultValue.sort(null);
-
-			for (var value : defaultValue) {
+			for (var value : defaultValue.stream().sorted().toList()) {
 				value.write(tag);
 			}
-
-			return;
+		} else {
+			tag.comment(key, String.join("\n", comment));
+			var newTag = new SNBTCompoundTag();
+			for (var value : defaultValue.stream().sorted().toList()) {
+				value.write(newTag);
+			}
+			tag.put(key, newTag);
 		}
-
-		tag.comment(key, String.join("\n", comment));
-
-		var tag1 = new SNBTCompoundTag();
-
-		defaultValue.sort(null);
-
-		for (var value : defaultValue) {
-			value.write(tag1);
-		}
-
-		tag.put(key, tag1);
 	}
 
 	@Override
@@ -67,16 +60,13 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 					value.read(tag);
 				}
 			}
-
-			return;
-		}
-
-		if (tag.contains(key, Tag.TAG_COMPOUND)) {
-			var tag1 = tag.getCompound(key);
-
-			for (var value : defaultValue) {
-				if (tag1.contains(value.key)) {
-					value.read(tag1);
+		} else {
+			if (tag.contains(key, Tag.TAG_COMPOUND)) {
+				var newTag = tag.getCompound(key);
+				for (var value : defaultValue) {
+					if (newTag.contains(value.key)) {
+						value.read(newTag);
+					}
 				}
 			}
 		}
@@ -85,21 +75,13 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void createClientConfig(ConfigGroup group) {
-		if (parent == null) {
-			for (var value : defaultValue) {
-				if (!value.excluded) {
-					value.createClientConfig(group);
-				}
-			}
-		} else {
-			var g = group.getOrCreateSubgroup(key);
+		List<BaseValue<?>> sorted = defaultValue.stream()
+				.filter(v -> !v.excluded)
+				.sorted(Comparator.comparingInt(o -> o.displayOrder))
+				.toList();
 
-			for (var value : defaultValue) {
-				if (!value.excluded) {
-					value.createClientConfig(g);
-				}
-			}
-		}
+		var g = parent == null ? group : group.getOrCreateSubgroup(key, displayOrder);
+		sorted.forEach(value -> value.createClientConfig(g));
 	}
 
 	/**
@@ -132,7 +114,8 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	}
 
 	public void save(Path path) {
-		Util.ioPool().execute(() -> saveNow(path));
+//		Util.ioPool().execute(() -> saveNow(path));
+		saveNow(path);
 	}
 
 	public void saveNow(Path path) {
@@ -149,6 +132,10 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		if (Files.exists(defaultPath)) {
 			if (!Files.exists(path)) {
 				try {
+					// it's possible for the destination directory to not exist yet
+					// in particular when creating a new world on Fabric
+					// https://github.com/FTBTeam/FTB-Mods-Issues/issues/867
+					Files.createDirectories(path.getParent());
 					Files.copy(defaultPath, path);
 				} catch (IOException ex) {
 					ex.printStackTrace();
@@ -169,7 +156,13 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 	}
 
 	public SNBTConfig addGroup(String key) {
-		return add(new SNBTConfig(this, key, new ArrayList<>()));
+		return addGroup(key, 0);
+	}
+
+	public SNBTConfig addGroup(String key, int displayOrder) {
+		SNBTConfig value = new SNBTConfig(this, key, new ArrayList<>());
+		value.displayOrder = displayOrder;
+		return add(value);
 	}
 
 	public BooleanValue addBoolean(String key, boolean def) {

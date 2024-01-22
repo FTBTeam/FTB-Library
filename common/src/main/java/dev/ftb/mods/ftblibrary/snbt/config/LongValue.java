@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,7 +18,7 @@ public class LongValue extends NumberValue<Long> {
 
 	@Override
 	public void set(Long v) {
-		super.set(Mth.clamp(v, minValue == null ? Long.MIN_VALUE : minValue, maxValue == null ? Long.MAX_VALUE : maxValue));
+		super.set(MathUtils.clamp(v, minValue == null ? Long.MIN_VALUE : minValue, maxValue == null ? Long.MAX_VALUE : maxValue));
 	}
 
 	@Override

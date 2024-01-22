@@ -1,11 +1,12 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public abstract class Button extends Widget {
 	protected Component title;
@@ -37,20 +38,20 @@ public abstract class Button extends Widget {
 		return this;
 	}
 
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawButton(matrixStack, x, y, w, h, getWidgetType());
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		theme.drawButton(graphics, x, y, w, h, getWidgetType());
 	}
 
-	public void drawIcon(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		icon.draw(matrixStack, x, y, w, h);
+	public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		icon.draw(graphics, x, y, w, h);
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		GuiHelper.setupDrawing();
 		var s = h >= 16 ? 16 : 8;
-		drawBackground(matrixStack, theme, x, y, w, h);
-		drawIcon(matrixStack, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
+		drawBackground(graphics, theme, x, y, w, h);
+		drawIcon(graphics, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
 	}
 
 	@Override
@@ -69,9 +70,8 @@ public abstract class Button extends Widget {
 	public abstract void onClicked(MouseButton button);
 
 	@Override
-	@Nullable
-	public Object getIngredientUnderMouse() {
-		return new WrappedIngredient(icon.getIngredient()).tooltip();
+	public Optional<PositionedIngredient> getIngredientUnderMouse() {
+		return PositionedIngredient.of(icon.getIngredient(), this, true);
 	}
 
 	@Override

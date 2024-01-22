@@ -1,16 +1,13 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Objects;
 
 /**
  * @author LatvianModder
@@ -61,6 +58,11 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	}
 
 	@Override
+	public boolean mouseDragged(double x, double y, int button, double dragX, double dragY) {
+		return wrappedGui.mouseDragged(button, dragX, dragY) || super.mouseDragged(x, y, button, dragX, dragY);
+	}
+
+	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		var key = new Key(keyCode, scanCode, modifiers);
 
@@ -74,11 +76,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 				wrappedGui.closeGui(true);
 				return true;
 			} else if (Platform.isModLoaded("jei")) {
-				var object = WrappedIngredient.unwrap(wrappedGui.getIngredientUnderMouse());
-
-				if (object != null) {
-					handleIngredientKey(key, object);
-				}
+				wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> handleIngredientKey(key, underMouse.ingredient()));
 			}
 
 			return super.keyPressed(keyCode, scanCode, modifiers);
@@ -106,42 +104,41 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	}
 
 	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
-		renderBackground(matrixStack);
+		renderBackground(graphics);
 		GuiHelper.setupDrawing();
 		var x = wrappedGui.getX();
 		var y = wrappedGui.getY();
 		var w = wrappedGui.width;
 		var h = wrappedGui.height;
 		var theme = wrappedGui.getTheme();
-		wrappedGui.draw(matrixStack, theme, x, y, w, h);
-		wrappedGui.drawForeground(matrixStack, theme, x, y, w, h);
+		wrappedGui.draw(graphics, theme, x, y, w, h);
+		wrappedGui.drawForeground(graphics, theme, x, y, w, h);
 
 		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
-			var object = wrappedGui.getIngredientUnderMouse();
-
-			if (object instanceof WrappedIngredient && ((WrappedIngredient) object).tooltip) {
-				var ingredient = WrappedIngredient.unwrap(object);
-
-				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty()) {
-					matrixStack.pushPose();
-					matrixStack.translate(0, 0, tooltipList.zOffsetItemTooltip);
-					renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
-					matrixStack.popPose();
+			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
+				if (underMouse.tooltip()) {
+					var ingredient = underMouse.ingredient();
+					if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
+						graphics.pose().pushPose();
+						graphics.pose().translate(0, 0, tooltipList.zOffsetItemTooltip);
+						graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
+						graphics.pose().popPose();
+					}
 				}
-			}
+			});
 		} else {
-			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
+			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}
 
 		tooltipList.reset();
 	}
 
 	@Override
-	public void renderBackground(PoseStack matrixStack) {
+	public void renderBackground(GuiGraphics matrixStack) {
 		if (wrappedGui.drawDefaultBackground(matrixStack)) {
 			super.renderBackground(matrixStack);
 		}

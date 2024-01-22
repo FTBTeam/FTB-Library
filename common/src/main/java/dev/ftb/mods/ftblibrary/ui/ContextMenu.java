@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -19,12 +19,22 @@ public class ContextMenu extends Panel {
 
 	private int nColumns;
 	private int columnWidth;
+	private int maxRows;
+	private boolean drawVerticalSeparators = true;
 
 	public ContextMenu(Panel panel, List<ContextMenuItem> i) {
 		super(panel);
 		items = i;
 
 		hasIcons = items.stream().anyMatch(item -> !item.getIcon().isEmpty());
+	}
+
+	public void setMaxRows(int maxRows) {
+		this.maxRows = maxRows;
+	}
+
+	public void setDrawVerticalSeparators(boolean drawVerticalSeparators) {
+		this.drawVerticalSeparators = drawVerticalSeparators;
 	}
 
 	@Override
@@ -59,7 +69,10 @@ public class ContextMenu extends Panel {
 
 		// if there are too many menu items to fit vertically on-screen, use a multi-column layout
 		nColumns = parent.getScreen().getGuiScaledHeight() > 0 ? (totalHeight / parent.getScreen().getGuiScaledHeight()) + 1 : 1;
-		int nRows = nColumns == 1 ? widgets.size() : (widgets.size() / nColumns) + 1;
+		if (maxRows > 0) {
+			nColumns = Math.max(nColumns, widgets.size() / maxRows);
+		}
+		int nRows = nColumns == 1 ? widgets.size() : (widgets.size() / (nColumns + 1)) + 1;
 
 		columnWidth = maxWidth + MARGIN * 2;
 		setWidth(columnWidth * nColumns);
@@ -83,21 +96,23 @@ public class ContextMenu extends Panel {
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawContextMenuBackground(matrixStack, x, y, w, h);
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		theme.drawContextMenuBackground(graphics, x, y, w, h);
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		GuiHelper.setupDrawing();
-		matrixStack.pushPose();
-		matrixStack.translate(0, 0, 900);
-		super.draw(matrixStack, theme, x, y, w, h);
-		for (int i = 1; i < nColumns; i++) {
-			// vertical separator line between columns (only in multi-column layouts)
-			Color4I.WHITE.withAlpha(130).draw(matrixStack, x + columnWidth * i, y + MARGIN, 1, height - MARGIN * 2);
+		graphics.pose().pushPose();
+		graphics.pose().translate(0, 0, 900);
+		super.draw(graphics, theme, x, y, w, h);
+		if (drawVerticalSeparators) {
+			for (int i = 1; i < nColumns; i++) {
+				// vertical separator line between columns (only in multi-column layouts)
+				Color4I.WHITE.withAlpha(130).draw(graphics, x + columnWidth * i, y + MARGIN, 1, height - MARGIN * 2);
+			}
 		}
-		matrixStack.popPose();
+		graphics.pose().popPose();
 	}
 
 	public static class CButton extends Button {
@@ -122,19 +137,19 @@ public class ContextMenu extends Panel {
 		}
 
 		@Override
-		public void drawIcon(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			item.drawIcon(matrixStack, theme, x, y, w, h);
+		public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			item.drawIcon(graphics, theme, x, y, w, h);
 		}
 
 		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 			GuiHelper.setupDrawing();
 
 			if (contextMenu.hasIcons) {
-				drawIcon(matrixStack, theme, x + 1, y + 2, 8, 8);
-				theme.drawString(matrixStack, getTitle(), x + 11, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+				drawIcon(graphics, theme, x + 1, y + 2, 8, 8);
+				theme.drawString(graphics, getTitle(), x + 11, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 			} else {
-				theme.drawString(matrixStack, getTitle(), x + 2, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+				theme.drawString(graphics, getTitle(), x + 2, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 			}
 		}
 
@@ -157,8 +172,8 @@ public class ContextMenu extends Panel {
 		}
 
 		@Override
-		public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-			Color4I.WHITE.withAlpha(130).draw(matrixStack, x + 2, y + 2, parent.width - 10, 1);
+		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			Color4I.WHITE.withAlpha(130).draw(graphics, x + 2, y + 2, parent.width - 10, 1);
 		}
 
 		@Override

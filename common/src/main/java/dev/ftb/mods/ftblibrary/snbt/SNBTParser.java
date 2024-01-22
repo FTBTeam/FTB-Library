@@ -195,32 +195,35 @@ class SNBTParser {
 	}
 
 	private CollectionTag<?> readArray(int pos, char type) {
-		List<Number> listOfNumbers = new ArrayList<>();
+		List<Integer> intList = new ArrayList<>();
+		List<Long> longList = new ArrayList<>();
+		List<Byte> byteList = new ArrayList<>();
+
+		type = Character.toLowerCase(type);
 
 		while (true) {
 			var c = nextNS();
 
 			if (c == ']') {
 				return switch (type) {
-					case 'i', 'I' -> new IntArrayTag((List<Integer>) (List) listOfNumbers);
-					case 'l', 'L' -> new LongArrayTag((List<Long>) (List) listOfNumbers);
-					case 'b', 'B' -> new ByteArrayTag((List<Byte>) (List) listOfNumbers);
+					case 'i' -> new IntArrayTag(intList);
+					case 'l' -> new LongArrayTag(longList);
+					case 'b' -> new ByteArrayTag(byteList);
 					default -> throw new SNBTSyntaxException("Unknown array type: " + type + " @ " + posString(pos));
 				};
 			} else if (c == ',') {
 				continue;
 			}
 
-			var t = SpecialTag.unwrap(readTag(c));
-
-			if (t instanceof NumericTag) {
+			var tag = SpecialTag.unwrap(readTag(c));
+			if (tag instanceof NumericTag numericTag) {
 				switch (type) {
-					case 'i', 'I' -> listOfNumbers.add(((NumericTag) t).getAsInt());
-					case 'l', 'L' -> listOfNumbers.add(((NumericTag) t).getAsLong());
-					case 'b', 'B' -> listOfNumbers.add(((NumericTag) t).getAsByte());
+					case 'i' -> intList.add(numericTag.getAsInt());
+					case 'l' -> longList.add(numericTag.getAsLong());
+					case 'b' -> byteList.add(numericTag.getAsByte());
 				}
 			} else {
-				throw new SNBTSyntaxException("Unexpected tag '" + t + "' in list @ " + posString() + " - expected a numeric tag!");
+				throw new SNBTSyntaxException("Unexpected tag '" + tag + "' in list @ " + posString() + " - expected a numeric tag!");
 			}
 		}
 	}

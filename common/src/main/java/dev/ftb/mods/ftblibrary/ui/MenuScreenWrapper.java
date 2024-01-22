@@ -1,11 +1,10 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import dev.ftb.mods.ftblibrary.util.WrappedIngredient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -105,71 +104,70 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	}
 
 	@Override
-	protected void renderBg(PoseStack matrixStack, float f, int mx, int my) {
+	protected void renderBg(GuiGraphics graphics, float f, int mx, int my) {
 		var theme = wrappedGui.getTheme();
 		GuiHelper.setupDrawing();
-		renderBackground(matrixStack);
+		renderBackground(graphics);
 		GuiHelper.setupDrawing();
-		wrappedGui.draw(matrixStack, theme, leftPos, topPos, imageWidth, imageHeight);
+		wrappedGui.draw(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
 		if (drawSlots) {
 			GuiHelper.setupDrawing();
 
 			for (var slot : menu.slots) {
-				theme.drawContainerSlot(matrixStack, leftPos + slot.x, topPos + slot.y, 16, 16);
+				theme.drawContainerSlot(graphics, leftPos + slot.x, topPos + slot.y, 16, 16);
 			}
 		}
 	}
 
 	@Override
-	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-		matrixStack.pushPose();
-		matrixStack.translate(-leftPos, -topPos, 0);
+	protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+		graphics.pose().pushPose();
+		graphics.pose().translate(-leftPos, -topPos, 0);
 		GuiHelper.setupDrawing();
 
 		var theme = wrappedGui.getTheme();
-		wrappedGui.drawForeground(matrixStack, theme, leftPos, topPos, imageWidth, imageHeight);
+		wrappedGui.drawForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
 		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
-			var object = wrappedGui.getIngredientUnderMouse();
-
-			if (object instanceof WrappedIngredient && ((WrappedIngredient) object).tooltip) {
-				var ingredient = WrappedIngredient.unwrap(object);
-
-				if (ingredient instanceof ItemStack && !((ItemStack) ingredient).isEmpty()) {
-					matrixStack.pushPose();
-					matrixStack.translate(0, 0, tooltipList.zOffsetItemTooltip);
-					renderTooltip(matrixStack, (ItemStack) ingredient, mouseX, mouseY);
-					matrixStack.popPose();
+			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
+				if (underMouse.tooltip()) {
+					var ingredient = underMouse.ingredient();
+					if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
+						graphics.pose().pushPose();
+						graphics.pose().translate(0, 0, tooltipList.zOffsetItemTooltip);
+						graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
+						graphics.pose().popPose();
+					}
 				}
-			}
+			});
 		} else {
-			tooltipList.render(matrixStack, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
+			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}
 
 		tooltipList.reset();
 
 		if (wrappedGui.getContextMenu().isEmpty()) {
-			renderTooltip(matrixStack, mouseX, mouseY);
+			renderTooltip(graphics, mouseX, mouseY);
 		}
 
-		matrixStack.popPose();
+		graphics.pose().popPose();
 	}
 
 	@Override
-	public void renderBackground(PoseStack matrixStack) {
-		if (wrappedGui.drawDefaultBackground(matrixStack)) {
-			super.renderBackground(matrixStack);
+	public void renderBackground(GuiGraphics graphics) {
+		if (wrappedGui.drawDefaultBackground(graphics)) {
+			super.renderBackground(graphics);
 		}
 	}
 
 	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(matrixStack);
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		renderBackground(graphics);
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		super.render(graphics, mouseX, mouseY, partialTicks);
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
@@ -75,7 +76,7 @@ public class TooltipList {
 	}
 
 	@Environment(EnvType.CLIENT)
-	public void render(PoseStack mStack, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font) {
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font) {
 		mouseX += xOffset;
 		mouseY += yOffset;
 
@@ -161,11 +162,11 @@ public class TooltipList {
 			tooltipY = screenHeight - tooltipHeight - 4;
 		}
 
-		mStack.pushPose();
-		mStack.translate(0, 0, zOffset);
-		var mat = mStack.last().pose();
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, 0, zOffset);
+		var mat = poseStack.last().pose();
 		RenderSystem.enableDepthTest();
-		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
@@ -185,13 +186,12 @@ public class TooltipList {
 		tesselator.end();
 
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
 		var renderType = MultiBufferSource.immediate(buffer);
 
 		for (var lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
 			var line = textLines.get(lineNumber);
 			if (line != null) {
-				font.drawInBatch(line, (float) tooltipX, (float) tooltipY, -1, true, mat, renderType, false, 0, 15728880);
+				font.drawInBatch(line, (float) tooltipX, (float) tooltipY, -1, true, mat, renderType, Font.DisplayMode.NORMAL, 0, 15728880);
 			}
 
 			if (lineNumber + 1 == titleLinesCount) {
@@ -202,7 +202,7 @@ public class TooltipList {
 		}
 
 		renderType.endBatch();
-		mStack.popPose();
+		poseStack.popPose();
 
 		RenderSystem.enableDepthTest();
 	}

@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
 import dev.architectury.fluid.FluidStack;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.FluidConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -12,11 +11,14 @@ import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
+import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
+import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
+
+import java.util.Optional;
 
 /**
  * @author LatvianModder
@@ -36,60 +38,39 @@ public class SelectFluidScreen extends ButtonListBaseScreen {
 	public void addButtons(Panel panel) {
 		if (config.allowEmptyFluid()) {
 			var fluidStack = FluidStack.create(Fluids.EMPTY, FluidStack.bucketAmount());
-
-			panel.add(new SimpleTextButton(panel, fluidStack.getName(), ItemIcon.getItemIcon(Items.BUCKET)) {
-				@Override
-				public void onClicked(MouseButton button) {
-					playClickSound();
-					config.setCurrentValue(Fluids.EMPTY);
-					callback.save(true);
-				}
-
-				@Override
-				public Object getIngredientUnderMouse() {
-					return FluidStack.create(Fluids.EMPTY, FluidStack.bucketAmount());
-				}
-			});
+			addFluidButton(panel, ItemIcon.getItemIcon(Items.BUCKET), fluidStack);
 		}
 
 		for (var fluid : BuiltInRegistries.FLUID) {
-			if (fluid == Fluids.EMPTY || fluid.defaultFluidState().isSource()) {
-				continue;
+			if (fluid != Fluids.EMPTY && fluid.defaultFluidState().isSource()) {
+				var fluidStack = FluidStack.create(fluid, FluidStack.bucketAmount());
+				Icon icon = Icon.getIcon(ClientUtils.getStillTexture(fluidStack)).withTint(Color4I.rgb(ClientUtils.getFluidColor(fluidStack)));
+				addFluidButton(panel, icon, fluidStack);
 			}
-
-			var fluidStack = FluidStack.create(fluid, FluidStack.bucketAmount());
-
-			panel.add(new SimpleTextButton(panel, fluidStack.getName(), Icon.getIcon(getStillTexture(fluidStack)).withTint(Color4I.rgb(getColor(fluidStack)))) {
-				@Override
-				public void onClicked(MouseButton button) {
-					playClickSound();
-					config.setCurrentValue(fluid);
-					callback.save(true);
-				}
-
-				@Override
-				public Object getIngredientUnderMouse() {
-					return FluidStack.create(fluid, FluidStack.bucketAmount());
-				}
-			});
 		}
 	}
 
-	@ExpectPlatform
-	private static ResourceLocation getStillTexture(FluidStack stack) {
-		throw new AssertionError();
-	}
+	private void addFluidButton(Panel panel, Icon icon, FluidStack fluidStack) {
+		panel.add(new SimpleTextButton(panel, fluidStack.getName(), icon) {
+			@Override
+			public void onClicked(MouseButton button) {
+				playClickSound();
+				config.setCurrentValue(fluidStack.copy());
+				callback.save(true);
+			}
 
-	@ExpectPlatform
-	private static int getColor(FluidStack stack) {
-		throw new AssertionError();
+			@Override
+			public Optional<PositionedIngredient> getIngredientUnderMouse() {
+				return PositionedIngredient.of(fluidStack, this);
+			}
+		});
 	}
 
 	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
 			callback.save(false);
-			return false;
+			return true;
 		}
 
 		return false;

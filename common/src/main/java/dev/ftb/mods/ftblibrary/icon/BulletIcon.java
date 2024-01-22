@@ -4,12 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 
 /**
@@ -79,7 +79,7 @@ public class BulletIcon extends Icon {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		Color4I c, cb, cd;
 
 		if (color.isEmpty()) {
@@ -94,19 +94,17 @@ public class BulletIcon extends Icon {
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		RenderSystem.disableTexture();
 		var tesselator = Tesselator.getInstance();
 		var buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-		GuiHelper.addRectToBuffer(matrixStack, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
-		GuiHelper.addRectToBuffer(matrixStack, buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);
-		GuiHelper.addRectToBuffer(matrixStack, buffer, x + 1, y, w - 2, 1, inverse ? cd : cb);
-		GuiHelper.addRectToBuffer(matrixStack, buffer, x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd);
-		GuiHelper.addRectToBuffer(matrixStack, buffer, x + 1, y + 1, w - 2, h - 2, c);
+		GuiHelper.addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
+		GuiHelper.addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);
+		GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y, w - 2, 1, inverse ? cd : cb);
+		GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd);
+		GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + 1, w - 2, h - 2, c);
 
 		tesselator.end();
-		RenderSystem.enableTexture();
 	}
 
 	@Override

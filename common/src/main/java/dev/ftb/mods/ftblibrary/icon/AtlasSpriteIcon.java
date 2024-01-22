@@ -1,11 +1,15 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -27,16 +31,20 @@ public class AtlasSpriteIcon extends Icon {
 		this.color = color;
 	}
 
+	public ResourceLocation getId() {
+		return id;
+	}
+
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void draw(PoseStack matrixStack, int x, int y, int w, int h) {
+	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
 
 		if (sprite == null) {
 			return;
 		}
 
-		var m = matrixStack.last().pose();
+		var m = graphics.pose().last().pose();
 
 		var r = color.redi();
 		var g = color.greeni();

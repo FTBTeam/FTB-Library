@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
+import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -52,7 +52,7 @@ public class LongConfig extends NumberConfig<Long> {
 
 	@Override
 	public boolean scrollValue(boolean forward) {
-		long newVal = Mth.clamp(value + (forward ? 1L : -1L), min, max);
+		long newVal = MathUtils.clamp(value + (forward ? 1L : -1L), min, max);
 		if (newVal != value) {
 			setValue(newVal);
 			return true;

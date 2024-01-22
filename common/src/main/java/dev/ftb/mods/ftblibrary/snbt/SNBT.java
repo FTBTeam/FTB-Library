@@ -4,17 +4,33 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.nbt.*;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author LatvianModder
  */
 public class SNBT {
+	private static boolean shouldSortKeysOnWrite = false;
+
 	public static SNBTCompoundTag readLines(List<String> lines) {
 		return SNBTParser.read(lines);
+	}
+
+	public static SNBTCompoundTag tryRead(Path path) throws IOException {
+		return readLines(Files.readAllLines(path, StandardCharsets.UTF_8));
+	}
+
+	public static void tryWrite(Path path, CompoundTag tag) throws IOException {
+		if (Files.notExists(path.getParent())) {
+			Files.createDirectories(path.getParent());
+		}
+
+		Files.write(path, writeLines(tag));
 	}
 
 	@Nullable
@@ -72,14 +88,14 @@ public class SNBT {
 		if (nbt == null || nbt instanceof EndTag) {
 			builder.print("null");
 		} else if (nbt instanceof CompoundTag compound) {
-			var ocompound = compound instanceof SNBTCompoundTag ? (SNBTCompoundTag) compound : null;
+			var snbtCompoundTag = compound instanceof SNBTCompoundTag s ? s : null;
 
 			if (compound.isEmpty()) {
 				builder.print("{ }");
 				return;
 			}
 
-			if (ocompound != null && ocompound.singleLine) {
+			if (snbtCompoundTag != null && snbtCompoundTag.singleLine) {
 				builder.singleLine++;
 			}
 
@@ -96,9 +112,10 @@ public class SNBT {
 
 			var index = 0;
 
-			for (var key : compound.getAllKeys()) {
+			Collection<String> keys = shouldSortKeysOnWrite ? compound.getAllKeys().stream().sorted().toList() : compound.getAllKeys();
+			for (var key : keys) {
 				index++;
-				var properties = ocompound == null ? SNBTTagProperties.DEFAULT : ocompound.getProperties(key);
+				var properties = snbtCompoundTag == null ? SNBTTagProperties.DEFAULT : snbtCompoundTag.getProperties(key);
 
 				if (!properties.comment.isEmpty()) {
 					if (singleLine) {
@@ -152,7 +169,7 @@ public class SNBT {
 
 			builder.print("}");
 
-			if (ocompound != null && ocompound.singleLine) {
+			if (snbtCompoundTag != null && snbtCompoundTag.singleLine) {
 				builder.singleLine--;
 			}
 		} else if (nbt instanceof CollectionTag) {
@@ -220,5 +237,15 @@ public class SNBT {
 		}
 
 		builder.print("]");
+	}
+
+	public static boolean shouldSortKeysOnWrite() {
+		return shouldSortKeysOnWrite;
+	}
+
+	public static boolean setShouldSortKeysOnWrite(boolean shouldSortKeysOnWrite) {
+		boolean prev = SNBT.shouldSortKeysOnWrite;
+		SNBT.shouldSortKeysOnWrite = shouldSortKeysOnWrite;
+		return prev;
 	}
 }

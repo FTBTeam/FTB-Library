@@ -1,6 +1,9 @@
-package dev.ftb.mods.ftblibrary.util;
+package dev.ftb.mods.ftblibrary.util.client;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.util.CustomComponentParser;
+import dev.ftb.mods.ftblibrary.util.StringUtils;
+import dev.ftb.mods.ftblibrary.util.TextComponentParser;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.*;
 

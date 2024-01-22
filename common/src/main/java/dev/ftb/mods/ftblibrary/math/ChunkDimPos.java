@@ -33,7 +33,7 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 	}
 
 	public ChunkDimPos(Entity entity) {
-		this(entity.level, entity.blockPosition());
+		this(entity.level(), entity.blockPosition());
 	}
 
 	public ChunkPos getChunkPos() {
@@ -46,6 +46,10 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 
 	public int z() {
 		return chunkPos.z;
+	}
+
+	public ResourceKey<Level> dimension() {
+		return dimension;
 	}
 
 	@Override

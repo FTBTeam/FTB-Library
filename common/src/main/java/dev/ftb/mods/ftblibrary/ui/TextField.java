@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.math.Bits;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
@@ -97,12 +97,12 @@ public class TextField extends Widget {
 	public void addMouseOverText(TooltipList list) {
 	}
 
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
 	@Override
-	public void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		drawBackground(matrixStack, theme, x, y, w, h);
+	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		drawBackground(graphics, theme, x, y, w, h);
 
 		if (formattedText.length != 0) {
 			var centered = Bits.getFlag(textFlags, Theme.CENTERED);
@@ -117,18 +117,18 @@ public class TextField extends Widget {
 			int i;
 			if (scale == 1.0F) {
 				for (i = 0; i < formattedText.length; ++i) {
-					theme.drawString(matrixStack, formattedText[i], (float) tx, (float) (ty + i * textSpacing), col, textFlags);
+					theme.drawString(graphics, formattedText[i], tx, ty + i * textSpacing, col, textFlags);
 				}
 			} else {
-				matrixStack.pushPose();
-				matrixStack.translate(tx, ty, 0.0D);
-				matrixStack.scale(scale, scale, 1.0F);
+				graphics.pose().pushPose();
+				graphics.pose().translate(tx, ty, 0.0D);
+				graphics.pose().scale(scale, scale, 1.0F);
 
 				for (i = 0; i < formattedText.length; ++i) {
-					theme.drawString(matrixStack, formattedText[i], 0.0F, (float) (i * textSpacing), col, textFlags);
+					theme.drawString(graphics, formattedText[i], 0, i * textSpacing, col, textFlags);
 				}
 
-				matrixStack.popPose();
+				graphics.pose().popPose();
 			}
 		}
 	}

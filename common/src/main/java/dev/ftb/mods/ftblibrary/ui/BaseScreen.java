@@ -1,21 +1,21 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.BooleanConsumer;
-import dev.ftb.mods.ftblibrary.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -122,11 +122,17 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	protected boolean setFullscreen() {
+		return setSizeProportional(1f, 1f);
+	}
+
+	protected boolean setSizeProportional(float w, float h) {
+		Validate.isTrue(w > 0f && w <= 1f && h > 0f && h <= 1f, "width and height must be > 0 and <= 1");
+
 		if (screen == null) {
 			return false;
 		} else {
-			setWidth(screen.getGuiScaledWidth());
-			setHeight(screen.getGuiScaledHeight());
+			setWidth((int) (screen.getGuiScaledWidth() * w));
+			setHeight((int) (screen.getGuiScaledHeight() * h));
 			return true;
 		}
 	}
@@ -226,15 +232,15 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	@Override
-	public final void draw(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		super.draw(matrixStack, theme, x, y, w, h);
+	public final void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		super.draw(graphics, theme, x, y, w, h);
 	}
 
 	public Optional<Panel> getContextMenu() {
 		return Optional.ofNullable(contextMenu);
 	}
 
-	private void openContextMenu(@Nullable ContextMenu newContextMenu) {
+	public void openContextMenu(@Nullable ContextMenu newContextMenu) {
 		int px = 0, py = 0;
 
 		if (contextMenu != null) {
@@ -278,7 +284,7 @@ public abstract class BaseScreen extends Panel {
 	@Override
 	public void closeContextMenu() {
 		openContextMenu((ContextMenu) null);
-		onInit();
+//		onInit();
 	}
 
 	@Override
@@ -289,15 +295,15 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	@Override
-	public void drawBackground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
-		theme.drawGui(matrixStack, x, y, w, h, WidgetType.NORMAL);
+	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+		theme.drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
 	}
 
-	public boolean drawDefaultBackground(PoseStack matrixStack) {
+	public boolean drawDefaultBackground(GuiGraphics graphics) {
 		return true;
 	}
 
-	public void drawForeground(PoseStack matrixStack, Theme theme, int x, int y, int w, int h) {
+	public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
 	@Override
@@ -308,19 +314,11 @@ public abstract class BaseScreen extends Panel {
 		}
 
 		var now = System.currentTimeMillis();
-
-		if (lastClickTime == 0L) {
-			lastClickTime = now;
-		} else {
-			if ((now - lastClickTime) <= 300L) {
-				if (mouseDoubleClicked(button)) {
-					lastClickTime = 0L;
-					return true;
-				}
-			}
-
+		if (lastClickTime != 0L && (now - lastClickTime) <= 300L && mouseDoubleClicked(button)) {
 			lastClickTime = 0L;
+			return true;
 		}
+		lastClickTime = now;
 
 		return super.mousePressed(button);
 	}
