@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * @author LatvianModder
@@ -16,17 +17,38 @@ public class PartIcon extends IconWithParent {
 
 	private Icon all, middleU, middleD, middleL, middleR, cornerNN, cornerPN, cornerNP, cornerPP, center;
 
-	public PartIcon(Icon icon, int x, int y, int w, int h, int c) {
-		super(icon);
+	public static PartIcon wholeTexture(ResourceLocation textureId, int textureWidth, int textureHeight, int corner) {
+		return new PartIcon(textureId, 0, 0, textureWidth, textureHeight, corner, textureWidth, textureHeight);
+	}
+
+	public PartIcon(Icon icon, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {super(icon);
 		parent = icon;
-		textureWidth = 256;
-		textureHeight = 256;
-		posX = x;
-		posY = y;
-		width = w;
-		height = h;
-		corner = c;
+		this.textureWidth = textureWidth;
+		this.textureHeight = textureHeight;
+		posX = textureU;
+		posY = textureV;
+		width = subWidth;
+		height = subHeight;
+		this.corner = corner;
 		updateParts();
+	}
+
+	public PartIcon(Icon icon, int x, int y, int w, int h, int c) {
+		this(icon, x, y, w, h, c, 256, 256);
+//		super(icon);
+//		parent = icon;
+//		textureWidth = 256;
+//		textureHeight = 256;
+//		posX = x;
+//		posY = y;
+//		width = w;
+//		height = h;
+//		corner = c;
+//		updateParts();
+	}
+
+	public PartIcon(ResourceLocation iconId, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {
+		this(Icon.getIcon(iconId), textureU, textureV, subWidth, subHeight, corner, textureWidth, textureHeight);
 	}
 
 	public PartIcon(Icon icon) {

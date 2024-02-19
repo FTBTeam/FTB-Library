@@ -8,7 +8,10 @@ import net.minecraft.network.chat.ComponentContents;
 
 /**
  * Base class for a screen which displays a scrollable list of buttons, with an optional search text box.
+ *
+ * @deprecated use {@link AbstractButtonListScreen}
  */
+@Deprecated
 public abstract class ButtonListBaseScreen extends BaseScreen {
 	private final Panel buttonPanel;
 	private final PanelScrollBar scrollBar;
@@ -20,6 +23,7 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 	private static final int SCROLLBAR_WIDTH = 16;
 	private static final int GUTTER_SIZE = 6;
 
+	@Deprecated
 	public ButtonListBaseScreen() {
 		buttonPanel = new ButtonPanel();
 

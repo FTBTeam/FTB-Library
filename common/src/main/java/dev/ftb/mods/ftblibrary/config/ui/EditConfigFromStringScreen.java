@@ -102,12 +102,10 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 			@Override
 			public boolean mouseScrolled(double scroll) {
-				if (config.scrollValue(scroll > 0)) {
-					textBox.setText(config.getStringFromValue(config.getValue()));
+				return config.scrollValue(currentValue, scroll > 0).map(v -> {
+					textBox.setText(config.getStringFromValue(v));
 					return true;
-				} else {
-					return super.mouseScrolled(scroll);
-				}
+				}).orElse(super.mouseScrolled(scroll));
 			}
 		};
 

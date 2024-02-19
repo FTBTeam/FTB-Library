@@ -7,9 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
 public class ContextMenuItem implements Comparable<ContextMenuItem> {
 	public static final ContextMenuItem SEPARATOR = new ContextMenuItem(Component.empty(), Icon.empty(), () -> {
 	}) {
@@ -18,7 +15,6 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 			return new ContextMenu.CSeparator(panel);
 		}
 	};
-
 
 	private final Component title;
 	private final Icon icon;
@@ -32,6 +28,10 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 		this.title = title;
 		this.icon = icon;
 		this.callback = callback;
+	}
+
+	public static ContextMenuItem title(Component title) {
+		return new ContextMenuItem(title, Icon.empty(), null).setCloseMenu(false);
 	}
 
 	public void addMouseOverText(TooltipList list) {
@@ -70,6 +70,10 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
 	public ContextMenuItem setCloseMenu(boolean v) {
 		closeMenu = v;
 		return this;
+	}
+
+	public boolean isClickable() {
+		return callback != null;
 	}
 
 	public Widget createWidget(ContextMenu panel) {

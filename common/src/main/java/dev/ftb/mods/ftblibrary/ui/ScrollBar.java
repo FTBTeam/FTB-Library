@@ -78,7 +78,9 @@ public class ScrollBar extends Widget {
 	@Override
 	public boolean mousePressed(MouseButton button) {
 		if (isMouseOver()) {
-			grab = (plane.isVertical ? (getMouseY() - (getY() + getMappedValue(height - getScrollBarSize()))) : (getMouseX() - (getX() + getMappedValue(width - getScrollBarSize()))));
+			grab = (plane.isVertical ?
+					(getMouseY() - (getY() + getMappedValue(height - getScrollBarSize()))) :
+					(getMouseX() - (getX() + getMappedValue(width - getScrollBarSize()))));
 			return true;
 		}
 

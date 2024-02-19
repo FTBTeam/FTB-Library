@@ -1,10 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -14,12 +10,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
-public class TextBox extends Widget {
+public class TextBox extends Widget implements IFocusableWidget {
 	private boolean isFocused = false;
 	public int charLimit = 2000;
 	public Color4I textColor = Icon.empty();
@@ -36,13 +32,20 @@ public class TextBox extends Widget {
 		setText("", false);
 	}
 
+	@Override
 	public final boolean isFocused() {
 		return isFocused;
 	}
 
-	public final void setFocused(boolean v) {
-		isFocused = v;
-		validText = isValid(text);
+	@Override
+	public final void setFocused(boolean focused) {
+		if (isFocused != focused) {
+			isFocused = focused;
+			validText = isValid(text);
+			if (focused) {
+				getGui().setFocusedWidget(this);
+			}
+		}
 	}
 
 //	@Override
@@ -65,6 +68,8 @@ public class TextBox extends Widget {
 			cursorPosition = 0;
 			selectionEnd = 0;
 		}
+
+		cursorPosition = Math.min(cursorPosition, s.length());
 
 		validText = isValid(s);
 
@@ -90,6 +95,11 @@ public class TextBox extends Widget {
 
 	public void moveCursorBy(int num) {
 		setCursorPosition(selectionEnd + num);
+//		int from = num > 0 ?
+//				Math.max(cursorPosition, selectionEnd) :
+//				Math.min(cursorPosition, selectionEnd);
+//
+//		setCursorPosition(from + num);
 	}
 
 	public void writeText(String textToWrite) {
@@ -447,44 +457,57 @@ public class TextBox extends Widget {
 		}
 
 		if (k != j) {
-			var l1 = textX + theme.getStringWidth(Component.literal(s.substring(0, k)));
+			var xMax = textX + theme.getStringWidth(Component.literal(s.substring(0, k)));
 
-			int startX = cursorX, startY = textY - 1, endX = l1 - 1, endY = textY + 1 + theme.getFontHeight();
+			int startX = Math.min(cursorX, xMax - 1);
+			int endX = Math.max(cursorX, xMax - 1);
+			int startY = textY - 1;
+			int endY = textY + theme.getFontHeight();
 
-			if (startX < endX) {
-				var i = startX;
-				startX = endX;
-				endX = i;
-			}
+//			int startX = cursorX;
+//            int startY = textY - 1;
+//            int endX = xMax - 1;
+//            int endY = textY + 1 + theme.getFontHeight();
 
-			if (startY < endY) {
-				var j12 = startY;
-				startY = endY;
-				endY = j12;
-			}
+//            if (startX < endX) {
+//				var i = startX;
+//				startX = endX;
+//				endX = i;
+//			}
+//
+//			if (startY < endY) {
+//				var j12 = startY;
+//				startY = endY;
+//				endY = j12;
+//			}
 
-			if (endX > x + w) {
-				endX = x + w;
-			}
+			endX = Math.min(endX, x + w);
+			startX = Math.min(startX, x + w);
 
-			if (startX > x + w) {
-				startX = x + w;
-			}
+//			if (endX > x + w) {
+//				endX = x + w;
+//			}
+//
+//			if (startX > x + w) {
+//				startX = x + w;
+//			}
+
+			graphics.fill(RenderType.guiTextHighlight(), startX, startY, endX, endY, 0x80000080);
 
 			// (please help)
-			var tesselator = Tesselator.getInstance();
-			var bufferBuilder = tesselator.getBuilder();
-			RenderSystem.setShader(GameRenderer::getPositionShader);
-			RenderSystem.setShaderColor(0, 0, 1, 1);
-			RenderSystem.enableColorLogicOp();
-			RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
-			bufferBuilder.vertex(startX, endY, 0).endVertex();
-			bufferBuilder.vertex(endX, endY, 0).endVertex();
-			bufferBuilder.vertex(endX, startY, 0).endVertex();
-			bufferBuilder.vertex(startX, startY, 0).endVertex();
-			tesselator.end();
-			RenderSystem.disableColorLogicOp();
+//			var tesselator = Tesselator.getInstance();
+//			var bufferBuilder = tesselator.getBuilder();
+//			RenderSystem.setShader(GameRenderer::getPositionShader);
+//			RenderSystem.setShaderColor(0, 0, 1, 1);
+//			RenderSystem.enableColorLogicOp();
+//			RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
+//			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+//			bufferBuilder.vertex(startX, endY, 0).endVertex();
+//			bufferBuilder.vertex(endX, endY, 0).endVertex();
+//			bufferBuilder.vertex(endX, startY, 0).endVertex();
+//			bufferBuilder.vertex(startX, startY, 0).endVertex();
+//			tesselator.end();
+//			RenderSystem.disableColorLogicOp();
 		}
 
 		GuiHelper.popScissor(getScreen());
