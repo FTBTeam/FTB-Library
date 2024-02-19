@@ -14,8 +14,9 @@ import java.util.Optional;
 
 
 public class TextField extends Widget {
-	public Component component = Component.empty();
+	public Component component = Component.empty();  // TODO remove this in MC 1.21
 	private FormattedText[] formattedText = new FormattedText[0];
+	private Component rawText = Component.empty();
 	public int textFlags = 0;
 	public int minWidth = 0;
 	public int maxWidth = 5000;
@@ -23,6 +24,7 @@ public class TextField extends Widget {
 	public float scale = 1.0F;
 	public Color4I textColor = Icon.empty();
 	public boolean trim = false;
+	private boolean tooltip = false;
 
 	public TextField(Panel panel) {
 		super(panel);
@@ -63,14 +65,16 @@ public class TextField extends Widget {
 		return this;
 	}
 
+	public TextField showTooltipForLongText() {
+		tooltip = true;
+		return this;
+	}
+
 	public TextField setText(Component txt) {
 		var theme = getGui().getTheme();
 
-		if (trim) {
-			formattedText = new FormattedText[]{theme.trimStringToWidth(Component.literal("").append(txt), maxWidth)};
-		} else {
-			formattedText = theme.listFormattedStringToWidth(Component.literal("").append(txt), maxWidth).toArray(new FormattedText[0]);
-		}
+		rawText = txt;
+		formattedText = theme.listFormattedStringToWidth(Component.literal("").append(txt), maxWidth).toArray(new FormattedText[0]);
 
 		return resize(theme);
 	}
@@ -82,7 +86,7 @@ public class TextField extends Widget {
 	public TextField resize(Theme theme) {
 		setWidth(0);
 
-		for (var s : formattedText) {
+		for (var s : getDisplayedText()) {
 			setWidth(Math.max(width, (int) ((float) theme.getStringWidth(s) * scale)));
 		}
 
@@ -93,9 +97,16 @@ public class TextField extends Widget {
 
 	@Override
 	public void addMouseOverText(TooltipList list) {
+		if (tooltip && formattedText.length > 1) {
+			list.add(rawText);
+		}
 	}
 
 	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+	}
+
+	private FormattedText[] getDisplayedText() {
+		return trim && formattedText.length > 0 ? new FormattedText[] { formattedText[0] } : formattedText;
 	}
 
 	@Override
@@ -114,7 +125,7 @@ public class TextField extends Widget {
 			var ty = y + (centeredV ? (h - theme.getFontHeight()) / 2 : 0);
 			int i;
 			if (scale == 1.0F) {
-				for (i = 0; i < formattedText.length; ++i) {
+				for (i = 0; i < getDisplayedText().length; ++i) {
 					theme.drawString(graphics, formattedText[i], tx, ty + i * textSpacing, col, textFlags);
 				}
 			} else {
@@ -122,7 +133,7 @@ public class TextField extends Widget {
 				graphics.pose().translate(tx, ty, 0.0D);
 				graphics.pose().scale(scale, scale, 1.0F);
 
-				for (i = 0; i < formattedText.length; ++i) {
+				for (i = 0; i < getDisplayedText().length; ++i) {
 					theme.drawString(graphics, formattedText[i], 0, i * textSpacing, col, textFlags);
 				}
 
@@ -133,7 +144,7 @@ public class TextField extends Widget {
 
 	public Optional<Style> getComponentStyleAt(Theme theme, int mouseX, int mouseY) {
 		int line = (mouseY - getY()) / theme.getFontHeight();
-		if (line >= 0 && line < formattedText.length) {
+		if (line >= 0 && line < getDisplayedText().length) {
 			boolean centered = Bits.getFlag(textFlags, Theme.CENTERED);
 			int textWidth = theme.getFont().width(formattedText[line]);
 			int xStart = centered ? getX() + (width - textWidth) / 2: getX();

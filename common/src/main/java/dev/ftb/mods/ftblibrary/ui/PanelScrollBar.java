@@ -50,20 +50,15 @@ public class PanelScrollBar extends ScrollBar {
 	@Override
 	public int getScrollBarSize() {
 		var max = getMaxValue();
-
 		if (max <= 0) {
 			return 0;
 		}
 
-		int size;
+		int size = plane.isVertical ?
+				(int) (panel.height / (max + panel.height) * height) :
+				(int) (panel.width / (max + panel.width) * width);
 
-		if (plane.isVertical) {
-			size = (int) (panel.height / (max + panel.height) * height);
-		} else {
-			size = (int) (panel.width / (max + panel.width) * width);
-		}
-
-		return Math.max(size, 10);
+        return Math.max(size, 10);
 	}
 
 	@Override
@@ -80,5 +75,15 @@ public class PanelScrollBar extends ScrollBar {
 	@Override
 	public boolean canMouseScroll() {
 		return super.canMouseScroll() || panel.isMouseOver();
+	}
+
+	@Override
+	public boolean shouldDraw() {
+		return getScrollBarSize() > 0;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return getScrollBarSize() > 0;
 	}
 }

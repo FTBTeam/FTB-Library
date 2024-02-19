@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-
 public class ColorConfig extends ConfigFromString<Color4I> {
 	public ColorConfig() {
 		defaultValue = Icon.empty();

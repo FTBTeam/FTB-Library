@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-
 public class NBTConfig extends ConfigFromString<CompoundTag> {
 	public static final Component EMPTY_NBT = Component.literal("{}");
 	public static final Component NON_EMPTY_NBT = Component.literal("{...}");

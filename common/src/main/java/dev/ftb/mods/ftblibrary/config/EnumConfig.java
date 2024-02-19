@@ -5,13 +5,13 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
+import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
-
 
 public class EnumConfig<E> extends ConfigWithVariants<E> {
 	public final NameMap<E> nameMap;
@@ -40,7 +40,13 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 		if (nameMap.size() > 0) {
 			list.blankLine();
 
-			for (var v : nameMap) {
+			for (int i = 0; i < nameMap.size(); i++) {
+				if (i >= 10) {
+					// prevent big enums producing giant unwieldy tooltips
+					list.add(Component.literal("... " + (nameMap.size() - i) + " more ...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+					break;
+				}
+			    var v = nameMap.get(i);
 				var e = isEqual(v, value);
 				var c = Component.literal(e ? "+ " : "- ");
 				c.withStyle(e ? ChatFormatting.AQUA : ChatFormatting.DARK_GRAY);
@@ -51,7 +57,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 	}
 
 	@Override
-	public void onClicked(MouseButton button, ConfigCallback callback) {
+	public void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback) {
 		if (nameMap.values.size() > 16 || BaseScreen.isCtrlKeyDown()) {
 			var gui = new ButtonListBaseScreen() {
 				@Override
@@ -61,8 +67,8 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 							@Override
 							public void onClicked(MouseButton button) {
 								playClickSound();
-								setCurrentValue(v);
-								callback.save(true);
+								boolean changed = setCurrentValue(v);
+								callback.save(changed);
 							}
 						});
 					}
@@ -74,7 +80,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 			return;
 		}
 
-		super.onClicked(button, callback);
+		super.onClicked(clickedWidget, button, callback);
 	}
 
 	@Override

@@ -1,76 +1,73 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
 import dev.architectury.fluid.FluidStack;
+import dev.architectury.hooks.fluid.FluidBucketHooks;
+import dev.architectury.hooks.fluid.FluidStackHooks;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.FluidConfig;
-import dev.ftb.mods.ftblibrary.icon.Color4I;
-import dev.ftb.mods.ftblibrary.icon.Icon;
-import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
-import dev.ftb.mods.ftblibrary.ui.input.Key;
-import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
-import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
-import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
-import net.minecraft.core.registries.BuiltInRegistries;
+import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.Fluids;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 
-import java.util.Optional;
+import java.util.Objects;
 
+public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
+    public static final SearchModeIndex<ResourceSearchMode<FluidStack>> KNOWN_MODES = new SearchModeIndex<>();
+    static {
+        KNOWN_MODES.appendMode(ResourceSearchMode.ALL_FLUIDS);
+    }
 
-public class SelectFluidScreen extends ButtonListBaseScreen {
-	private final FluidConfig config;
-	private final ConfigCallback callback;
+    public SelectFluidScreen(FluidConfig config, ConfigCallback callback) {
+        super(config, callback);
+    }
 
-	public SelectFluidScreen(FluidConfig c, ConfigCallback cb) {
-		setTitle(Component.translatable("ftblibrary.select_fluid.gui"));
-		setHasSearchBox(true);
-		config = c;
-		callback = cb;
-	}
+    private class FluidStackButton extends ResourceButton {
+        private FluidStackButton(Panel panel, SelectableResource<FluidStack> resource) {
+            super(panel, resource);
+        }
 
-	@Override
-	public void addButtons(Panel panel) {
-		if (config.allowEmptyFluid()) {
-			var fluidStack = FluidStack.create(Fluids.EMPTY, FluidStack.bucketAmount());
-			addFluidButton(panel, ItemIcon.getItemIcon(Items.BUCKET), fluidStack);
-		}
+        @Override
+        public boolean shouldAdd(String search) {
+            search = search.toLowerCase();
+            if (search.isEmpty()) {
+                return true;
+            } else if (search.startsWith("@")) {
+                return RegistrarManager.getId(getStack().getFluid(), Registries.FLUID).getNamespace().contains(search.substring(1));
+            } else if (search.startsWith("#") && ResourceLocation.isValidResourceLocation(search.substring(1))) {
+                return getStack().getFluid().builtInRegistryHolder().is(TagKey.create(Registries.FLUID, new ResourceLocation(search.substring(1))));
+            } else {
+                return getStack().getName().getString().toLowerCase().contains(search);
+            }
+        }
 
-		for (var fluid : BuiltInRegistries.FLUID) {
-			if (fluid != Fluids.EMPTY && fluid.defaultFluidState().isSource()) {
-				var fluidStack = FluidStack.create(fluid, FluidStack.bucketAmount());
-				Icon icon = Icon.getIcon(ClientUtils.getStillTexture(fluidStack)).withTint(Color4I.rgb(ClientUtils.getFluidColor(fluidStack)));
-				addFluidButton(panel, icon, fluidStack);
-			}
-		}
-	}
+        @Override
+        public void addMouseOverText(TooltipList list) {
+            if (!getStack().isEmpty()) {
+                list.add(getStack().getName());
+                ModUtils.getModName(getStack().getFluid())
+                        .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+            }
+        }
+    }
 
-	private void addFluidButton(Panel panel, Icon icon, FluidStack fluidStack) {
-		panel.add(new SimpleTextButton(panel, fluidStack.getName(), icon) {
-			@Override
-			public void onClicked(MouseButton button) {
-				playClickSound();
-				config.setCurrentValue(fluidStack.copy());
-				callback.save(true);
-			}
+    @Override
+    protected int defaultQuantity() {
+        return (int) FluidStackHooks.bucketAmount();
+    }
 
-			@Override
-			public Optional<PositionedIngredient> getIngredientUnderMouse() {
-				return PositionedIngredient.of(fluidStack, this);
-			}
-		});
-	}
+    @Override
+    protected SearchModeIndex<ResourceSearchMode<FluidStack>> getSearchModeIndex() {
+        return KNOWN_MODES;
+    }
 
-	@Override
-	public boolean onClosedByKey(Key key) {
-		if (super.onClosedByKey(key)) {
-			callback.save(false);
-			return true;
-		}
-
-		return false;
-	}
+    @Override
+    protected ResourceSelectorScreen<FluidStack>.ResourceButton makeResourceButton(Panel panel, SelectableResource<FluidStack> resource) {
+        return new FluidStackButton(panel, Objects.requireNonNullElse(resource, SelectableResource.fluid(FluidStack.empty())));
+    }
 }

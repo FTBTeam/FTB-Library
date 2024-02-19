@@ -26,21 +26,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
-public class SelectImageScreen extends ButtonListBaseScreen {
+public class SelectImageScreen extends AbstractButtonListScreen {
 	private final ImageConfig imageConfig;
 	private final ConfigCallback callback;
 	private final SimpleTextButton refreshButton;
 
 	private static List<ImageDetails> cachedImages = null;
 
-	public SelectImageScreen(ImageConfig i, ConfigCallback c) {
-		imageConfig = i;
-		callback = c;
+	public SelectImageScreen(ImageConfig imageConfig, ConfigCallback callback) {
+		this.imageConfig = imageConfig;
+		this.callback = callback;
+
 		setTitle(Component.literal("Select Image"));
 		setHasSearchBox(true);
 		focus();
 		setBorder(1, 1, 1);
+
 		refreshButton = new SimpleTextButton(this, Component.translatable("ftblibrary.select_image.rescan"), Icons.REFRESH) {
 			@Override
 			public void onClicked(MouseButton button) {
@@ -84,11 +85,6 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				// shorten <mod>:textures/A/B.png to <mod>:A/B
 				ResourceLocation res1 = new ResourceLocation(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
 				TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
-//				try (SpriteContents s = sprite.contents()) {
-//					if (s.name().equals(MissingTextureAtlasSprite.getLocation())) {
-//						res1 = res;
-//					}
-//				}
 				if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
 					res1 = res;
 				}
@@ -107,6 +103,16 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 		super.alignWidgets();
 
 		refreshButton.setPos(width + 2, 0);
+	}
+
+	@Override
+	protected void doCancel() {
+		callback.save(false);
+	}
+
+	@Override
+	protected void doAccept() {
+		callback.save(true);
 	}
 
 	@Override
@@ -135,8 +141,8 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
 					playClickSound();
-					imageConfig.setCurrentValue("");
-					callback.save(true);
+					boolean changed = imageConfig.setCurrentValue("");
+					callback.save(changed);
 				}
 			});
 		}
@@ -146,8 +152,8 @@ public class SelectImageScreen extends ButtonListBaseScreen {
 				@Override
 				public void onClicked(MouseButton mouseButton) {
 					playClickSound();
-					imageConfig.setCurrentValue(res.icon.toString());
-					callback.save(true);
+					boolean changed = imageConfig.setCurrentValue(res.icon.toString());
+					callback.save(changed);
 				}
 			});
 		}

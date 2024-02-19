@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
@@ -24,10 +25,10 @@ public class SimpleToast implements Toast {
 		graphics.blitSprite(BACKGROUND_SPRITE, 0, 0, 160, 32);
 
 		var list = mc.font.split(getSubtitle(), 125);
-		var i = isImportant() ? 16746751 : 16776960;
+		var i = isImportant() ? 0x00FF88FF : 0x00FFFF00;
 
 		if (list.size() == 1) {
-			graphics.drawString(mc.font, getTitle(), 30, 7, i | -16777216, true);
+			graphics.drawString(mc.font, getTitle(), 30, 7, i | 0xFF000000, true);
 			graphics.drawString(mc.font, list.get(0), 30, 18, -1);
 		} else {
 			if (delta < 1500L) {
@@ -38,7 +39,7 @@ public class SimpleToast implements Toast {
 				var l = 16 - list.size() * mc.font.lineHeight / 2;
 
 				for (var s : list) {
-					graphics.drawString(mc.font, s, 30, l, 16777215 | i1, true);
+					graphics.drawString(mc.font, s, 30, l, 0x00FFFFFF | i1, true);
 					l += mc.font.lineHeight;
 				}
 			}
@@ -49,10 +50,8 @@ public class SimpleToast implements Toast {
 			playSound(mc.getSoundManager());
 		}
 
-		GuiHelper.setupDrawing();
-		Lighting.setupFor3DItems();
 		getIcon().draw(graphics, 8, 8, 16, 16);
-		return delta >= 5000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
+		return delta >= 5000L * gui.getNotificationDisplayTimeMultiplier() ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
 	}
 
 	public Component getTitle() {
@@ -72,5 +71,40 @@ public class SimpleToast implements Toast {
 	}
 
 	public void playSound(SoundManager handler) {
+	}
+
+	public static void info(Component title, Component subtitle) {
+		Minecraft.getInstance().getToasts().addToast(
+		new SimpleToast() {
+			@Override
+			public Component getTitle() {
+				return title;
+			}
+
+			@Override
+			public Component getSubtitle() {
+				return subtitle;
+			}
+		});
+	}
+
+	public static void error(Component title, Component subtitle) {
+		Minecraft.getInstance().getToasts().addToast(
+				new SimpleToast() {
+					@Override
+					public Component getTitle() {
+						return title;
+					}
+
+					@Override
+					public Component getSubtitle() {
+						return subtitle;
+					}
+
+					@Override
+					public Icon getIcon() {
+						return Icons.BARRIER;
+					}
+				});
 	}
 }

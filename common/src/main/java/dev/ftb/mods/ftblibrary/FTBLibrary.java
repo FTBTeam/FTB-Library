@@ -7,6 +7,7 @@ import dev.architectury.utils.EnvExecutor;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +27,10 @@ public class FTBLibrary {
 		LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
 		PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
 		PROXY.init();
+	}
+
+	public static ResourceLocation rl(String path) {
+		return new ResourceLocation(MOD_ID, path);
 	}
 
 	private void serverStarted(MinecraftServer server) {

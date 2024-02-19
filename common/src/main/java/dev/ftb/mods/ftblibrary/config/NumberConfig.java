@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-
 public abstract class NumberConfig<T extends Number> extends ConfigFromString<T> {
 	public static final Color4I COLOR = Color4I.rgb(0xAA5AE8);
 
@@ -26,6 +25,11 @@ public abstract class NumberConfig<T extends Number> extends ConfigFromString<T>
 	public NumberConfig<T> fader(boolean v) {
 		fader = v;
 		return this;
+	}
+
+	@Override
+	public boolean canScroll() {
+		return true;
 	}
 
 	@Override

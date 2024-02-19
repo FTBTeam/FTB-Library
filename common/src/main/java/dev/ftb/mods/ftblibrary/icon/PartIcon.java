@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
 
 public class PartIcon extends IconWithParent {
@@ -18,8 +19,7 @@ public class PartIcon extends IconWithParent {
 		return new PartIcon(textureId, 0, 0, textureWidth, textureHeight, corner, textureWidth, textureHeight);
 	}
 
-	public PartIcon(Icon icon, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {
-		super(icon);
+	public PartIcon(Icon icon, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {super(icon);
 		parent = icon;
 		this.textureWidth = textureWidth;
 		this.textureHeight = textureHeight;
@@ -31,12 +31,12 @@ public class PartIcon extends IconWithParent {
 		updateParts();
 	}
 
-	public PartIcon(String iconId, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {
-		this(Icon.getIcon(iconId), textureU, textureV, subWidth, subHeight, corner, textureWidth, textureHeight);
-	}
-
 	public PartIcon(Icon icon, int x, int y, int w, int h, int c) {
 		this(icon, x, y, w, h, c, 256, 256);
+	}
+
+	public PartIcon(String iconId, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {
+		this(Icon.getIcon(iconId), textureU, textureV, subWidth, subHeight, corner, textureWidth, textureHeight);
 	}
 
 	public PartIcon(Icon icon) {

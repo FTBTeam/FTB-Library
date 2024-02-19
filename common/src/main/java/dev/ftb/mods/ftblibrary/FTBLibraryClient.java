@@ -4,6 +4,7 @@ import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.client.screen.ScreenAccess;
+import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.ftb.mods.ftblibrary.config.*;
@@ -12,6 +13,7 @@ import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.misc.SelectImageScreen;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import me.shedaniel.rei.api.client.config.ConfigObject;
@@ -20,8 +22,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -119,21 +125,31 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 
 	@Override
 	public void testScreen() {
-		var group = new ConfigGroup("test");
-		group.add("image", new ImageConfig(), "", v -> { }, "");
+		var group = new ConfigGroup("test", accepted ->
+				Minecraft.getInstance().player.displayClientMessage(Component.literal("Accepted: " + accepted), false));
+		group.add("image", new ImageResourceConfig(), ImageResourceConfig.NONE, v -> { }, ImageResourceConfig.NONE);
+		group.add("old_image", new ImageConfig(), "", v -> { }, "");
 
-		group.addItemStack("item", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, true);
-		group.add("fluid", new FluidConfig(true), FluidStack.empty(), v -> {}, FluidStack.empty());
+		group.addItemStack("itemstack", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, true);
+		group.addItemStack("item", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, 1).setAllowNBTEdit(false);
+		group.addFluidStack("fluidstack", FluidStack.empty(), v -> {}, FluidStack.empty(), true);
+		FluidStack water = FluidStack.create(Fluids.WATER, FluidStackHooks.bucketAmount());
+		group.addFluidStack("fluid", water, v -> {}, water, water.getAmount()).showAmount(false).setAllowNBTEdit(false);
 
 		ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
 		grp1.addInt("integer", 1, v -> {}, 0, 0, 10);
+		grp1.addLong("long", 10L, v -> {}, 0L, 0L, 1000L);
+		grp1.addDouble("double", 1.5, v -> {}, 0.0, 0.0, 10.0);
 		grp1.addBool("bool", true, v -> {}, false);
+		grp1.addString("string", "some text", v -> {}, "");
 
 		ConfigGroup grp2 = grp1.getOrCreateSubgroup("subgroup1");
 		grp2.addEnum("enum", Direction.UP, v -> {}, NameMap.of(Direction.UP, Direction.values()).create());
 		List<Integer> integers = new ArrayList<>(List.of(1, 2, 3, 4));
-		grp2.addList("list", integers, new IntConfig(0, 10), 1);
+		grp2.addList("int_list", integers, new IntConfig(0, 10), 1);
+		List<String> strings = new ArrayList<>(List.of("line one", "line two", "line three"));
+		grp2.addList("str_list", strings, new StringConfig(), "");
 
-		new EditConfigScreen(group).openGuiLater();
+		new EditConfigScreen(group).setAutoclose(true).openGuiLater();
 	}
 }

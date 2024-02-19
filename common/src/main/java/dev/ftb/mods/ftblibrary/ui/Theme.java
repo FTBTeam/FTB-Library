@@ -24,6 +24,7 @@ import java.util.List;
 
 public class Theme {
 	public static final Theme DEFAULT = new Theme();
+
 	public static boolean renderDebugBoxes = false;
 
 	public static final int DARK = 1;
@@ -33,9 +34,9 @@ public class Theme {
 	public static final int MOUSE_OVER = 16;
 	public static final int CENTERED_V = 32;
 
-	private static final Color4I CONTENT_COLOR_MOUSE_OVER = Color4I.rgb(16777120);
-	private static final Color4I CONTENT_COLOR_DISABLED = Color4I.rgb(10526880);
-	private static final Color4I CONTENT_COLOR_DARK = Color4I.rgb(4210752);
+	private static final Color4I CONTENT_COLOR_MOUSE_OVER = Color4I.rgb(0xFFFFA0);
+	private static final Color4I CONTENT_COLOR_DISABLED = Color4I.rgb(0xA0A0A0);
+	private static final Color4I CONTENT_COLOR_DARK = Color4I.rgb(0x404040);
 
 	public static final ImageIcon BACKGROUND_SQUARES = (ImageIcon) Icon.getIcon(FTBLibrary.MOD_ID + ":textures/gui/background_squares.png");
 

@@ -1,10 +1,14 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
+import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.BooleanConsumer;
+import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,37 +24,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.List;
-import java.util.Optional;
-
+import java.util.*;
 
 public abstract class BaseScreen extends Panel {
-	public static class PositionedTextData {
-		public final int posX, posY;
-		public final int width, height;
-		public final ClickEvent clickEvent;
-		public final HoverEvent hoverEvent;
-		public final String insertion;
-
-		public PositionedTextData(int x, int y, int w, int h, Style s) {
-			posX = x;
-			posY = y;
-			width = w;
-			height = h;
-			clickEvent = s.getClickEvent();
-			hoverEvent = s.getHoverEvent();
-			insertion = s.getInsertion();
-		}
-	}
-
 	private final Screen prevScreen;
 	private int mouseX, mouseY;
 	private float partialTicks;
 	private boolean refreshWidgets;
 	private Window screen;
-	private Panel contextMenu = null;
-//	public ItemRenderer itemRenderer;
 	private long lastClickTime = 0L;
+	private final Deque<ModalPanel> modalPanels;
+	private Widget focusedWidget = null;
 
 	public BaseScreen() {
 		super(null);
@@ -58,6 +42,7 @@ public abstract class BaseScreen extends Panel {
 		setOnlyRenderWidgetsInside(false);
 		setOnlyInteractWithWidgetsInside(false);
 		prevScreen = Minecraft.getInstance().screen;
+		modalPanels = new ArrayDeque<>();
 	}
 
 	@Override
@@ -84,6 +69,7 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	public Theme getTheme() {
+		// TODO a way for users to select theme
 		return Theme.DEFAULT;
 	}
 
@@ -119,6 +105,16 @@ public abstract class BaseScreen extends Panel {
 		return true;
 	}
 
+	/**
+	 * Should the GUI automatically close when Escape (or the inventory key - E by default) is pressed? Override this
+	 * to return false if you need to implement custom close behaviour, e.g. a confirmation screen for unsaved changes.
+	 *
+	 * @return autoclose behaviour, true by default
+	 */
+	public boolean shouldCloseOnEsc() {
+		return true;
+	}
+
 	protected boolean setFullscreen() {
 		return setSizeProportional(1f, 1f);
 	}
@@ -138,10 +134,20 @@ public abstract class BaseScreen extends Panel {
 	public void onPostInit() {
 	}
 
+	public void pushModalPanel(ModalPanel modalPanel) {
+		modalPanels.addFirst(modalPanel);
+		modalPanel.addWidgets();
+		modalPanel.alignWidgets();
+	}
+
+	public void popModalPanel() {
+		modalPanels.removeFirst();
+	}
+
 	@Nullable
 	public Screen getPrevScreen() {
-		if (prevScreen instanceof ScreenWrapper && ((ScreenWrapper) prevScreen).getGui() instanceof LoadingScreen) {
-			return ((ScreenWrapper) prevScreen).getGui().getPrevScreen();
+		if (prevScreen instanceof ScreenWrapper sw && sw.getGui() instanceof LoadingScreen) {
+			return sw.getGui().getPrevScreen();
 		} else if (prevScreen instanceof ChatScreen) {
 			return null;
 		}
@@ -168,6 +174,8 @@ public abstract class BaseScreen extends Panel {
 			mc.setScreen(getPrevScreen());
 			GLFW.glfwSetCursorPos(getScreen().getWindow(), mx, my);
 		}
+
+		modalPanels.clear();
 
 		onClosed();
 	}
@@ -196,19 +204,12 @@ public abstract class BaseScreen extends Panel {
 
 		if (refreshWidgets) {
 			super.refreshWidgets();
+			modalPanels.forEach(Panel::refreshWidgets);
 			refreshWidgets = false;
 		}
 
 		posX = getX();
 		posY = getY();
-
-		if (contextMenu != null) {
-			if (contextMenu instanceof BaseScreen) {
-				((BaseScreen) contextMenu).updateGui(mx, my, pt);
-			} else {
-				contextMenu.updateMouseOver(mouseX, mouseY);
-			}
-		}
 
 		updateMouseOver(mouseX, mouseY);
 	}
@@ -218,13 +219,8 @@ public abstract class BaseScreen extends Panel {
 		isMouseOver = checkMouseOver(mouseX, mouseY);
 		setOffset(true);
 
-		if (contextMenu != null) {
-			contextMenu.updateMouseOver(mouseX, mouseY);
-		} else {
-			for (var widget : widgets) {
-				widget.updateMouseOver(mouseX, mouseY);
-			}
-		}
+		modalPanels.forEach(p -> p.updateMouseOver(mouseX, mouseY));
+		widgets.forEach(w -> w.updateMouseOver(mouseX, mouseY));
 
 		setOffset(false);
 	}
@@ -232,45 +228,65 @@ public abstract class BaseScreen extends Panel {
 	@Override
 	public final void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		super.draw(graphics, theme, x, y, w, h);
+
+		if (!modalPanels.isEmpty()) {
+			// dim the rest of the gui so modal panel(s) are effectively highlighted
+			graphics.pose().translate(0.0, 0.0, 0.05);
+			Color4I.rgba(0x80202020).draw(graphics, x, y, w, h);
+			graphics.pose().translate(0.0, 0.0, -0.05);
+
+			// allow modal panels to draw outside scissor area if needed
+			boolean r = getOnlyRenderWidgetsInside();
+			boolean i = getOnlyInteractWithWidgetsInside();
+			setOnlyRenderWidgetsInside(false);
+			setOnlyInteractWithWidgetsInside(false);
+
+			graphics.pose().pushPose();
+			graphics.pose().translate(0, 0, 200);
+			Iterator<ModalPanel> iter = modalPanels.descendingIterator();
+			while (iter.hasNext()) {
+				ModalPanel p = iter.next();
+				p.draw(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
+				graphics.pose().translate(0, 0, 10);
+			}
+			graphics.pose().popPose();
+
+			setOnlyRenderWidgetsInside(r);
+			setOnlyRenderWidgetsInside(i);
+		}
 	}
 
-	public Optional<Panel> getContextMenu() {
-		return Optional.ofNullable(contextMenu);
+	public Optional<ModalPanel> getContextMenu() {
+		return modalPanels.stream().filter(p -> p instanceof ContextMenu).findFirst();
 	}
 
 	public void openContextMenu(@Nullable ContextMenu newContextMenu) {
-		int px = 0, py = 0;
-
-		if (contextMenu != null) {
-			px = contextMenu.posX;
-			py = contextMenu.posY;
-			contextMenu.onClosed();
-			widgets.remove(contextMenu);
-		}
-
 		if (newContextMenu == null) {
-			contextMenu = null;
+			if (modalPanels.peekFirst() instanceof ContextMenu) {
+				modalPanels.pop();
+			}
 			return;
 		}
 
 		var x = getX();
 		var y = getY();
 
-		if (contextMenu == null) {
+		ContextMenu currentMenu = (ContextMenu) modalPanels.stream()
+				.filter(p -> p instanceof ContextMenu)
+				.findFirst()
+				.orElse(null);
+
+		int px = 0, py = 0;
+		if (currentMenu == null) {
 			px = getMouseX() - x;
 			py = getMouseY() - y;
 		}
 
-		contextMenu = newContextMenu;
-		widgets.add(contextMenu);
-		contextMenu.refreshWidgets();
-		px = Math.min(px, screen.getGuiScaledWidth() - contextMenu.width - x) - 3;
-		py = Math.min(py, screen.getGuiScaledHeight() - contextMenu.height - y) - 3;
-		contextMenu.setPos(px, py);
+		pushModalPanel(newContextMenu);
 
-		if (contextMenu instanceof BaseScreen b) {
-			b.initGui();
-		}
+		px = Math.min(px, screen.getGuiScaledWidth() - newContextMenu.width - x) - 3;
+		py = Math.min(py, screen.getGuiScaledHeight() - newContextMenu.height - y) - 3;
+		newContextMenu.setPos(px, py);
 	}
 
 	public ContextMenu openContextMenu(@NotNull List<ContextMenuItem> menu) {
@@ -282,7 +298,6 @@ public abstract class BaseScreen extends Panel {
 	@Override
 	public void closeContextMenu() {
 		openContextMenu((ContextMenu) null);
-//		onInit();
 	}
 
 	@Override
@@ -304,6 +319,10 @@ public abstract class BaseScreen extends Panel {
 	public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
+	private Panel getDoubleClickTarget() {
+		return modalPanels.isEmpty() ? this : modalPanels.peekFirst();
+	}
+
 	@Override
 	public boolean mousePressed(MouseButton button) {
 		if (button == MouseButton.BACK) {
@@ -312,20 +331,36 @@ public abstract class BaseScreen extends Panel {
 		}
 
 		var now = System.currentTimeMillis();
-		if (lastClickTime != 0L && (now - lastClickTime) <= 300L && mouseDoubleClicked(button)) {
+		if (lastClickTime != 0L && (now - lastClickTime) <= 300L && getDoubleClickTarget().mouseDoubleClicked(button)) {
 			lastClickTime = 0L;
 			return true;
 		}
 		lastClickTime = now;
 
-		return super.mousePressed(button);
+		if (modalPanels.isEmpty()) {
+			return super.mousePressed(button);
+		} else if (modalPanels.peekFirst().isMouseOver()) {
+			return modalPanels.peekFirst().mousePressed(button);
+		} else {
+			// clicking outside any modal panels dismisses them all
+			modalPanels.clear();
+			return false;
+		}
 	}
 
 	@Override
 	public boolean keyPressed(Key key) {
-		if (super.keyPressed(key)) {
+		if (focusedWidget != null && focusedWidget.keyPressed(key)) {
 			return true;
-		} else if (GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS && key.is(GLFW.GLFW_KEY_B)) {
+		} else if (!modalPanels.isEmpty()) {
+			if (key.esc()) {
+				modalPanels.pop();
+				return true;
+			}
+			return modalPanels.peekFirst().keyPressed(key);
+		} else if (super.keyPressed(key)) {
+			return true;
+		} else if (InputConstants.isKeyDown(getGui().screen.getWindow(), GLFW.GLFW_KEY_F3) && key.is(GLFW.GLFW_KEY_B)) {
 			Theme.renderDebugBoxes = !Theme.renderDebugBoxes;
 			return true;
 		}
@@ -334,8 +369,52 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	@Override
+	public boolean mouseDoubleClicked(MouseButton button) {
+		return modalPanels.isEmpty() ? super.mouseDoubleClicked(button) : modalPanels.peekFirst().mouseDoubleClicked(button);
+	}
+
+	@Override
+	public void mouseReleased(MouseButton button) {
+		if (modalPanels.isEmpty()) {
+			super.mouseReleased(button);
+		} else {
+			modalPanels.peekFirst().mouseReleased(button);
+		}
+	}
+
+	@Override
+	public boolean mouseScrolled(double scroll) {
+		if (focusedWidget != null && focusedWidget.mouseScrolled(scroll)) {
+			return true;
+		}
+		return modalPanels.isEmpty() ? super.mouseScrolled(scroll) : modalPanels.peekFirst().mouseScrolled(scroll);
+	}
+
+	@Override
+	public boolean mouseDragged(int button, double dragX, double dragY) {
+		return modalPanels.isEmpty() ? super.mouseDragged(button, dragX, dragY) : modalPanels.peekFirst().mouseDragged(button, dragX, dragY);
+	}
+
+	@Override
+	public boolean charTyped(char c, KeyModifiers modifiers) {
+		if (focusedWidget != null && focusedWidget.charTyped(c, modifiers)) {
+			return true;
+		}
+		return modalPanels.isEmpty() ? super.charTyped(c, modifiers) : modalPanels.peekFirst().charTyped(c, modifiers);
+	}
+
+	@Override
 	public boolean shouldAddMouseOverText() {
-		return contextMenu == null;
+		return getContextMenu().isEmpty();
+	}
+
+	@Override
+	public void addMouseOverText(TooltipList list) {
+		if (!modalPanels.isEmpty()) {
+			modalPanels.peekFirst().addMouseOverText(list);
+		} else {
+			super.addMouseOverText(list);
+		}
 	}
 
 	@Override
@@ -392,8 +471,7 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	public void openYesNoFull(Component title, Component desc, BooleanConsumer callback) {
-		Minecraft.getInstance().setScreen(new ConfirmScreen(result ->
-		{
+		Minecraft.getInstance().setScreen(new ConfirmScreen(result -> {
 			openGui();
 			callback.accept(result);
 			refreshWidgets();
@@ -406,5 +484,31 @@ public abstract class BaseScreen extends Panel {
 				callback.run();
 			}
 		});
+	}
+
+	public void setFocusedWidget(Widget widget) {
+		Validate.isTrue(widget instanceof IFocusableWidget);
+		if (focusedWidget instanceof IFocusableWidget f && focusedWidget != widget) {
+			f.setFocused(false);
+		}
+		focusedWidget = widget;
+	}
+
+	public static class PositionedTextData {
+		public final int posX, posY;
+		public final int width, height;
+		public final ClickEvent clickEvent;
+		public final HoverEvent hoverEvent;
+		public final String insertion;
+
+		public PositionedTextData(int x, int y, int w, int h, Style s) {
+			posX = x;
+			posY = y;
+			width = w;
+			height = h;
+			clickEvent = s.getClickEvent();
+			hoverEvent = s.getHoverEvent();
+			insertion = s.getInsertion();
+		}
 	}
 }

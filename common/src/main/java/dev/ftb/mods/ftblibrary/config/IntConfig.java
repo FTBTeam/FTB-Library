@@ -4,8 +4,8 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
-
 
 public class IntConfig extends NumberConfig<Integer> {
 	public IntConfig(int mn, int mx) {
@@ -37,7 +37,7 @@ public class IntConfig extends NumberConfig<Integer> {
 
 				return true;
 			}
-		} catch (Exception ex) {
+		} catch (Exception ignored) {
 		}
 
 		return false;
@@ -49,12 +49,8 @@ public class IntConfig extends NumberConfig<Integer> {
 	}
 
 	@Override
-	public boolean scrollValue(boolean forward) {
-		int newVal = Mth.clamp(value + (forward ? 1 : -1), min, max);
-		if (newVal != value) {
-			setValue(newVal);
-			return true;
-		}
-		return false;
-	}
+	public Optional<Integer> scrollValue(Integer currentValue, boolean forward) {
+		int newVal = Mth.clamp(currentValue + (forward ? 1 : -1), min, max);
+        return newVal != currentValue ? Optional.of(newVal) : Optional.empty();
+    }
 }

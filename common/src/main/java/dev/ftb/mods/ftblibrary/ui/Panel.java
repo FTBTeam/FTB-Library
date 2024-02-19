@@ -284,12 +284,10 @@ public abstract class Panel extends Widget {
 		for (var i = widgets.size() - 1; i >= 0; i--) {
 			var widget = widgets.get(i);
 
-			if (widget.isEnabled()) {
-				if (widget.mousePressed(button)) {
-					setOffset(false);
-					return true;
-				}
-			}
+            if (widget.isEnabled() && widget.shouldDraw() && widget.mousePressed(button)) {
+                setOffset(false);
+                return true;
+            }
 		}
 
 		setOffset(false);

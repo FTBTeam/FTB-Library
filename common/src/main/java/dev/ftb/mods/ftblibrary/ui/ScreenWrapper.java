@@ -71,7 +71,9 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 				wrappedGui.onBack();
 				return true;
 			} else if (wrappedGui.onClosedByKey(key)) {
-				wrappedGui.closeGui(true);
+				if (shouldCloseOnEsc()) {
+					wrappedGui.closeGui(true);
+				}
 				return true;
 			} else if (Platform.isModLoaded("jei")) {
 				wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> handleIngredientKey(key, underMouse.ingredient()));
@@ -114,7 +116,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		wrappedGui.draw(graphics, theme, x, y, w, h);
 		wrappedGui.drawForeground(graphics, theme, x, y, w, h);
 
-		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
+		wrappedGui.addMouseOverText(tooltipList); //getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
@@ -157,5 +159,10 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	public void removed() {
 		wrappedGui.onClosed();
 		super.removed();
+	}
+
+	@Override
+	public boolean shouldCloseOnEsc() {
+		return getGui().shouldCloseOnEsc();
 	}
 }

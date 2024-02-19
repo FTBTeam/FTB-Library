@@ -5,8 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
-import dev.ftb.mods.ftblibrary.config.ui.ItemSearchMode;
 import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
+import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
@@ -45,7 +46,7 @@ import java.util.List;
 public class REIIntegration implements REIClientPlugin {
 	public static final ResourceLocation ID = new ResourceLocation("ftblibrary", "sidebar_button");
 
-	private static final ItemSearchMode REI_ITEMS = new ItemSearchMode() {
+	private static final ResourceSearchMode<ItemStack> REI_ITEMS = new ResourceSearchMode<>() {
 		@Override
 		public Icon getIcon() {
 			return ItemIcon.getItemIcon(Items.GLOW_BERRIES);
@@ -57,7 +58,7 @@ public class REIIntegration implements REIClientPlugin {
 		}
 
 		@Override
-		public Collection<ItemStack> getAllItems() {
+		public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
 			return CollectionUtils.filterAndMap(
 					EntryRegistry.getInstance().getPreFilteredList(),
 					stack -> stack.getType().equals(VanillaEntryTypes.ITEM),
@@ -67,7 +68,7 @@ public class REIIntegration implements REIClientPlugin {
 	};
 
 	static {
-		SelectItemStackScreen.modes.add(0, REI_ITEMS);
+		SelectItemStackScreen.KNOWN_MODES.prependMode(REI_ITEMS);
 	}
 
 	@Override

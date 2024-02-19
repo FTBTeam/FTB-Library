@@ -2,9 +2,10 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.config.ImageResourceConfig;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
@@ -90,7 +91,7 @@ public abstract class Icon implements Drawable {
 
 		var s = json.getAsString();
 
-		if (s.isEmpty()) {
+		if (isNone(s)) {
 			return empty();
 		}
 
@@ -99,11 +100,11 @@ public abstract class Icon implements Drawable {
 	}
 
 	public static Icon getIcon(ResourceLocation id) {
-		return getIcon(id == null ? Strings.EMPTY : id.toString());
+		return id == null ? empty() : getIcon(id.toString());
 	}
 
 	public static Icon getIcon(String id) {
-		if (id.isEmpty()) {
+		if (isNone(id)) {
 			return empty();
 		}
 
@@ -162,7 +163,7 @@ public abstract class Icon implements Drawable {
 	}
 
 	private static Icon getIcon0(String id) {
-		if (id.isEmpty() || id.equals("none")) {
+		if (isNone(id)) {
 			return Icon.empty();
 		}
 
@@ -198,6 +199,10 @@ public abstract class Icon implements Drawable {
 		}
 
 		return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(new ResourceLocation(id)) : new AtlasSpriteIcon(new ResourceLocation(id));
+	}
+
+	private static boolean isNone(String id) {
+		return id.isEmpty() || id.equals("none") || id.equals(ImageResourceConfig.NONE.toString());
 	}
 
 	public boolean isEmpty() {

@@ -22,7 +22,7 @@ public class TooltipList {
 	private final List<Component> lines = new ArrayList<>();
 	public int zOffset = 950;
 	public int zOffsetItemTooltip = 0;
-	public int backgroundColor = 0xF0100010;
+	public int backgroundColor = 0xC0100010;
 	public int borderColorStart = 0x505000FF;
 	public int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
 	public int maxWidth = 0;
@@ -37,7 +37,7 @@ public class TooltipList {
 		lines.clear();
 		zOffset = 950;
 		zOffsetItemTooltip = 0;
-		backgroundColor = 0xF0100010;
+		backgroundColor = 0xC0100010;
 		borderColorStart = 0x505000FF;
 		borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
 		maxWidth = 0;

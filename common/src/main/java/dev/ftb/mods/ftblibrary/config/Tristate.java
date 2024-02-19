@@ -8,7 +8,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 
-
 public enum Tristate {
 	FALSE("false", "false", InteractionResult.FAIL, Color4I.rgb(0xD52834), 1, Icons.ACCEPT_GRAY),
 	TRUE("true", "true", InteractionResult.SUCCESS, Color4I.rgb(0x33AA33), 0, Icons.ACCEPT),

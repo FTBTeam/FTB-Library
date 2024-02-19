@@ -4,8 +4,8 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
-
 
 public class DoubleConfig extends NumberConfig<Double> {
 	public DoubleConfig(double mn, double mx) {
@@ -92,12 +92,8 @@ public class DoubleConfig extends NumberConfig<Double> {
 	}
 
 	@Override
-	public boolean scrollValue(boolean forward) {
-		double newVal = Mth.clamp(value + (forward ? 1D : -1D), min, max);
-		if (newVal != value) {
-			setValue(newVal);
-			return true;
-		}
-		return false;
-	}
+	public Optional<Double> scrollValue(Double currentValue, boolean forward) {
+		double newVal = Mth.clamp(currentValue + (forward ? 1D : -1D), min, max);
+        return newVal != currentValue ? Optional.of(newVal) : Optional.empty();
+    }
 }
