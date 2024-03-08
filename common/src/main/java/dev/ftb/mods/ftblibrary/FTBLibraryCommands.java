@@ -7,6 +7,7 @@ import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
+import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -186,7 +187,11 @@ public class FTBLibraryCommands {
 		if (Platform.isDevelopmentEnvironment()) {
 			command.then(Commands.literal("test_screen")
 					.executes(context -> {
-						FTBLibrary.PROXY.testScreen();
+						if (context.getSource().getServer().isDedicatedServer()) {
+							context.getSource().sendFailure(Component.literal("Can't do this on dedicated server!").withStyle(ChatFormatting.RED));
+						} else {
+							UITesting.openTestScreen();
+						}
 						return 1;
 					})
 			);

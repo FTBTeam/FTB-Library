@@ -19,6 +19,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.inventory.InventoryMenu;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +40,10 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
 
     public SelectImageResourceScreen(ResourceConfigValue<ResourceLocation> config, ConfigCallback callback) {
         super(config, callback);
+    }
+
+    private static void clearCachedImages() {
+        cachedImages = null;
     }
 
     @Override
@@ -78,6 +84,15 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
             list.add(text);
             ModUtils.getModName(getStack().getNamespace())
                     .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+        }
+    }
+
+    public enum ResourceListener implements ResourceManagerReloadListener {
+        INSTANCE;
+
+        @Override
+        public void onResourceManagerReload(ResourceManager resourceManager) {
+            SelectImageResourceScreen.clearCachedImages();
         }
     }
 

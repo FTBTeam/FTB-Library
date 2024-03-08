@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 public class DoubleConfig extends NumberConfig<Double> {
 	public DoubleConfig(double mn, double mx) {
 		super(mn, mx);
+		scrollIncrement = 1.0;
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class DoubleConfig extends NumberConfig<Double> {
 
 	@Override
 	public Optional<Double> scrollValue(Double currentValue, boolean forward) {
-		double newVal = Mth.clamp(currentValue + (forward ? 1D : -1D), min, max);
+		double newVal = Mth.clamp(currentValue + (forward ? scrollIncrement : -scrollIncrement), min, max);
         return newVal != currentValue ? Optional.of(newVal) : Optional.empty();
     }
 }

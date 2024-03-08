@@ -11,6 +11,7 @@ public abstract class NumberConfig<T extends Number> extends ConfigFromString<T>
 	public final T min;
 	public final T max;
 	public boolean fader;
+	protected T scrollIncrement;
 
 	public NumberConfig(T mn, T mx) {
 		min = mn;
@@ -39,5 +40,10 @@ public abstract class NumberConfig<T extends Number> extends ConfigFromString<T>
 
 	protected String formatValue(T v) {
 		return StringUtils.formatDouble(v.doubleValue(), true);
+	}
+
+	public NumberConfig<T> withScrollIncrement(T increment) {
+		scrollIncrement = increment;
+		return this;
 	}
 }

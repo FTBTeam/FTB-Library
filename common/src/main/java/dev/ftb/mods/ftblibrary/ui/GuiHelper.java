@@ -306,8 +306,8 @@ public class GuiHelper {
 	public static void drawBorderedPanel(GuiGraphics graphics, int x, int y, int w, int h, Color4I color, boolean outset) {
 		w--; h--;
 
-		Color4I hi = color.addBrightness(outset ? 0.1f : -0.1f);
-		Color4I lo = color.addBrightness(outset ? -0.1f : 0.1f);
+		Color4I hi = color.addBrightness(outset ? 0.15f : -0.1f);
+		Color4I lo = color.addBrightness(outset ? -0.1f : 0.15f);
 
 		graphics.fill(x, y, x + w, y + h, color.rgba());
 		graphics.hLine(x, x + w - 1, y, hi.rgba());

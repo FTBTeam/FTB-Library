@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.architectury.fluid.FluidStack;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -229,6 +230,10 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
 
 	public FluidConfig addFluidStack(String id, FluidStack value, Consumer<FluidStack> setter, FluidStack def, long fixedSize) {
 		return add(id, new FluidConfig(fixedSize), value, setter, def);
+	}
+
+	public ImageResourceConfig addImage(String id, ResourceLocation value, Consumer<ResourceLocation> setter, ResourceLocation def) {
+		return add(id, new ImageResourceConfig(), value, setter, def);
 	}
 
 	public final Collection<ConfigValue<?>> getValues() {

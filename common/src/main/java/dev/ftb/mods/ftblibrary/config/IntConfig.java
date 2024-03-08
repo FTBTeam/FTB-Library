@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 public class IntConfig extends NumberConfig<Integer> {
 	public IntConfig(int mn, int mx) {
 		super(mn, mx);
+		scrollIncrement = 1;
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class IntConfig extends NumberConfig<Integer> {
 
 	@Override
 	public Optional<Integer> scrollValue(Integer currentValue, boolean forward) {
-		int newVal = Mth.clamp(currentValue + (forward ? 1 : -1), min, max);
+		int newVal = Mth.clamp(currentValue + (forward ? scrollIncrement : -scrollIncrement), min, max);
         return newVal != currentValue ? Optional.of(newVal) : Optional.empty();
     }
 }

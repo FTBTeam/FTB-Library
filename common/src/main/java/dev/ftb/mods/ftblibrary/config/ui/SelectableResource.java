@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -126,7 +127,8 @@ public interface SelectableResource<T> {
         public ImageResource(ResourceLocation location) {
             this.location = location;
 
-            name = Component.literal(location.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
+            name = location == null ? Component.translatable("gui.none").withStyle(ChatFormatting.GRAY) :
+                    Component.literal(location.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
                     .append(Component.literal(location.getPath()).withStyle(ChatFormatting.YELLOW));
             icon = Icon.getIcon(location);
         }

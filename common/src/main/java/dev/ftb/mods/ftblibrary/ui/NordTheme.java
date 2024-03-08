@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.PartIcon;
 import dev.ftb.mods.ftblibrary.ui.misc.NordColors;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
@@ -39,13 +40,15 @@ public class NordTheme extends Theme {
 
     @Override
     public void drawGui(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-        NordColors.POLAR_NIGHT_1.draw(graphics, x, y, w, h);
-        GuiHelper.drawHollowRect(graphics, x - 1, y - 1, w + 2, h + 2, Color4I.rgb(0x101010), true);
+//        NordColors.POLAR_NIGHT_1.draw(graphics, x, y, w, h);
+        GuiHelper.drawBorderedPanel(graphics, x - 1, y - 1, w + 2, h + 2, NordColors.POLAR_NIGHT_1, true);
+        GuiHelper.drawHollowRect(graphics, x - 2, y - 2, w + 4, h + 4, Color4I.rgb(0x101010), true);
+//        GuiHelper.drawHollowRect(graphics, x - 1, y - 1, w + 2, h + 2, Color4I.rgb(0x101010), true);
     }
 
     @Override
     public void drawContextMenuBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-        NordColors.POLAR_NIGHT_1.draw(graphics, x, y, w, h);
+        NordColors.POLAR_NIGHT_1.draw(graphics, x, y , w , h );
         GuiHelper.drawHollowRect(graphics, x - 1, y - 1, w + 2, h + 2, Color4I.rgb(0x101010), false);
     }
 
@@ -69,5 +72,11 @@ public class NordTheme extends Theme {
     @Override
     public void drawWidget(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
         GuiHelper.drawBorderedPanel(graphics, x, y, w, h, NordColors.POLAR_NIGHT_2, true);
+    }
+
+    @Override
+    public void drawPanelBackground(GuiGraphics graphics, int x, int y, int w, int h) {
+        NordColors.POLAR_NIGHT_2.draw(graphics, x, y, w, h);
+//        GuiHelper.drawBorderedPanel(graphics, x, y, w, h, NordColors.POLAR_NIGHT_2, true);
     }
 }

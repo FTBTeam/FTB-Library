@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
+import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
@@ -17,16 +18,15 @@ public class FTBLibrary {
 	public static final String MOD_ID = "ftblibrary";
 	public static final String MOD_NAME = "FTB Library";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
-	public static FTBLibraryCommon PROXY;
 
 	public FTBLibrary() {
-		PROXY = EnvExecutor.getEnvSpecific(() -> FTBLibraryClient::new, () -> FTBLibraryCommon::new);
 		CommandRegistrationEvent.EVENT.register(FTBLibraryCommands::registerCommands);
 		FTBLibraryNet.init();
 		LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
 		LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
 		PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
-		PROXY.init();
+
+		EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::init);
 	}
 
 	public static ResourceLocation rl(String path) {

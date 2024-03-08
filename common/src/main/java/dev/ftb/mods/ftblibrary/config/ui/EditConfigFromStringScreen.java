@@ -12,6 +12,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @deprecated this class offers a poor UX; use {@link EditStringConfigOverlay} instead
+ * @param <T>
+ */
+@Deprecated
 public class EditConfigFromStringScreen<T> extends BaseScreen {
 	private final ConfigFromString<T> config;
 	private final ConfigCallback callback;

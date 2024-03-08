@@ -1,8 +1,11 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
 import com.mojang.datafixers.util.Pair;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.*;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
@@ -16,6 +19,8 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
     protected final T mainPanel;
     protected final Panel bottomPanel;
     protected final PanelScrollBar scrollBar;
+    private boolean showBottomPanel = true;
+    private boolean showCloseButton = false;
 
     protected AbstractThreePanelScreen() {
         super();
@@ -31,7 +36,9 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         add(topPanel);
         add(mainPanel);
         add(scrollBar);
-        add(bottomPanel);
+        if (showBottomPanel) {
+            add(bottomPanel);
+        }
     }
 
     @Override
@@ -42,11 +49,16 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         topPanel.alignWidgets();
 
         var inset = mainPanelInset();
-        mainPanel.setPosAndSize(inset.getFirst(), topPanelHeight + inset.getSecond(), width - inset.getFirst() * 2, height - BOTTOM_PANEL_H - topPanelHeight - inset.getSecond() * 2);
+        int bottomPanelHeight = showBottomPanel ? BOTTOM_PANEL_H + inset.getSecond() : 0;
+
+        mainPanel.setPosAndSize(inset.getFirst(), topPanelHeight + inset.getSecond(),
+                width - inset.getFirst() * 2, height - topPanelHeight - inset.getSecond() * 2 - bottomPanelHeight);
         mainPanel.alignWidgets();
 
-        bottomPanel.setPosAndSize(0, height - BOTTOM_PANEL_H, width, BOTTOM_PANEL_H);
-        bottomPanel.alignWidgets();
+        if (showBottomPanel) {
+            bottomPanel.setPosAndSize(0, height - BOTTOM_PANEL_H, width, BOTTOM_PANEL_H);
+            bottomPanel.alignWidgets();
+        }
 
         scrollBar.setPosAndSize(mainPanel.getPosX() + mainPanel.getWidth() - getScrollbarWidth(), mainPanel.getPosY(), getScrollbarWidth(), mainPanel.getHeight());
     }
@@ -89,22 +101,42 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         return new TopPanel();
     }
 
+    public void showBottomPanel(boolean show) {
+        showBottomPanel = show;
+    }
+
+    public void showCloseButton(boolean show) {
+        showCloseButton = show;
+    }
+
     protected class TopPanel extends Panel {
+        private final SimpleButton closeButton;
+
         public TopPanel() {
             super(AbstractThreePanelScreen.this);
+
+            closeButton = new SimpleButton(this, Component.translatable("gui.close"),
+                    Icons.CLOSE, (btn, mb) -> doCancel());
         }
 
         @Override
         public void addWidgets() {
+            if (showCloseButton) {
+                add(closeButton);
+            }
         }
 
         @Override
         public void alignWidgets() {
+            if (showCloseButton) {
+                closeButton.setPosAndSize(width - 16, 1, 14, 14);
+            }
         }
 
         @Override
         public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            theme.drawWidget(graphics, x, y, w, h, WidgetType.NORMAL);
+            theme.drawPanelBackground(graphics, x, y, w, h);
+            Color4I.BLACK.withAlpha(80).draw(graphics, x, y + h - 1, w, 1);
         }
     }
 
@@ -132,7 +164,8 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
 
         @Override
         public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            theme.drawWidget(graphics, x, y, w, h, WidgetType.NORMAL);
+            theme.drawPanelBackground(graphics, x, y, w, h);
+            Color4I.GRAY.withAlpha(64).draw(graphics, x, y, w, 1);
         }
     }
 }

@@ -90,7 +90,7 @@ public class Theme {
 	}
 
 	public void drawGui(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-		(type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(graphics, x, y, w, h);
+		(type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(graphics, x - 3, y - 3, w + 6, h + 6);
 	}
 
 	public void drawWidget(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
@@ -132,7 +132,7 @@ public class Theme {
 	}
 
 	public void drawPanelBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-		drawContainerSlot(graphics, x, y, w, h);
+		Color4I.rgb(0x8B8B8B).draw(graphics, x, y, w, h);
 	}
 
 	public void drawHorizontalTab(GuiGraphics graphics, int x, int y, int w, int h, boolean selected) {

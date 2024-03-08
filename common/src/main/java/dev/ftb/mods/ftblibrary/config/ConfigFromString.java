@@ -31,9 +31,8 @@ public abstract class ConfigFromString<T> extends ConfigValue<T> {
 				EditStringConfigOverlay.PosProvider.Offset.NONE;
 		int xPos = clicked.getX() - gui.getX() + offset.x();
 		int yPos = clicked.getY() - gui.getY() + offset.y();
-		int availableWidth = gui.width - xPos - 2;
 
-		EditStringConfigOverlay<T> panel = new EditStringConfigOverlay<>(gui, this, callback, availableWidth);
+		EditStringConfigOverlay<T> panel = new EditStringConfigOverlay<>(gui, this, callback);
 		panel.setPos(xPos, yPos);
 		gui.pushModalPanel(panel);
 	}

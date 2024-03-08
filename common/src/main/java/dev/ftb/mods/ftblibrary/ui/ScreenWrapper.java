@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Optional;
 
 public class ScreenWrapper extends Screen implements IScreenWrapper {
 	private final BaseScreen wrappedGui;
@@ -131,7 +132,12 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 				}
 			});
 		} else {
-			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
+			graphics.pose().translate(0, 0, 600);
+			graphics.setColor(1f, 1f, 1f, 0.8f);
+			graphics.renderTooltip(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
+			graphics.setColor(1f, 1f, 1f, 1f);
+			graphics.pose().translate(0, 0, -600);
+//			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}
 
 		tooltipList.reset();
