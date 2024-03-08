@@ -105,10 +105,10 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         public EditField() {
             super(EditStringConfigOverlay.this);
 
-            setText(config.getStringFromValue(currentValue));
+            setText(config.getStringFromValue(EditStringConfigOverlay.this.currentValue));
             textColor = Color4I.WHITE; //config.getColor(currentValue);
-            setCursorPosition(getText().length());
-            setSelectionPos(0);
+            setCursorPos(0);
+            setSelectionPos(getText().length());
             setFocused(true);
         }
 
@@ -138,7 +138,7 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         public boolean mouseScrolled(double scroll) {
             return config.scrollValue(currentValue, scroll > 0).map(v -> {
                 textBox.setText(config.getStringFromValue(v));
-                textBox.setSelectionPos(textBox.getCursorPosition());
+                textBox.setSelectionPos(textBox.getCursorPos());
                 return true;
             }).orElse(super.mouseScrolled(scroll));
         }
