@@ -13,11 +13,6 @@ public class SidebarButtonGroup implements Comparable<SidebarButtonGroup> {
 	private final boolean isPinned;
 	private final List<SidebarButton> buttons;
 
-	@Deprecated(forRemoval = true)
-	public SidebarButtonGroup(ResourceLocation id, int y) {
-		this(id, y, true);
-	}
-
 	public SidebarButtonGroup(ResourceLocation id, int y, boolean isPinned) {
 		this.id = id;
 		this.y = y;
