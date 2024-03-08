@@ -45,7 +45,7 @@ public interface WidgetLayout {
 			if (!panel.widgets.isEmpty()) {
 				for (var widget : panel.widgets) {
 					positionSetter.accept(widget, i);
-					i += sizeGetter.apply(widget);
+					i += sizeGetter.apply(widget) + spacing;
 				}
 
 				i -= spacing;
