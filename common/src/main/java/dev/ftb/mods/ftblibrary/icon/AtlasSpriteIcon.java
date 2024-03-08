@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author LatvianModder
  */
-public class AtlasSpriteIcon extends Icon {
+public class AtlasSpriteIcon extends Icon implements IResourceIcon {
 	private final ResourceLocation id;
 	private final Color4I color;
 
@@ -101,5 +101,10 @@ public class AtlasSpriteIcon extends Icon {
 	@Override
 	public AtlasSpriteIcon withTint(Color4I c) {
 		return withColor(color.withTint(c));
+	}
+
+	@Override
+	public ResourceLocation getResourceLocation() {
+		return getId();
 	}
 }

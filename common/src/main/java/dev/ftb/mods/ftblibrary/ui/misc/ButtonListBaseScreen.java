@@ -100,6 +100,12 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 	}
 
 	@Override
+	public Theme getTheme() {
+		// TODO ultimately move this up to BaseScreen once theming is fully functional
+		return ThemeManager.INSTANCE.getActiveTheme();
+	}
+
+	@Override
 	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		super.drawBackground(graphics, theme, x, y, w, h);
 

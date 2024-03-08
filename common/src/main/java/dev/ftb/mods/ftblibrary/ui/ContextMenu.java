@@ -131,7 +131,9 @@ public class ContextMenu extends ModalPanel {
 
 		@Override
 		public WidgetType getWidgetType() {
-			if (!item.isClickable()) return WidgetType.NORMAL;  // no hovered highlighting
+			if (!item.isClickable()) {
+				return WidgetType.NORMAL;  // no hovered highlighting
+			}
 
 			return item.isEnabled() ? super.getWidgetType() : WidgetType.DISABLED;
 		}
@@ -155,12 +157,14 @@ public class ContextMenu extends ModalPanel {
 
 		@Override
 		public void onClicked(MouseButton button) {
-			if (item.isClickable()) playClickSound();
+			if (item.isClickable()) {
+				playClickSound();
+			}
 
 			if (item.getYesNoText().getString().isEmpty()) {
-				item.onClicked(contextMenu, button);
+				item.onClicked(CButton.this, contextMenu, button);
 			} else {
-				getGui().openYesNo(item.getYesNoText(), Component.literal(""), () -> item.onClicked(contextMenu, button));
+				getGui().openYesNo(item.getYesNoText(), Component.literal(""), () -> item.onClicked(CButton.this, contextMenu, button));
 			}
 		}
 	}

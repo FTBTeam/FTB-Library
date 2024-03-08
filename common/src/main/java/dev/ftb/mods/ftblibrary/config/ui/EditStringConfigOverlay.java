@@ -9,29 +9,56 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class EditStringConfigOverlay<T> extends ModalPanel {
     private final EditField textBox;
     private final Button accept, cancel;
     private final ConfigFromString<T> config;
     private final ConfigCallback callback;
-    private T currentValue;
-    private final int availableWidth;
+    private final TextField titleField;
+    private final Component title;
 
-    public EditStringConfigOverlay(Panel panel, ConfigFromString<T> config, ConfigCallback callback, int availableWidth) {
+    private T currentValue;
+
+    public EditStringConfigOverlay(Panel panel, ConfigFromString<T> config, ConfigCallback callback) {
+        this(panel, config, callback, null);
+    }
+
+    public EditStringConfigOverlay(Panel panel, ConfigFromString<T> config, ConfigCallback callback, @Nullable Component title) {
         super(panel);
         this.config = config;
         this.callback = callback;
         this.currentValue = config.getValue() == null ? null : config.copy(config.getValue());
-        this.availableWidth = availableWidth;
+        this.title = title;
 
+        width = currentValue == null ? 100 : getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue)) + 86;
+
+        titleField = new TextField(this).addFlags(Theme.SHADOW).setText(Objects.requireNonNullElse(title, Component.empty()));
+        titleField.setSize(0, 0);
         textBox = new EditField();
         accept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, this::onAccepted);
         cancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, this::onCancelled);
     }
 
+    public EditStringConfigOverlay<T> atPosition(int x, int y) {
+        setPos(x, y);
+        return this;
+    }
+
+    public EditStringConfigOverlay<T> atMousePosition() {
+        int absX = Math.min(getMouseX(), getScreen().getGuiScaledWidth() - width);
+        int absY = Math.min(getMouseY(), getScreen().getGuiScaledHeight() - height);
+        return atPosition(absX - parent.getX(), absY - parent.getY() - (int) parent.getScrollY());
+    }
+
     @Override
     public void addWidgets() {
+        if (title != null) {
+            add(titleField);
+        }
         add(textBox);
         add(accept);
         add(cancel);
@@ -39,11 +66,14 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
 
     @Override
     public void alignWidgets() {
-        textBox.setPosAndSize(2, 1, availableWidth - 32, 14);
-//        textBox.setY((16 - textBox.height) / 2);
+        if (title != null) {
+            titleField.setPosAndSize(2, 2, width, getGui().getTheme().getFontHeight() + 4);
+        }
+        textBox.setPosAndSize(2, titleField.getHeight() + 1, width - 36, 14);
+        accept.setPos(textBox.width + 2, textBox.getPosY());
+        cancel.setPos(accept.getPosX() + accept.width + 2, textBox.getPosY());
 
-        width = align(WidgetLayout.HORIZONTAL);
-        height = 16;
+        height = title == null ? 16 : 30;
     }
 
     @Override

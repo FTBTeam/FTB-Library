@@ -8,5 +8,6 @@ public enum ThemeManager {
 
     public Theme getActiveTheme() {
         return NordTheme.THEME;
+//        return Theme.DEFAULT;
     }
 }

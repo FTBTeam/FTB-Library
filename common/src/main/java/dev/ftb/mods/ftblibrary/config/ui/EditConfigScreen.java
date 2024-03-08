@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -29,9 +30,6 @@ import java.util.List;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.ConfigPanel> {
-	@Deprecated(forRemoval = true)
-	public static final Theme THEME = Theme.DEFAULT;
-
 	private final ConfigGroup group;
 	private final Component title;
 	private final List<Widget> allConfigButtons; // both groups and entries
@@ -103,16 +101,19 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 	@Override
 	public boolean onInit() {
 		widestKey = widestValue = 0;
+		MutableInt widestGroup = new MutableInt(0);
 
 		allConfigButtons.forEach(w -> {
 			if (w instanceof ConfigEntryButton<?> eb) {
 				widestKey = Math.max(widestKey, getTheme().getFont().width(eb.keyText));
 				widestValue = Math.max(widestValue, getTheme().getFont().width(eb.getValueStr()));
+			} else if (w instanceof ConfigGroupButton gb) {
+				widestGroup.setValue(Math.max(widestGroup.intValue(), getTheme().getStringWidth(gb.title)));
 			}
 		});
 
 		setHeight((int) (getScreen().getGuiScaledHeight() * .9f));
-		setWidth(Math.min((int) (getScreen().getGuiScaledWidth() * .9f), widestKey + widestValue + 50));
+		setWidth(Math.min((int) (getScreen().getGuiScaledWidth() * .9f), Math.max(widestKey + widestValue, widestGroup.intValue()) + 50));
 		return true;
 	}
 
@@ -194,9 +195,9 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 	}
 
 	public static class ConfigGroupButton extends Button {
-		public final ConfigGroup group;
-		public MutableComponent title, info;
-		public boolean collapsed = false;
+		private final ConfigGroup group;
+		private final MutableComponent title, info;
+		private boolean collapsed = false;
 
 		public ConfigGroupButton(Panel panel, ConfigGroup g) {
 			super(panel);
@@ -205,20 +206,14 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
 			if (group.getParent() != null) {
 				List<ConfigGroup> groups = new ArrayList<>();
-				do {
+				while (g.getParent() != null) {
 					groups.add(g);
 					g = g.getParent();
-				} while (g != null);
-				groups.remove(groups.size() - 1);
-
-				title = Component.empty();
-
-				for (var i = groups.size() - 1; i >= 0; i--) {
-					title.append(Component.translatable(groups.get(i).getNameKey()).withStyle(ChatFormatting.YELLOW));
-					if (i != 0) {
-						title.append(Component.literal(" → ").withStyle(ChatFormatting.GOLD));
-					}
 				}
+				title = groups.stream()
+						.map(grp -> Component.translatable(grp.getNameKey()).withStyle(ChatFormatting.YELLOW))
+						.reduce((g1, g2) -> g2.append(Component.literal(" → ").withStyle(ChatFormatting.GOLD)).append(g1))
+						.orElse(Component.empty());
 			} else {
 				title = Component.translatable("stat.generalButton").withStyle(ChatFormatting.YELLOW);
 			}
@@ -359,7 +354,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 		}
 	}
 
-	private class CustomTopPanel extends TopPanel {
+	protected class CustomTopPanel extends TopPanel {
 		private final TextField titleLabel = new TextField(this).setText(getTitle());
 
 		@Override
@@ -388,22 +383,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
 			theme.drawString(graphics, getGui().getTitle(), x + 6, y + 6, Theme.SHADOW);
 		}
-
-		@Override
-		public boolean mousePressed(MouseButton button) {
-			if (Platform.isDevelopmentEnvironment() && button.isRight()) {
-				ContextMenu menu = new ContextMenu(this, List.of(
-					ContextMenuItem.title(Component.literal("Title")),
-					ContextMenuItem.SEPARATOR,
-					new ContextMenuItem(Component.literal("line 1"), Icons.ADD, () -> {
-						new SelectItemStackScreen(new ItemStackConfig(1), (b) -> run()).openGui();
-					}),
-					new ContextMenuItem(Component.literal("line 2"), Icons.REMOVE, () -> {}),
-					new ContextMenuItem(Component.literal("line 3"), Icon.empty(), () -> {})
-				));
-				getGui().openContextMenu(menu);
-			}
-			return super.mousePressed(button);
-		}
 	}
+
+
 }

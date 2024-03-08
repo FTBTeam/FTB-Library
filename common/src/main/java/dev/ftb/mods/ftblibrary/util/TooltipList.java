@@ -75,6 +75,10 @@ public class TooltipList {
 		styledTranslate(key, Style.EMPTY, objects);
 	}
 
+	public List<Component> getLines() {
+		return lines;
+	}
+
 	@Environment(EnvType.CLIENT)
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font) {
 		mouseX += xOffset;

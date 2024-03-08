@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
+import dev.architectury.platform.Mod;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
@@ -134,14 +135,40 @@ public abstract class BaseScreen extends Panel {
 	public void onPostInit() {
 	}
 
+	/**
+	 * Push a modal panel onto the stack. It will render above any existing modal panels and take key/mouse input first.
+	 *
+	 * @param modalPanel the panel to push
+	 */
 	public void pushModalPanel(ModalPanel modalPanel) {
 		modalPanels.addFirst(modalPanel);
-		modalPanel.addWidgets();
-		modalPanel.alignWidgets();
+		modalPanel.refreshWidgets();
 	}
 
-	public void popModalPanel() {
-		modalPanels.removeFirst();
+	/**
+	 * Close the top modal panel, by removing it from the stack.
+	 *
+	 * @return the panel that was just popped/closed
+	 */
+	public ModalPanel popModalPanel() {
+		ModalPanel panel = modalPanels.removeFirst();
+		panel.onClosed();
+		return panel;
+	}
+
+	/**
+	 * Close the given panel, and all panels above it, from the stack
+	 *
+	 * @param panel the panel to pop/close
+	 */
+	public void closeModalPanel(ModalPanel panel) {
+		if (modalPanels.contains(panel)) {
+			while (!modalPanels.isEmpty()) {
+				if (popModalPanel() == panel) {
+					break;
+				}
+			}
+		}
 	}
 
 	@Nullable
@@ -230,11 +257,6 @@ public abstract class BaseScreen extends Panel {
 		super.draw(graphics, theme, x, y, w, h);
 
 		if (!modalPanels.isEmpty()) {
-			// dim the rest of the gui so modal panel(s) are effectively highlighted
-			graphics.pose().translate(0.0, 0.0, 0.05);
-			Color4I.rgba(0x80202020).draw(graphics, x, y, w, h);
-			graphics.pose().translate(0.0, 0.0, -0.05);
-
 			// allow modal panels to draw outside scissor area if needed
 			boolean r = getOnlyRenderWidgetsInside();
 			boolean i = getOnlyInteractWithWidgetsInside();
@@ -242,12 +264,19 @@ public abstract class BaseScreen extends Panel {
 			setOnlyInteractWithWidgetsInside(false);
 
 			graphics.pose().pushPose();
-			graphics.pose().translate(0, 0, 200);
-			Iterator<ModalPanel> iter = modalPanels.descendingIterator();
+			graphics.pose().translate(0f, 0f, 10f);
+			Iterator<ModalPanel> iter = modalPanels.descendingIterator(); // stack is drawn from bottom to top
 			while (iter.hasNext()) {
 				ModalPanel p = iter.next();
+				if (!iter.hasNext()) {
+					// dim the rest of the gui so the top modal panel is effectively highlighted
+					graphics.pose().translate(0.0, 0.0, -0.05);
+					Color4I.rgba(0xA0202020).draw(graphics, x, y, w, h);
+					graphics.pose().translate(0.0, 0.0, 0.05);
+				}
+				graphics.pose().translate(0f, 0f, p.getExtraZlevel());
 				p.draw(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
-				graphics.pose().translate(0, 0, 10);
+				graphics.pose().translate(0, 0, 1);
 			}
 			graphics.pose().popPose();
 
@@ -262,35 +291,22 @@ public abstract class BaseScreen extends Panel {
 
 	public void openContextMenu(@Nullable ContextMenu newContextMenu) {
 		if (newContextMenu == null) {
-			if (modalPanels.peekFirst() instanceof ContextMenu) {
-				modalPanels.pop();
-			}
+			modalPanels.removeIf(p -> p instanceof ContextMenu);
 			return;
-		}
-
-		var x = getX();
-		var y = getY();
-
-		ContextMenu currentMenu = (ContextMenu) modalPanels.stream()
-				.filter(p -> p instanceof ContextMenu)
-				.findFirst()
-				.orElse(null);
-
-		int px = 0, py = 0;
-		if (currentMenu == null) {
-			px = getMouseX() - x;
-			py = getMouseY() - y;
 		}
 
 		pushModalPanel(newContextMenu);
 
-		px = Math.min(px, screen.getGuiScaledWidth() - newContextMenu.width - x) - 3;
-		py = Math.min(py, screen.getGuiScaledHeight() - newContextMenu.height - y) - 3;
+		// default positioning where the mouse was clicked. caller is free to reposition if needed
+		var x = getX();
+		var y = getY();
+		int px = Math.min((getMouseX() - x), screen.getGuiScaledWidth() - newContextMenu.width - x) - 3;
+		int py = Math.min((getMouseY() - y), screen.getGuiScaledHeight() - newContextMenu.height - y) - 3;
 		newContextMenu.setPos(px, py);
 	}
 
-	public ContextMenu openContextMenu(@NotNull List<ContextMenuItem> menu) {
-		var contextMenu = new ContextMenu(this, menu);
+	public ContextMenu openContextMenu(@NotNull List<ContextMenuItem> menuItems) {
+		var contextMenu = new ContextMenu(this, menuItems);
 		openContextMenu(contextMenu);
 		return contextMenu;
 	}
@@ -342,8 +358,8 @@ public abstract class BaseScreen extends Panel {
 		} else if (modalPanels.peekFirst().isMouseOver()) {
 			return modalPanels.peekFirst().mousePressed(button);
 		} else {
-			// clicking outside any modal panels dismisses them all
-			modalPanels.clear();
+			// clicking outside any panel dismisses the top one
+			popModalPanel();
 			return false;
 		}
 	}
@@ -354,7 +370,7 @@ public abstract class BaseScreen extends Panel {
 			return true;
 		} else if (!modalPanels.isEmpty()) {
 			if (key.esc()) {
-				modalPanels.pop();
+				popModalPanel();
 				return true;
 			}
 			return modalPanels.peekFirst().keyPressed(key);
@@ -366,6 +382,15 @@ public abstract class BaseScreen extends Panel {
 		}
 
 		return false;
+	}
+
+	@Override
+	public void keyReleased(Key key) {
+		if (modalPanels.isEmpty()) {
+			super.keyReleased(key);
+		} else {
+			modalPanels.peekFirst().keyReleased(key);
+		}
 	}
 
 	@Override

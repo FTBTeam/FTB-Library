@@ -36,11 +36,6 @@ public class FluidConfig extends ResourceConfigValue<FluidStack> {
 		return this;
 	}
 
-	@Deprecated(forRemoval = true)
-	public boolean allowEmptyFluid() {
-		return allowEmptyResource();
-	}
-
 	@Override
 	public Component getStringForGUI(FluidStack v) {
         if (v == null || v.isEmpty()) {

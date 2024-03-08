@@ -17,7 +17,7 @@ public class ItemStackConfig extends ResourceConfigValue<ItemStack> {
 	private final long fixedSize;
 
 	public ItemStackConfig(boolean single, boolean empty) {
-		isFixedSize = !single && !empty;
+		isFixedSize = single && !empty;
 		fixedSize = 0L;
 		allowEmpty = empty;
 		defaultValue = ItemStack.EMPTY;
@@ -31,16 +31,6 @@ public class ItemStackConfig extends ResourceConfigValue<ItemStack> {
 		allowEmpty = false;
 		defaultValue = ItemStack.EMPTY;
 		value = ItemStack.EMPTY;
-	}
-
-	@Deprecated(forRemoval = true)
-	public boolean isSingleItemOnly() {
-		return isFixedSize && fixedSize == 1;
-	}
-
-	@Deprecated(forRemoval = true)
-	public boolean allowEmptyItem() {
-		return allowEmptyResource();
 	}
 
 	@Override

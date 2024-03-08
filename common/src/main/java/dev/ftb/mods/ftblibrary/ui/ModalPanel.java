@@ -1,6 +1,8 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 public abstract class ModalPanel extends Panel {
+    int extraZlevel = 1;
+
     public ModalPanel(Panel panel) {
         super(panel);
     }
@@ -10,5 +12,13 @@ public abstract class ModalPanel extends Panel {
         var ax = getX();
         var ay = getY();
         return mouseX >= ax && mouseY >= ay && mouseX < ax + width && mouseY < ay + height;
+    }
+
+    public int getExtraZlevel() {
+        return extraZlevel;
+    }
+
+    public void setExtraZlevel(int extraZlevel) {
+        this.extraZlevel = extraZlevel;
     }
 }

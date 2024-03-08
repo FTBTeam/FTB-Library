@@ -21,7 +21,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -193,7 +192,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 						mainPanel.refreshWidgets();
 					}
 					NBTEditorScreen.this.openGui();
-				}, 120);
+				});
 				overlay.setPos(btn.posX, btn.posY + btn.height + 4);
 				getGui().pushModalPanel(overlay);
 			} else if (selected instanceof ButtonNBTCollection) {
@@ -343,12 +342,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
 		private <T> void openEditOverlay(ConfigFromString<T> config, T val) {
 			config.setValue(val);
-			int w = Mth.clamp(getTheme().getStringWidth(config.getStringFromValue(val)) + 50, 60,200);
-			EditStringConfigOverlay<T> panel = new EditStringConfigOverlay<>(getParent(), config, accepted -> onCallback(config, accepted), w);
-			int xPos = Math.min(getScreen().getGuiScaledWidth() - w, getGui().getMouseX() - getParent().getX());
-			int yPos = Mth.clamp(getGui().getMouseY() - getParent().getY() - 8, 20, getScreen().getGuiScaledHeight() - panel.height);
-			panel.setPos(xPos, yPos);
-			getGui().pushModalPanel(panel);
+			getGui().pushModalPanel(
+					new EditStringConfigOverlay<>(getGui(), config, accepted -> onCallback(config, accepted))
+							.atMousePosition()
+			);
 		}
 
 		public void onCallback(ConfigValue<?> value, boolean accepted) {
@@ -763,7 +760,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 			}));
 
 			if (selected instanceof ButtonBasicTag) {
-				add(new SimpleButton(this, Component.translatable("ftblibrary.gui.edit_tag_value"), Icons.FEATHER, (widget, button) -> ((ButtonBasicTag) selected).edit()));
+				add(new SimpleButton(this, Component.translatable("ftblibrary.gui.edit_tag_value"), Icons.FEATHER,
+						(widget, button) -> ((ButtonBasicTag) selected).edit()));
 			}
 
 			List<Widget> addBtns = buildAddButtons();
@@ -827,10 +825,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 		@NotNull
 		private EditStringConfigOverlay<String> makeRenameOverlay(SimpleButton button) {
 			var value = new StringConfig();
-			int overlayWidth = 100;
+//			int overlayWidth = 100;
 			if (selected != null) {
 				value.setValue(selected.key);
-				overlayWidth = getTheme().getStringWidth(selected.key) + 50;
+//				overlayWidth = getTheme().getStringWidth(selected.key) + 100;
 			}
 			var overlay = new EditStringConfigOverlay<>(this, value, accepted -> {
 				if (accepted && !value.getValue().isEmpty() && selected.parent != null) {
@@ -843,8 +841,9 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 					mainPanel.refreshWidgets();
 				}
 				getGui().openGui();
-			}, overlayWidth);
+			}, Component.literal("New name"));
 			overlay.setPos(button.posX, button.posY + button.height + 4);
+			overlay.setExtraZlevel(300);
 			return overlay;
 		}
 

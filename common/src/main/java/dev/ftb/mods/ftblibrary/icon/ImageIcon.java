@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author LatvianModder
  */
-public class ImageIcon extends Icon {
+public class ImageIcon extends Icon implements IResourceIcon {
 	public static final ResourceLocation MISSING_IMAGE = new ResourceLocation(FTBLibrary.MOD_ID, "textures/gui/missing_image.png");
 
 	public final ResourceLocation texture;
@@ -154,5 +154,10 @@ public class ImageIcon extends Icon {
 		} catch (Exception ex) {
 			return null;
 		}
+	}
+
+	@Override
+	public ResourceLocation getResourceLocation() {
+		return texture;
 	}
 }
