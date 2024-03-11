@@ -72,5 +72,6 @@
 	"ftblibrary.gui.nbt_copied": "NBT copied to clipboard",
 	"ftblibrary.gui.edit_tag_name": "Edit Tag Name",
 	"ftblibrary.gui.edit_tag_value": "Edit Tag Value",
-	"ftblibrary.gui.no_selection": "Nothing Selected"
+	"ftblibrary.gui.no_selection": "Nothing Selected",
+	"ftblibrary.gui.key_reference": "Key Reference"
 }
