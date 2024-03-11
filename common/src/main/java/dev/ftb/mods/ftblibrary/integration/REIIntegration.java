@@ -62,7 +62,7 @@ public class REIIntegration implements REIClientPlugin {
 			return CollectionUtils.filterAndMap(
 					EntryRegistry.getInstance().getPreFilteredList(),
 					stack -> stack.getType().equals(VanillaEntryTypes.ITEM),
-					stack -> stack.castValue()
+					stack -> SelectableResource.item(stack.castValue())
 			);
 		}
 	};
