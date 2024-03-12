@@ -39,7 +39,7 @@ public class UITesting {
         ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
         grp1.addInt("integer", 1, v -> {}, 0, 0, 10);
         grp1.addLong("long", 10L, v -> {}, 0L, 0L, 1000L);
-        grp1.addDouble("double", 1.5, v -> {}, 0.0, 0.0, 10.0);
+        grp1.addDouble("double", 1.5, v -> {}, 0.0, -10.0, 10.0);
         grp1.addBool("bool", true, v -> {}, false);
         grp1.addString("string", "some text", v -> {}, "");
 

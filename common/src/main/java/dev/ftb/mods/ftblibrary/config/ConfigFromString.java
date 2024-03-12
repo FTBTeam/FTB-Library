@@ -44,4 +44,9 @@ public abstract class ConfigFromString<T> extends ConfigValue<T> {
 	public Optional<T> scrollValue(T currentValue, boolean forward) {
 		return Optional.empty();
 	}
+
+	protected boolean okValue(@Nullable Consumer<T> callback, T v) {
+		if (callback != null) callback.accept(v);
+		return true;
+	}
 }

@@ -116,7 +116,9 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends Abstract
 
 	@Override
 	public boolean keyPressed(Key key) {
-		if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
+		if (super.keyPressed(key)) {
+			return true;
+		} else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
 			doAccept();
 			return true;
 		} else if (key.is(InputConstants.KEY_INSERT)) {
@@ -128,7 +130,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends Abstract
 				return true;
 			}).orElse(super.keyPressed(key));
 		}
-		return super.keyPressed(key);
+		return false;
 	}
 
 	@Override

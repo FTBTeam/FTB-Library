@@ -151,7 +151,9 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
 	@Override
 	public boolean keyPressed(Key key) {
-		if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
+		if (super.keyPressed(key)) {
+			return true;
+		} else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
 			doAccept();
 			return true;
 		} else if (key.is(InputConstants.KEY_ADD) || key.is(InputConstants.KEY_EQUALS)) {
@@ -161,7 +163,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 		} else if (key.is(InputConstants.KEY_C) && key.modifiers.control()) {
 			copyToClipboard();
 		}
-		return super.keyPressed(key);
+		return false;
 	}
 
 	private void copyToClipboard() {
