@@ -28,15 +28,12 @@ public class IntConfig extends NumberConfig<Integer> {
 
 	@Override
 	public boolean parse(@Nullable Consumer<Integer> callback, String string) {
+		if (string.equals("-") || string.equals("+") || string.isEmpty()) return okValue(callback, 0);
+
 		try {
-			var v = Long.decode(string).intValue();
-
+			var v = Integer.decode(string);
 			if (v >= min && v <= max) {
-				if (callback != null) {
-					callback.accept(v);
-				}
-
-				return true;
+				return okValue(callback, v);
 			}
 		} catch (Exception ignored) {
 		}

@@ -41,27 +41,19 @@ public class DoubleConfig extends NumberConfig<Double> {
 
 	@Override
 	public boolean parse(@Nullable Consumer<Double> callback, String string) {
-		if (string.equals("+Inf")) {
-			if (max == Double.POSITIVE_INFINITY) {
-				if (callback != null) {
-					callback.accept(Double.POSITIVE_INFINITY);
-				}
+		if (string.equals("-") || string.equals("+") || string.isEmpty()) return okValue(callback, 0D);
 
-				return true;
-			}
-
-			return false;
-		} else if (string.equals("-Inf")) {
-			if (min == Double.NEGATIVE_INFINITY) {
-				if (callback != null) {
-					callback.accept(Double.NEGATIVE_INFINITY);
-				}
-
-				return true;
-			}
-
-			return false;
-		}
+        switch (string) {
+            case "+Inf" -> {
+                return max == Double.POSITIVE_INFINITY && okValue(callback, Double.POSITIVE_INFINITY);
+            }
+            case "-Inf" -> {
+				return min == Double.NEGATIVE_INFINITY && okValue(callback, Double.NEGATIVE_INFINITY);
+            }
+            case "-" -> {
+				return min <= 0 && max >= 0 && okValue(callback, 0d);
+            }
+        }
 
 		try {
 			var multiplier = 1D;
@@ -78,15 +70,10 @@ public class DoubleConfig extends NumberConfig<Double> {
 			}
 
 			var v = Double.parseDouble(string.trim()) * multiplier;
-
 			if (v >= min && v <= max) {
-				if (callback != null) {
-					callback.accept(v);
-				}
-
-				return true;
+				return okValue(callback, v);
 			}
-		} catch (Exception ex) {
+		} catch (Exception ignored) {
 		}
 
 		return false;

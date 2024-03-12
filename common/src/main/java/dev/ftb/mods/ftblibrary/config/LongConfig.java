@@ -27,17 +27,14 @@ public class LongConfig extends NumberConfig<Long> {
 
 	@Override
 	public boolean parse(@Nullable Consumer<Long> callback, String string) {
+		if (string.equals("-") || string.equals("+") || string.isEmpty()) return okValue(callback, 0L);
+
 		try {
 			long v = Long.decode(string);
-
 			if (v >= min && v <= max) {
-				if (callback != null) {
-					callback.accept(v);
-				}
-
-				return true;
+				return okValue(callback, v);
 			}
-		} catch (Exception ex) {
+		} catch (Exception ignored) {
 		}
 
 		return false;
