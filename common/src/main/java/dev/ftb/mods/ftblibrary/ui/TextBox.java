@@ -67,6 +67,10 @@ public class TextBox extends Widget implements IFocusableWidget {
 		}
 	}
 
+	public void setFilter(Predicate<String> filter) {
+		this.filter = filter;
+	}
+
 	public final String getText() {
 		return text;
 	}
