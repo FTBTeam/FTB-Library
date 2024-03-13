@@ -34,7 +34,6 @@ dependencies {
 	modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
 	modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
-	modLocalRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
