@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.config.ui;
 
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.ItemStackConfig;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
@@ -52,8 +53,10 @@ public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
             if (!getStack().isEmpty()) {
                 TooltipFlag flag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
                 getStack().getTooltipLines(Minecraft.getInstance().player, flag).forEach(list::add);
-                ModUtils.getModName(getStack().getItem()).ifPresent(name ->
-                        list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                if (FTBLibraryClientConfig.ITEM_MODNAME.get()) {
+                    ModUtils.getModName(getStack().getItem()).ifPresent(name ->
+                            list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                }
             }
         }
     }
