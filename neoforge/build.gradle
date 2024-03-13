@@ -31,13 +31,6 @@ repositories {
 	maven {
 		url "https://maven.neoforged.net/releases/"
 	}
-	maven {
-		name "ModMaven (JEI)"
-		url "https://modmaven.dev/"
-		content {
-			includeGroup "mezz.jei"
-		}
-	}
 }
 
 dependencies {
@@ -45,10 +38,8 @@ dependencies {
 
 	modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 
-//	modCompileOnly "me.shedaniel:RoughlyEnoughItems-plugin-compatibilities-forge:${rootProject.rei_plugin_compat_version}"
-	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
-	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-neoforge-api:${rootProject.jei_version}")
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rootProject.rei_version}"
+	modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }

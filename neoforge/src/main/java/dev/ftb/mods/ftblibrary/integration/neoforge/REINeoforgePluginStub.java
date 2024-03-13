@@ -4,5 +4,5 @@ import dev.ftb.mods.ftblibrary.integration.REIIntegration;
 import me.shedaniel.rei.forge.REIPluginCommon;
 
 @REIPluginCommon
-public class REIForgePluginStub extends REIIntegration {
+public class REINeoforgePluginStub extends REIIntegration {
 }

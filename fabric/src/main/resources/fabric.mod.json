@@ -19,6 +19,12 @@
 		],
 		"rei_client": [
 			"dev.ftb.mods.ftblibrary.integration.REIIntegration"
+		],
+		"emi": [
+			"dev.ftb.mods.ftblibrary.integration.EMIIntegration"
+		],
+		"jei_mod_plugin": [
+			"dev.ftb.mods.ftblibrary.integration.JEIIntegration"
 		]
 	},
 	"mixins": [
