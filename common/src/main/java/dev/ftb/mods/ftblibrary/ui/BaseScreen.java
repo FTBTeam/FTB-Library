@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
-import dev.architectury.platform.Mod;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
@@ -148,9 +147,12 @@ public abstract class BaseScreen extends Panel {
 	/**
 	 * Close the top modal panel, by removing it from the stack.
 	 *
-	 * @return the panel that was just popped/closed
+	 * @return the panel that was just popped/closed, or null if no modal panels were present
 	 */
 	public ModalPanel popModalPanel() {
+		if (modalPanels.isEmpty()) {
+			return null;
+		}
 		ModalPanel panel = modalPanels.removeFirst();
 		panel.onClosed();
 		return panel;
@@ -169,6 +171,10 @@ public abstract class BaseScreen extends Panel {
 				}
 			}
 		}
+	}
+
+	public boolean anyModalPanelOpen() {
+		return !modalPanels.isEmpty();
 	}
 
 	@Nullable
