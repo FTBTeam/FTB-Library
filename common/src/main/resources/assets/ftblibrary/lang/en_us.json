@@ -42,6 +42,7 @@
 	"ftblibrary.select_item.list_mode.inv": "Inventory",
 	"ftblibrary.select_item.list_mode.jei": "JEI",
 	"ftblibrary.select_item.list_mode.rei": "REI",
+	"ftblibrary.select_item.list_mode.emi": "EMI",
 	"ftblibrary.select_item.count": "Set Size",
 	"ftblibrary.select_item.nbt": "Edit NBT\n§7Left-click: quick string editor\n§7Right-click: interactive NBT editor",
 	"ftblibrary.select_item.caps": "Edit Capabilities",
