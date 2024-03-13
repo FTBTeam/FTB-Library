@@ -5,6 +5,8 @@ import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.config.ui.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -30,6 +32,8 @@ public class FTBLibraryClient {
 	public static CursorType lastCursorType = null;
 
 	public static void init() {
+		FTBLibraryClientConfig.load();
+
 		// when using REI >= 6, disable the regular sidebar buttons,
 		// we'll be using REI's system favourites instead.
 		if (Platform.isModLoaded("roughlyenoughitems")) {
@@ -87,5 +91,10 @@ public class FTBLibraryClient {
 		}
 
 		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.getGroups().isEmpty();
+	}
+
+	public static void editConfig(boolean isClientConfig) {
+		// NOTE: only client config supported right now
+		new EditConfigScreen(FTBLibraryClientConfig.getConfigGroup()).setAutoclose(true).openGui();
 	}
 }

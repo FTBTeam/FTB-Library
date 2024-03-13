@@ -5,6 +5,7 @@ import dev.architectury.hooks.fluid.FluidBucketHooks;
 import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FluidConfig;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
@@ -50,8 +51,10 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
         public void addMouseOverText(TooltipList list) {
             if (!getStack().isEmpty()) {
                 list.add(getStack().getName());
-                ModUtils.getModName(getStack().getFluid())
-                        .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                if (FTBLibraryClientConfig.FLUID_MODNAME.get()) {
+                    ModUtils.getModName(getStack().getFluid())
+                            .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                }
             }
         }
     }

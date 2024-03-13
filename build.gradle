@@ -61,6 +61,20 @@ allprojects {
 				includeGroup "dev.ftb.mods"
 			}
 		}
+
+		maven {
+			name "ModMaven (JEI)"
+			url "https://modmaven.dev/"
+			content {
+				includeGroup "mezz.jei"
+			}
+		}
+
+		maven {
+			// Emi
+			name = "TerraformersMC"
+			url = "https://maven.terraformersmc.com/"
+		}
 	}
 
 	dependencies {
