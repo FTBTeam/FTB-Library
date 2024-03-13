@@ -1,5 +1,8 @@
-package dev.ftb.mods.ftblibrary.integration.neoforge;
+package dev.ftb.mods.ftblibrary.integration;
 
+import dev.architectury.fluid.FluidStack;
+import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
@@ -14,8 +17,8 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
+import mezz.jei.api.ingredients.IIngredientTypeWithSubtypes;
 import mezz.jei.api.ingredients.ITypedIngredient;
-import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.runtime.IClickableIngredient;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -26,8 +29,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -51,7 +53,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-		if (ModList.get().isLoaded("roughlyenoughitems")) {
+		if (Platform.isModLoaded("roughlyenoughitems")) {
 			return;
 		}
 		registration.addGlobalGuiHandler(this);
@@ -81,17 +83,26 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
 				}
 			} else if (underMouse.ingredient() instanceof FluidStack stack) {
-				Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(NeoForgeTypes.FLUID_STACK, stack);
+				// This should work if Arch has setup their fluidstack properly
+				Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(FLUID_STACK, stack);
 				if (typed.isPresent()) {
 					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
 				}
+			} else {
+				// Allow us to fallback onto Fluid handlers for the native implementations
+				return handleExtraIngredientTypes(runtime, underMouse);
 			}
 		}
 
 		return Optional.empty();
 	}
 
-    private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
+	@ExpectPlatform
+	public static Optional<IClickableIngredient<?>> handleExtraIngredientTypes(IJeiRuntime runtime, PositionedIngredient underMouse) {
+		throw new AssertionError();
+	}
+
+	private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
         @Override
         public Icon getIcon() {
             return ItemIcon.getItemIcon(Items.APPLE);
@@ -115,12 +126,12 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     };
 
 	static {
-		if (!ModList.get().isLoaded("roughlyenoughitems")) {
+		if (!Platform.isModLoaded("roughlyenoughitems")) {
             SelectItemStackScreen.KNOWN_MODES.prependMode(JEI_ITEMS);
 		}
 	}
 
-	private record ClickableIngredient<T>(ITypedIngredient<T> typedStack, Rect2i clickedArea) implements IClickableIngredient<T> {
+	public record ClickableIngredient<T>(ITypedIngredient<T> typedStack, Rect2i clickedArea) implements IClickableIngredient<T> {
 		@Override
 		public ITypedIngredient<T> getTypedIngredient() {
 			return typedStack;
@@ -131,4 +142,25 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 			return clickedArea;
 		}
 	}
+
+	/**
+	 * Wrapper around Archs fluid stack to provide JEI with the correct type for each platform
+	 * @implNote This might not work.
+	 */
+	public static final IIngredientTypeWithSubtypes<Fluid, FluidStack> FLUID_STACK = new IIngredientTypeWithSubtypes<>() {
+		@Override
+		public Class<? extends FluidStack> getIngredientClass() {
+			return FluidStack.class;
+		}
+
+		@Override
+		public Class<? extends Fluid> getIngredientBaseClass() {
+			return Fluid.class;
+		}
+
+		@Override
+		public Fluid getBase(FluidStack ingredient) {
+			return ingredient.getFluid();
+		}
+	};
 }
