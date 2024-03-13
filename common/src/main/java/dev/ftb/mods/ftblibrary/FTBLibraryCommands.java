@@ -6,6 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
+import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
 import net.minecraft.ChatFormatting;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.block.entity.TickingBlockEntity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -182,6 +184,13 @@ public class FTBLibraryCommands {
 									player.getItemInHand(InteractionHand.MAIN_HAND).save(tag);
 								}))
 						)
+				)
+				.then(Commands.literal("clientconfig")
+						.requires(CommandSourceStack::isPlayer)
+						.executes(context -> {
+							new EditConfigPacket(true).sendTo(Objects.requireNonNull(context.getSource().getPlayer()));
+							return 1;
+						})
 				);
 
 		if (Platform.isDevelopmentEnvironment()) {

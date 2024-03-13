@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.config.ui;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.ImageResourceConfig;
 import dev.ftb.mods.ftblibrary.config.ResourceConfigValue;
 import dev.ftb.mods.ftblibrary.icon.Icon;
@@ -82,8 +83,10 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
             Component text = Component.literal(getStack().getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
                     .append(Component.literal(getStack().getPath()).withStyle(ChatFormatting.YELLOW));
             list.add(text);
-            ModUtils.getModName(getStack().getNamespace())
-                    .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+            if (FTBLibraryClientConfig.IMAGE_MODNAME.get()) {
+                ModUtils.getModName(getStack().getNamespace())
+                        .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+            }
         }
     }
 

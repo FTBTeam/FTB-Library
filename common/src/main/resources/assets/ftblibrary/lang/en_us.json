@@ -73,5 +73,9 @@
 	"ftblibrary.gui.edit_tag_name": "Edit Tag Name",
 	"ftblibrary.gui.edit_tag_value": "Edit Tag Value",
 	"ftblibrary.gui.no_selection": "Nothing Selected",
-	"ftblibrary.gui.key_reference": "Key Reference"
+	"ftblibrary.gui.key_reference": "Key Reference",
+	"ftblibrary.client_settings": "Client Config",
+	"ftblibrary.client_settings.tooltips.item_modname": "Show Mod Name in Item Select GUI",
+	"ftblibrary.client_settings.tooltips.fluid_modname": "Show Mod Name in Fluid Select GUI",
+	"ftblibrary.client_settings.tooltips.image_modname": "Show Mod Name in Image Select GUI"
 }

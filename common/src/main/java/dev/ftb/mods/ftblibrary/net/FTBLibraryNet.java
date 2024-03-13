@@ -10,7 +10,8 @@ public interface FTBLibraryNet {
 	MessageType EDIT_NBT = NET.registerS2C("edit_nbt", EditNBTPacket::new);
 	MessageType EDIT_NBT_RESPONSE = NET.registerC2S("edit_nbt_response", EditNBTResponsePacket::new);
 	MessageType SYNC_KNOWN_SERVER_REGISTRIES = NET.registerS2C("sync_known_server_registries", SyncKnownServerRegistriesPacket::new);
+	MessageType EDIT_CONFIG = NET.registerS2C("edit_config", EditConfigPacket::new);
 
-	static void init() {
+    static void init() {
 	}
 }
