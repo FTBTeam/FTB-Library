@@ -6,6 +6,7 @@ import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.ContextMenu;
@@ -28,7 +29,6 @@ public class UITesting {
         var group = new ConfigGroup("test", accepted ->
                 Minecraft.getInstance().player.displayClientMessage(Component.literal("Accepted: " + accepted), false));
         group.add("image", new ImageResourceConfig(), ImageResourceConfig.NONE, v -> { }, ImageResourceConfig.NONE);
-//		group.add("old_image", new ImageConfig(), "", v -> { }, "");
 
         group.addItemStack("itemstack", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, true);
         group.addItemStack("item", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, 1).setAllowNBTEdit(false);
@@ -51,6 +51,8 @@ public class UITesting {
         grp2.addList("str_list", strings, new StringConfig(), "");
 
         ConfigGroup grp3 = grp2.getOrCreateSubgroup("subgroup2");
+        grp3.addColor("color", Color4I.WHITE, v -> { }, Color4I.GRAY);
+        grp3.addColor("color_alpha", Color4I.WHITE, v -> { }, Color4I.GRAY).withAlphaEditing();
         grp3.addItemStack("itemstack", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, false);
 
         new TestConfigScreen(group).setAutoclose(true).openGuiLater();

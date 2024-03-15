@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.architectury.fluid.FluidStack;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -234,6 +235,10 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
 
 	public ImageResourceConfig addImage(String id, ResourceLocation value, Consumer<ResourceLocation> setter, ResourceLocation def) {
 		return add(id, new ImageResourceConfig(), value, setter, def);
+	}
+
+	public ColorConfig addColor(String id, Color4I value, Consumer<Color4I> setter, Color4I def) {
+		return add(id, new ColorConfig(), value, setter, def);
 	}
 
 	public final Collection<ConfigValue<?>> getValues() {

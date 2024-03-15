@@ -69,8 +69,7 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	public Theme getTheme() {
-		// TODO a way for users to select theme
-		return Theme.DEFAULT;
+		return ThemeManager.INSTANCE.getActiveTheme();
 	}
 
 	@Override
@@ -277,7 +276,7 @@ public abstract class BaseScreen extends Panel {
 				if (!iter.hasNext()) {
 					// dim the rest of the gui so the top modal panel is effectively highlighted
 					graphics.pose().translate(0.0, 0.0, -0.05);
-					Color4I.rgba(0xA0202020).draw(graphics, x, y, w, h);
+					Color4I.rgba(0xA0202020).draw(graphics, 0, 0, getScreen().getGuiScaledWidth(), getScreen().getGuiScaledHeight());
 					graphics.pose().translate(0.0, 0.0, 0.05);
 				}
 				graphics.pose().translate(0f, 0f, p.getExtraZlevel());

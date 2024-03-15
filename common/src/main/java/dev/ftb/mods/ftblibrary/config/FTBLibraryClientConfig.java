@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.snbt.config.BooleanValue;
+import dev.ftb.mods.ftblibrary.snbt.config.IntArrayValue;
 import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
 
 import static dev.ftb.mods.ftblibrary.FTBLibrary.MOD_ID;
@@ -21,14 +22,22 @@ public interface FTBLibraryClientConfig {
     BooleanValue IMAGE_MODNAME = TOOLTIPS.addBoolean("image_modname", true)
             .comment("Add the name of the mod that images belong to in the image selection GUI.");
 
+    SNBTConfig COLOR = CONFIG.addGroup("colorselector");
+    IntArrayValue RECENT = COLOR.addIntArray("recents", new int[0])
+            .comment("Colors recently selected in the color selector");
+
     static void load() {
         loadDefaulted(CONFIG, LOCAL_DIR, MOD_ID);
+    }
+
+    static void save() {
+        CONFIG.save(LOCAL_DIR.resolve(MOD_ID + "-client.snbt"));
     }
 
     static ConfigGroup getConfigGroup() {
         ConfigGroup group = new ConfigGroup(MOD_ID + ".client_settings", accepted -> {
             if (accepted) {
-                CONFIG.save(LOCAL_DIR.resolve(MOD_ID + "-client.snbt"));
+                save();
             }
         });
         CONFIG.createClientConfig(group);

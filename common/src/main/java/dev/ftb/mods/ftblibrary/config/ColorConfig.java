@@ -2,63 +2,39 @@ package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.ui.ColorSelectorPanel;
+import dev.ftb.mods.ftblibrary.ui.Widget;
+import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
+public class ColorConfig extends ConfigValue<Color4I> {
+	private boolean allowAlphaEdit = false;
 
-public class ColorConfig extends ConfigFromString<Color4I> {
 	public ColorConfig() {
 		defaultValue = Icon.empty();
 		value = Icon.empty();
 	}
 
-	@Override
-	public Color4I getColor(Color4I v) {
-		return v;
+	public ColorConfig withAlphaEditing() {
+		allowAlphaEdit = true;
+		return this;
+	}
+
+	public boolean isAllowAlphaEdit() {
+		return allowAlphaEdit;
 	}
 
 	@Override
-	public boolean parse(@Nullable Consumer<Color4I> callback, String string) {
-		try {
-			if (string.indexOf(',') != -1) {
-				if (string.length() < 5) {
-					return false;
-				}
+	public void onClicked(Widget clicked, MouseButton button, ConfigCallback callback) {
+		ColorSelectorPanel.popupAtMouse(clicked.getGui(), this, callback);
+	}
 
-				var s = string.split(",");
-
-				if (s.length == 3 || s.length == 4) {
-					var c = new int[4];
-					c[3] = 255;
-
-					for (var i = 0; i < s.length; i++) {
-						c[i] = Integer.parseInt(s[i]);
-					}
-
-					if (callback != null) {
-						callback.accept(Color4I.rgba(c[0], c[1], c[2], c[3]));
-					}
-
-					return true;
-				}
-			} else {
-				if (string.length() < 6) {
-					return false;
-				} else if (string.startsWith("#")) {
-					string = string.substring(1);
-				}
-
-				var hex = Integer.parseInt(string, 16);
-
-				if (callback != null) {
-					callback.accept(Color4I.rgba(0xFF000000 | hex));
-				}
-
-				return true;
-			}
-		} catch (Exception ex) {
-		}
-
-		return false;
+	@Override
+	public Component getStringForGUI(@Nullable Color4I v) {
+		Component block = Component.literal(" ■").withStyle(Style.EMPTY.withColor(allowAlphaEdit ? value.rgba() : value.rgb()));
+		return super.getStringForGUI(v).copy().append(block);
 	}
 }

@@ -82,7 +82,7 @@ public abstract class SimpleTextButton extends Button {
 		theme.drawString(graphics, title, textX, textY, theme.getContentColor(getWidgetType()), Theme.SHADOW);
 	}
 
-	public static SimpleTextButton create(Panel panel, Component txt, Icon icon, Consumer<MouseButton> callback, @Nullable Component tooltip) {
+	public static SimpleTextButton create(Panel panel, Component txt, Icon icon, Consumer<MouseButton> callback, Component... tooltip) {
 		return new SimpleTextButton(panel, txt, icon) {
 			@Override
 			public void onClicked(MouseButton button) {
@@ -91,18 +91,18 @@ public abstract class SimpleTextButton extends Button {
 
 			@Override
 			public void addMouseOverText(TooltipList list) {
-				if (tooltip != null) {
-					list.add(tooltip);
+				for (Component c : tooltip) {
+					list.add(c);
 				}
 			}
 		};
 	}
 
-	public static SimpleTextButton accept(Panel panel, Consumer<MouseButton> callback, @Nullable Component tooltip) {
+	public static SimpleTextButton accept(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
 		return create(panel, Component.translatable("gui.accept"), Icons.ACCEPT, callback, tooltip);
 	}
 
-	public static SimpleTextButton cancel(Panel panel, Consumer<MouseButton> callback, @Nullable Component tooltip) {
+	public static SimpleTextButton cancel(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
 		return create(panel, Component.translatable("gui.cancel"), Icons.CANCEL, callback, tooltip);
 	}
 }
