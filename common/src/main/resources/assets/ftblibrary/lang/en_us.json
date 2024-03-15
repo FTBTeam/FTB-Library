@@ -78,5 +78,12 @@
 	"ftblibrary.client_settings": "Client Config",
 	"ftblibrary.client_settings.tooltips.item_modname": "Show Mod Name in Item Select GUI",
 	"ftblibrary.client_settings.tooltips.fluid_modname": "Show Mod Name in Fluid Select GUI",
-	"ftblibrary.client_settings.tooltips.image_modname": "Show Mod Name in Image Select GUI"
+	"ftblibrary.client_settings.tooltips.image_modname": "Show Mod Name in Image Select GUI",
+	"ftblibrary.palette.chat": "Chat Colors",
+	"ftblibrary.palette.dye": "Dye Colors",
+	"ftblibrary.palette.nord": "Nord Theme",
+	"ftblibrary.palette.reds": "Reds",
+	"ftblibrary.palette.greens": "Greens",
+	"ftblibrary.palette.blues": "Blues",
+	"ftblibrary.palette.recent": "Recent Colors"
 }

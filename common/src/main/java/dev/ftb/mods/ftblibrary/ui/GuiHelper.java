@@ -165,6 +165,10 @@ public class GuiHelper {
 		tesselator.end();
 	}
 
+	public static void drawGradientRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col1, Color4I col2) {
+		graphics.fillGradient(x, y, x + w, y + h, col1.rgba(), col2.rgba());
+	}
+
 	public static void drawItem(GuiGraphics graphics, ItemStack stack, int hash, boolean renderOverlay, @Nullable String text) {
 		if (stack.isEmpty()) {
 			return;
