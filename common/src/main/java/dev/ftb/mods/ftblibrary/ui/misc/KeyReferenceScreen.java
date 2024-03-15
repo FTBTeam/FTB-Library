@@ -156,17 +156,19 @@ public class KeyReferenceScreen extends BaseScreen {
             int maxWidth = getParent().getWidth() - GUTTER_SIZE * 2;
             reflowed.clear();
             for (var entry : data) {
-                if (entry.getRight().getContents().equals(ComponentContents.EMPTY)) {
+                if (entry.getRight().getString().isEmpty()) {
                     // header line
                     reflowed.add(Pair.of(entry.getLeft(), null));
                     h += theme.getFontHeight() + 3;
                 } else {
                     var l = theme.getFont().split(entry.getRight(), maxWidth - 10 - widestL);
-                    reflowed.add(Pair.of(entry.getLeft(), l.get(0)));
-                    for (int i = 1; i < l.size(); i++) {
-                        reflowed.add(Pair.of(Component.empty(), l.get(i)));
+                    if (!l.isEmpty()) {
+                        reflowed.add(Pair.of(entry.getLeft(), l.get(0)));
+                        for (int i = 1; i < l.size(); i++) {
+                            reflowed.add(Pair.of(Component.empty(), l.get(i)));
+                        }
+                        h += (theme.getFontHeight() + 1) * l.size();
                     }
-                    h += (theme.getFontHeight() + 1) * l.size();
                 }
             }
 
