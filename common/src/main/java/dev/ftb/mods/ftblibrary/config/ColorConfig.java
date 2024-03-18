@@ -9,9 +9,20 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 public class ColorConfig extends ConfigValue<Color4I> {
+	private boolean allowAlphaEdit = false;
+
 	public ColorConfig() {
 		defaultValue = Icon.empty();
 		value = Icon.empty();
+	}
+
+	public ColorConfig withAlphaEditing() {
+		allowAlphaEdit = true;
+		return this;
+	}
+
+	public boolean isAllowAlphaEdit() {
+		return allowAlphaEdit;
 	}
 
 	@Override
@@ -21,6 +32,6 @@ public class ColorConfig extends ConfigValue<Color4I> {
 
 	@Override
 	public Component getStringForGUI(@Nullable Color4I v) {
-		return super.getStringForGUI(v).copy().append(Component.literal(" ■").withColor(value.rgb()));
+		return super.getStringForGUI(v).copy().append(Component.literal(" ■").withColor(allowAlphaEdit ? value.rgba() : value.rgb()));
 	}
 }

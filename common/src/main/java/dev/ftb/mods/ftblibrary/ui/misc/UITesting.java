@@ -52,6 +52,7 @@ public class UITesting {
 
         ConfigGroup grp3 = grp2.getOrCreateSubgroup("subgroup2");
         grp3.addColor("color", Color4I.WHITE, v -> { }, Color4I.GRAY);
+        grp3.addColor("color_alpha", Color4I.WHITE, v -> { }, Color4I.GRAY).withAlphaEditing();
         grp3.addItemStack("itemstack", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, false);
 
         new TestConfigScreen(group).setAutoclose(true).openGuiLater();

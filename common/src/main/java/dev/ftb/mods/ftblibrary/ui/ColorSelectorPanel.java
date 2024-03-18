@@ -25,18 +25,21 @@ import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 public class ColorSelectorPanel extends ModalPanel {
     private static final Icon WHEEL = Icon.getIcon(FTBLibrary.rl("textures/gui/rgbcolorwheel.png"));
     private static final MutableComponent ARGB = Component.literal("ARGB");
+    private static final MutableComponent RGB = Component.literal("RGB");
 
     private final ColorConfig config;
     private final ConfigCallback callback;
     private final BrightnessButton bButton;
     private final HueSaturationButton hsButton;
     private final AlphaButton aButton;
-    private final TextBox rgbBox;
+    private final RGBTextBox rgbBox;
     private final Button acceptBtn, cancelBtn;
     private final PaletteSelectorButton presetBtn;
     private final List<PaletteButton> paletteButtons = new ArrayList<>();
 
     private final float[] hsb = new float[3];
+
+    private boolean allowAlphaEdit = false;
 
     private static String curPalette = "chat";
     private static final Map<String,List<Integer>> PRESETS = new LinkedHashMap<>();
@@ -72,12 +75,17 @@ public class ColorSelectorPanel extends ModalPanel {
 
     public static ColorSelectorPanel popupAtMouse(BaseScreen gui, ColorConfig config, ConfigCallback callback) {
         ColorSelectorPanel selector = new ColorSelectorPanel(gui, config, callback);
+        selector.setAllowAlphaEdit(config.isAllowAlphaEdit());
         int absX = Math.min(gui.getMouseX(), gui.getScreen().getGuiScaledWidth() - selector.width - 10);
         int absY = Math.min(gui.getMouseY(), gui.getScreen().getGuiScaledHeight() - selector.height - 10);
         selector.setPos(absX - selector.getParent().getX(), absY - selector.getParent().getY());
 
         gui.pushModalPanel(selector);
         return selector;
+    }
+
+    public void setAllowAlphaEdit(boolean allowAlphaEdit) {
+        this.allowAlphaEdit = allowAlphaEdit;
     }
 
     @Override
@@ -127,7 +135,7 @@ public class ColorSelectorPanel extends ModalPanel {
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         super.draw(graphics, theme, x, y, w, h);
 
-        theme.drawString(graphics, ARGB, x + 157 - theme.getStringWidth(ARGB), y + 9);
+        theme.drawString(graphics, allowAlphaEdit ? ARGB : RGB, x + 157 - theme.getStringWidth(ARGB), y + 9);
     }
 
     private void done(boolean accept) {
@@ -149,7 +157,7 @@ public class ColorSelectorPanel extends ModalPanel {
     private void setColor(Color4I newColor) {
         if (config.setCurrentValue(newColor)) {
             updateHSB(newColor);
-            rgbBox.setText(String.format("#%08x", config.getValue().rgba()));
+            rgbBox.setTextFromColor(config.getValue());
         }
     }
 
@@ -292,30 +300,36 @@ public class ColorSelectorPanel extends ModalPanel {
 
         @Override
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            GuiHelper.pushScissor(getScreen(), x, y, w, h);
-            for (int i = 0; i < w; i += 10) {
-                for (int j = 0; j < h; j += 10) {
-                    Color4I c = (i + j) / 10 % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
-                    c.draw(graphics, x + i, y + j, 10, 10);
+            if (allowAlphaEdit) {
+                GuiHelper.pushScissor(getScreen(), x, y, w, h);
+                for (int i = 0; i < w; i += 10) {
+                    for (int j = 0; j < h; j += 10) {
+                        Color4I c = (i + j) / 10 % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
+                        c.draw(graphics, x + i, y + j, 10, 10);
+                    }
                 }
-            }
-            GuiHelper.popScissor(getScreen());
-            config.getValue().withAlpha(config.getValue().alphai()).draw(graphics, x, y, w, h);
-            GuiHelper.drawHollowRect(graphics, x, y, w, h, Color4I.BLACK, false);
+                GuiHelper.popScissor(getScreen());
+                config.getValue().draw(graphics, x, y, w, h);
 
-            int xVal = x + (w - 1) * config.getValue().alphai() / 255;
-            Color4I.BLACK.draw(graphics, xVal, y - 2, 3, height + 4);
-            Color4I.GRAY.draw(graphics, xVal + 1, y - 1, 1, height + 2);
+                int xVal = x + (w - 1) * config.getValue().alphai() / 255;
+                Color4I.BLACK.draw(graphics, xVal, y - 2, 3, height + 4);
+                Color4I.GRAY.draw(graphics, xVal + 1, y - 1, 1, height + 2);
+            } else {
+                config.getValue().draw(graphics, x, y, w, h);
+            }
+            GuiHelper.drawHollowRect(graphics, x, y, w, h, Color4I.BLACK, false);
         }
 
         @Override
         public void onClicked(MouseButton button) {
-            adjustToMouseX();
+            if (allowAlphaEdit) {
+                adjustToMouseX();
+            }
         }
 
         @Override
         public boolean mouseDragged(int button, double dragX, double dragY) {
-            if (isMouseOver()) {
+            if (allowAlphaEdit && isMouseOver()) {
                 adjustToMouseX();
                 return true;
             }
@@ -336,7 +350,7 @@ public class ColorSelectorPanel extends ModalPanel {
         public RGBTextBox() {
             super(ColorSelectorPanel.this);
 
-            setText(String.format("#%08x", config.getValue().rgba()));
+            setTextFromColor(config.getValue());
             setFilter(s -> {
                 if (s.isEmpty()) return true;
                 if (s.startsWith("#")) s = s.substring(1);
@@ -344,18 +358,26 @@ public class ColorSelectorPanel extends ModalPanel {
             });
         }
 
+        private void setTextFromColor(Color4I color) {
+            if (allowAlphaEdit) {
+                setText(String.format("#%08x", color.rgba()));
+            } else {
+                setText(String.format("#%06x", color.rgb()));
+            }
+        }
+
         @Override
         public void onEnterPressed() {
             String s = getText();
             if (s.startsWith("#")) s = s.substring(1);
 
-            if (s.length() == 6) {
+            if (s.length() == 6 || !allowAlphaEdit) {
                 s = "FF" + s;
             }
 
             try {
                 int col = Integer.parseUnsignedInt(s, 16);
-                setColor(Color4I.rgba(col));
+                setColor(allowAlphaEdit ? Color4I.rgba(col) : Color4I.rgb(col));
             } catch (NumberFormatException ignored) {
             }
         }
@@ -387,8 +409,8 @@ public class ColorSelectorPanel extends ModalPanel {
             if (icon instanceof Color4I col && !col.isEmpty()) {
                 col.draw(graphics, x, y, w, h);
                 Color4I shade = col.addBrightness(-0.15f);
-                shade.draw(graphics, x, y, w, 1);
-                shade.draw(graphics, x, y, 1, h);
+                shade.draw(graphics, x, y + h - 1, w, 1);
+                shade.draw(graphics, x + w - 1, y, 1, h);
             }
 
         }
@@ -421,7 +443,7 @@ public class ColorSelectorPanel extends ModalPanel {
         ));
 
         PRESETS.put("greens", List.of(
-                0xFF1E5631, 0xFFA4DE02, 0xFF76BA1B, 0xFF4C9A2A, 0xFFACDF87, 0xFF68BB59
+                0xFF1E5631, 0xFF4C9A2A, 0xFF76BA1B, 0xFF68BB59, 0xFFA4DE02, 0xFFACDF87
         ));
 
         PRESETS.put("blues", List.of(
