@@ -6,6 +6,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.util.Mth;
 
 public class ScrollBar extends Widget {
@@ -78,7 +79,9 @@ public class ScrollBar extends Widget {
 	@Override
 	public boolean mousePressed(MouseButton button) {
 		if (isMouseOver()) {
-			grab = (plane.isVertical ? (getMouseY() - (getY() + getMappedValue(height - getScrollBarSize()))) : (getMouseX() - (getX() + getMappedValue(width - getScrollBarSize()))));
+			grab = (plane.isVertical ?
+					(getMouseY() - (getY() + getMappedValue(height - getScrollBarSize()))) :
+					(getMouseX() - (getX() + getMappedValue(width - getScrollBarSize()))));
 			return true;
 		}
 
@@ -99,7 +102,7 @@ public class ScrollBar extends Widget {
 	public void addMouseOverText(TooltipList list) {
 		if (showValueOnMouseOver()) {
 			var t = getTitle();
-			list.string(t.getContents() == ComponentContents.EMPTY ? (Double.toString(getValue())) : (t + ": " + getValue()));
+			list.string(t.getContents() == PlainTextContents.EMPTY ? (Double.toString(getValue())) : (t + ": " + getValue()));
 		}
 
 		if (Theme.renderDebugBoxes) {

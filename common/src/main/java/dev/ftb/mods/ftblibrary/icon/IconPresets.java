@@ -3,9 +3,7 @@ package dev.ftb.mods.ftblibrary.icon;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author LatvianModder
- */
+
 public class IconPresets {
 	public static final Map<String, Icon> MAP = new HashMap<>();
 

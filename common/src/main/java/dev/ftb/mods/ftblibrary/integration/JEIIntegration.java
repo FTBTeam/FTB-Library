@@ -1,9 +1,13 @@
-package dev.ftb.mods.ftblibrary.integration.forge;
+package dev.ftb.mods.ftblibrary.integration;
 
+import dev.architectury.fluid.FluidStack;
+import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
-import dev.ftb.mods.ftblibrary.config.ui.ItemSearchMode;
+import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
 import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -12,8 +16,8 @@ import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
+import mezz.jei.api.ingredients.IIngredientTypeWithSubtypes;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.runtime.IClickableIngredient;
@@ -25,8 +29,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.ModList;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -50,7 +53,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-		if (ModList.get().isLoaded("roughlyenoughitems")) {
+		if (Platform.isModLoaded("roughlyenoughitems")) {
 			return;
 		}
 		registration.addGlobalGuiHandler(this);
@@ -80,44 +83,55 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
 				}
 			} else if (underMouse.ingredient() instanceof FluidStack stack) {
-				Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(ForgeTypes.FLUID_STACK, stack);
+				// This should work if Arch has setup their fluidstack properly
+				Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(FLUID_STACK, stack);
 				if (typed.isPresent()) {
 					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
 				}
+			} else {
+				// Allow us to fallback onto Fluid handlers for the native implementations
+				return handleExtraIngredientTypes(runtime, underMouse);
 			}
 		}
 
 		return Optional.empty();
 	}
 
-	private static final ItemSearchMode JEI_ITEMS = new ItemSearchMode() {
-		@Override
-		public Icon getIcon() {
-			return ItemIcon.getItemIcon(Items.APPLE);
-		}
+	@ExpectPlatform
+	public static Optional<IClickableIngredient<?>> handleExtraIngredientTypes(IJeiRuntime runtime, PositionedIngredient underMouse) {
+		throw new AssertionError();
+	}
 
-		@Override
-		public MutableComponent getDisplayName() {
-			return Component.translatable("ftblibrary.select_item.list_mode.jei");
-		}
+	private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
+        @Override
+        public Icon getIcon() {
+            return ItemIcon.getItemIcon(Items.APPLE);
+        }
 
-		@Override
-		public Collection<ItemStack> getAllItems() {
-			if (runtime == null) {
-				return Collections.emptySet();
-			}
+        @Override
+        public MutableComponent getDisplayName() {
+            return Component.translatable("ftblibrary.select_item.list_mode.jei");
+        }
 
-			return runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK);
-		}
-	};
+        @Override
+        public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
+            if (runtime == null) {
+                return Collections.emptySet();
+            }
+
+            return runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK).stream()
+                    .map(SelectableResource::item)
+                    .toList();
+        }
+    };
 
 	static {
-		if (!ModList.get().isLoaded("roughlyenoughitems")) {
-			SelectItemStackScreen.modes.add(0, JEI_ITEMS);
+		if (!Platform.isModLoaded("roughlyenoughitems")) {
+            SelectItemStackScreen.KNOWN_MODES.prependMode(JEI_ITEMS);
 		}
 	}
 
-	private record ClickableIngredient<T>(ITypedIngredient<T> typedStack, Rect2i clickedArea) implements IClickableIngredient<T> {
+	public record ClickableIngredient<T>(ITypedIngredient<T> typedStack, Rect2i clickedArea) implements IClickableIngredient<T> {
 		@Override
 		public ITypedIngredient<T> getTypedIngredient() {
 			return typedStack;
@@ -128,4 +142,25 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 			return clickedArea;
 		}
 	}
+
+	/**
+	 * Wrapper around Archs fluid stack to provide JEI with the correct type for each platform
+	 * @implNote This might not work.
+	 */
+	public static final IIngredientTypeWithSubtypes<Fluid, FluidStack> FLUID_STACK = new IIngredientTypeWithSubtypes<>() {
+		@Override
+		public Class<? extends FluidStack> getIngredientClass() {
+			return FluidStack.class;
+		}
+
+		@Override
+		public Class<? extends Fluid> getIngredientBaseClass() {
+			return Fluid.class;
+		}
+
+		@Override
+		public Fluid getBase(FluidStack ingredient) {
+			return ingredient.getFluid();
+		}
+	};
 }

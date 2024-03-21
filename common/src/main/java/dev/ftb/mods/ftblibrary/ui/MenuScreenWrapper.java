@@ -11,9 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * @author LatvianModder
- */
+
 public class MenuScreenWrapper<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements IScreenWrapper {
 	private final BaseScreen wrappedGui;
 	private boolean drawSlots = true;
@@ -65,9 +63,9 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	}
 
 	@Override
-	public boolean mouseScrolled(double x, double y, double scroll) {
-		wrappedGui.mouseScrolled(scroll);
-		return super.mouseScrolled(x, y, scroll);
+	public boolean mouseScrolled(double x, double y, double dirX, double dirY) {
+		wrappedGui.mouseScrolled(dirY);
+		return super.mouseScrolled(x, y, dirX, dirY);
 	}
 
 	@Override
@@ -80,7 +78,9 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 			if (key.backspace()) {
 				wrappedGui.onBack();
 			} else if (wrappedGui.onClosedByKey(key)) {
-				wrappedGui.closeGui(true);
+				if (shouldCloseOnEsc()) {
+					wrappedGui.closeGui(true);
+				}
 			}
 
 			return super.keyPressed(keyCode, scanCode, modifiers);
@@ -107,7 +107,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	protected void renderBg(GuiGraphics graphics, float f, int mx, int my) {
 		var theme = wrappedGui.getTheme();
 		GuiHelper.setupDrawing();
-		renderBackground(graphics);
+		renderBackground(graphics, mx, my, f);
 		GuiHelper.setupDrawing();
 		wrappedGui.draw(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
@@ -129,7 +129,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 		var theme = wrappedGui.getTheme();
 		wrappedGui.drawForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
-		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
+		wrappedGui./*getContextMenu().orElse(wrappedGui).*/addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
@@ -157,15 +157,15 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics graphics) {
+	public void renderBackground(GuiGraphics graphics, int x, int y, float partialTicks) {
 		if (wrappedGui.drawDefaultBackground(graphics)) {
-			super.renderBackground(graphics);
+			super.renderBackground(graphics, x, y, partialTicks);
 		}
 	}
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(graphics);
+		renderBackground(graphics, mouseX, mouseY, partialTicks);
 		wrappedGui.updateGui(mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
 	}

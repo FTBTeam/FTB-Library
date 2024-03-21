@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigListScreen;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
@@ -11,9 +12,6 @@ import net.minecraft.network.chat.MutableComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
 public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E>> {
 	public static final Component EMPTY_LIST = Component.literal("[]");
 	public static final Component NON_EMPTY_LIST = Component.literal("[...]");
@@ -51,9 +49,16 @@ public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 		if (!getValue().isEmpty()) {
 			l.add(info("List"));
 
-			for (var value : getValue()) {
-				l.add(type.getStringForGUI(value));
-			}
+            List<E> val = getValue();
+            for (int i = 0; i < val.size(); i++) {
+				if (i >= 10) {
+					// prevent big lists producing giant unwieldy tooltips
+					l.add(Component.literal("... " + (val.size() - i) + " more ...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+					break;
+				}
+                var value = val.get(i);
+                l.add(type.getStringForGUI(value));
+            }
 
 			if (!getDefaultValue().isEmpty()) {
 				l.blankLine();
@@ -69,7 +74,7 @@ public class ListConfig<E, CV extends ConfigValue<E>> extends ConfigValue<List<E
 	}
 
 	@Override
-	public void onClicked(MouseButton button, ConfigCallback callback) {
+	public void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback) {
 		new EditConfigListScreen<>(this, callback).openGui();
 	}
 

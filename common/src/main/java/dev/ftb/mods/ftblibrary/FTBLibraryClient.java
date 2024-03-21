@@ -2,44 +2,38 @@ package dev.ftb.mods.ftblibrary;
 
 import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
-import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
-import dev.ftb.mods.ftblibrary.config.*;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
+import dev.ftb.mods.ftblibrary.config.ui.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
-import dev.ftb.mods.ftblibrary.ui.misc.SelectImageScreen;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import me.shedaniel.rei.api.client.config.ConfigObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
-import net.minecraft.core.Direction;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
-/**
- * @author LatvianModder
- */
-public class FTBLibraryClient extends FTBLibraryCommon {
+public class FTBLibraryClient {
 	/**
 	 * Meaning of the different values: 0 = No, 1 = Yes, 2 = Only in inventory, 3 = Managed by integration
 	 * (should this be an enum instead at this point?)
 	 */
 	public static int showButtons = 1;
-	public CursorType lastCursorType = null;
+	public static CursorType lastCursorType = null;
 
-	@Override
-	public void init() {
+	public static void init() {
+		FTBLibraryClientConfig.load();
+
 		// when using REI >= 6, disable the regular sidebar buttons,
 		// we'll be using REI's system favourites instead.
 		if (Platform.isModLoaded("roughlyenoughitems")) {
@@ -51,40 +45,20 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 			return;
 		}
 
-//		ClientTextureStitchEvent.PRE.register(this::textureStitch);
-		ClientGuiEvent.INIT_POST.register(this::guiInit);
-		ClientTickEvent.CLIENT_POST.register(this::clientTick);
+		ClientGuiEvent.INIT_POST.register(FTBLibraryClient::guiInit);
+		ClientTickEvent.CLIENT_POST.register(FTBLibraryClient::clientTick);
 
 		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
-		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageScreen.ResourceListener.INSTANCE);
+		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageResourceScreen.ResourceListener.INSTANCE);
 	}
 
-//	private void textureStitch(TextureAtlas atlas, Consumer<ResourceLocation> addSprite) {
-//		if (!atlas.location().equals(InventoryMenu.BLOCK_ATLAS)) {
-//			return;
-//		}
-//
-//		try {
-//			for (var field : Icons.class.getDeclaredFields()) {
-//				field.setAccessible(true);
-//				var o = field.get(null);
-//
-//				if (o instanceof AtlasSpriteIcon a) {
-//					addSprite.accept(a.id);
-//					IconPresets.MAP.put(a.id.toString(), a);
-//				}
-//			}
-//		} catch (Exception ignored) {
-//		}
-//	}
-
-	private void guiInit(Screen screen, ScreenAccess access) {
+	private static void guiInit(Screen screen, ScreenAccess access) {
 		if (areButtonsVisible(screen)) {
 			access.addRenderableWidget(new SidebarGroupGuiButton());
 		}
 	}
 
-	private void clientTick(Minecraft client) {
+	private static void clientTick(Minecraft client) {
 		var t = client.screen instanceof IScreenWrapper ? ((IScreenWrapper) client.screen).getGui().getCursor() : null;
 
 		if (lastCursorType != t) {
@@ -111,7 +85,7 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		}
 
 		if(showButtons == 3 && Platform.isModLoaded("roughlyenoughitems")) {
-			if(ConfigObject.getInstance().isFavoritesEnabled()) {
+			if (ConfigObject.getInstance().isFavoritesEnabled()) {
 				return false;
 			}
 		}
@@ -119,23 +93,8 @@ public class FTBLibraryClient extends FTBLibraryCommon {
 		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.getGroups().isEmpty();
 	}
 
-	@Override
-	public void testScreen() {
-		var group = new ConfigGroup("test");
-		group.add("image", new ImageConfig(), "", v -> { }, "");
-
-		group.addItemStack("item", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, true);
-		group.add("fluid", new FluidConfig(true), FluidStack.empty(), v -> {}, FluidStack.empty());
-
-		ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
-		grp1.addInt("integer", 1, v -> {}, 0, 0, 10);
-		grp1.addBool("bool", true, v -> {}, false);
-
-		ConfigGroup grp2 = grp1.getOrCreateSubgroup("subgroup1");
-		grp2.addEnum("enum", Direction.UP, v -> {}, NameMap.of(Direction.UP, Direction.values()).create());
-		List<Integer> integers = new ArrayList<>(List.of(1, 2, 3, 4));
-		grp2.addList("list", integers, new IntConfig(0, 10), 1);
-
-		new EditConfigScreen(group).openGuiLater();
+	public static void editConfig(boolean isClientConfig) {
+		// NOTE: only client config supported right now
+		new EditConfigScreen(FTBLibraryClientConfig.getConfigGroup()).setAutoclose(true).openGui();
 	}
 }

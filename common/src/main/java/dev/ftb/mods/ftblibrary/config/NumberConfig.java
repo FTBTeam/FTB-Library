@@ -5,15 +5,13 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author LatvianModder
- */
 public abstract class NumberConfig<T extends Number> extends ConfigFromString<T> {
 	public static final Color4I COLOR = Color4I.rgb(0xAA5AE8);
 
 	public final T min;
 	public final T max;
 	public boolean fader;
+	protected T scrollIncrement;
 
 	public NumberConfig(T mn, T mx) {
 		min = mn;
@@ -31,11 +29,21 @@ public abstract class NumberConfig<T extends Number> extends ConfigFromString<T>
 	}
 
 	@Override
+	public boolean canScroll() {
+		return true;
+	}
+
+	@Override
 	public Component getStringForGUI(@Nullable T v) {
 		return v == null ? NULL_TEXT : Component.literal(formatValue(v));
 	}
 
 	protected String formatValue(T v) {
 		return StringUtils.formatDouble(v.doubleValue(), true);
+	}
+
+	public NumberConfig<T> withScrollIncrement(T increment) {
+		scrollIncrement = increment;
+		return this;
 	}
 }

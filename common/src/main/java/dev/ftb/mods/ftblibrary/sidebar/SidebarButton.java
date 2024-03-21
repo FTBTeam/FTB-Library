@@ -22,9 +22,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/**
- * @author LatvianModder
- */
+
 public class SidebarButton implements Comparable<SidebarButton> {
 	private static final BooleanSupplier NEI_NOT_LOADED = () -> !Platform.isModLoaded("notenoughitems");
 

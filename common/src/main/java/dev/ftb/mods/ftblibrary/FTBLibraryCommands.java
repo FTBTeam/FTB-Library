@@ -1,13 +1,14 @@
 package dev.ftb.mods.ftblibrary;
 
-import com.google.gson.Gson;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
+import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
+import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -22,39 +23,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraft.world.level.block.entity.BarrelBlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.entity.TickingBlockEntity;
-import net.minecraft.world.level.storage.loot.Deserializers;
-import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.functions.*;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
-/**
- * @author LatvianModder
- */
+
 public class FTBLibraryCommands {
 	public static final Map<UUID, CompoundTag> EDITING_NBT = new HashMap<>();
 
@@ -207,131 +184,29 @@ public class FTBLibraryCommands {
 									player.getItemInHand(InteractionHand.MAIN_HAND).save(tag);
 								}))
 						)
-				).then(Commands.literal("generate_loot_tables").executes(FTBLibraryCommands::generateLootTables));
+				)
+				.then(Commands.literal("clientconfig")
+						.requires(CommandSourceStack::isPlayer)
+						.executes(context -> {
+							new EditConfigPacket(true).sendTo(Objects.requireNonNull(context.getSource().getPlayer()));
+							return 1;
+						})
+				);
 
 		if (Platform.isDevelopmentEnvironment()) {
 			command.then(Commands.literal("test_screen")
 					.executes(context -> {
-						FTBLibrary.PROXY.testScreen();
+						if (context.getSource().getServer().isDedicatedServer()) {
+							context.getSource().sendFailure(Component.literal("Can't do this on dedicated server!").withStyle(ChatFormatting.RED));
+						} else {
+							UITesting.openTestScreen();
+						}
 						return 1;
 					})
 			);
 		}
 
 		dispatcher.register(command);
-	}
-
-	/**
-	 * @deprecated being moved to FTB Pack Companion in a more usable way.
-	 */
-	@Deprecated
-	private static int generateLootTables(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-		CommandSourceStack source = context.getSource();
-
-		var player = source.getPlayerOrException();
-		HitResult pick = player.pick(30, 1.0F, true);
-		if (pick.getType() != HitResult.Type.BLOCK) {
-			source.sendFailure(Component.literal("You must be facing a valid block"));
-			return 0;
-		}
-
-		BlockHitResult trace = (BlockHitResult) pick;
-		var level = source.getLevel();
-
-		var blockEntity = level.getBlockEntity(trace.getBlockPos());
-		if (!(blockEntity instanceof ChestBlockEntity) && !(blockEntity instanceof BarrelBlockEntity)) {
-			source.sendFailure(Component.literal("You must be facing a chest or barrel"));
-			return 0;
-		}
-
-		var chest = ((RandomizableContainerBlockEntity) blockEntity);
-		var items = new ArrayList<ItemStack>();
-		for (int i = 0; i < chest.getContainerSize(); i ++) {
-			var item = chest.getItem(i);
-			if (!item.isEmpty()) {
-				items.add(item);
-			}
-		}
-
-		try {
-			var tablePool = LootPool.lootPool()
-					.setRolls(ConstantValue.exactly(1.0F));
-
-			for (ItemStack e : items) {
-				LootPoolSingletonContainer.Builder<?> itemBuilder = LootItem.lootTableItem(e.getItem()).setWeight(1);
-
-				// If there is more than one item in the slot, use it to generate a possibility range
-				if (e.getCount() > 1) {
-					itemBuilder.apply(SetItemCountFunction.setCount(UniformGenerator.between(0, e.getCount())));
-				}
-
-				CompoundTag itemTag = e.getOrCreateTag();
-				// If you're copying then we don't need to do anything special
-				if (itemTag.contains("copy") || e.getItem() instanceof EnchantedBookItem || (e.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock)) {
-					itemBuilder.apply(SetNbtFunction.setTag(itemTag));
-				} else {
-					// If the item is enchanted, support random, copy and leveled random
-					if (e.isEnchanted()) {
-						if (itemTag.contains("level")) {
-							String range = itemTag.getString("level");
-							if (range.contains(",")) {
-								String[] split = range.split(",");
-								itemBuilder.apply(EnchantWithLevelsFunction.enchantWithLevels(UniformGenerator.between(Float.parseFloat(split[0]), Float.parseFloat(split[1]))));
-							} else {
-								itemBuilder.apply(EnchantWithLevelsFunction.enchantWithLevels(UniformGenerator.between(0, Float.parseFloat(range))));
-							}
-						} else if (itemTag.contains("set")) {
-							SetEnchantmentsFunction.Builder enchantBuilder = new SetEnchantmentsFunction.Builder();
-							EnchantmentHelper.getEnchantments(e).forEach((enchant, l) -> enchantBuilder.withEnchantment(enchant, ConstantValue.exactly(l)));
-							itemBuilder.apply(enchantBuilder);
-						} else {
-							itemBuilder.apply(EnchantRandomlyFunction.randomApplicableEnchantment());
-						}
-					}
-				}
-
-				tablePool.add(itemBuilder);
-			}
-
-			// Use the loot table serializer to generate the loot table output json
-			var lootTable = LootTable.lootTable().withPool(tablePool);
-			Gson gson = Deserializers.createLootTableSerializer()
-					.setPrettyPrinting()
-					.create();
-
-			String output = gson.toJson(lootTable.build());
-
-			// Put into the moddata path in the servers root
-			Path path = source.getServer().getServerDirectory().toPath();
-
-			// If the chest is named and contains a / we'll infer it's output path based on it.
-			Path outputDir = path.resolve("moddata/ftb-library/generated/");
-			String outputFileName = "loot-" + (blockEntity instanceof ChestBlockEntity ? "chest" : "barrel") + "-" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replaceAll(":|\\.", "_")+ ".json";
-
-			Component customName = chest.getCustomName();
-			if (customName != null && customName.getString().contains("/") && !customName.getString().contains("..")) {
-				String chestPathName = customName.getString();
-				if (chestPathName.chars().filter(c -> c == '/').count() == 2) {
-					// [0] == modname, [1] == type of loot (chests etc), [2] == file name
-					String[] pathParts = chestPathName.split("/");
-					outputFileName = String.format("%s.json", pathParts[2]);
-					outputDir = path.resolve(String.format("kubejs/%s/loot_tables/%s/", pathParts[0], pathParts[1]));
-				}
-			}
-
-			if (!Files.exists(outputDir)) {
-				Files.createDirectories(outputDir);
-			}
-
-			Files.writeString(outputDir.resolve(outputFileName), output);
-			final Path dir = outputDir.resolve(outputFileName);
-			source.sendSuccess(() -> Component.literal("Loot table stored at " + dir.toString().replace(path.toAbsolutePath().toString(), "")), true);
-		} catch (Exception e) {
-			source.sendFailure(Component.literal("Something went wrong, check the logs"));
-			FTBLibrary.LOGGER.error(e);
-			return 0;
-		}
-		return 1;
 	}
 
 	private static void addInfo(ListTag list, Component key, Component value) {

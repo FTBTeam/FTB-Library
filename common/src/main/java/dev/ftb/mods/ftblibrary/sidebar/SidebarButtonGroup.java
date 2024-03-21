@@ -6,19 +6,12 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class SidebarButtonGroup implements Comparable<SidebarButtonGroup> {
 	private final ResourceLocation id;
 	private final int y;
 	private final boolean isPinned;
 	private final List<SidebarButton> buttons;
-
-	@Deprecated(forRemoval = true)
-	public SidebarButtonGroup(ResourceLocation id, int y) {
-		this(id, y, true);
-	}
 
 	public SidebarButtonGroup(ResourceLocation id, int y, boolean isPinned) {
 		this.id = id;

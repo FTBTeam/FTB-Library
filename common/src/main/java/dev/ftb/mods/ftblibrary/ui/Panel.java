@@ -62,20 +62,19 @@ public abstract class Panel extends Widget {
 
 	public void refreshWidgets() {
 		contentWidth = contentHeight = -1;
-		clearWidgets();
-		var theme = getGui().getTheme();
 
+		clearWidgets();
 		try {
 			addWidgets();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
-		//alignWidgets();
+		widgets.sort(null);
 
 		for (var widget : widgets) {
-			if (widget instanceof Panel) {
-				((Panel) widget).refreshWidgets();
+			if (widget instanceof Panel p) {
+				p.refreshWidgets();
 			}
 		}
 
@@ -200,15 +199,16 @@ public abstract class Panel extends Widget {
 		}
 
 		setOffset(true);
+
+		widgets.stream()
+				.filter(widget -> widget.shouldRenderInLayer(DrawLayer.BACKGROUND, x, y, w, h))
+				.forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
+
 		drawOffsetBackground(graphics, theme, x + offsetX, y + offsetY, w, h);
 
-		for (var i = 0; i < widgets.size(); i++) {
-			var widget = widgets.get(i);
-
-			if (widget.shouldDraw() && (!renderInside || widget.collidesWith(x, y, w, h))) {
-				drawWidget(graphics, theme, widget, i, x + offsetX, y + offsetY, w, h);
-			}
-		}
+        widgets.stream()
+				.filter(widget -> widget.shouldRenderInLayer(DrawLayer.FOREGROUND, x, y, w, h))
+				.forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
 
 		setOffset(false);
 
@@ -223,7 +223,7 @@ public abstract class Panel extends Widget {
 	public void drawOffsetBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 	}
 
-	public void drawWidget(GuiGraphics graphics, Theme theme, Widget widget, int index, int x, int y, int w, int h) {
+	public void drawWidget(GuiGraphics graphics, Theme theme, Widget widget, int x, int y, int w, int h) {
 		var wx = widget.getX();
 		var wy = widget.getY();
 		var ww = widget.width;
@@ -284,12 +284,10 @@ public abstract class Panel extends Widget {
 		for (var i = widgets.size() - 1; i >= 0; i--) {
 			var widget = widgets.get(i);
 
-			if (widget.isEnabled()) {
-				if (widget.mousePressed(button)) {
-					setOffset(false);
-					return true;
-				}
-			}
+            if (widget.isEnabled() && widget.shouldDraw() && widget.mousePressed(button)) {
+                setOffset(false);
+                return true;
+            }
 		}
 
 		setOffset(false);

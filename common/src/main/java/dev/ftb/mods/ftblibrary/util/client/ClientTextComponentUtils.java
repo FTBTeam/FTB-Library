@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.util.client;
 
-import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.util.CustomComponentParser;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TextComponentParser;
@@ -41,25 +40,12 @@ public class ClientTextComponentUtils {
 			}
 
 			if (map.containsKey("image")) {
-				var c = new ImageComponent();
-				c.image = Icon.getIcon(map.get("image"));
-
-				if (map.containsKey("width")) {
-					c.width = Integer.parseInt(map.get("width"));
-				}
-
-				if (map.containsKey("height")) {
-					c.height = Integer.parseInt(map.get("height"));
-				}
-
-				switch (map.getOrDefault("align", "center").toLowerCase()) {
-					case "left" -> c.align = 0;
-					case "center" -> c.align = 1;
-					case "right" -> c.align = 2;
-				}
-
-				c.fit = map.getOrDefault("fit", "false").equals("true");
-
+				var c = ImageComponent.create(map.get("image"),
+						Integer.parseInt(map.getOrDefault("width", "100")),
+						Integer.parseInt(map.getOrDefault("height", "100")),
+						ImageComponent.ImageAlign.byName(map.getOrDefault("align", "center")),
+						map.getOrDefault("fit", "false").equals("true")
+				);
 				var output = MutableComponent.create(c);
 				if (map.containsKey("text")) {
 					output.withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, parse(map.get("text")))));

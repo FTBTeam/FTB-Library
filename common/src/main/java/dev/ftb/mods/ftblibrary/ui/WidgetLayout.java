@@ -5,9 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-/**
- * @author LatvianModder
- */
+
 @FunctionalInterface
 public interface WidgetLayout {
 	Padding NO_PADDING = new Padding(0, 0);
@@ -47,7 +45,7 @@ public interface WidgetLayout {
 			if (!panel.widgets.isEmpty()) {
 				for (var widget : panel.widgets) {
 					positionSetter.accept(widget, i);
-					i += sizeGetter.apply(widget);
+					i += sizeGetter.apply(widget) + spacing;
 				}
 
 				i -= spacing;

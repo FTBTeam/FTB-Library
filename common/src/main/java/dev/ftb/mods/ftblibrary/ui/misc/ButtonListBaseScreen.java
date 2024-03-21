@@ -5,10 +5,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 
 /**
  * Base class for a screen which displays a scrollable list of buttons, with an optional search text box.
+ *
+ * @deprecated use {@link AbstractButtonListScreen}
  */
+@Deprecated
 public abstract class ButtonListBaseScreen extends BaseScreen {
 	private final Panel buttonPanel;
 	private final PanelScrollBar scrollBar;
@@ -20,6 +24,7 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 	private static final int SCROLLBAR_WIDTH = 16;
 	private static final int GUTTER_SIZE = 6;
 
+	@Deprecated
 	public ButtonListBaseScreen() {
 		buttonPanel = new ButtonPanel();
 
@@ -96,12 +101,18 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 	}
 
 	@Override
+	public Theme getTheme() {
+		// TODO ultimately move this up to BaseScreen once theming is fully functional
+		return ThemeManager.INSTANCE.getActiveTheme();
+	}
+
+	@Override
 	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		super.drawBackground(graphics, theme, x, y, w, h);
 
 		var title = getTitle();
 
-		if (title.getContents() != ComponentContents.EMPTY) {
+		if (title.getContents() != PlainTextContents.EMPTY) {
 			theme.drawString(graphics, title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);
 		}
 	}

@@ -7,9 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import org.lwjgl.glfw.GLFW;
 
-/**
- * @author LatvianModder
- */
+
 public class Key {
 	@ExpectPlatform
 	private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {

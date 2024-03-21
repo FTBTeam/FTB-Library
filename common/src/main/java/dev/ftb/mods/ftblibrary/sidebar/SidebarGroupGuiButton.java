@@ -15,9 +15,7 @@ import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
+
 public class SidebarGroupGuiButton extends AbstractButton {
 	public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
 
@@ -30,7 +28,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	}
 
 	@Override
-	public void render(GuiGraphics graphics, int mx, int my, float partialTicks) {
+	public void renderWidget(GuiGraphics graphics, int mx, int my, float partialTicks) {
 		buttons.clear();
 		mouseOver = null;
 		int rx, ry = 0;

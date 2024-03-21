@@ -8,9 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
 public class NBTConfig extends ConfigFromString<CompoundTag> {
 	public static final Component EMPTY_NBT = Component.literal("{}");
 	public static final Component NON_EMPTY_NBT = Component.literal("{...}");
@@ -33,21 +30,11 @@ public class NBTConfig extends ConfigFromString<CompoundTag> {
 	@Override
 	public boolean parse(@Nullable Consumer<CompoundTag> callback, String string) {
 		if (string.equals("null")) {
-			if (callback != null) {
-				callback.accept(null);
-			}
-
-			return true;
+			return okValue(callback, null);
 		}
 
 		try {
-			var nbt = TagParser.parseTag(string);
-
-			if (callback != null) {
-				callback.accept(nbt);
-			}
-
-			return true;
+			return okValue(callback, TagParser.parseTag(string));
 		} catch (Exception ex) {
 			return false;
 		}

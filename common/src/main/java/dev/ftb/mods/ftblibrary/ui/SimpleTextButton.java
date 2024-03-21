@@ -2,17 +2,19 @@ package dev.ftb.mods.ftblibrary.ui;
 
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
+
 public abstract class SimpleTextButton extends Button {
 	public SimpleTextButton(Panel panel, Component txt, Icon icon) {
 		super(panel, txt, icon);
@@ -76,5 +78,29 @@ public abstract class SimpleTextButton extends Button {
 		}
 
 		theme.drawString(graphics, title, textX, textY, theme.getContentColor(getWidgetType()), Theme.SHADOW);
+	}
+
+	public static SimpleTextButton create(Panel panel, Component txt, Icon icon, Consumer<MouseButton> callback, Component... tooltip) {
+		return new SimpleTextButton(panel, txt, icon) {
+			@Override
+			public void onClicked(MouseButton button) {
+				callback.accept(button);
+			}
+
+			@Override
+			public void addMouseOverText(TooltipList list) {
+				for (Component c : tooltip) {
+					list.add(c);
+				}
+			}
+		};
+	}
+
+	public static SimpleTextButton accept(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
+		return create(panel, Component.translatable("gui.accept"), Icons.ACCEPT, callback, tooltip);
+	}
+
+	public static SimpleTextButton cancel(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
+		return create(panel, Component.translatable("gui.cancel"), Icons.CANCEL, callback, tooltip);
 	}
 }

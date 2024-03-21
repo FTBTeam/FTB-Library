@@ -1,6 +1,6 @@
 plugins {
 	id "architectury-plugin" version "3.4-SNAPSHOT"
-	id "dev.architectury.loom" version "1.2-SNAPSHOT" apply false
+	id "dev.architectury.loom" version "1.5-SNAPSHOT" apply false
 }
 
 architectury {
@@ -41,6 +41,7 @@ allprojects {
 
 	repositories {
 		mavenCentral()
+		mavenLocal()
 
 		maven {
 			url "https://maven.architectury.dev/"
@@ -59,6 +60,20 @@ allprojects {
 				includeGroup "dev.latvian.mods"
 				includeGroup "dev.ftb.mods"
 			}
+		}
+
+		maven {
+			name "ModMaven (JEI)"
+			url "https://modmaven.dev/"
+			content {
+				includeGroup "mezz.jei"
+			}
+		}
+
+		maven {
+			// Emi
+			name = "TerraformersMC"
+			url = "https://maven.terraformersmc.com/"
 		}
 	}
 

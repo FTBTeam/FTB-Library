@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ConfigValue;
@@ -9,90 +10,104 @@ import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.ui.misc.AbstractThreePanelScreen;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
-/**
- * @author LatvianModder
- */
-public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScreen {
-	private final ListConfig<E, CV> list;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
+
+public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends AbstractThreePanelScreen<EditConfigListScreen<E,CV>.ConfigPanel> {
+	private final ListConfig<E, CV> listConfig;
 	private final ConfigCallback callback;
+	private final List<E> localValues;
+	private final int widestElement;
 
 	private final Component title;
-	private final Panel configPanel;
-	private final Button buttonAccept, buttonCancel;
-	private final PanelScrollBar scroll;
+	private final ButtonAddValue addButton;
 
-	public EditConfigListScreen(ListConfig<E, CV> l, ConfigCallback cb) {
-		list = l;
-		callback = cb;
+	boolean changed = false;
 
-		title = Component.literal(list.getName()).withStyle(ChatFormatting.BOLD);
+	public EditConfigListScreen(ListConfig<E, CV> listConfig, ConfigCallback callback) {
+		super();
 
-		configPanel = new Panel(this) {
-			@Override
-			public void addWidgets() {
-				for (var i = 0; i < list.getValue().size(); i++) {
-					add(new ButtonConfigValue<>(this, list, i));
-				}
+		this.listConfig = listConfig;
+		this.callback = callback;
 
-				if (list.getCanEdit()) {
-					add(new ButtonAddValue(this));
-				}
-			}
+		localValues = new ArrayList<>(listConfig.getValue());
 
-			@Override
-			public void alignWidgets() {
-				for (var w : widgets) {
-					w.setWidth(width - 16);
-				}
-				align(WidgetLayout.VERTICAL);
-			}
-		};
+		title = Component.literal(listConfig.getName()).withStyle(ChatFormatting.BOLD);
 
-		scroll = new PanelScrollBar(this, configPanel);
-		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, (widget, button) -> doAccept());
-		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, (widget, button) -> doCancel());
+		addButton = new ButtonAddValue(topPanel);
+
+		widestElement = Math.max(getTheme().getStringWidth(title) + 25, listConfig.getValue().stream()
+				.map(item -> getTheme().getStringWidth(listConfig.getType().getStringForGUI(item)))
+				.max(Integer::compareTo)
+				.orElse(176));
 	}
 
 	@Override
 	public boolean onInit() {
-		return setFullscreen();
+		int maxH = (int) (getScreen().getGuiScaledHeight() * .8f);
+		int maxW = (int) (getScreen().getGuiScaledWidth() * .9f);
+
+		setHeight(Mth.clamp(localValues.size() * 12 + getTopPanelHeight() + bottomPanel.height, 176, maxH));
+		setWidth(Mth.clamp(widestElement + 20, 176, maxW));
+		return true;
 	}
 
 	@Override
-	public void addWidgets() {
-		add(buttonAccept);
-		add(buttonCancel);
-		add(configPanel);
-		add(scroll);
+	public boolean shouldCloseOnEsc() {
+		return false;
 	}
 
 	@Override
-	public void alignWidgets() {
-		configPanel.setPosAndSize(0, 20, width, height - 20);
-		configPanel.alignWidgets();
-		scroll.setPosAndSize(width - 16, 20, 16, height - 20);
-
-		buttonAccept.setPos(width - 18, 2);
-		buttonCancel.setPos(width - 38, 2);
+	protected void doAccept() {
+		if (changed) {
+			listConfig.getValue().clear();
+			listConfig.getValue().addAll(localValues);
+		}
+		callback.save(changed);
 	}
 
-	private void doAccept() {
-		callback.save(true);
+	@Override
+	protected int getTopPanelHeight() {
+		return 20;
 	}
 
-	private void doCancel() {
+	@Override
+	protected Panel createTopPanel() {
+		return new CustomTopPanel();
+	}
+
+	@Override
+	protected ConfigPanel createMainPanel() {
+		return new ConfigPanel();
+	}
+
+	@Override
+	protected void doCancel() {
+		if (changed) {
+			openYesNo(Component.translatable("ftblibrary.unsaved_changes"), Component.empty(), this::reallyCancel);
+		} else {
+			reallyCancel();
+		}
+	}
+
+	private void reallyCancel() {
 		callback.save(false);
 	}
 
 	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
-			buttonCancel.onClicked(MouseButton.LEFT);
+			doCancel();
 			return true;
 		}
 
@@ -100,9 +115,22 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 	}
 
 	@Override
-	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-		EditConfigScreen.COLOR_BACKGROUND.draw(graphics, 0, 0, w, 20);
-		theme.drawString(graphics, getTitle(), 6, 6, Theme.SHADOW);
+	public boolean keyPressed(Key key) {
+		if (super.keyPressed(key)) {
+			return true;
+		} else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
+			doAccept();
+			return true;
+		} else if (key.is(InputConstants.KEY_INSERT)) {
+			addButton.onClicked(MouseButton.LEFT);
+			return true;
+		} else if (key.is(InputConstants.KEY_DELETE)) {
+			return mainPanel.getHoveredDeletable().map(d -> {
+				d.deleteItem();
+				return true;
+			}).orElse(super.keyPressed(key));
+		}
+		return false;
 	}
 
 	@Override
@@ -110,38 +138,26 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		return title;
 	}
 
-	@Override
-	public Theme getTheme() {
-		return EditConfigScreen.THEME;
-	}
-
-	public class ButtonAddValue extends Button {
+	public class ButtonAddValue extends SimpleButton implements EditStringConfigOverlay.PosProvider {
 		public ButtonAddValue(Panel panel) {
-			super(panel);
-			setHeight(12);
-			setTitle(Component.literal("+ ").append(Component.translatable("gui.add")));
+			super(panel, Component.translatable("gui.add"), Icons.ADD, (btn, mb) -> {});
 		}
 
 		@Override
-		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-			var mouseOver = getMouseY() >= 20 && isMouseOver();
-
-			if (mouseOver) {
-				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
-			}
-
-			theme.drawString(graphics, getTitle(), x + 4, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+		public void addMouseOverText(TooltipList list) {
+			list.translate("gui.add");
+			list.styledString("[Ins]", ChatFormatting.GRAY);
 		}
 
 		@Override
 		public void onClicked(MouseButton button) {
 			playClickSound();
-			CV listType = list.getType();
+			CV listType = listConfig.getType();
 			listType.setValue(listType.getDefaultValue() == null ? null : listType.copy(listType.getDefaultValue()));
-			listType.onClicked(button, accepted -> {
+			listType.onClicked(this, button, accepted -> {
 				if (accepted) {
-					list.getValue().add(listType.getValue());
+					localValues.add(listType.getValue());
+					changed = true;
 				}
 
 				openGui();
@@ -149,17 +165,26 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		}
 
 		@Override
-		public void addMouseOverText(TooltipList list) {
+		public Offset getOverlayOffset() {
+			return new Offset(-getGui().width / 2, 20);
 		}
 	}
 
-	public static class ButtonConfigValue<E, CV extends ConfigValue<E>> extends Button {
-		public final ListConfig<E, CV> list;
+	@FunctionalInterface
+	public interface Deletable {
+		void deleteItem();
+	}
+
+	public class ButtonConfigValue extends Button implements Deletable, EditStringConfigOverlay.PosProvider {
+		private static final Component DEL_BUTTON_TXT =
+				Component.literal("[").withStyle(ChatFormatting.RED)
+						.append(Component.literal("X").withStyle(ChatFormatting.GOLD))
+						.append(Component.literal("]").withStyle(ChatFormatting.RED));
+
 		public final int index;
 
-		public ButtonConfigValue(Panel panel, ListConfig<E, CV> list, int index) {
-			super(panel);
-			this.list = list;
+		public ButtonConfigValue(int index) {
+			super(mainPanel);
 			this.index = index;
 			setHeight(12);
 		}
@@ -168,23 +193,21 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 			var mouseOver = getMouseY() >= 20 && isMouseOver();
 
-			var textCol = list.getType().getColor(list.getValue().get(index)).mutable();
+			var textCol = listConfig.getType().getColor(localValues.get(index)).mutable();
 			textCol.setAlpha(255);
 
 			if (mouseOver) {
 				textCol.addBrightness(60);
-
 				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
-
 				if (getMouseX() >= x + w - 19) {
 					Color4I.WHITE.withAlpha(33).draw(graphics, x + w - 19, y, 19, h);
 				}
 			}
 
-			theme.drawString(graphics, getGui().getTheme().trimStringToWidth(list.getType().getStringForGUI(list.getValue().get(index)), width), x + 4, y + 2, textCol, 0);
+			theme.drawString(graphics, getGui().getTheme().trimStringToWidth(listConfig.getType().getStringForGUI(localValues.get(index)), width), x + 4, y + 2, textCol, 0);
 
 			if (mouseOver) {
-				theme.drawString(graphics, "[-]", x + w - 16, y + 2, Color4I.WHITE, 0);
+				theme.drawString(graphics, DEL_BUTTON_TXT, x + w - 16, y + 2, Color4I.WHITE, 0);
 			}
 
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
@@ -195,15 +218,15 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 			playClickSound();
 
 			if (getMouseX() >= getX() + width - 19) {
-				if (list.getCanEdit()) {
-					list.getValue().remove(index);
-					parent.refreshWidgets();
+				if (listConfig.getCanEdit()) {
+					deleteItem();
 				}
 			} else {
-				list.getType().setValue(list.getValue().get(index));
-				list.getType().onClicked(button, accepted -> {
+				listConfig.getType().setValue(localValues.get(index));
+				listConfig.getType().onClicked(this, button, accepted -> {
 					if (accepted) {
-						list.getValue().set(index, list.getType().getValue());
+						localValues.set(index, listConfig.getType().getValue());
+						changed = true;
 					}
 
 					openGui();
@@ -215,10 +238,77 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends BaseScre
 		public void addMouseOverText(TooltipList l) {
 			if (getMouseX() >= getX() + width - 19) {
 				l.translate("selectServer.delete");
+				l.add(hotkeyTooltip("Del"));
 			} else {
-				list.getType().setValue(list.getValue().get(index));
-				list.getType().addInfo(l);
+				listConfig.getType().setValue(localValues.get(index));
+				listConfig.getType().addInfo(l);
 			}
+		}
+
+		@Override
+		public void deleteItem() {
+			localValues.remove(index);
+			changed = true;
+			parent.refreshWidgets();
+		}
+
+		@Override
+		public Offset getOverlayOffset() {
+			return new Offset(0, 0);
+		}
+	}
+
+	public class ConfigPanel extends Panel {
+		public ConfigPanel() {
+			super(EditConfigListScreen.this);
+		}
+
+		@Override
+		public void addWidgets() {
+			for (var i = 0; i < localValues.size(); i++) {
+				add(new ButtonConfigValue(i));
+			}
+		}
+
+		@Override
+		public void alignWidgets() {
+			for (var w : widgets) {
+				w.setX(2);
+				w.setWidth(width - 4);
+			}
+			align(WidgetLayout.VERTICAL);
+		}
+
+		public Optional<Deletable> getHoveredDeletable() {
+			return getWidgets().stream().filter(w -> w.isMouseOver() && w instanceof Deletable).map(w -> (Deletable) w).findFirst();
+		}
+	}
+
+	private class CustomTopPanel extends TopPanel {
+		private final TextField titleLabel = new TextField(this).setText(getTitle());
+
+		@Override
+		public void addWidgets() {
+			titleLabel.addFlags(Theme.CENTERED_V);
+			add(titleLabel);
+
+			if (listConfig.getCanEdit()) {
+				add(addButton);
+			}
+		}
+
+		@Override
+		public void alignWidgets() {
+			titleLabel.setPosAndSize(4, 0, titleLabel.width, height);
+
+			addButton.setPosAndSize(width - 18, 1, 16, 16);
+		}
+
+		@Override
+		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			super.draw(graphics, theme, x, y, w, h);
+
+			theme.drawString(graphics, getGui().getTitle(), x + 6, y + 6, Theme.SHADOW);
 		}
 	}
 }

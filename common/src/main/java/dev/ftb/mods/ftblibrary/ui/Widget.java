@@ -10,18 +10,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.sounds.SoundEvents;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Optional;
 
-public class Widget implements IScreenWrapper {
+public class Widget implements IScreenWrapper, Comparable<Widget> {
 	protected final Panel parent;
 
 	public int posX, posY, width, height;
 	protected boolean isMouseOver;
+	private DrawLayer drawLayer = DrawLayer.FOREGROUND;
 
 	public Widget(Panel p) {
 		parent = p;
@@ -123,7 +125,7 @@ public class Widget implements IScreenWrapper {
 	public void addMouseOverText(TooltipList list) {
 		var title = getTitle();
 
-		if (title.getContents() != ComponentContents.EMPTY) {
+		if (title.getContents() != PlainTextContents.EMPTY) {
 			list.add(title);
 		}
 	}
@@ -197,6 +199,14 @@ public class Widget implements IScreenWrapper {
 		return parent.getMouseY();
 	}
 
+	public DrawLayer getDrawLayer() {
+		return drawLayer;
+	}
+
+	public void setDrawLayer(DrawLayer drawLayer) {
+		this.drawLayer = drawLayer;
+	}
+
 	public float getPartialTicks() {
 		return parent.getPartialTicks();
 	}
@@ -213,6 +223,12 @@ public class Widget implements IScreenWrapper {
 		}
 
 		return handleClick(click.substring(0, index), click.substring(index + 1));
+	}
+
+	final boolean shouldRenderInLayer(DrawLayer layer, int x, int y, int w, int h) {
+		return drawLayer == layer
+				&& shouldDraw()
+				&& (!parent.getOnlyRenderWidgetsInside() || collidesWith(x, y, w, h));
 	}
 
 	public void onClosed() {
@@ -273,5 +289,24 @@ public class Widget implements IScreenWrapper {
 	@Nullable
 	public CursorType getCursor() {
 		return null;
+	}
+
+	/**
+	 * Get a widget comparison for draw ordering. To preserve API constraints, the widget types should be checked,
+	 * and if not the same, comparison should always return 0. Positive or negative returns should only apply to
+	 * widgets of the same or compatible type.
+	 *
+	 * @param widget the other widget to check
+	 * @return see {@link Comparable}
+	 */
+	@Override
+	public int compareTo(@NotNull Widget widget) {
+		// default: don't care. override this in subclasses which do care about relative draw order
+		return 0;
+	}
+
+	public enum DrawLayer {
+		BACKGROUND,
+		FOREGROUND
 	}
 }

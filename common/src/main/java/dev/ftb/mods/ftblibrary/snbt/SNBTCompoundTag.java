@@ -5,9 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author LatvianModder
- */
+
 public class SNBTCompoundTag extends CompoundTag {
 	public static SNBTCompoundTag of(@Nullable Tag tag) {
 		if (tag instanceof SNBTCompoundTag) {

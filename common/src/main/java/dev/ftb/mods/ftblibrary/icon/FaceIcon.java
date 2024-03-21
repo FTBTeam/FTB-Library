@@ -1,15 +1,18 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.client.resources.PlayerSkin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class FaceIcon extends Icon {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FaceIcon.class);
 	private static final HashMap<UUID, FaceIcon> CACHE = new HashMap<>();
 
 	public static FaceIcon getFace(GameProfile profile) {
@@ -30,17 +33,22 @@ public class FaceIcon extends Icon {
 
 	private FaceIcon(GameProfile p) {
 		profile = p;
-		skin = new ImageIcon(DefaultPlayerSkin.getDefaultSkin(profile.getId()));
+		skin = new ImageIcon(DefaultPlayerSkin.get(profile.getId()).texture());
 		head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
 		hat = Icon.empty();
 
-		Minecraft.getInstance().getSkinManager().registerSkins(profile, (type, resourceLocation, minecraftProfileTexture) -> {
-			if (type == MinecraftProfileTexture.Type.SKIN) {
-				skin = new ImageIcon(resourceLocation);
+		Minecraft.getInstance().getSkinManager().getOrLoad(profile).whenComplete((playerSkin, throwable) -> {
+			if (playerSkin != null) {
+				var texture = playerSkin.texture();
+				skin = new ImageIcon(texture);
 				head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
 				hat = skin.withUV(40F, 8F, 8F, 8F, 64F, 64F);
+			} else if (throwable != null) {
+				LOGGER.warn("Failed to load skin for {}: {} ", profile.getName(), throwable.getMessage());
+			} else {
+				LOGGER.warn("Failed to load skin for {} ?", profile.getName());
 			}
-		}, true);
+		});
 	}
 
 	@Override

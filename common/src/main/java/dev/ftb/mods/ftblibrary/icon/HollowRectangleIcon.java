@@ -7,9 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 
-/**
- * @author LatvianModder
- */
+
 public class HollowRectangleIcon extends Icon {
 	public Color4I color;
 	public boolean roundEdges;

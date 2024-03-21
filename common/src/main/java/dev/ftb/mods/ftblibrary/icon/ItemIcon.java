@@ -22,10 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-/**
- * @author LatvianModder
- */
-public class ItemIcon extends Icon {
+public class ItemIcon extends Icon implements IResourceIcon {
 	private final ItemStack stack;
 
 	public static Icon getItemIcon(ItemStack stack) {
@@ -175,5 +172,10 @@ public class ItemIcon extends Icon {
 	@Nullable
 	public Object getIngredient() {
 		return getStack();
+	}
+
+	@Override
+	public ResourceLocation getResourceLocation() {
+		return BuiltInRegistries.ITEM.getKey(stack.getItem());
 	}
 }

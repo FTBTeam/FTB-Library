@@ -9,9 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-/**
- * @author LatvianModder
- */
 public class StringConfig extends ConfigFromString<String> {
 	public static final Color4I COLOR = Color4I.rgb(0xFFAA49);
 
@@ -34,16 +31,8 @@ public class StringConfig extends ConfigFromString<String> {
 
 	@Override
 	public boolean parse(@Nullable Consumer<String> callback, String string) {
-		if (pattern == null || pattern.matcher(string).matches()) {
-			if (callback != null) {
-				callback.accept(string);
-			}
-
-			return true;
-		}
-
-		return false;
-	}
+        return (pattern == null || pattern.matcher(string).matches()) && okValue(callback, string);
+    }
 
 	@Override
 	public Component getStringForGUI(@Nullable String v) {
