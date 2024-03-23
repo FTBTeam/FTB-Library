@@ -162,7 +162,8 @@ public class TextBox extends Widget implements IFocusableWidget {
 			}
 
 			String newText = (new StringBuilder(text)).replace(selStart, selEnd, filtered).toString();
-			if (isValid(newText)) {
+			validText = isValid(newText);
+			if (validText) {
 				text = newText;
 				setCursorPosition(selStart + nToInsert);
 				setSelectionPos(cursorPos);
