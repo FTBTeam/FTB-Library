@@ -94,17 +94,6 @@ public abstract class AbstractButtonListScreen extends AbstractThreePanelScreen<
 		borderW = w;
 	}
 
-	@Override
-	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-		super.drawBackground(graphics, theme, x, y, w, h);
-
-		var title = getTitle();
-
-		if (!title.getString().isEmpty()) {
-			theme.drawString(graphics, title, x + (width - theme.getStringWidth(title)) / 2, y - theme.getFontHeight() - 2, Theme.SHADOW);
-		}
-	}
-
 	public void focus() {
 		searchBox.setFocused(true);
 	}
