@@ -156,7 +156,6 @@ public class ColorSelectorPanel extends ModalPanel {
 
     private void setColor(Color4I newColor) {
         if (config.setCurrentValue(newColor)) {
-            updateHSB(newColor);
             rgbBox.setTextFromColor(config.getValue());
         }
     }
@@ -300,15 +299,19 @@ public class ColorSelectorPanel extends ModalPanel {
 
         @Override
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+            GuiHelper.drawHollowRect(graphics, x, y, w, h, Color4I.BLACK, false);
+
             if (allowAlphaEdit) {
-                GuiHelper.pushScissor(getScreen(), x, y, w, h);
-                for (int i = 0; i < w; i += 10) {
-                    for (int j = 0; j < h; j += 10) {
-                        Color4I c = (i + j) / 10 % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
-                        c.draw(graphics, x + i, y + j, 10, 10);
+                if (config.getValue().alphai() < 255) {
+                    GuiHelper.pushScissor(getScreen(), x, y, w, h);
+                    for (int i = 0; i < w; i += 10) {
+                        for (int j = 0; j < h; j += 10) {
+                            Color4I c = (i + j) / 10 % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
+                            c.draw(graphics, x + i, y + j, 10, 10);
+                        }
                     }
+                    GuiHelper.popScissor(getScreen());
                 }
-                GuiHelper.popScissor(getScreen());
                 config.getValue().draw(graphics, x, y, w, h);
 
                 int xVal = x + (w - 1) * config.getValue().alphai() / 255;
@@ -317,7 +320,6 @@ public class ColorSelectorPanel extends ModalPanel {
             } else {
                 config.getValue().draw(graphics, x, y, w, h);
             }
-            GuiHelper.drawHollowRect(graphics, x, y, w, h, Color4I.BLACK, false);
         }
 
         @Override
@@ -378,6 +380,7 @@ public class ColorSelectorPanel extends ModalPanel {
             try {
                 int col = Integer.parseUnsignedInt(s, 16);
                 setColor(allowAlphaEdit ? Color4I.rgba(col) : Color4I.rgb(col));
+                updateHSB(config.getValue());
             } catch (NumberFormatException ignored) {
             }
         }
@@ -418,6 +421,7 @@ public class ColorSelectorPanel extends ModalPanel {
         private void applyColor() {
             if (icon instanceof Color4I col && !col.isEmpty()) {
                 setColor(col);
+                updateHSB(col);
             }
         }
     }
