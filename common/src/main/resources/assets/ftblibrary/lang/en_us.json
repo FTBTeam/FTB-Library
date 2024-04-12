@@ -84,5 +84,13 @@
 	"ftblibrary.palette.reds": "Reds",
 	"ftblibrary.palette.greens": "Greens",
 	"ftblibrary.palette.blues": "Blues",
-	"ftblibrary.palette.recent": "Recent Colors"
+	"ftblibrary.palette.recent": "Recent Colors",
+	"ftblibrary.panel.position.top_left": "Top Left",
+	"ftblibrary.panel.position.top": "Top",
+	"ftblibrary.panel.position.top_right": "Top Right",
+	"ftblibrary.panel.position.left": "Left",
+	"ftblibrary.panel.position.right": "Right",
+	"ftblibrary.panel.position.bottom_left": "Bottom Left",
+	"ftblibrary.panel.position.bottom": "Bottom",
+	"ftblibrary.panel.position.bottom_right": "Bottom Right"
 }
