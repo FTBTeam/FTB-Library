@@ -205,6 +205,10 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 		return add(new EnumValue<>(this, key, nameMap));
 	}
 
+	public <T> EnumValue<T> addEnum(String key, NameMap<T> nameMap, T def) {
+		return add(new EnumValue<>(this, key, nameMap, def));
+	}
+
 	public IntArrayValue addIntArray(String key, int[] def) {
 		return add(new IntArrayValue(this, key, def));
 	}

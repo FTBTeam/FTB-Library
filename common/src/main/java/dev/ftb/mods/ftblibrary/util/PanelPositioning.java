@@ -3,16 +3,17 @@ package dev.ftb.mods.ftblibrary.util;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 
 public enum PanelPositioning {
-    BOTTOM_LEFT(0, 2),
-    LEFT(0, 1),
+    // 0: align left/top, 1: align center, 2: align right/bottom
     TOP_LEFT(0, 0),
-    TOP_CENTER(1, 0),
-    TOP_RIGHT(1, 0),
-    RIGHT(1, 1),
-    BOTTOM_RIGHT(1, 2),
-    BOTTOM_CENTER(1, 2);
+    TOP(1, 0),
+    TOP_RIGHT(2, 0),
+    RIGHT(2, 1),
+    BOTTOM_RIGHT(2, 2),
+    BOTTOM(1, 2),
+    BOTTOM_LEFT(0, 2),
+    LEFT(0, 1);
 
-    public static final NameMap<PanelPositioning> NAME_MAP = NameMap.of(TOP_RIGHT, values()).baseNameKey("ftbquests.panel.position").create();
+    public static final NameMap<PanelPositioning> NAME_MAP = NameMap.of(TOP_RIGHT, values()).baseNameKey("ftblibrary.panel.position").create();
 
     private final int posX;
     private final int posY;
