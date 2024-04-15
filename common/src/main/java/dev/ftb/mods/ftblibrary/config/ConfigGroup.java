@@ -1,7 +1,10 @@
 package dev.ftb.mods.ftblibrary.config;
 
+import dev.architectury.fluid.FluidStack;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,8 +15,6 @@ import java.util.regex.Pattern;
 
 /**
  * Represent a collection of {@link ConfigValue} objects, possibly recursively nested in one or more subgroups.
- *
- * @author LatvianModder
  */
 public class ConfigGroup implements Comparable<ConfigGroup> {
 	private final String id;
@@ -216,8 +217,28 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
 		return addTristate(id, value, setter, Tristate.DEFAULT);
 	}
 
-	public ItemStackConfig addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, boolean singleItemOnly, boolean allowEmpty) {
-		return add(id, new ItemStackConfig(singleItemOnly, allowEmpty), value, setter, def);
+	public ItemStackConfig addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, boolean singleItem, boolean allowEmpty) {
+		return add(id, new ItemStackConfig(singleItem, allowEmpty), value, setter, def);
+	}
+
+	public ItemStackConfig addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, int fixedSize) {
+		return add(id, new ItemStackConfig(fixedSize), value, setter, def);
+	}
+
+	public FluidConfig addFluidStack(String id, FluidStack value, Consumer<FluidStack> setter, FluidStack def, boolean allowEmpty) {
+		return add(id, new FluidConfig(allowEmpty), value, setter, def);
+	}
+
+	public FluidConfig addFluidStack(String id, FluidStack value, Consumer<FluidStack> setter, FluidStack def, long fixedSize) {
+		return add(id, new FluidConfig(fixedSize), value, setter, def);
+	}
+
+	public ImageResourceConfig addImage(String id, ResourceLocation value, Consumer<ResourceLocation> setter, ResourceLocation def) {
+		return add(id, new ImageResourceConfig(), value, setter, def);
+	}
+
+	public ColorConfig addColor(String id, Color4I value, Consumer<Color4I> setter, Color4I def) {
+		return add(id, new ColorConfig(), value, setter, def);
 	}
 
 	public final Collection<ConfigValue<?>> getValues() {

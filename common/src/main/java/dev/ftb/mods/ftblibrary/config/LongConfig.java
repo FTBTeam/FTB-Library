@@ -4,11 +4,9 @@ import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
 public class LongConfig extends NumberConfig<Long> {
 	public LongConfig(long mn, long mx) {
 		super(mn, mx);
@@ -29,17 +27,14 @@ public class LongConfig extends NumberConfig<Long> {
 
 	@Override
 	public boolean parse(@Nullable Consumer<Long> callback, String string) {
+		if (string.equals("-") || string.equals("+") || string.isEmpty()) return okValue(callback, 0L);
+
 		try {
 			long v = Long.decode(string);
-
 			if (v >= min && v <= max) {
-				if (callback != null) {
-					callback.accept(v);
-				}
-
-				return true;
+				return okValue(callback, v);
 			}
-		} catch (Exception ex) {
+		} catch (Exception ignored) {
 		}
 
 		return false;
@@ -51,12 +46,8 @@ public class LongConfig extends NumberConfig<Long> {
 	}
 
 	@Override
-	public boolean scrollValue(boolean forward) {
-		long newVal = MathUtils.clamp(value + (forward ? 1L : -1L), min, max);
-		if (newVal != value) {
-			setValue(newVal);
-			return true;
-		}
-		return false;
+	public Optional<Long> scrollValue(Long currentValue, boolean forward) {
+		long newVal = MathUtils.clamp(currentValue + (forward ? 1L : -1L), min, max);
+		return newVal != currentValue ? Optional.of(newVal) : Optional.empty();
 	}
 }

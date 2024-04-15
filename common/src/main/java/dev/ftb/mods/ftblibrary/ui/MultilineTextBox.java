@@ -18,7 +18,7 @@ import net.minecraft.util.Mth;
 
 import java.util.function.Consumer;
 
-public class MultilineTextBox extends Widget {
+public class MultilineTextBox extends Widget implements IFocusableWidget {
     private final Font font;
     private boolean isFocused = false;
     private MultilineTextField textField;
@@ -53,12 +53,17 @@ public class MultilineTextBox extends Widget {
         textField.setValueListener(valueListener);
     }
 
+    @Override
     public final boolean isFocused() {
         return isFocused;
     }
 
-    public final void setFocused(boolean v) {
-        isFocused = v;
+    @Override
+    public final void setFocused(boolean focused) {
+        isFocused = focused;
+        if (focused) {
+            getGui().setFocusedWidget(this);
+        }
     }
 
     public String getText() {

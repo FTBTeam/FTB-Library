@@ -167,6 +167,10 @@ public class GuiHelper {
 		tesselator.end();
 	}
 
+	public static void drawGradientRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col1, Color4I col2) {
+		graphics.fillGradient(x, y, x + w, y + h, col1.rgba(), col2.rgba());
+	}
+
 	public static void drawItem(GuiGraphics graphics, ItemStack stack, int hash, boolean renderOverlay, @Nullable String text) {
 		if (stack.isEmpty()) {
 			return;
@@ -303,5 +307,18 @@ public class GuiHelper {
 		for (var i = 1; i < tooltip.size(); i++) {
 			list.add(Component.literal("").withStyle(ChatFormatting.GRAY).append(tooltip.get(i)));
 		}
+	}
+
+	public static void drawBorderedPanel(GuiGraphics graphics, int x, int y, int w, int h, Color4I color, boolean outset) {
+		w--; h--;
+
+		Color4I hi = color.addBrightness(outset ? 0.15f : -0.1f);
+		Color4I lo = color.addBrightness(outset ? -0.1f : 0.15f);
+
+		graphics.fill(x, y, x + w, y + h, color.rgba());
+		graphics.hLine(x, x + w - 1, y, hi.rgba());
+		graphics.vLine(x, y, y + h, hi.rgba());
+		graphics.hLine(x + 1, x + w, y + h, lo.rgba());
+		graphics.vLine(x + w, y, y + h, lo.rgba());
 	}
 }

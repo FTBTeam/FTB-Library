@@ -2,8 +2,9 @@ package dev.ftb.mods.ftblibrary.integration.forge;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
-import dev.ftb.mods.ftblibrary.config.ui.ItemSearchMode;
 import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
+import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -90,7 +91,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 		return Optional.empty();
 	}
 
-	private static final ItemSearchMode JEI_ITEMS = new ItemSearchMode() {
+	private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
 		@Override
 		public Icon getIcon() {
 			return ItemIcon.getItemIcon(Items.APPLE);
@@ -102,18 +103,20 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 		}
 
 		@Override
-		public Collection<ItemStack> getAllItems() {
+		public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
 			if (runtime == null) {
 				return Collections.emptySet();
 			}
 
-			return runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK);
+			return runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK).stream()
+					.map(SelectableResource::item)
+					.toList();
 		}
 	};
 
 	static {
 		if (!ModList.get().isLoaded("roughlyenoughitems")) {
-			SelectItemStackScreen.modes.add(0, JEI_ITEMS);
+			SelectItemStackScreen.KNOWN_MODES.prependMode(JEI_ITEMS);
 		}
 	}
 

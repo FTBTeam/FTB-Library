@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class Theme {
 	public static final Theme DEFAULT = new Theme();
+
 	public static boolean renderDebugBoxes = false;
 
 	public static final int DARK = 1;
@@ -35,9 +36,9 @@ public class Theme {
 	public static final int MOUSE_OVER = 16;
 	public static final int CENTERED_V = 32;
 
-	private static final Color4I CONTENT_COLOR_MOUSE_OVER = Color4I.rgb(16777120);
-	private static final Color4I CONTENT_COLOR_DISABLED = Color4I.rgb(10526880);
-	private static final Color4I CONTENT_COLOR_DARK = Color4I.rgb(4210752);
+	private static final Color4I CONTENT_COLOR_MOUSE_OVER = Color4I.rgb(0xFFFFA0);
+	private static final Color4I CONTENT_COLOR_DISABLED = Color4I.rgb(0xA0A0A0);
+	private static final Color4I CONTENT_COLOR_DARK = Color4I.rgb(0x404040);
 
 	public static final ImageIcon BACKGROUND_SQUARES = (ImageIcon) Icon.getIcon(FTBLibrary.MOD_ID + ":textures/gui/background_squares.png");
 	private static final ImageIcon TEXTURE_BEACON = (ImageIcon) Icon.getIcon("textures/gui/container/beacon.png");
@@ -78,7 +79,7 @@ public class Theme {
 	}
 
 	public void drawGui(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-		(type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(graphics, x, y, w, h);
+		(type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(graphics, x - 3, y - 3, w + 6, h + 6);
 	}
 
 	public void drawWidget(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
@@ -120,7 +121,7 @@ public class Theme {
 	}
 
 	public void drawPanelBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-		drawContainerSlot(graphics, x, y, w, h);
+		Color4I.rgb(0x8B8B8B).draw(graphics, x, y, w, h);
 	}
 
 	public void drawHorizontalTab(GuiGraphics graphics, int x, int y, int w, int h, boolean selected) {

@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -9,6 +9,7 @@ import dev.ftb.mods.ftblibrary.math.Bits;
 import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.ui.misc.AbstractThreePanelScreen;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,42 +18,33 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.util.Mth;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditConfigScreen extends BaseScreen {
-	public static final Color4I COLOR_BACKGROUND = Color4I.rgba(0x99333333);
+import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
-	public static Theme THEME = new Theme() {
-		@Override
-		public void drawScrollBarBackground(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-			Color4I.BLACK.withAlpha(70).draw(graphics, x, y, w, h);
-		}
-
-		@Override
-		public void drawScrollBar(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean vertical) {
-			getContentColor(WidgetType.NORMAL).withAlpha(100).withBorder(Color4I.GRAY.withAlpha(100), false).draw(graphics, x, y, w, h);
-		}
-	};
-
+public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.ConfigPanel> {
 	private final ConfigGroup group;
 	private final Component title;
 	private final List<Widget> allConfigButtons; // both groups and entries
-	private final Panel configPanel;
-	private final Button buttonAccept, buttonCancel, buttonCollapseAll, buttonExpandAll;
-	private final PanelScrollBar scroll;
+	private final Button buttonCollapseAll, buttonExpandAll;
 
 	private int groupSize = 0;
 	private boolean autoclose = false;
-	private int dividerX;
+	private int widestKey = 0;
+	private int widestValue = 0;
+	private boolean changed = false;
 
 	public EditConfigScreen(ConfigGroup configGroup) {
+		super();
+
 		group = configGroup;
 		title = configGroup.getName().copy().withStyle(ChatFormatting.BOLD);
 		allConfigButtons = new ArrayList<>();
-
-		configPanel = new ConfigPanel();
 
 		List<ConfigValue<?>> list = new ArrayList<>();
 		collectAllConfigValues(group, list);
@@ -64,32 +56,24 @@ public class EditConfigScreen extends BaseScreen {
 
 			for (var value : list) {
 				if (group == null || group.group != value.getGroup()) {
-					allConfigButtons.add(new VerticalSpaceWidget(configPanel, 4));
-					group = new ConfigGroupButton(configPanel, value.getGroup());
+					allConfigButtons.add(new VerticalSpaceWidget(mainPanel, 4));
+					group = new ConfigGroupButton(mainPanel, value.getGroup());
 					allConfigButtons.add(group);
 					groupSize++;
 				}
 
-				ConfigEntryButton<?> btn = new ConfigEntryButton<>(configPanel, group, value);
+				ConfigEntryButton<?> btn = new ConfigEntryButton<>(mainPanel, group, value);
 				allConfigButtons.add(btn);
-				dividerX = Math.max(dividerX, getTheme().getStringWidth(btn.keyText));
 			}
 
 			if (groupSize == 1) {
 				allConfigButtons.remove(group);
 			}
 		}
-		dividerX += 10;
 
-		scroll = new PanelScrollBar(this, configPanel);
-
-		buttonAccept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT,
-				(widget, button) -> doAccept());
-		buttonCancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL,
-				(widget, button) -> doCancel());
-		buttonExpandAll = new SimpleButton(this, Component.translatable("gui.expand_all"), Icons.ADD,
+		buttonExpandAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.UP,
 				(widget, button) -> toggleAll(false));
-		buttonCollapseAll = new SimpleButton(this, Component.translatable("gui.collapse_all"), Icons.REMOVE,
+		buttonCollapseAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.DOWN,
 				(widget, button) -> toggleAll(true));
 	}
 
@@ -100,7 +84,7 @@ public class EditConfigScreen extends BaseScreen {
 			}
 		}
 
-		scroll.setValue(0);
+		scrollBar.setValue(0);
 		getGui().refreshWidgets();
 	}
 
@@ -114,36 +98,24 @@ public class EditConfigScreen extends BaseScreen {
 
 	@Override
 	public boolean onInit() {
-		return setFullscreen();
-	}
+		widestKey = widestValue = 0;
+		MutableInt widestGroup = new MutableInt(0);
+		MutableInt cfgHeight = new MutableInt(0);
 
-	@Override
-	public void addWidgets() {
-		add(buttonAccept);
-		add(buttonCancel);
+		allConfigButtons.forEach(w -> {
+			if (w instanceof ConfigEntryButton<?> eb) {
+				widestKey = Math.max(widestKey, getTheme().getFont().width(eb.keyText));
+				widestValue = Math.max(widestValue, getTheme().getFont().width(eb.getValueStr()));
+			} else if (w instanceof ConfigGroupButton gb) {
+				widestGroup.setValue(Math.max(widestGroup.intValue(), getTheme().getStringWidth(gb.title)));
+			}
+			cfgHeight.add(w.height + 2);
+		});
 
-		if (groupSize > 1) {
-			add(buttonExpandAll);
-			add(buttonCollapseAll);
-		}
+		setHeight(Mth.clamp(cfgHeight.intValue() + getTopPanelHeight() + BOTTOM_PANEL_H, 100, (int) (getScreen().getGuiScaledHeight() * .9f)));
+		setWidth(Mth.clamp(Math.max(widestKey + widestValue, widestGroup.intValue()) + 50, 176, (int) (getScreen().getGuiScaledWidth() * .9f)));
 
-		add(configPanel);
-		add(scroll);
-	}
-
-	@Override
-	public void alignWidgets() {
-		configPanel.setPosAndSize(0, 20, width, height - 20);
-		configPanel.alignWidgets();
-		scroll.setPosAndSize(width - 16, 20, 16, height - 20);
-
-		buttonAccept.setPos(width - 18, 2);
-		buttonCancel.setPos(width - 38, 2);
-
-		if (groupSize > 1) {
-			buttonExpandAll.setPos(width - 58, 2);
-			buttonCollapseAll.setPos(width - 78, 2);
-		}
+		return true;
 	}
 
 	/**
@@ -155,12 +127,37 @@ public class EditConfigScreen extends BaseScreen {
 		return this;
 	}
 
-	private void doAccept() {
+	@Override
+	protected int getTopPanelHeight() {
+		return 20;
+	}
+
+	@Override
+	protected Panel createTopPanel() {
+		return new CustomTopPanel();
+	}
+
+	@Override
+	protected ConfigPanel createMainPanel() {
+		return new ConfigPanel();
+	}
+
+	@Override
+	protected void doAccept() {
 		group.save(true);
 		if (autoclose) closeGui();
 	}
 
-	private void doCancel() {
+	@Override
+	protected void doCancel() {
+		if (changed) {
+			openYesNo(Component.translatable("ftblibrary.unsaved_changes"), Component.empty(), this::reallyCancel);
+		} else {
+			reallyCancel();
+		}
+	}
+
+	private void reallyCancel() {
 		group.save(false);
 		if (autoclose) closeGui();
 	}
@@ -168,7 +165,7 @@ public class EditConfigScreen extends BaseScreen {
 	@Override
 	public boolean onClosedByKey(Key key) {
 		if (super.onClosedByKey(key)) {
-			group.save(true);
+			doCancel();
 			return true;
 		}
 
@@ -176,9 +173,23 @@ public class EditConfigScreen extends BaseScreen {
 	}
 
 	@Override
-	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-		COLOR_BACKGROUND.draw(graphics, 0, 0, w, 20);
-		theme.drawString(graphics, getTitle(), 6, 6, Theme.SHADOW);
+	public boolean keyPressed(Key key) {
+		if (super.keyPressed(key)) {
+			return true;
+		} else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
+			doAccept();
+			return true;
+		} else if (key.is(InputConstants.KEY_ADD) || key.is(InputConstants.KEY_EQUALS)) {
+			buttonExpandAll.onClicked(MouseButton.LEFT);
+		} else if (key.is(InputConstants.KEY_MINUS) || key.is(GLFW.GLFW_KEY_KP_SUBTRACT)) {
+			buttonCollapseAll.onClicked(MouseButton.LEFT);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean shouldCloseOnEsc() {
+		return false;
 	}
 
 	@Override
@@ -186,42 +197,29 @@ public class EditConfigScreen extends BaseScreen {
 		return title;
 	}
 
-	@Override
-	public Theme getTheme() {
-		return THEME;
-	}
-
 	public static class ConfigGroupButton extends Button {
-		public final ConfigGroup group;
-		public MutableComponent title, info;
-		public boolean collapsed = false;
+		private final ConfigGroup group;
+		private final MutableComponent title, info;
+		private boolean collapsed = false;
 
 		public ConfigGroupButton(Panel panel, ConfigGroup g) {
 			super(panel);
-			setHeight(12);
+			setHeight(14);
 			group = g;
 
 			if (group.getParent() != null) {
 				List<ConfigGroup> groups = new ArrayList<>();
-				do {
+				while (g.getParent() != null) {
 					groups.add(g);
 					g = g.getParent();
-				} while (g != null);
-				groups.remove(groups.size() - 1);
-
-				title = Component.literal("");
-
-				for (var i = groups.size() - 1; i >= 0; i--) {
-					title.append(groups.get(i).getName());
-
-					if (i != 0) {
-						title.append(" > ");
-					}
 				}
+				title = groups.stream()
+						.map(grp -> Component.translatable(grp.getNameKey()).withStyle(ChatFormatting.YELLOW))
+						.reduce((g1, g2) -> g2.append(Component.literal(" → ").withStyle(ChatFormatting.GOLD)).append(g1))
+						.orElse(Component.empty());
 			} else {
-				title = Component.translatable("stat.generalButton");
+				title = Component.translatable("stat.generalButton").withStyle(ChatFormatting.YELLOW);
 			}
-			title.withStyle(ChatFormatting.YELLOW);
 
 			var infoKey = group.getPath() + ".info";
 			info = I18n.exists(infoKey) ? Component.translatable(infoKey) : null;
@@ -230,17 +228,13 @@ public class EditConfigScreen extends BaseScreen {
 
 		public void setCollapsed(boolean collapsed) {
 			this.collapsed = collapsed;
-			setTitle(Component.literal(this.collapsed ? "[-] " : "[v] ").withStyle(this.collapsed ? ChatFormatting.RED : ChatFormatting.GREEN).append(title));
+			setTitle(Component.literal(this.collapsed ? "▶ " : "▼ ").withStyle(this.collapsed ? ChatFormatting.RED : ChatFormatting.GREEN).append(title));
 		}
 
 		@Override
 		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-			COLOR_BACKGROUND.draw(graphics, x, y, w, h);
-			theme.drawString(graphics, getTitle(), x + 3, y + 2);
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-
-			Color4I.GRAY.withAlpha(80).draw(graphics, 0, y, width, 1);
-			Color4I.GRAY.withAlpha(80).draw(graphics, 0, y, 1, height);
+			theme.drawWidget(graphics, x, y, w, h, getWidgetType());
+			theme.drawString(graphics, getTitle(), x + 3, y + 3);
 			if (isMouseOver()) {
 				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
 			}
@@ -260,7 +254,7 @@ public class EditConfigScreen extends BaseScreen {
 		}
 	}
 
-	private class ConfigEntryButton<T> extends Button {
+	private class ConfigEntryButton<T> extends Button implements EditStringConfigOverlay.PosProvider {
 		private final ConfigGroupButton groupButton;
 		private final ConfigValue<T> configValue;
 		private final Component keyText;
@@ -278,45 +272,36 @@ public class EditConfigScreen extends BaseScreen {
 
 		@Override
 		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-			var mouseOver = getMouseY() >= 20 && isMouseOver();
+			theme.drawString(graphics, keyText, x + 5, y + 2, Bits.setFlag(0, Theme.SHADOW, isMouseOver()));
 
-			if (mouseOver) {
-				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
-			}
+			Component valueText = configValue.getStringForGUI(configValue.getValue());
 
-			theme.drawString(graphics, keyText, 5, y + 2, Bits.setFlag(0, Theme.SHADOW, mouseOver));
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-
-			Component s = configValue.getStringForGUI(configValue.getValue());
-			var slen = theme.getStringWidth(s);
-
-			int maxLen = width - dividerX - 10;
-			if (slen > maxLen) {
-				s = Component.literal(theme.trimStringToWidth(s, maxLen).getString().trim() + "...");
-				slen = maxLen + 2;
+			int maxLen = width - (scrollBar.shouldDraw() ? scrollBar.width : 0) - widestKey;
+			if (theme.getStringWidth(valueText) > maxLen) {
+				valueText = Component.literal(theme.trimStringToWidth(valueText, maxLen).getString().trim() + "...");
 			}
 
 			var textCol = configValue.getColor().mutable();
 			textCol.setAlpha(255);
 
-			if (mouseOver) {
+			if (isMouseOver()) {
 				textCol.addBrightness(60);
-				if (getMouseX() > x + w - slen - 9) {
-					Color4I.WHITE.withAlpha(33).draw(graphics, x + w - slen - 8, y, slen + 8, h);
-				}
+				Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
 			}
 
-			theme.drawString(graphics, s, dividerX + 5, y + 2, textCol, 0);
+			Color4I.GRAY.withAlpha(33).draw(graphics, x + widestKey + 10, y, 1, height);
 
-			Color4I.GRAY.withAlpha(33).draw(graphics, dividerX, y, 1, height);
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+			theme.drawString(graphics, valueText, x + widestKey + 15, y + 2, textCol, 0);
 		}
 
 		@Override
 		public void onClicked(MouseButton button) {
 			if (getMouseY() >= 20) {
 				playClickSound();
-				configValue.onClicked(button, accepted -> run());
+				configValue.onClicked(this, button, accepted -> {
+					if (accepted) changed = true;
+					run();
+				});
 			}
 		}
 
@@ -336,9 +321,18 @@ public class EditConfigScreen extends BaseScreen {
 				configValue.addInfo(list);
 			}
 		}
+
+		Component getValueStr() {
+			return configValue.getStringForGUI(configValue.getValue());
+		}
+
+		@Override
+		public Offset getOverlayOffset() {
+			return new Offset(widestKey + 12, -2);
+		}
 	}
 
-	private class ConfigPanel extends Panel {
+	public class ConfigPanel extends Panel {
 		public ConfigPanel() {
 			super(EditConfigScreen.this);
 		}
@@ -354,8 +348,37 @@ public class EditConfigScreen extends BaseScreen {
 
 		@Override
 		public void alignWidgets() {
-			widgets.forEach(w -> w.setWidth(width - 16));
+			allConfigButtons.forEach(btn -> {
+				btn.setX(1);
+				btn.setWidth(width - 2);
+			});
+
 			align(WidgetLayout.VERTICAL);
+		}
+	}
+
+	protected class CustomTopPanel extends TopPanel {
+		private final TextField titleLabel = new TextField(this);//.setText(getTitle());
+
+		@Override
+		public void addWidgets() {
+			titleLabel.setText(getGui().getTitle());
+			titleLabel.addFlags(Theme.CENTERED_V);
+			add(titleLabel);
+
+			if (groupSize > 1) {
+				add(buttonExpandAll);
+				add(buttonCollapseAll);
+			}
+		}
+
+		@Override
+		public void alignWidgets() {
+			titleLabel.setPosAndSize(4, 0, titleLabel.width, height);
+			if (groupSize > 1) {
+				buttonExpandAll.setPos(width - 18, 2);
+				buttonCollapseAll.setPos(width - 38, 2);
+			}
 		}
 	}
 }

@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
@@ -13,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
 public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	public static final Component NULL_TEXT = Component.literal("null");
 
@@ -105,7 +103,15 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 		return Component.literal("").append((Component.literal(key + ": ").withStyle(ChatFormatting.AQUA))).append(c);
 	}
 
-	public abstract void onClicked(MouseButton button, ConfigCallback callback);
+	/**
+	 * What to do when the widget displaying this config entry is clicked; provide the user with some means of editing
+	 * the value.
+	 *
+	 * @param clickedWidget the widget that was clicked to trigger this method; you can use this to help position the edit controls you display
+	 * @param button the mouse button
+	 * @param callback called when the editing GUI is either accepted or cancelled
+	 */
+	public abstract void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback);
 
 	public final Component getStringForGUI() {
 		return Component.literal(String.valueOf(value));
@@ -116,6 +122,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	}
 
 	public String getPath() {
+		if (group == null) return id;
 		var p = group.getPath();
 		return p.isEmpty() ? id : (p + '.' + id);
 	}

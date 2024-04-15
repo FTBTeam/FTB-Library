@@ -1,11 +1,10 @@
 package dev.ftb.mods.ftblibrary.config;
 
+import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 
 /**
  * A config value with some well-defined options, which can be cycled through.
- *
- * @author LatvianModder
  */
 public abstract class ConfigWithVariants<T> extends ConfigValue<T> {
 	/**
@@ -17,10 +16,10 @@ public abstract class ConfigWithVariants<T> extends ConfigValue<T> {
 	public abstract T getIteration(T currentValue, boolean next);
 
 	@Override
-	public void onClicked(MouseButton button, ConfigCallback callback) {
+	public void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback) {
 		if (value != null && getCanEdit()) {
-			setCurrentValue(getIteration(value, button.isLeft()));
-			callback.save(true);
+			boolean changed = setCurrentValue(getIteration(value, button.isLeft()));
+			callback.save(changed);
 		}
 	}
 }

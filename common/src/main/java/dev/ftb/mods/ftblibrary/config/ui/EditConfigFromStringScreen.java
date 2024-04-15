@@ -12,6 +12,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @deprecated this class offers a poor UX; use {@link EditStringConfigOverlay} instead
+ * @param <T>
+ */
+@Deprecated
 public class EditConfigFromStringScreen<T> extends BaseScreen {
 	private final ConfigFromString<T> config;
 	private final ConfigCallback callback;
@@ -102,12 +107,10 @@ public class EditConfigFromStringScreen<T> extends BaseScreen {
 
 			@Override
 			public boolean mouseScrolled(double scroll) {
-				if (config.scrollValue(scroll > 0)) {
-					textBox.setText(config.getStringFromValue(config.getValue()));
+				return config.scrollValue(currentValue, scroll > 0).map(v -> {
+					textBox.setText(config.getStringFromValue(v));
 					return true;
-				} else {
-					return super.mouseScrolled(scroll);
-				}
+				}).orElse(super.mouseScrolled(scroll));
 			}
 		};
 

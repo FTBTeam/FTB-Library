@@ -9,6 +9,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Optional;
+
 /**
  * @author LatvianModder
  */
@@ -73,7 +75,9 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 				wrappedGui.onBack();
 				return true;
 			} else if (wrappedGui.onClosedByKey(key)) {
-				wrappedGui.closeGui(true);
+				if (shouldCloseOnEsc()) {
+					wrappedGui.closeGui(true);
+				}
 				return true;
 			} else if (Platform.isModLoaded("jei")) {
 				wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> handleIngredientKey(key, underMouse.ingredient()));
@@ -116,7 +120,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		wrappedGui.draw(graphics, theme, x, y, w, h);
 		wrappedGui.drawForeground(graphics, theme, x, y, w, h);
 
-		wrappedGui.getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
+		wrappedGui.addMouseOverText(tooltipList); //getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
@@ -131,7 +135,12 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 				}
 			});
 		} else {
-			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
+			graphics.pose().translate(0, 0, 600);
+			graphics.setColor(1f, 1f, 1f, 0.8f);
+			graphics.renderTooltip(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
+			graphics.setColor(1f, 1f, 1f, 1f);
+			graphics.pose().translate(0, 0, -600);
+//			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}
 
 		tooltipList.reset();
@@ -159,5 +168,10 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 	public void removed() {
 		wrappedGui.onClosed();
 		super.removed();
+	}
+
+	@Override
+	public boolean shouldCloseOnEsc() {
+		return getGui().shouldCloseOnEsc();
 	}
 }

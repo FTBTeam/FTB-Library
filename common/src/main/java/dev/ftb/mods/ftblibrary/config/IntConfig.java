@@ -4,14 +4,13 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
-/**
- * @author LatvianModder
- */
 public class IntConfig extends NumberConfig<Integer> {
 	public IntConfig(int mn, int mx) {
 		super(mn, mx);
+		scrollIncrement = 1;
 	}
 
 	@Override
@@ -29,17 +28,14 @@ public class IntConfig extends NumberConfig<Integer> {
 
 	@Override
 	public boolean parse(@Nullable Consumer<Integer> callback, String string) {
+		if (string.equals("-") || string.equals("+") || string.isEmpty()) return okValue(callback, 0);
+
 		try {
-			var v = Long.decode(string).intValue();
-
+			var v = Integer.decode(string);
 			if (v >= min && v <= max) {
-				if (callback != null) {
-					callback.accept(v);
-				}
-
-				return true;
+				return okValue(callback, v);
 			}
-		} catch (Exception ex) {
+		} catch (Exception ignored) {
 		}
 
 		return false;
@@ -51,12 +47,8 @@ public class IntConfig extends NumberConfig<Integer> {
 	}
 
 	@Override
-	public boolean scrollValue(boolean forward) {
-		int newVal = Mth.clamp(value + (forward ? 1 : -1), min, max);
-		if (newVal != value) {
-			setValue(newVal);
-			return true;
-		}
-		return false;
-	}
+	public Optional<Integer> scrollValue(Integer currentValue, boolean forward) {
+		int newVal = Mth.clamp(currentValue + (forward ? scrollIncrement : -scrollIncrement), min, max);
+        return newVal != currentValue ? Optional.of(newVal) : Optional.empty();
+    }
 }

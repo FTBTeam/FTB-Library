@@ -7,7 +7,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
+import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
+import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -50,6 +52,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -207,12 +210,23 @@ public class FTBLibraryCommands {
 									player.getItemInHand(InteractionHand.MAIN_HAND).save(tag);
 								}))
 						)
-				).then(Commands.literal("generate_loot_tables").executes(FTBLibraryCommands::generateLootTables));
+				).then(Commands.literal("generate_loot_tables").executes(FTBLibraryCommands::generateLootTables)
+				).then(Commands.literal("clientconfig")
+						.requires(CommandSourceStack::isPlayer)
+						.executes(context -> {
+							new EditConfigPacket(true).sendTo(Objects.requireNonNull(context.getSource().getPlayer()));
+							return 1;
+						})
+				);
 
 		if (Platform.isDevelopmentEnvironment()) {
 			command.then(Commands.literal("test_screen")
 					.executes(context -> {
-						FTBLibrary.PROXY.testScreen();
+						if (context.getSource().getServer().isDedicatedServer()) {
+							context.getSource().sendFailure(Component.literal("Can't do this on dedicated server!").withStyle(ChatFormatting.RED));
+						} else {
+							UITesting.openTestScreen();
+						}
 						return 1;
 					})
 			);

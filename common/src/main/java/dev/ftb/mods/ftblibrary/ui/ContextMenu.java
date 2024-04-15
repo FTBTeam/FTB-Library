@@ -8,10 +8,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-/**
- * @author LatvianModder
- */
-public class ContextMenu extends Panel {
+public class ContextMenu extends ModalPanel {
 	private static final int MARGIN = 3;
 
 	private final List<ContextMenuItem> items;
@@ -105,6 +102,7 @@ public class ContextMenu extends Panel {
 		GuiHelper.setupDrawing();
 		graphics.pose().pushPose();
 		graphics.pose().translate(0, 0, 900);
+		Color4I.BLACK.withAlpha(45).draw(graphics, x + 3, y + 3, w, h);
 		super.draw(graphics, theme, x, y, w, h);
 		if (drawVerticalSeparators) {
 			for (int i = 1; i < nColumns; i++) {
@@ -133,6 +131,10 @@ public class ContextMenu extends Panel {
 
 		@Override
 		public WidgetType getWidgetType() {
+			if (!item.isClickable()) {
+				return WidgetType.NORMAL;  // no hovered highlighting
+			}
+
 			return item.isEnabled() ? super.getWidgetType() : WidgetType.DISABLED;
 		}
 
@@ -155,12 +157,14 @@ public class ContextMenu extends Panel {
 
 		@Override
 		public void onClicked(MouseButton button) {
-			playClickSound();
+			if (item.isClickable()) {
+				playClickSound();
+			}
 
 			if (item.getYesNoText().getString().isEmpty()) {
-				item.onClicked(contextMenu, button);
+				item.onClicked(CButton.this, contextMenu, button);
 			} else {
-				getGui().openYesNo(item.getYesNoText(), Component.literal(""), () -> item.onClicked(contextMenu, button));
+				getGui().openYesNo(item.getYesNoText(), Component.literal(""), () -> item.onClicked(CButton.this, contextMenu, button));
 			}
 		}
 	}
@@ -173,7 +177,8 @@ public class ContextMenu extends Panel {
 
 		@Override
 		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-			Color4I.WHITE.withAlpha(130).draw(graphics, x + 2, y + 2, parent.width - 10, 1);
+			theme.getContentColor(WidgetType.NORMAL).withAlpha(100).draw(graphics, x + 2, y + 2, parent.width - 10, 1);
+			theme.getContentColor(WidgetType.DISABLED).withAlpha(100).draw(graphics, x + 3, y + 3, parent.width - 10, 1);
 		}
 
 		@Override
