@@ -358,10 +358,11 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 	}
 
 	protected class CustomTopPanel extends TopPanel {
-		private final TextField titleLabel = new TextField(this).setText(getTitle());
+		private final TextField titleLabel = new TextField(this);
 
 		@Override
 		public void addWidgets() {
+			titleLabel.setText(getGui().getTitle());
 			titleLabel.addFlags(Theme.CENTERED_V);
 			add(titleLabel);
 
@@ -379,14 +380,5 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 				buttonCollapseAll.setPos(width - 38, 2);
 			}
 		}
-
-		@Override
-		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-			super.draw(graphics, theme, x, y, w, h);
-
-			theme.drawString(graphics, getGui().getTitle(), x + 6, y + 6, Theme.SHADOW);
-		}
 	}
-
-
 }
