@@ -18,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.util.Mth;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
 
@@ -99,6 +100,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 	public boolean onInit() {
 		widestKey = widestValue = 0;
 		MutableInt widestGroup = new MutableInt(0);
+		MutableInt cfgHeight = new MutableInt(0);
 
 		allConfigButtons.forEach(w -> {
 			if (w instanceof ConfigEntryButton<?> eb) {
@@ -107,10 +109,12 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 			} else if (w instanceof ConfigGroupButton gb) {
 				widestGroup.setValue(Math.max(widestGroup.intValue(), getTheme().getStringWidth(gb.title)));
 			}
+			cfgHeight.add(w.height + 2);
 		});
 
-		setHeight((int) (getScreen().getGuiScaledHeight() * .9f));
-		setWidth(Math.min((int) (getScreen().getGuiScaledWidth() * .9f), Math.max(widestKey + widestValue, widestGroup.intValue()) + 50));
+		setHeight(Mth.clamp(cfgHeight.intValue() + getTopPanelHeight() + BOTTOM_PANEL_H, 100, (int) (getScreen().getGuiScaledHeight() * .9f)));
+		setWidth(Mth.clamp(Math.max(widestKey + widestValue, widestGroup.intValue()) + 50, 176, (int) (getScreen().getGuiScaledWidth() * .9f)));
+
 		return true;
 	}
 
@@ -354,10 +358,11 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 	}
 
 	protected class CustomTopPanel extends TopPanel {
-		private final TextField titleLabel = new TextField(this).setText(getTitle());
+		private final TextField titleLabel = new TextField(this);
 
 		@Override
 		public void addWidgets() {
+			titleLabel.setText(getGui().getTitle());
 			titleLabel.addFlags(Theme.CENTERED_V);
 			add(titleLabel);
 
@@ -375,14 +380,5 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 				buttonCollapseAll.setPos(width - 38, 2);
 			}
 		}
-
-		@Override
-		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-			super.draw(graphics, theme, x, y, w, h);
-
-			theme.drawString(graphics, getGui().getTitle(), x + 6, y + 6, Theme.SHADOW);
-		}
 	}
-
-
 }

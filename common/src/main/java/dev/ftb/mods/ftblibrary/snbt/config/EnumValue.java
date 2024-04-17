@@ -14,9 +14,13 @@ import java.util.stream.Collectors;
 public class EnumValue<T> extends BaseValue<T> {
 	private final NameMap<T> nameMap;
 
-	EnumValue(SNBTConfig c, String n, NameMap<T> nm) {
-		super(c, n, nm.defaultValue);
-		nameMap = nm;
+	EnumValue(SNBTConfig c, String key, NameMap<T> nameMap) {
+		this(c, key, nameMap, nameMap.defaultValue);
+	}
+
+	EnumValue(SNBTConfig c, String key, NameMap<T> nameMap, T def) {
+		super(c, key, def);
+		this.nameMap = nameMap;
 	}
 
 	@Override

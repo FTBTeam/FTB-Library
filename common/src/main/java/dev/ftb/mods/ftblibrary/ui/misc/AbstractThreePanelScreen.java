@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScreen {
-    private static final int BOTTOM_PANEL_H = 25;
+    protected static final int BOTTOM_PANEL_H = 25;
     private static final int SCROLLBAR_WIDTH = 12;
 
     public static final Pair<Integer, Integer> NO_INSET = Pair.of(0, 0);
