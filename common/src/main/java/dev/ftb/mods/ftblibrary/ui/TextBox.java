@@ -444,7 +444,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 		}
 
 		// highlight the selection if needed
-		int k = Math.min(s.length(), highlightPos - displayPos);
+		int k = Mth.clamp(highlightPos - displayPos, 0, s.length());
 		if (k != j) {
 			var xMax = textX + theme.getStringWidth(Component.literal(s.substring(0, k)));
 
