@@ -129,7 +129,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 		var theme = wrappedGui.getTheme();
 		wrappedGui.drawForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
-		wrappedGui./*getContextMenu().orElse(wrappedGui).*/addMouseOverText(tooltipList);
+		wrappedGui.addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
