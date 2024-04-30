@@ -9,8 +9,11 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,8 +22,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class ItemIcon extends Icon implements IResourceIcon {
 	private final ItemStack stack;
@@ -58,15 +59,17 @@ public class ItemIcon extends Icon implements IResourceIcon {
 
 			if (s.length >= 4 && !s[3].equals("null")) {
 				try {
-					stack.setTag(TagParser.parseTag(s[3]));
+					DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseTag(s[3]))
+							.ifSuccess(stack::applyComponents);
 				} catch (CommandSyntaxException ex) {
 					ex.printStackTrace();
 				}
 			}
 
 			if (stack.isEmpty()) {
-				stack = new ItemStack(Items.BARRIER);
-				stack.setHoverName(Component.literal(lazyStackString));
+				ItemStack fallback = new ItemStack(Items.BARRIER);
+				fallback.set(DataComponents.CUSTOM_NAME, Component.literal(lazyStackString));
+				return getItemIcon(fallback);
 			}
 
 			return getItemIcon(stack);
@@ -131,12 +134,13 @@ public class ItemIcon extends Icon implements IResourceIcon {
 	}
 
 	public String toString() {
-		var is = getStack();
+		var stack = getStack();
 		var builder = new StringBuilder("item:");
-		builder.append(RegistrarManager.getId(is.getItem(), Registries.ITEM));
-		var count = is.getCount();
-		var damage = is.getDamageValue();
-		var nbt = is.getTag();
+		builder.append(RegistrarManager.getId(stack.getItem(), Registries.ITEM));
+		var count = stack.getCount();
+		var damage = stack.getDamageValue();
+		var nbt = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()
+				.orElse(null);
 
 		if (count > 1 || damage > 0 || nbt != null) {
 			builder.append(' ');
@@ -157,11 +161,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
 	}
 
 	public int hashCode() {
-		var stack = getStack();
-		var h = stack.getItem().hashCode();
-		h = h * 31 + stack.getCount();
-		h = h * 31 + Objects.hashCode(stack.getTag());
-		return h;
+		return ItemStack.hashItemAndComponents(getStack());
 	}
 
 	public boolean equals(Object o) {

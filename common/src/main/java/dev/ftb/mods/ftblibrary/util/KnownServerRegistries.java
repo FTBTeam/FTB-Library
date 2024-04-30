@@ -4,8 +4,9 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.core.DisplayInfoFTBL;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +26,7 @@ public class KnownServerRegistries {
 	public final List<ResourceLocation> dimensions;
 	public final Map<ResourceLocation, AdvancementInfo> advancements;
 
-	public KnownServerRegistries(FriendlyByteBuf buffer) {
+	public KnownServerRegistries(RegistryFriendlyByteBuf buffer) {
 		{
 			var s = buffer.readVarInt();
 			dimensions = new ArrayList<>(s);
@@ -42,8 +43,8 @@ public class KnownServerRegistries {
 			for (var i = 0; i < s; i++) {
 				var info = new AdvancementInfo();
 				info.id = buffer.readResourceLocation();
-				info.name = buffer.readComponent();
-				info.icon = buffer.readItem();
+				info.name = ComponentSerialization.STREAM_CODEC.decode(buffer);
+				info.icon = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
 				advancements.put(info.id, info);
 			}
 		}
@@ -84,7 +85,7 @@ public class KnownServerRegistries {
 		}
 	}
 
-	public void write(FriendlyByteBuf buffer) {
+	public void write(RegistryFriendlyByteBuf buffer) {
 		buffer.writeVarInt(dimensions.size());
 
 		for (var id : dimensions) {
@@ -95,8 +96,8 @@ public class KnownServerRegistries {
 
 		for (var info : advancements.values()) {
 			buffer.writeResourceLocation(info.id);
-			buffer.writeComponent(info.name);
-			buffer.writeItem(info.icon);
+			ComponentSerialization.STREAM_CODEC.encode(buffer, info.name);
+			ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, info.icon);
 		}
 	}
 }

@@ -8,6 +8,7 @@ import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 public class EditNBTPacket extends BaseS2CMessage {
 	private final CompoundTag info;
@@ -29,7 +30,7 @@ public class EditNBTPacket extends BaseS2CMessage {
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buf) {
+	public void write(RegistryFriendlyByteBuf buf) {
 		buf.writeNbt(info);
 		buf.writeNbt(tag);
 	}

@@ -1,35 +1,24 @@
 package dev.ftb.mods.ftblibrary.util;
 
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenCustomHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 public class SetOfItemStack extends ObjectLinkedOpenCustomHashSet<ItemStack> {
     private record ItemStackHashingStrategy() implements Strategy<ItemStack> {
         @Override
         public int hashCode(ItemStack stack) {
-            return Objects.hash(Item.getId(stack.getItem()), stack.hasTag() ? stack.getTag().hashCode() : 0);
+            return ItemStack.hashItemAndComponents(stack);
         }
 
         @Override
         public boolean equals(ItemStack o1, ItemStack o2) {
-            return (o1 == o2) || !(o1 == null || o2 == null)
-                    && o1.getItem() == o2.getItem()
-                    && tagsMatch(o1.getTag(), o2.getTag());
-        }
-
-        private boolean tagsMatch(CompoundTag tag1, CompoundTag tag2) {
-            return (tag1 != null || tag2 == null)
-                    && (tag1 == null || tag2 != null)
-                    && (tag1 == null || tag1.equals(tag2));
+            return ItemStack.isSameItemSameComponents(o1, o2);
         }
     }
 

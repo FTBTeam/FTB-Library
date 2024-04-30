@@ -20,11 +20,11 @@ public final class FluidKey {
 			return false;
 		}
 		var fluidKey = (FluidKey) o;
-		return stack.isFluidEqual(fluidKey.stack);
+		return FluidStack.isSameFluidSameComponents(stack, fluidKey.stack);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(stack.getFluid(), stack.getTag());
+		return FluidStack.hashFluidAndComponents(stack);
 	}
 }

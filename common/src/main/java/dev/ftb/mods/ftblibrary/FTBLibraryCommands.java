@@ -15,10 +15,12 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Nameable;
@@ -104,23 +106,23 @@ public class FTBLibraryCommands {
 											info.putInt("x", pos.getX());
 											info.putInt("y", pos.getY());
 											info.putInt("z", pos.getZ());
-											tag.merge(blockEntity.saveWithFullMetadata());
+											tag.merge(blockEntity.saveWithFullMetadata(context.getSource().getLevel().registryAccess()));
 											tag.remove("x");
 											tag.remove("y");
 											tag.remove("z");
 											info.putString("id", tag.getString("id"));
 											tag.remove("id");
 
-											var list = new ListTag();
-											addInfo(list, Component.literal("Class"), Component.literal(blockEntity.getClass().getName()));
 											var key = RegistrarManager.getId(blockEntity.getType(), Registries.BLOCK_ENTITY_TYPE);
-											addInfo(list, Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()));
-											addInfo(list, Component.literal("Block"), Component.literal(String.valueOf(RegistrarManager.getId(blockEntity.getBlockState().getBlock(), Registries.BLOCK))));
-											addInfo(list, Component.literal("Block Class"), Component.literal(blockEntity.getBlockState().getBlock().getClass().getName()));
-											addInfo(list, Component.literal("Position"), Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"));
-											addInfo(list, Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
-											addInfo(list, Component.literal("Ticking"), Component.literal(blockEntity instanceof TickingBlockEntity ? "true" : "false"));
-											info.put("text", list);
+											info.put("text", InfoAppender.create(context)
+													.add(Component.literal("Class"), Component.literal(blockEntity.getClass().getName()))
+													.add(Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()))
+													.add(Component.literal("Block"), Component.literal(String.valueOf(RegistrarManager.getId(blockEntity.getBlockState().getBlock(), Registries.BLOCK))))
+													.add(Component.literal("Block Class"), Component.literal(blockEntity.getBlockState().getBlock().getClass().getName()))
+													.add(Component.literal("Position"), Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"))
+													.add(Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+													.add(Component.literal("Ticking"), Component.literal(blockEntity instanceof TickingBlockEntity ? "true" : "false"))
+													.list);
 
 											var title = blockEntity instanceof Nameable ? ((Nameable) blockEntity).getDisplayName() : null;
 
@@ -128,7 +130,7 @@ public class FTBLibraryCommands {
 												title = Component.literal(blockEntity.getClass().getSimpleName());
 											}
 
-											info.putString("title", Component.Serializer.toJson(title));
+											info.putString("title", Component.Serializer.toJson(title, context.getSource().registryAccess()));
 										}))
 								)
 						)
@@ -146,13 +148,13 @@ public class FTBLibraryCommands {
 
 											entity.save(tag);
 
-											var list = new ListTag();
-											addInfo(list, Component.literal("Class"), Component.literal(entity.getClass().getName()));
 											var key = RegistrarManager.getId(entity.getType(), Registries.ENTITY_TYPE);
-											addInfo(list, Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()));
-											addInfo(list, Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")));
-											info.put("text", list);
-											info.putString("title", Component.Serializer.toJson(entity.getDisplayName()));
+											info.put("text", InfoAppender.create(context)
+													.add(Component.literal("Class"), Component.literal(entity.getClass().getName()))
+													.add(Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()))
+													.add(Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+													.list());
+											info.putString("title", Component.Serializer.toJson(entity.getDisplayName(), entity.level().registryAccess()));
 										}))
 								)
 						)
@@ -167,13 +169,12 @@ public class FTBLibraryCommands {
 											player.saveWithoutId(tag);
 											tag.remove("id");
 
-											var list = new ListTag();
-											addInfo(list, Component.literal("Name"), player.getName());
-											addInfo(list, Component.literal("Display Name"), player.getDisplayName());
-											addInfo(list, Component.literal("UUID"), Component.literal(player.getUUID().toString()));
-											// addInfo(list, Component.literal("FTB Library Team"), Component.literal(p.team.getId()));
-											info.put("text", list);
-											info.putString("title", Component.Serializer.toJson(player.getDisplayName()));
+											info.put("text", InfoAppender.create(context)
+													.add(Component.literal("Name"), player.getName())
+													.add(Component.literal("Display Name"), player.getDisplayName())
+													.add(Component.literal("UUID"), Component.literal(player.getUUID().toString()))
+													.list());
+											info.putString("title", Component.Serializer.toJson(player.getDisplayName(), player.level().registryAccess()));
 										}))
 								)
 						)
@@ -181,7 +182,8 @@ public class FTBLibraryCommands {
 								.executes(context -> editNBT(context, (info, tag) -> {
 									var player = context.getSource().getPlayerOrException();
 									info.putString("type", "item");
-									player.getItemInHand(InteractionHand.MAIN_HAND).save(tag);
+									Tag res = player.getItemInHand(InteractionHand.MAIN_HAND).save(player.level().registryAccess(), tag);
+									if (res instanceof  CompoundTag t) tag.merge(t);
 								}))
 						)
 				)
@@ -209,8 +211,12 @@ public class FTBLibraryCommands {
 		dispatcher.register(command);
 	}
 
-	private static void addInfo(ListTag list, Component key, Component value) {
-		list.add(StringTag.valueOf(Component.Serializer.toJson(key.copy().withStyle(ChatFormatting.BLUE).append(": ").append(value.copy().withStyle(ChatFormatting.GOLD)))));
+	private static void addInfo(ListTag list, Component key, Component value, HolderLookup.Provider provider) {
+		list.add(StringTag.valueOf(Component.Serializer.toJson(
+						key.copy().withStyle(ChatFormatting.BLUE).append(": ").append(value.copy().withStyle(ChatFormatting.GOLD)),
+						provider)
+				)
+		);
 	}
 
 	private static int editNBT(CommandContext<CommandSourceStack> context, NBTEditCallback data) throws CommandSyntaxException {
@@ -226,5 +232,20 @@ public class FTBLibraryCommands {
 		}
 
 		return 0;
+	}
+
+	private record InfoAppender(ListTag list, HolderLookup.Provider provider) {
+		static InfoAppender create(CommandContext<CommandSourceStack> context) {
+			return new InfoAppender(new ListTag(), context.getSource().registryAccess());
+		}
+
+		private InfoAppender add(Component key, Component value) {
+			list.add(StringTag.valueOf(Component.Serializer.toJson(
+							key.copy().withStyle(ChatFormatting.BLUE).append(": ").append(value.copy().withStyle(ChatFormatting.GOLD)),
+							provider)
+					)
+			);
+			return this;
+		}
 	}
 }

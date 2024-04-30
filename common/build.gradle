@@ -11,9 +11,11 @@ dependencies {
 		exclude group: "dev.architectury"
 	}
 
- 	modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+// 	modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+ 	modCompileOnly("mezz.jei:jei-1.20.4-common-api:${jei_version}")
 
-	modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+${minecraft_version}:api"
+//	modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+${minecraft_version}:api"
+	modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.20.4:api"
 }
 
 def ENV = System.getenv()
@@ -23,7 +25,7 @@ test {
 }
 
 architectury {
-	common("forge", "fabric", "neoforge")
+	common(/*"forge",*/ "fabric", "neoforge")
 }
 
 loom {

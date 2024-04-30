@@ -39,7 +39,8 @@ dependencies {
 	modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rootProject.rei_version}"
-	modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+//	modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+	modCompileOnly("mezz.jei:jei-1.20.4-neoforge-api:${jei_version}")
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
@@ -50,7 +51,7 @@ processResources {
 
 	inputs.property "version", project.version
 
-	filesMatching("META-INF/mods.toml") {
+	filesMatching("META-INF/neoforge.mods.toml") {
 		expand "version": project.version,
 				"archversion": project.architectury_version,
 				"neoforgeversion": project.neoforge_version,

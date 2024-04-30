@@ -13,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
@@ -52,7 +53,7 @@ public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
         public void addMouseOverText(TooltipList list) {
             if (!getStack().isEmpty()) {
                 TooltipFlag flag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
-                getStack().getTooltipLines(Minecraft.getInstance().player, flag).forEach(list::add);
+                getStack().getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player, flag).forEach(list::add);
                 if (FTBLibraryClientConfig.ITEM_MODNAME.get()) {
                     ModUtils.getModName(getStack().getItem()).ifPresent(name ->
                             list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));

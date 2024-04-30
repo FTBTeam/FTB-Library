@@ -5,11 +5,12 @@ import dev.architectury.networking.simple.BaseS2CMessage;
 import dev.architectury.networking.simple.MessageType;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 public class SyncKnownServerRegistriesPacket extends BaseS2CMessage {
 	private final KnownServerRegistries knownServerRegistries;
 
-	public SyncKnownServerRegistriesPacket(FriendlyByteBuf buf) {
+	public SyncKnownServerRegistriesPacket(RegistryFriendlyByteBuf buf) {
 		knownServerRegistries = new KnownServerRegistries(buf);
 	}
 
@@ -23,7 +24,7 @@ public class SyncKnownServerRegistriesPacket extends BaseS2CMessage {
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buf) {
+	public void write(RegistryFriendlyByteBuf buf) {
 		knownServerRegistries.write(buf);
 	}
 

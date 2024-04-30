@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +32,7 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buf) {
+	public void write(RegistryFriendlyByteBuf buf) {
 		buf.writeNbt(info);
 		buf.writeNbt(tag);
 	}
@@ -52,7 +53,7 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 							tag.putInt("y", pos.getY());
 							tag.putInt("z", pos.getZ());
 							tag.putString("id", info.getString("id"));
-							blockEntity.load(tag);
+							blockEntity.loadWithComponents(tag, player.level().registryAccess());
 							blockEntity.setChanged();
 							player.level().sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
 						}
@@ -68,7 +69,7 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 					}
 				}
 				case "player" -> {
-					var player1 = player.level().getServer().getPlayerList().getPlayer(info.getUUID("id"));
+					var player1 = player.getServer().getPlayerList().getPlayer(info.getUUID("id"));
 
 					if (player1 != null) {
 						var uUID = player1.getUUID();
@@ -77,7 +78,8 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 						player1.moveTo(player1.getX(), player1.getY(), player1.getZ());
 					}
 				}
-				case "item" -> player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.of(tag));
+				case "item" -> ItemStack.parse(player.registryAccess(), tag)
+						.ifPresent(stack -> player.setItemInHand(InteractionHand.MAIN_HAND, stack));
 			}
 		}
 	}

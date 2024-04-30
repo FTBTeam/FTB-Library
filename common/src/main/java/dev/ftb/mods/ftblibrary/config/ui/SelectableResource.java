@@ -6,8 +6,10 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -39,9 +41,9 @@ public interface SelectableResource<T> {
         return new FluidStackResource(stack);
     }
 
-    CompoundTag getTag();
+    CompoundTag getComponentsTag();
 
-    void setTag(CompoundTag tag);
+    void applyComponentsTag(CompoundTag tag);
 
     void setCount(int count);
 
@@ -67,13 +69,16 @@ public interface SelectableResource<T> {
         }
 
         @Override
-        public CompoundTag getTag() {
-            return stack.getTag();
+        public CompoundTag getComponentsTag() {
+            Tag tag = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()
+                    .orElse(new CompoundTag());
+            return tag instanceof CompoundTag t ? t : null;
         }
 
         @Override
-        public void setTag(CompoundTag tag) {
-            stack.setTag(tag);
+        public void applyComponentsTag(CompoundTag tag) {
+            DataComponentMap.CODEC.parse(NbtOps.INSTANCE, tag).result()
+                    .ifPresent(stack::applyComponents);
         }
 
         @Override
@@ -104,13 +109,16 @@ public interface SelectableResource<T> {
         }
 
         @Override
-        public CompoundTag getTag() {
-            return stack.getTag();
+        public CompoundTag getComponentsTag() {
+            Tag tag = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()
+                    .orElse(new CompoundTag());
+            return tag instanceof CompoundTag t ? t : null;
         }
 
         @Override
-        public void setTag(CompoundTag tag) {
-            stack.setTag(tag);
+        public void applyComponentsTag(CompoundTag tag) {
+            DataComponentMap.CODEC.parse(NbtOps.INSTANCE, tag).result()
+                    .ifPresent(stack::applyComponents);
         }
 
         @Override
@@ -159,12 +167,12 @@ public interface SelectableResource<T> {
         }
 
         @Override
-        public CompoundTag getTag() {
+        public CompoundTag getComponentsTag() {
             return null;
         }
 
         @Override
-        public void setTag(CompoundTag tag) {
+        public void applyComponentsTag(CompoundTag tag) {
         }
 
         @Override

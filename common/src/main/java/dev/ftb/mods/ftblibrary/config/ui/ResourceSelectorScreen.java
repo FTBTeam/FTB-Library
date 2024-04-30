@@ -311,7 +311,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         public void onClicked(MouseButton button) {
             playClickSound();
 
-            CompoundTag toEdit = Objects.requireNonNullElse(selectedStack.getTag(), new CompoundTag());
+            CompoundTag toEdit = Objects.requireNonNullElse(selectedStack.getComponentsTag(), new CompoundTag());
             if (button.isLeft()) {
                 StringConfig config = new StringConfig();
                 SNBTCompoundTag snbt = SNBTCompoundTag.of(toEdit);
@@ -322,7 +322,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
                 CompoundTag info = Util.make(new CompoundTag(), tag -> tag.putString("type", "item"));
                 new NBTEditorScreen(info, toEdit, (accepted, tag) -> {
                     if (accepted) {
-                        selectedStack.setTag(tag.copy());
+                        selectedStack.applyComponentsTag(tag.copy());
                         ResourceSelectorScreen.this.openGuiLater();
                     }
                 }).openGui();
@@ -334,7 +334,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             var panel = new EditMultilineStringConfigOverlay(ResourceSelectorScreen.this, config, accepted -> {
                 if (accepted) {
                     try {
-                        selectedStack.setTag(SNBT.readLines(List.of(config.getValue())));
+                        selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
                     } catch (SNBTSyntaxException e) {
                         SimpleToast.error(Component.translatable("ftblibrary.gui.error"), Component.literal(e.getMessage()));
                     }

@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -175,73 +176,82 @@ public class GuiHelper {
 		}
 
 		var mc = Minecraft.getInstance();
-		var itemRenderer = mc.getItemRenderer();
-		var bakedModel = itemRenderer.getModel(stack, null, mc.player, hash);
 
-		Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
-		RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		PoseStack modelViewStack = RenderSystem.getModelViewStack();
-		modelViewStack.pushPose();
-		modelViewStack.mulPoseMatrix(graphics.pose().last().pose());
-		// modelViewStack.translate(x, y, 100.0D + this.blitOffset);
-		modelViewStack.scale(1F, -1F, 1F);
-		modelViewStack.scale(16F, 16F, 16F);
-		RenderSystem.applyModelViewMatrix();
-		MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-		var flatLight = !bakedModel.usesBlockLight();
-
-		if (flatLight) {
-			Lighting.setupForFlatItems();
-		}
-
-		itemRenderer.render(stack, ItemDisplayContext.GUI, false, new PoseStack(), bufferSource, 0xF000F0, OverlayTexture.NO_OVERLAY, bakedModel);
-		bufferSource.endBatch();
-		RenderSystem.enableDepthTest();
-
-		if (flatLight) {
-			Lighting.setupFor3DItems();
-		}
-
-		modelViewStack.popPose();
-		RenderSystem.applyModelViewMatrix();
-
+		graphics.pose().pushPose();
+		graphics.pose().translate(-8, -8, -8);
+		graphics.renderItem(stack, 0, 0);
 		if (renderOverlay) {
-			var t = Tesselator.getInstance();
-			var font = mc.font;
-
-			if (stack.getCount() != 1 || text != null) {
-				var s = text == null ? String.valueOf(stack.getCount()) : text;
-				graphics.pose().pushPose();
-				graphics.pose().translate(9D - font.width(s), 1D, 20D);
-				font.drawInBatch(s, 0F, 0F, 0xFFFFFF, true, graphics.pose().last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-				bufferSource.endBatch();
-				graphics.pose().popPose();
-			}
-
-			if (stack.isBarVisible()) {
-				RenderSystem.disableDepthTest();
-				RenderSystem.disableBlend();
-				var barWidth = stack.getBarWidth();
-				var barColor = stack.getBarColor();
-				draw(graphics, t, -6, 5, 13, 2, 0, 0, 0, 255);
-				draw(graphics, t, -6, 5, barWidth, 1, barColor >> 16 & 255, barColor >> 8 & 255, barColor & 255, 255);
-				RenderSystem.enableBlend();
-				RenderSystem.enableDepthTest();
-			}
-
-			var cooldown = mc.player == null ? 0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
-
-			if (cooldown > 0F) {
-				RenderSystem.disableDepthTest();
-				RenderSystem.enableBlend();
-				RenderSystem.defaultBlendFunc();
-				draw(graphics, t, -8, Mth.floor(16F * (1F - cooldown)) - 8, 16, Mth.ceil(16F * cooldown), 255, 255, 255, 127);
-				RenderSystem.enableDepthTest();
-			}
+			graphics.renderItemDecorations(mc.font, stack, 0, 0, text);
 		}
+		graphics.pose().popPose();
+
+//		var itemRenderer = mc.getItemRenderer();
+//		var bakedModel = itemRenderer.getModel(stack, null, mc.player, hash);
+//
+//		Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
+//		RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+//		RenderSystem.enableBlend();
+//		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+//		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+//		PoseStack modelViewStack = RenderSystem.getModelViewStack();
+//		modelViewStack.pushPose();
+//		modelViewStack.mulPoseMatrix(graphics.pose().last().pose());
+//		// modelViewStack.translate(x, y, 100.0D + this.blitOffset);
+//		modelViewStack.scale(1F, -1F, 1F);
+//		modelViewStack.scale(16F, 16F, 16F);
+//		RenderSystem.applyModelViewMatrix();
+//		MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+//		var flatLight = !bakedModel.usesBlockLight();
+//
+//		if (flatLight) {
+//			Lighting.setupForFlatItems();
+//		}
+//
+//		itemRenderer.render(stack, ItemDisplayContext.GUI, false, new PoseStack(), bufferSource, 0xF000F0, OverlayTexture.NO_OVERLAY, bakedModel);
+//		bufferSource.endBatch();
+//		RenderSystem.enableDepthTest();
+//
+//		if (flatLight) {
+//			Lighting.setupFor3DItems();
+//		}
+//
+//		modelViewStack.popPose();
+//		RenderSystem.applyModelViewMatrix();
+//
+//		if (renderOverlay) {
+//			var t = Tesselator.getInstance();
+//			var font = mc.font;
+//
+//			if (stack.getCount() != 1 || text != null) {
+//				var s = text == null ? String.valueOf(stack.getCount()) : text;
+//				graphics.pose().pushPose();
+//				graphics.pose().translate(9D - font.width(s), 1D, 20D);
+//				font.drawInBatch(s, 0F, 0F, 0xFFFFFF, true, graphics.pose().last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+//				bufferSource.endBatch();
+//				graphics.pose().popPose();
+//			}
+//
+//			if (stack.isBarVisible()) {
+//				RenderSystem.disableDepthTest();
+//				RenderSystem.disableBlend();
+//				var barWidth = stack.getBarWidth();
+//				var barColor = stack.getBarColor();
+//				draw(graphics, t, -6, 5, 13, 2, 0, 0, 0, 255);
+//				draw(graphics, t, -6, 5, barWidth, 1, barColor >> 16 & 255, barColor >> 8 & 255, barColor & 255, 255);
+//				RenderSystem.enableBlend();
+//				RenderSystem.enableDepthTest();
+//			}
+//
+//			var cooldown = mc.player == null ? 0F : mc.player.getCooldowns().getCooldownPercent(stack.getItem(), mc.getFrameTime());
+//
+//			if (cooldown > 0F) {
+//				RenderSystem.disableDepthTest();
+//				RenderSystem.enableBlend();
+//				RenderSystem.defaultBlendFunc();
+//				draw(graphics, t, -8, Mth.floor(16F * (1F - cooldown)) - 8, 16, Mth.ceil(16F * cooldown), 255, 255, 255, 127);
+//				RenderSystem.enableDepthTest();
+//			}
+//		}
 	}
 
 	private static void draw(GuiGraphics graphics, Tesselator t, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
@@ -299,8 +309,12 @@ public class GuiHelper {
 	}
 
 	public static void addStackTooltip(ItemStack stack, List<Component> list, @Nullable Component prefix) {
-		var tooltip = stack.getTooltipLines(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
-		list.add(prefix == null ? tooltip.get(0).copy().withStyle(stack.getRarity().color) : prefix.copy().append(tooltip.get(0)));
+		var tooltip = stack.getTooltipLines(Item.TooltipContext.of(
+				Minecraft.getInstance().level),
+				Minecraft.getInstance().player,
+				Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL
+		);
+		list.add(prefix == null ? tooltip.get(0).copy().withStyle(stack.getRarity().color()) : prefix.copy().append(tooltip.get(0)));
 
 		for (var i = 1; i < tooltip.size(); i++) {
 			list.add(Component.literal("").withStyle(ChatFormatting.GRAY).append(tooltip.get(i)));
