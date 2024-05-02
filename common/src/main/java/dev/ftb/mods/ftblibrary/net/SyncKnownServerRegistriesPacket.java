@@ -1,35 +1,26 @@
 package dev.ftb.mods.ftblibrary.net;
 
 import dev.architectury.networking.NetworkManager;
-import dev.architectury.networking.simple.BaseS2CMessage;
-import dev.architectury.networking.simple.MessageType;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public class SyncKnownServerRegistriesPacket extends BaseS2CMessage {
-	private final KnownServerRegistries knownServerRegistries;
+public record SyncKnownServerRegistriesPacket(KnownServerRegistries registries) implements CustomPacketPayload {
+	public static final Type<SyncKnownServerRegistriesPacket> TYPE = new Type<>(FTBLibrary.rl("sync_known_server_registries"));
 
-	public SyncKnownServerRegistriesPacket(RegistryFriendlyByteBuf buf) {
-		knownServerRegistries = new KnownServerRegistries(buf);
-	}
+	public static StreamCodec<RegistryFriendlyByteBuf, SyncKnownServerRegistriesPacket> STREAM_CODEC = StreamCodec.composite(
+			KnownServerRegistries.STREAM_CODEC, SyncKnownServerRegistriesPacket::registries,
+			SyncKnownServerRegistriesPacket::new
+	);
 
-	public SyncKnownServerRegistriesPacket(KnownServerRegistries r) {
-		knownServerRegistries = r;
-	}
-
-	@Override
-	public MessageType getType() {
-		return FTBLibraryNet.SYNC_KNOWN_SERVER_REGISTRIES;
-	}
-
-	@Override
-	public void write(RegistryFriendlyByteBuf buf) {
-		knownServerRegistries.write(buf);
+	public static void handle(SyncKnownServerRegistriesPacket packet, NetworkManager.PacketContext context) {
+		context.queue(() -> KnownServerRegistries.client = packet.registries);
 	}
 
 	@Override
-	public void handle(NetworkManager.PacketContext context) {
-		KnownServerRegistries.client = knownServerRegistries;
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

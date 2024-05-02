@@ -1,15 +1,18 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditStringConfigOverlay;
 import dev.ftb.mods.ftblibrary.icon.*;
+import dev.ftb.mods.ftblibrary.net.EditNBTResponsePacket;
 import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.AbstractThreePanelScreen;
 import dev.ftb.mods.ftblibrary.ui.misc.SimpleToast;
+import dev.ftb.mods.ftblibrary.util.NBTUtils;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
@@ -78,6 +81,18 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 		buttonNBTRoot.setCollapsedTree(true);
 		buttonNBTRoot.setCollapsed(false);
 		setSelected(buttonNBTRoot);
+	}
+
+	public static void openEditor(CompoundTag info, CompoundTag tag) {
+		new NBTEditorScreen(info, tag, (accepted, responseTag) -> {
+            if (accepted) {
+                if (NBTUtils.getSizeInBytes(responseTag, false) >= 30000L) {
+                    FTBLibrary.LOGGER.error("NBT too large to send!");
+                } else {
+                    NetworkManager.sendToServer(new EditNBTResponsePacket(info, responseTag));
+                }
+            }
+        }).openGui();
 	}
 
 	private String getInfoTitle(CompoundTag info) {
