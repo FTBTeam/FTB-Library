@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.util;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -18,5 +19,19 @@ public class NetworkHelper {
         } else {
             NetworkManager.registerS2CPayloadType(type, codec);
         }
+    }
+
+    public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumStreamCodec(Class<V> enumClass) {
+        return new StreamCodec<>() {
+            @Override
+            public V decode(B buf) {
+                return buf.readEnum(enumClass);
+            }
+
+            @Override
+            public void encode(B buf, V value) {
+                buf.writeEnum(value);
+            }
+        };
     }
 }
