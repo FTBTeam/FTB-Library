@@ -10,31 +10,22 @@ public class SNBTNet {
 	public static final LongArrayTag EMPTY_LONG_ARRAY = new LongArrayTag(new long[0]);
 
 	public static void write(FriendlyByteBuf buf, @Nullable Tag tag) {
-		if (tag instanceof ByteTag) {
-			buf.writeByte(((ByteTag) tag).getAsByte());
-		} else if (tag instanceof ShortTag) {
-			buf.writeShort(((ShortTag) tag).getAsShort());
-		} else if (tag instanceof IntTag) {
-			buf.writeInt(((IntTag) tag).getAsInt());
-		} else if (tag instanceof LongTag) {
-			buf.writeLong(((LongTag) tag).getAsLong());
-		} else if (tag instanceof FloatTag) {
-			buf.writeFloat(((FloatTag) tag).getAsFloat());
-		} else if (tag instanceof DoubleTag) {
-			buf.writeDouble(((DoubleTag) tag).getAsDouble());
-		} else if (tag instanceof ByteArrayTag) {
-			writeByteArray(buf, (ByteArrayTag) tag);
-		} else if (tag instanceof StringTag) {
-			buf.writeUtf(tag.getAsString(), Short.MAX_VALUE);
-		} else if (tag instanceof ListTag) {
-			writeList(buf, (ListTag) tag);
-		} else if (tag instanceof CompoundTag) {
-			writeCompound(buf, SNBTCompoundTag.of(tag));
-		} else if (tag instanceof IntArrayTag) {
-			writeIntArray(buf, (IntArrayTag) tag);
-		} else if (tag instanceof LongArrayTag) {
-			writeLongArray(buf, (LongArrayTag) tag);
-		}
+        switch (tag) {
+            case ByteTag byteTag -> buf.writeByte(byteTag.getAsByte());
+            case ShortTag shortTag -> buf.writeShort(shortTag.getAsShort());
+            case IntTag intTag -> buf.writeInt(intTag.getAsInt());
+            case LongTag longTag -> buf.writeLong(longTag.getAsLong());
+            case FloatTag floatTag -> buf.writeFloat(floatTag.getAsFloat());
+            case DoubleTag doubleTag -> buf.writeDouble(doubleTag.getAsDouble());
+            case ByteArrayTag byteTags -> writeByteArray(buf, byteTags);
+            case StringTag stringTag -> buf.writeUtf(stringTag.getAsString(), Short.MAX_VALUE);
+            case ListTag tags -> writeList(buf, tags);
+            case CompoundTag compoundTag -> writeCompound(buf, SNBTCompoundTag.of(compoundTag));
+            case IntArrayTag intTags -> writeIntArray(buf, intTags);
+            case LongArrayTag longTags -> writeLongArray(buf, longTags);
+            case null, default -> {
+            }
+        }
 	}
 
 	public static void writeCompound(FriendlyByteBuf buf, @Nullable SNBTCompoundTag tag) {

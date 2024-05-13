@@ -1,12 +1,26 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
 import net.minecraft.nbt.*;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 
 public class SNBTCompoundTag extends CompoundTag {
+	public static final StreamCodec<FriendlyByteBuf,SNBTCompoundTag> STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public SNBTCompoundTag decode(FriendlyByteBuf object) {
+			return SNBTNet.readCompound(object);
+        }
+
+        @Override
+        public void encode(FriendlyByteBuf object, SNBTCompoundTag object2) {
+			SNBTNet.write(object, object2);
+        }
+    };
+
 	public static SNBTCompoundTag of(@Nullable Tag tag) {
 		if (tag instanceof SNBTCompoundTag) {
 			return (SNBTCompoundTag) tag;

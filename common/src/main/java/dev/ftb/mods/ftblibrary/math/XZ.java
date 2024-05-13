@@ -1,12 +1,28 @@
 package dev.ftb.mods.ftblibrary.math;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 
 public record XZ(int x, int z) {
+	public static final Codec<XZ> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+		Codec.INT.fieldOf("x").forGetter(XZ::x),
+		Codec.INT.fieldOf("z").forGetter(XZ::z)
+	).apply(builder, XZ::new));
+
+	public static StreamCodec<FriendlyByteBuf, XZ> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT, XZ::x,
+			ByteBufCodecs.INT, XZ::z,
+			XZ::new
+	);
+
 	public static XZ of(int x, int z) {
 		return new XZ(x, z);
 	}
@@ -41,34 +57,6 @@ public record XZ(int x, int z) {
 
 	public static XZ regionFromBlock(Vec3i pos) {
 		return regionFromBlock(pos.getX(), pos.getZ());
-	}
-
-//	public final int x;
-//	public final int z;
-//
-//	private XZ(int _x, int _z) {
-//		x = _x;
-//		z = _z;
-//	}
-
-	public int hashCode() {
-		var x1 = 1664525 * x + 1013904223;
-		var z1 = 1664525 * (z ^ -559038737) + 1013904223;
-		return x1 ^ z1;
-	}
-
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		} else if (!(o instanceof XZ p)) {
-			return false;
-		} else {
-			return x == p.x && z == p.z;
-		}
-	}
-
-	public String toString() {
-		return "[" + x + ", " + z + "]";
 	}
 
 	public ChunkDimPos dim(ResourceKey<Level> type) {
