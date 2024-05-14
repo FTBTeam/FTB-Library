@@ -7,7 +7,6 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.ChatFormatting;
-import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -164,7 +163,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 
 			String newText = (new StringBuilder(text)).replace(selStart, selEnd, filtered).toString();
 			validText = isValid(newText);
-			if (validText) {
+			if (!text.equals(newText)) {
 				text = newText;
 				setCursorPosition(selStart + nToInsert);
 				setSelectionPos(cursorPos);
@@ -232,10 +231,15 @@ public class TextBox extends Widget implements IFocusableWidget {
 	}
 
 	private void deleteText(int count) {
+		String prevText = text;
 		if (Screen.hasControlDown()) {
 			deleteWords(count);
 		} else {
 			deleteChars(count);
+		}
+		if (!prevText.equals(text)) {
+			validText = isValid(text);
+			onTextChanged();
 		}
 	}
 
