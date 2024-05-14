@@ -23,6 +23,7 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
@@ -50,8 +51,6 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 		collectAllConfigValues(group, list);
 
 		if (!list.isEmpty()) {
-			list.sort(null);
-
 			ConfigGroupButton group = null;
 
 			for (var value : list) {
@@ -89,7 +88,10 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 	}
 
 	private void collectAllConfigValues(ConfigGroup group, List<ConfigValue<?>> list) {
-		list.addAll(group.getValues());
+		list.addAll(group.getValues().stream()
+				.sorted(Comparator.comparing(ConfigValue::getName))
+				.toList()
+		);
 
 		for (var subgroup : group.getSubgroups()) {
 			collectAllConfigValues(subgroup, list);
