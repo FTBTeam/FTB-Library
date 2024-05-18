@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.MinecraftServer;
 
 public class NetworkHelper {
     public static <T extends CustomPacketPayload> void registerC2S(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, NetworkManager.NetworkReceiver<T> handler) {
@@ -19,6 +20,10 @@ public class NetworkHelper {
         } else {
             NetworkManager.registerS2CPayloadType(type, codec);
         }
+    }
+
+    public static <T extends CustomPacketPayload> void sendToAll(MinecraftServer server, T packet) {
+        NetworkManager.sendToPlayers(server.getPlayerList().getPlayers(), packet);
     }
 
     public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumStreamCodec(Class<V> enumClass) {
