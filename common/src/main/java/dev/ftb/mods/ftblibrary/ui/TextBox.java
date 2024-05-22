@@ -284,9 +284,10 @@ public class TextBox extends Widget implements IFocusableWidget {
 						setSelectionPos(theme.trimStringToWidth(s, i).length() + displayPos);
 					} else {
 						setCursorPos(theme.trimStringToWidth(s, i).length() + displayPos);
+						setSelectionPos(getCursorPos());
 					}
 				}
-			} else if (button.isRight() && getText().length() > 0 && allowInput()) {
+			} else if (button.isRight() && !getText().isEmpty() && allowInput()) {
 				setText("");
 			}
 
