@@ -5,11 +5,18 @@ import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
 
 /**
  * @author LatvianModder
@@ -19,8 +26,8 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	private boolean drawSlots = true;
 	private final TooltipList tooltipList = new TooltipList();
 
-	public MenuScreenWrapper(BaseScreen g, T c, Inventory playerInventory, Component title) {
-		super(c, playerInventory, title);
+	public MenuScreenWrapper(BaseScreen g, T menu, Inventory playerInventory, Component title) {
+		super(menu, playerInventory, title);
 		wrappedGui = g;
 	}
 
@@ -52,8 +59,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 			wrappedGui.onBack();
 			return true;
 		} else {
-			wrappedGui.mousePressed(MouseButton.get(button));
-			return super.mouseClicked(x, y, button);
+			return wrappedGui.mousePressed(MouseButton.get(button)) || super.mouseClicked(x, y, button);
 		}
 	}
 
@@ -66,8 +72,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
 	@Override
 	public boolean mouseScrolled(double x, double y, double scroll) {
-		wrappedGui.mouseScrolled(scroll);
-		return super.mouseScrolled(x, y, scroll);
+		return wrappedGui.mouseScrolled(scroll) || super.mouseScrolled(x, y, scroll);
 	}
 
 	@Override
@@ -79,10 +84,14 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 		} else {
 			if (key.backspace()) {
 				wrappedGui.onBack();
+				return true;
 			} else if (wrappedGui.onClosedByKey(key)) {
 				if (shouldCloseOnEsc()) {
-					wrappedGui.closeGui(true);
+					// false is important here; menu-based screens are driven by messages from the server,
+					//   so we can't just switch between screens
+					wrappedGui.closeGui(false);
 				}
+				return true;
 			}
 
 			return super.keyPressed(keyCode, scanCode, modifiers);
@@ -146,14 +155,23 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 				}
 			});
 		} else {
-			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
+			List<FormattedCharSequence> lines = Tooltip.splitTooltip(minecraft, tooltipList.getLines().stream()
+					.reduce((c1, c2) -> c1.copy().append("\n").append(c2))
+					.orElse(Component.empty())
+			);
+			graphics.pose().translate(0, 0, 600);
+			graphics.setColor(1f, 1f, 1f, 0.8f);
+			graphics.renderTooltip(theme.getFont(), lines, DefaultTooltipPositioner.INSTANCE, mouseX, Math.max(mouseY, 18));
+			graphics.setColor(1f, 1f, 1f, 1f);
+			graphics.pose().translate(0, 0, -600);
+//			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}
 
 		tooltipList.reset();
 
-		if (wrappedGui.getContextMenu().isEmpty()) {
-			renderTooltip(graphics, mouseX, mouseY);
-		}
+//		if (wrappedGui.getContextMenu().isEmpty()) {
+//			renderTooltip(graphics, mouseX, mouseY);
+//		}
 
 		graphics.pose().popPose();
 	}
@@ -187,5 +205,10 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 	public void removed() {
 		wrappedGui.onClosed();
 		super.removed();
+	}
+
+	@Override
+	public boolean shouldCloseOnEsc() {
+		return getGui().shouldCloseOnEsc();
 	}
 }
