@@ -104,11 +104,12 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 	}
 
 	/**
-	 * What to do when the widget displaying this config entry is clicked; provide the user with some means of editing
-	 * the value.
+	 * Called when the widget displaying this config entry is clicked; implementations must provide the user with some
+	 * means of editing the value, which accepts the {@code callback} object that is passed.
 	 *
-	 * @param clickedWidget the widget that was clicked to trigger this method; you can use this to help position the edit controls you display
-	 * @param button the mouse button
+	 * @param clickedWidget the widget that was clicked to trigger this method;
+	 *                         may be useful to help position the edit controls you display
+	 * @param button the mouse button that triggered this
 	 * @param callback called when the editing GUI is either accepted or cancelled
 	 */
 	public abstract void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback);
