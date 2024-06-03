@@ -25,7 +25,7 @@ side = "BOTH"
 [[dependencies.ftblibrary]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.20.2,)"
+versionRange = "[${mcversion},)"
 ordering = "NONE"
 side = "BOTH"
 

@@ -141,6 +141,10 @@ public abstract class BaseScreen extends Panel {
 	public void pushModalPanel(ModalPanel modalPanel) {
 		modalPanels.addFirst(modalPanel);
 		modalPanel.refreshWidgets();
+
+		// since the panel size will have changed, make sure it's still on-screen
+		modalPanel.setX(Math.min(modalPanel.getX(), getWidth() - modalPanel.getWidth() - 10));
+		modalPanel.setY(Math.min(modalPanel.getY(), getHeight() - modalPanel.getHeight() - 10));
 	}
 
 	/**
@@ -154,6 +158,7 @@ public abstract class BaseScreen extends Panel {
 		}
 		ModalPanel panel = modalPanels.removeFirst();
 		panel.onClosed();
+		focusedWidget = null;  // in case an editfield in the panel had focus
 		return panel;
 	}
 
