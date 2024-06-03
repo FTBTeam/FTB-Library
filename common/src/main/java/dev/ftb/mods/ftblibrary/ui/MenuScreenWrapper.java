@@ -159,14 +159,9 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 			graphics.renderTooltip(theme.getFont(), lines, DefaultTooltipPositioner.INSTANCE, mouseX, Math.max(mouseY, 18));
 			graphics.setColor(1f, 1f, 1f, 1f);
 			graphics.pose().translate(0, 0, -600);
-//			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}
 
 		tooltipList.reset();
-
-//		if (wrappedGui.getContextMenu().isEmpty()) {
-//			renderTooltip(graphics, mouseX, mouseY);
-//		}
 
 		graphics.pose().popPose();
 	}

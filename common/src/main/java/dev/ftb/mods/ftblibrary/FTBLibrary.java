@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
+import dev.architectury.networking.NetworkManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
@@ -21,7 +22,7 @@ public class FTBLibrary {
 
 	public FTBLibrary() {
 		CommandRegistrationEvent.EVENT.register(FTBLibraryCommands::registerCommands);
-		FTBLibraryNet.init();
+		FTBLibraryNet.register();
 		LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
 		LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
 		PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
@@ -34,7 +35,7 @@ public class FTBLibrary {
 	}
 
 	private void serverStarted(MinecraftServer server) {
-		KnownServerRegistries.server = new KnownServerRegistries(server);
+		KnownServerRegistries.server = KnownServerRegistries.create(server);
 	}
 
 	private void serverStopped(MinecraftServer server) {
@@ -42,6 +43,6 @@ public class FTBLibrary {
 	}
 
 	private void playerJoined(ServerPlayer player) {
-		new SyncKnownServerRegistriesPacket(KnownServerRegistries.server).sendTo(player);
+		NetworkManager.sendToPlayer(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
 	}
 }

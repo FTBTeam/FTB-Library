@@ -15,6 +15,7 @@ import net.minecraft.client.gui.components.Whence;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.util.StringUtil;
 
 import java.util.function.Consumer;
 
@@ -189,7 +190,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
 
     @Override
     public boolean charTyped(char c, KeyModifiers modifiers) {
-        if (this.isFocused() && SharedConstants.isAllowedChatCharacter(c)) {
+        if (this.isFocused() && StringUtil.isAllowedChatCharacter(c)) {
             this.textField.insertText(Character.toString(c));
             recalculateHeight();
             return true;

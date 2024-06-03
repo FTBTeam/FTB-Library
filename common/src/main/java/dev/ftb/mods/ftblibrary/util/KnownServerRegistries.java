@@ -1,102 +1,52 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.core.DisplayInfoFTBL;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class KnownServerRegistries {
-	public static class AdvancementInfo {
-		public ResourceLocation id;
-		public Component name;
-		public ItemStack icon;
-	}
-
+public record KnownServerRegistries(List<ResourceLocation> dimension, Map<ResourceLocation,AdvancementInfo> advancements) {
 	public static KnownServerRegistries client;
 	public static KnownServerRegistries server;
 
-	public final List<ResourceLocation> dimensions;
-	public final Map<ResourceLocation, AdvancementInfo> advancements;
+	public static StreamCodec<RegistryFriendlyByteBuf, KnownServerRegistries> STREAM_CODEC = StreamCodec.composite(
+			ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list()), KnownServerRegistries::dimension,
+			ByteBufCodecs.map(LinkedHashMap::new, ResourceLocation.STREAM_CODEC, AdvancementInfo.STREAM_CODEC), KnownServerRegistries::advancements,
+			KnownServerRegistries::new
+	);
 
-	public KnownServerRegistries(FriendlyByteBuf buffer) {
-		{
-			var s = buffer.readVarInt();
-			dimensions = new ArrayList<>(s);
-
-			for (var i = 0; i < s; i++) {
-				dimensions.add(buffer.readResourceLocation());
-			}
-		}
-
-		{
-			var s = buffer.readVarInt();
-			advancements = new LinkedHashMap<>(s);
-
-			for (var i = 0; i < s; i++) {
-				var info = new AdvancementInfo();
-				info.id = buffer.readResourceLocation();
-				info.name = buffer.readComponent();
-				info.icon = buffer.readItem();
-				advancements.put(info.id, info);
-			}
-		}
-
-		FTBLibrary.LOGGER.debug("Received server registries");
-	}
-
-	public KnownServerRegistries(MinecraftServer server) {
-		dimensions = new ArrayList<>();
-
+	public static KnownServerRegistries create(MinecraftServer server) {
+		List<ResourceLocation> dimensions = new ArrayList<>();
 		for (var level : server.getAllLevels()) {
 			dimensions.add(level.dimension().location());
 		}
-
 		dimensions.sort(null);
 
 		List<AdvancementInfo> advancementList = new ArrayList<>();
-
-		for (var advancement : server.getAdvancements().getAllAdvancements()) {
-			Advancement value = advancement.value();
-			Optional<DisplayInfo> displayOpt = value.display();
-			if (displayOpt.isPresent() && value.display().get() instanceof DisplayInfoFTBL) {
-				var display = displayOpt.get();
-				var info = new AdvancementInfo();
-				info.id = advancement.id();
-				info.name = display.getTitle();
-				info.icon = ((DisplayInfoFTBL) display).getIconStackFTBL();
-				advancementList.add(info);
-			}
-		}
-
+        server.getAdvancements().getAllAdvancements().forEach(advancement -> advancement.value().display().ifPresent(display ->
+				advancementList.add(new AdvancementInfo(advancement.id(), display.getTitle(), display.getIcon())))
+		);
 		advancementList.sort(Comparator.comparing(o -> o.id));
 
-		advancements = new LinkedHashMap<>(advancementList.size());
+		Map<ResourceLocation, AdvancementInfo> map = advancementList.stream()
+				.collect(Collectors.toMap(info -> info.id, info -> info, (a, b) -> b, () -> new LinkedHashMap<>(advancementList.size())));
 
-		for (var info : advancementList) {
-			advancements.put(info.id, info);
-		}
+		return new KnownServerRegistries(dimensions, map);
 	}
 
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeVarInt(dimensions.size());
-
-		for (var id : dimensions) {
-			buffer.writeResourceLocation(id);
-		}
-
-		buffer.writeVarInt(advancements.size());
-
-		for (var info : advancements.values()) {
-			buffer.writeResourceLocation(info.id);
-			buffer.writeComponent(info.name);
-			buffer.writeItem(info.icon);
-		}
+	public record AdvancementInfo(ResourceLocation id, Component name, ItemStack icon) {
+		public static StreamCodec<RegistryFriendlyByteBuf, AdvancementInfo> STREAM_CODEC = StreamCodec.composite(
+				ResourceLocation.STREAM_CODEC, AdvancementInfo::id,
+				ComponentSerialization.STREAM_CODEC, AdvancementInfo::name,
+				ItemStack.OPTIONAL_STREAM_CODEC, AdvancementInfo::icon,
+				AdvancementInfo::new
+		);
 	}
 }

@@ -2,9 +2,10 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ImageResourceConfig;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,6 +19,18 @@ public abstract class Icon implements Drawable {
 	public static Color4I empty() {
 		return Color4I.EMPTY_ICON;
 	}
+
+	public static final StreamCodec<FriendlyByteBuf,Icon> STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public Icon decode(FriendlyByteBuf buf) {
+			return Icon.getIcon(buf.readUtf());
+        }
+
+        @Override
+        public void encode(FriendlyByteBuf buf, Icon icon) {
+			buf.writeUtf(icon.toString());
+        }
+    };
 
 	public static Icon getIcon(@Nullable JsonElement json) {
 		if (json == null || json.isJsonNull()) {

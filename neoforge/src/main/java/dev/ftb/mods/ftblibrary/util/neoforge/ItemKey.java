@@ -20,11 +20,11 @@ public final class ItemKey {
 			return false;
 		}
 
-		return ItemStack.isSameItemSameTags(stack, ((ItemKey) o).stack);
+		return ItemStack.isSameItemSameComponents(stack, ((ItemKey) o).stack);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(stack.getItem(), stack.getTag());
+		return ItemStack.hashItemAndComponents(stack);
 	}
 }

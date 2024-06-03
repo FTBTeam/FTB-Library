@@ -189,31 +189,36 @@ public class Theme {
 			return x;
 		}
 
-		if (text instanceof FormattedCharSequence fcs) {
-			if (Bits.getFlag(flags, CENTERED)) {
-				x -= getStringWidth(fcs) / 2F;
-			}
-			int i = graphics.drawString(getFont(), (FormattedCharSequence) text, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
-			GuiHelper.setupDrawing();
-			return i;
-		} else if (text instanceof Component comp) {
-			if (Bits.getFlag(flags, CENTERED)) {
-				x -= getStringWidth(comp) / 2F;
-			}
-			int i = graphics.drawString(getFont(), comp, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
-			GuiHelper.setupDrawing();
-			return i;
-		} else if (text instanceof FormattedText) {
-			return drawString(graphics, Language.getInstance().getVisualOrder((FormattedText) text), x, y, color, flags);
-		} else {
-			var s = String.valueOf(text);
-			if (Bits.getFlag(flags, CENTERED)) {
-				x -= getStringWidth(s) / 2F;
-			}
-			int i = graphics.drawString(getFont(), s, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
-			GuiHelper.setupDrawing();
-			return i;
-		}
+        switch (text) {
+            case FormattedCharSequence fcs -> {
+                if (Bits.getFlag(flags, CENTERED)) {
+                    x -= getStringWidth(fcs) / 2;
+                }
+                int i = graphics.drawString(getFont(), (FormattedCharSequence) text, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
+                GuiHelper.setupDrawing();
+                return i;
+            }
+            case Component comp -> {
+                if (Bits.getFlag(flags, CENTERED)) {
+                    x -= getStringWidth(comp) / 2;
+                }
+                int i = graphics.drawString(getFont(), comp, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
+                GuiHelper.setupDrawing();
+                return i;
+            }
+            case FormattedText formattedText -> {
+                return drawString(graphics, Language.getInstance().getVisualOrder(formattedText), x, y, color, flags);
+            }
+            default -> {
+                var s = String.valueOf(text);
+                if (Bits.getFlag(flags, CENTERED)) {
+                    x -= getStringWidth(s) / 2;
+                }
+                int i = graphics.drawString(getFont(), s, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
+                GuiHelper.setupDrawing();
+                return i;
+            }
+        }
 	}
 
 	public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y, int flags) {

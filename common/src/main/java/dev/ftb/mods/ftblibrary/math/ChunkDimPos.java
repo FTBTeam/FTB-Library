@@ -1,29 +1,31 @@
 package dev.ftb.mods.ftblibrary.math;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
-import java.util.Objects;
+public record ChunkDimPos(ResourceKey<Level> dimension, ChunkPos chunkPos) implements Comparable<ChunkDimPos> {
+	private static final StreamCodec<ByteBuf,ChunkPos> CHUNK_POS_STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT, cp -> cp.x,
+			ByteBufCodecs.INT, cp -> cp.z,
+			ChunkPos::new
+	);
 
-
-public class ChunkDimPos implements Comparable<ChunkDimPos> {
-	private final ResourceKey<Level> dimension;
-	private final ChunkPos chunkPos;
-	private int hash;
+	public static StreamCodec<FriendlyByteBuf, ChunkDimPos> STREAM_CODEC = StreamCodec.composite(
+			ResourceKey.streamCodec(Registries.DIMENSION), ChunkDimPos::dimension,
+			CHUNK_POS_STREAM_CODEC, ChunkDimPos::chunkPos,
+			ChunkDimPos::new
+	);
 
 	public ChunkDimPos(ResourceKey<Level> dim, int x, int z) {
-		dimension = dim;
-		chunkPos = new ChunkPos(x, z);
-
-		int h = Objects.hash(dimension.location(), chunkPos);
-		hash = h == 0 ? 1 : h;
-	}
-
-	public ChunkDimPos(ResourceKey<Level> dim, ChunkPos pos) {
-		this(dim, pos.x, pos.z);
+		this(dim, new ChunkPos(x, z));
 	}
 
 	public ChunkDimPos(Level world, BlockPos pos) {
@@ -32,10 +34,6 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 
 	public ChunkDimPos(Entity entity) {
 		this(entity.level(), entity.blockPosition());
-	}
-
-	public ChunkPos getChunkPos() {
-		return chunkPos;
 	}
 
 	public int x() {
@@ -51,30 +49,9 @@ public class ChunkDimPos implements Comparable<ChunkDimPos> {
 	}
 
 	@Override
-	public String toString() {
-		return "[" + dimension.location() + ":" + x() + ":" + z() + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		return hash;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		} else if (obj instanceof ChunkDimPos p) {
-			return dimension == p.dimension && chunkPos.equals(p.chunkPos);
-		}
-
-		return false;
-	}
-
-	@Override
 	public int compareTo(ChunkDimPos o) {
 		var i = dimension.location().compareTo(o.dimension.location());
-		return i == 0 ? Long.compare(getChunkPos().toLong(), o.getChunkPos().toLong()) : i;
+		return i == 0 ? Long.compare(chunkPos.toLong(), o.chunkPos.toLong()) : i;
 	}
 
 	public ChunkDimPos offset(int ox, int oz) {

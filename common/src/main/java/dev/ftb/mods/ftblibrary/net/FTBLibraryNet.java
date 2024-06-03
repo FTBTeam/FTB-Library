@@ -1,17 +1,13 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.simple.MessageType;
-import dev.architectury.networking.simple.SimpleNetworkManager;
-import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 
-public interface FTBLibraryNet {
-	SimpleNetworkManager NET = SimpleNetworkManager.create(FTBLibrary.MOD_ID);
+public class FTBLibraryNet {
+    public static void register() {
+        NetworkHelper.registerS2C(EditConfigPacket.TYPE, EditConfigPacket.STREAM_CODEC, EditConfigPacket::handle);
+        NetworkHelper.registerS2C(EditNBTPacket.TYPE, EditNBTPacket.STREAM_CODEC, EditNBTPacket::handle);
+        NetworkHelper.registerS2C(SyncKnownServerRegistriesPacket.TYPE, SyncKnownServerRegistriesPacket.STREAM_CODEC, SyncKnownServerRegistriesPacket::handle);
 
-	MessageType EDIT_NBT = NET.registerS2C("edit_nbt", EditNBTPacket::new);
-	MessageType EDIT_NBT_RESPONSE = NET.registerC2S("edit_nbt_response", EditNBTResponsePacket::new);
-	MessageType SYNC_KNOWN_SERVER_REGISTRIES = NET.registerS2C("sync_known_server_registries", SyncKnownServerRegistriesPacket::new);
-	MessageType EDIT_CONFIG = NET.registerS2C("edit_config", EditConfigPacket::new);
-
-    static void init() {
-	}
+        NetworkHelper.registerC2S(EditNBTResponsePacket.TYPE, EditNBTResponsePacket.STREAM_CODEC, EditNBTResponsePacket::handle);
+    }
 }

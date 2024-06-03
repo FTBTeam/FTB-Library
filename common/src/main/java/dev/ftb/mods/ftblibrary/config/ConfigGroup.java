@@ -177,66 +177,232 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
 		return add(id, new IntConfig(min, max), value, setter, def);
 	}
 
+	/**
+	 * Add a new long config item to this group.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @param min the minimum permitted value
+	 * @param max the maximum permitted value
+	 * @return the {@link LongConfig} just added
+	 */
 	public LongConfig addLong(String id, long value, Consumer<Long> setter, long def, long min, long max) {
 		return add(id, new LongConfig(min, max), value, setter, def);
 	}
 
+	/**
+	 * Add a new double config item to this group.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @param min the minimum permitted value
+	 * @param max the maximum permitted value
+	 * @return the {@link DoubleConfig} just added
+	 */
 	public DoubleConfig addDouble(String id, double value, Consumer<Double> setter, double def, double min, double max) {
 		return add(id, new DoubleConfig(min, max), value, setter, def);
 	}
 
+	/**
+	 * Add a new String config item to this group.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @param pattern a regular expression to constrain the valid values of the string
+	 * @return the {@link IntConfig} just added
+	 */
 	public StringConfig addString(String id, String value, Consumer<String> setter, String def, @Nullable Pattern pattern) {
 		return add(id, new StringConfig(pattern), value, setter, def);
 	}
 
+	/**
+	 * Add a new String config item to this group.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @return the {@link StringConfig} just added
+	 */
 	public StringConfig addString(String id, String value, Consumer<String> setter, String def) {
 		return addString(id, value, setter, def, null);
 	}
 
+	/**
+	 * Add a new enum config item to this group.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param nameMap the {@link NameMap} object which handles serialization/deserialization of the enum
+	 * @param def the default value
+	 * @return the {@link EnumConfig} just added
+	 */
 	public <E> EnumConfig<E> addEnum(String id, E value, Consumer<E> setter, NameMap<E> nameMap, E def) {
 		return add(id, new EnumConfig<>(nameMap), value, setter, def);
 	}
 
+	/**
+	 * Add a new enum config item to this group.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param nameMap the {@link NameMap} object which handles serialization/deserialization of the enum
+	 * @return the {@link EnumConfig} just added
+	 */
 	public <E> EnumConfig<E> addEnum(String id, E value, Consumer<E> setter, NameMap<E> nameMap) {
 		return addEnum(id, value, setter, nameMap, nameMap.defaultValue);
 	}
 
-	public <E, CV extends ConfigValue<E>> ListConfig<E, CV> addList(String id, List<E> c, CV type, E def) {
+	/**
+	 * Add a new list config item to this group. This variant has a default setter callback which updates the list
+	 * passed as {@code value}; see the {@link #addList(String, List, ConfigValue, Consumer, Object)} overload if
+	 * you want a custom setter.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param type the config value type which wraps the type contained in the list
+	 * @param def the default value
+	 * @return the {@link ListConfig} just added
+	 * @param <E> the list type
+	 * @param <CV> the config value type which wraps the list type {@code E}
+	 */
+	public <E, CV extends ConfigValue<E>> ListConfig<E, CV> addList(String id, List<E> value, CV type, E def) {
 		type.setDefaultValue(def);
-		return add(id, new ListConfig<>(type), c, t -> {
-			c.clear();
-			c.addAll(t);
-		}, Collections.emptyList());
+		return add(id, new ListConfig<>(type), value, value::retainAll, Collections.emptyList());
 	}
 
+	/**
+	 * Add a new list config item to this group
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param type the config value type which wraps the type contained in the list
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @return the {@link ListConfig} just added
+	 * @param <E> the list type
+	 * @param <CV> the config value type which wraps the list type {@code E}
+	 */
+	public <E, CV extends ConfigValue<E>> ListConfig<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, E def) {
+		type.setDefaultValue(def);
+		return add(id, new ListConfig<>(type), value, setter, Collections.emptyList());
+	}
+
+	/**
+	 * Convenience case of {@link #addEnum(String, Object, Consumer, NameMap)} for {@code Tristate values}
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @return the {@link EnumConfig} just added
+	 */
 	public EnumConfig<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter, Tristate def) {
 		return addEnum(id, value, setter, Tristate.NAME_MAP, def);
 	}
 
+	/**
+	 * Convenience case of {@link #addEnum(String, Object, Consumer, NameMap)} for {@code Tristate values}. This
+	 * variant uses {@code Tristate.DEFAULT} as the default config value.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @return the {@link EnumConfig} just added
+	 */
 	public EnumConfig<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter) {
 		return addTristate(id, value, setter, Tristate.DEFAULT);
 	}
 
+	/**
+	 * Add a new {@code ItemStack} config item to this group
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @param singleItem if true, the resulting selection screen will only permit inserting a single item (itemstack count is always 1)
+	 * @param allowEmpty if true, the resulting selection screen will permit selecting {@code ItemStack.EMPTY}
+	 * @return the {@link ItemStackConfig} just added
+	 */
 	public ItemStackConfig addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, boolean singleItem, boolean allowEmpty) {
 		return add(id, new ItemStackConfig(singleItem, allowEmpty), value, setter, def);
 	}
 
+	/**
+	 * Add a new {@code ItemStack} config item to this group
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @param fixedSize the resulting itemstack will always have this size
+	 * @return the {@link ItemStackConfig} just added
+	 */
 	public ItemStackConfig addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, int fixedSize) {
 		return add(id, new ItemStackConfig(fixedSize), value, setter, def);
 	}
 
+	/**
+	 * Add a new {@code FluidStack} config item to this group (note: this is an Architectury {@link FluidStack}).
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @param allowEmpty if true, the resulting selection screen will permit selecting {@code FluidStack.EMPTY}
+	 * @return the {@link FluidConfig} just added
+	 */
 	public FluidConfig addFluidStack(String id, FluidStack value, Consumer<FluidStack> setter, FluidStack def, boolean allowEmpty) {
 		return add(id, new FluidConfig(allowEmpty), value, setter, def);
 	}
 
+	/**
+	 * Add a new {@code FluidStack} config item to this group (note: this is an Architectury {@link FluidStack}).
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @param fixedSize the resulting fluidstack will always have this size
+	 * @return the {@link FluidConfig} just added
+	 */
 	public FluidConfig addFluidStack(String id, FluidStack value, Consumer<FluidStack> setter, FluidStack def, long fixedSize) {
 		return add(id, new FluidConfig(fixedSize), value, setter, def);
 	}
 
+	/**
+	 * Add a new image config item to this group (note: this is in effect a ResourceLocation referring to an image known
+	 * to the client's resource manager).
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @return the {@link ImageResourceConfig} just added
+	 */
 	public ImageResourceConfig addImage(String id, ResourceLocation value, Consumer<ResourceLocation> setter, ResourceLocation def) {
 		return add(id, new ImageResourceConfig(), value, setter, def);
 	}
 
+	/**
+	 * Add a new color config item to this group. By default, this allows selection of RGB colors; if you wish to
+	 * allow alpha selection too, call {@link ColorConfig#withAlphaEditing()} on the result of this method.
+	 *
+	 * @param id a unique id for this config item
+	 * @param value the initial value
+	 * @param setter a consumer to be called to apply changes to the value
+	 * @param def the default value
+	 * @return the {@link ColorConfig} just added
+	 */
 	public ColorConfig addColor(String id, Color4I value, Consumer<Color4I> setter, Color4I def) {
 		return add(id, new ColorConfig(), value, setter, def);
 	}

@@ -38,9 +38,9 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
 
         titleField = new TextField(this).addFlags(Theme.SHADOW).setText(Objects.requireNonNullElse(title, Component.empty()));
         titleField.setSize(0, 0);
-        textBox = new EditField();
         accept = new SimpleButton(this, Component.translatable("gui.accept"), Icons.ACCEPT, this::onAccepted);
         cancel = new SimpleButton(this, Component.translatable("gui.cancel"), Icons.CANCEL, this::onCancelled);
+        textBox = new EditField();
     }
 
     public EditStringConfigOverlay<T> atPosition(int x, int y) {
@@ -91,9 +91,11 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
     }
 
     private void onAccepted(Button btn, MouseButton mb) {
-        config.setCurrentValue(currentValue);
-        callback.save(true);
-        getGui().popModalPanel();
+        if (textBox.isTextValid()) {
+            config.setCurrentValue(currentValue);
+            callback.save(true);
+            getGui().popModalPanel();
+        }
     }
 
     private void onCancelled(Button btn, MouseButton mb) {
@@ -125,6 +127,10 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         @Override
         public void onTextChanged() {
             config.parse(t -> currentValue = t, getText());
+
+            if (accept != null) {
+                accept.setIcon(isTextValid() ? Icons.ACCEPT : Icons.ACCEPT.withTint(Color4I.DARK_GRAY.withAlpha(160)));
+            }
         }
 
         @Override

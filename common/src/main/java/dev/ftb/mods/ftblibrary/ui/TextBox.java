@@ -7,7 +7,6 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.ChatFormatting;
-import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,6 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.util.StringUtil;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
@@ -150,7 +150,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 		int selEnd = Math.max(cursorPos, highlightPos);
 		int space = maxLength - text.length() - (selStart - selEnd);
 		if (space > 0) {
-			String filtered = SharedConstants.filterText(string);
+			String filtered = StringUtil.filterText(string);
 			int nToInsert = filtered.length();
 			if (space < nToInsert) {
 				if (Character.isHighSurrogate(filtered.charAt(space - 1))) {
@@ -163,7 +163,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 
 			String newText = (new StringBuilder(text)).replace(selStart, selEnd, filtered).toString();
 			validText = isValid(newText);
-			if (validText) {
+			if (!text.equals(newText)) {
 				text = newText;
 				setCursorPosition(selStart + nToInsert);
 				setSelectionPos(cursorPos);
@@ -231,10 +231,15 @@ public class TextBox extends Widget implements IFocusableWidget {
 	}
 
 	private void deleteText(int count) {
+		String prevText = text;
 		if (Screen.hasControlDown()) {
 			deleteWords(count);
 		} else {
 			deleteChars(count);
+		}
+		if (!prevText.equals(text)) {
+			validText = isValid(text);
+			onTextChanged();
 		}
 	}
 
@@ -378,7 +383,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 	@Override
 	public boolean charTyped(char c, KeyModifiers modifiers) {
 		if (isFocused()) {
-			if (SharedConstants.isAllowedChatCharacter(c)) {
+			if (StringUtil.isAllowedChatCharacter(c)) {
 				insertText(Character.toString(c));
 			}
 
