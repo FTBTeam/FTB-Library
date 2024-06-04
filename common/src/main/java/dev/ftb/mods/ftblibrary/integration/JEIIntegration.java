@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.integration;
 
-import dev.architectury.fluid.FluidStack;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
@@ -17,7 +16,6 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
-import mezz.jei.api.ingredients.IIngredientTypeWithSubtypes;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.runtime.IClickableIngredient;
@@ -29,7 +27,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -82,12 +79,15 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 				if (typed.isPresent()) {
 					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
 				}
-			} else if (underMouse.ingredient() instanceof FluidStack stack) {
-				// This should work if Arch has setup their fluidstack properly
-				Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(FLUID_STACK, stack);
-				if (typed.isPresent()) {
-					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
-				}
+				// TODO this could work, but an Arch FLUID_STACK needs to be registered with JEI
+				//   and this is non-trivial to do. The handleExtraIngredientTypes fallback below
+				//   works fine for native FluidStacks on NeoForge/Fabric/Forge
+//			} else if (underMouse.ingredient() instanceof FluidStack stack) {
+//				// This should work if Arch has setup their fluidstack properly
+//				Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(FLUID_STACK, stack);
+//				if (typed.isPresent()) {
+//					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
+//				}
 			} else {
 				// Allow us to fallback onto Fluid handlers for the native implementations
 				return handleExtraIngredientTypes(runtime, underMouse);
@@ -143,24 +143,25 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 		}
 	}
 
-	/**
-	 * Wrapper around Archs fluid stack to provide JEI with the correct type for each platform
-	 * @implNote This might not work.
-	 */
-	public static final IIngredientTypeWithSubtypes<Fluid, FluidStack> FLUID_STACK = new IIngredientTypeWithSubtypes<>() {
-		@Override
-		public Class<? extends FluidStack> getIngredientClass() {
-			return FluidStack.class;
-		}
-
-		@Override
-		public Class<? extends Fluid> getIngredientBaseClass() {
-			return Fluid.class;
-		}
-
-		@Override
-		public Fluid getBase(FluidStack ingredient) {
-			return ingredient.getFluid();
-		}
-	};
+	// TODO see above TODO about registering an Arch fluid stack ingredient type
+//	/**
+//	 * Wrapper around Archs fluid stack to provide JEI with the correct type for each platform
+//	 * @implNote This might not work.
+//	 */
+//	public static final IIngredientTypeWithSubtypes<Fluid, FluidStack> FLUID_STACK = new IIngredientTypeWithSubtypes<>() {
+//		@Override
+//		public Class<? extends FluidStack> getIngredientClass() {
+//			return FluidStack.class;
+//		}
+//
+//		@Override
+//		public Class<? extends Fluid> getIngredientBaseClass() {
+//			return Fluid.class;
+//		}
+//
+//		@Override
+//		public Fluid getBase(FluidStack ingredient) {
+//			return ingredient.getFluid();
+//		}
+//	};
 }
