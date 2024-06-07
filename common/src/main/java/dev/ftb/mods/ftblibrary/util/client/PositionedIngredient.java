@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public record PositionedIngredient(Object ingredient, Rect2i area, boolean tooltip) {
     public static Optional<PositionedIngredient> of(Object ingredient, Widget widget, boolean tooltip) {
-        return Optional.of(new PositionedIngredient(ingredient, new Rect2i(widget.getPosX(), widget.getPosY(), widget.getWidth(), widget.getHeight()), tooltip));
+        return Optional.of(new PositionedIngredient(ingredient, new Rect2i(widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight()), tooltip));
     }
 
     public static Optional<PositionedIngredient> of(Object ingredient, Widget widget) {
