@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.integration;
 
+import dev.architectury.fluid.FluidStack;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;

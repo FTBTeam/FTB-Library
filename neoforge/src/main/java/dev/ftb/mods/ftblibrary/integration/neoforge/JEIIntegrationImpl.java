@@ -12,8 +12,9 @@ import java.util.Optional;
 
 public class JEIIntegrationImpl {
     public static Optional<IClickableIngredient<?>> handleExtraIngredientTypes(IJeiRuntime runtime, PositionedIngredient underMouse) {
-        if (underMouse.ingredient() instanceof FluidStack stack) {
-            Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(NeoForgeTypes.FLUID_STACK, stack);
+        if (underMouse.ingredient() instanceof dev.architectury.fluid.FluidStack archStack) {
+            FluidStack neoStack = new FluidStack(archStack.getFluid(), (int) archStack.getAmount());
+            Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(NeoForgeTypes.FLUID_STACK, neoStack);
             if (typed.isPresent()) {
                 return Optional.of(new JEIIntegration.ClickableIngredient<>(typed.get(), underMouse.area()));
             }
