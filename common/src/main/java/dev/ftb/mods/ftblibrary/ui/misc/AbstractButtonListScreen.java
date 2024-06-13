@@ -135,6 +135,7 @@ public abstract class AbstractButtonListScreen extends AbstractThreePanelScreen<
 
 			if (hasSearchBox) {
 				add(searchBox);
+				searchBox.setFocused(true);
 			}
 		}
 
