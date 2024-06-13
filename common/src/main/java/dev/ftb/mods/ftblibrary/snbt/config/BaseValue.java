@@ -17,13 +17,12 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 	public final String key;
 	public final T defaultValue;
 	private T value;
-	boolean excluded;
-	BooleanSupplier enabled = SNBTUtils.ALWAYS_TRUE;
+	protected boolean excluded;
+	protected BooleanSupplier enabled = SNBTUtils.ALWAYS_TRUE;
 	protected int displayOrder = 0;
+	protected List<String> comment = new ArrayList<>(0);
 
-	List<String> comment = new ArrayList<>(0);
-
-	public BaseValue(@Nullable SNBTConfig c, String n, T def) {
+	protected BaseValue(@Nullable SNBTConfig c, String n, T def) {
 		parent = c;
 		key = n;
 		defaultValue = def;
