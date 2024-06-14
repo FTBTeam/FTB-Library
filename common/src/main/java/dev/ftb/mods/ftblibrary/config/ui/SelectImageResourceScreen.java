@@ -127,16 +127,15 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
                 StringUtils.ignoreResourceLocationErrors = false;
 
                 textures.keySet().forEach(rl -> {
-                    if (!ResourceLocation.isValidResourceLocation(rl.toString())) {
-                        FTBLibrary.LOGGER.warn("Image " + rl + " has invalid path! Report this to author of '" + rl.getNamespace() + "'!");
-                    } else if (isValidImage(rl)) {
-                        images.add(rl);
-                    }
+                    ResourceLocation.read(rl.toString()).result().ifPresentOrElse(
+                            images::add,
+                            () -> FTBLibrary.LOGGER.warn("Image {} has invalid path! Report this to author of '{}'!", rl, rl.getNamespace())
+                    );
                 });
 
                 cachedImages = images.stream().sorted().map(res -> {
                     // shorten <mod>:textures/A/B.png to <mod>:A/B
-                    ResourceLocation res1 = new ResourceLocation(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
+                    ResourceLocation res1 = ResourceLocation.fromNamespaceAndPath(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
                     TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
                     SpriteContents contents = sprite.contents();
                     if (contents.name().equals(MissingTextureAtlasSprite.getLocation())) {

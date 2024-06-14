@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.OptionalLong;
 
 public class ImageResourceConfig extends ResourceConfigValue<ResourceLocation> {
-	public static final ResourceLocation NONE = new ResourceLocation(FTBLibrary.MOD_ID, "none");
+	public static final ResourceLocation NONE = FTBLibrary.rl("none");
 
 	private boolean allowEmpty = true;
 

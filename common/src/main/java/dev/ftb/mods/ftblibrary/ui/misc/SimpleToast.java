@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
-import com.mojang.blaze3d.platform.Lighting;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
@@ -14,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class SimpleToast implements Toast {
-	private static final ResourceLocation BACKGROUND_SPRITE = new ResourceLocation("toast/advancement");
+	private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.parse("toast/advancement");
 	private boolean hasPlayedSound = false;
 
 	@Override

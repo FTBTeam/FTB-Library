@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.common.base.Objects;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -18,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 public class ImageIcon extends Icon implements IResourceIcon {
-	public static final ResourceLocation MISSING_IMAGE = new ResourceLocation(FTBLibrary.MOD_ID, "textures/gui/missing_image.png");
+	public static final ResourceLocation MISSING_IMAGE = FTBLibrary.rl("textures/gui/missing_image.png");
 
 	public final ResourceLocation texture;
 	public float minU, minV, maxU, maxV;
@@ -84,15 +85,22 @@ public class ImageIcon extends Icon implements IResourceIcon {
 
 			var m = graphics.pose().last().pose();
 			var tesselator = Tesselator.getInstance();
-			var buffer = tesselator.getBuilder();
-			RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+			RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-			buffer.vertex(m, x, y + h, 0).color(r, g, b, a).uv((float) (x / tileSize), (float) ((y + h) / tileSize)).endVertex();
-			buffer.vertex(m, x + w, y + h, 0).color(r, g, b, a).uv((float) ((x + w) / tileSize), (float) ((y + h) / tileSize)).endVertex();
-			buffer.vertex(m, x + w, y, 0).color(r, g, b, a).uv((float) ((x + w) / tileSize), (float) (y / tileSize)).endVertex();
-			buffer.vertex(m, x, y, 0).color(r, g, b, a).uv((float) (x / tileSize), (float) (y / tileSize)).endVertex();
-			tesselator.end();
+			var buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+			buffer.addVertex(m, x, y + h, 0)
+					.setUv((float) (x / tileSize), (float) ((y + h) / tileSize))
+					.setColor(r, g, b, a);
+			buffer.addVertex(m, x + w, y + h, 0)
+					.setUv((float) ((x + w) / tileSize), (float) ((y + h) / tileSize))
+					.setColor(r, g, b, a);
+			buffer.addVertex(m, x + w, y, 0)
+					.setUv((float) ((x + w) / tileSize), (float) (y / tileSize))
+					.setColor(r, g, b, a);
+			buffer.addVertex(m, x, y, 0)
+					.setUv((float) (x / tileSize), (float) (y / tileSize))
+					.setColor(r, g, b, a);
+			BufferUploader.drawWithShader(buffer.buildOrThrow());
 		}
 	}
 

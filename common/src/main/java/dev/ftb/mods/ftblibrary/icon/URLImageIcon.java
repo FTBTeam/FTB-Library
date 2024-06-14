@@ -27,7 +27,7 @@ public class URLImageIcon extends ImageIcon {
 	}
 
 	public URLImageIcon(URI uri) {
-		this(new ResourceLocation("remote_image:" + UndashedUuid.toString(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
+		this(ResourceLocation.parse("remote_image:" + UndashedUuid.toString(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
 	}
 
 	@Override

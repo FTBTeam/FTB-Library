@@ -53,16 +53,23 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
 		var maxU = sprite.getU1();
 		var maxV = sprite.getV1();
 
-		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		RenderSystem.setShaderTexture(0, sprite.atlasLocation());
-		var buffer = Tesselator.getInstance().getBuilder();
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-		buffer.vertex(m, x, y, 0F).color(r, g, b, a).uv(minU, minV).endVertex();
-		buffer.vertex(m, x, y + h, 0F).color(r, g, b, a).uv(minU, maxV).endVertex();
-		buffer.vertex(m, x + w, y + h, 0F).color(r, g, b, a).uv(maxU, maxV).endVertex();
-		buffer.vertex(m, x + w, y, 0F).color(r, g, b, a).uv(maxU, minV).endVertex();
-		BufferUploader.drawWithShader(buffer.end());
+		var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+		buffer.addVertex(m, x, y, 0F)
+				.setUv(minU, minV)
+				.setColor(r, g, b, a);
+		buffer.addVertex(m, x, y + h, 0F)
+				.setUv(minU, maxV)
+				.setColor(r, g, b, a);
+		buffer.addVertex(m, x + w, y + h, 0F)
+				.setUv(maxU, maxV)
+				.setColor(r, g, b, a);
+		buffer.addVertex(m, x + w, y, 0F)
+				.setUv(maxU, minV)
+				.setColor(r, g, b, a);
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	@Override
@@ -79,7 +86,7 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
 	@Nullable
 	public PixelBuffer createPixelBuffer() {
 		try {
-			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(id.getNamespace(), "textures/" + id.getPath() + ".png")).orElseThrow().open());
+			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/" + id.getPath() + ".png")).orElseThrow().open());
 		} catch (Exception ex) {
 			return null;
 		}

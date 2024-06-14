@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
 import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
 import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
@@ -44,7 +45,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class REIIntegration implements REIClientPlugin {
-	public static final ResourceLocation ID = new ResourceLocation("ftblibrary", "sidebar_button");
+	public static final ResourceLocation ID = FTBLibrary.rl("sidebar_button");
 
 	private static final ResourceSearchMode<ItemStack> REI_ITEMS = new ResourceSearchMode<>() {
 		@Override
@@ -101,7 +102,7 @@ public class REIIntegration implements REIClientPlugin {
 
 		@Override
 		public DataResult<SidebarButtonEntry> read(CompoundTag object) {
-			var id = new ResourceLocation(object.getString("id"));
+			var id = ResourceLocation.parse(object.getString("id"));
 			var json = (JsonObject) JsonParser.parseString(object.getString("json"));
 			return DataResult.success(new SidebarButtonEntry(createSidebarButton(id, null, json)), Lifecycle.stable());
 		}

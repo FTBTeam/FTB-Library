@@ -77,12 +77,11 @@ public class GuiHelper {
 	}
 
 	public static void drawTexturedRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
-		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-		var buffer = Tesselator.getInstance().getBuilder();
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+		var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 		addRectToBufferWithUV(graphics, buffer, x, y, w, h, col, u0, v0, u1, v1);
-		BufferUploader.drawWithShader(buffer.end());
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	public static void addRectToBuffer(GuiGraphics graphics, BufferBuilder buffer, int x, int y, int w, int h, Color4I col) {
@@ -95,10 +94,10 @@ public class GuiHelper {
 		var g = col.greeni();
 		var b = col.bluei();
 		var a = col.alphai();
-		buffer.vertex(m, x, y + h, 0).color(r, g, b, a).endVertex();
-		buffer.vertex(m, x + w, y + h, 0).color(r, g, b, a).endVertex();
-		buffer.vertex(m, x + w, y, 0).color(r, g, b, a).endVertex();
-		buffer.vertex(m, x, y, 0).color(r, g, b, a).endVertex();
+		buffer.addVertex(m, x, y + h, 0).setColor(r, g, b, a);
+		buffer.addVertex(m, x + w, y + h, 0).setColor(r, g, b, a);
+		buffer.addVertex(m, x + w, y, 0).setColor(r, g, b, a);
+		buffer.addVertex(m, x, y, 0).setColor(r, g, b, a);
 	}
 
 	public static void addRectToBufferWithUV(GuiGraphics graphics, BufferBuilder buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
@@ -111,10 +110,10 @@ public class GuiHelper {
 		var g = col.greeni();
 		var b = col.bluei();
 		var a = col.alphai();
-		buffer.vertex(m, x, y + h, 0).color(r, g, b, a).uv(u0, v1).endVertex();
-		buffer.vertex(m, x + w, y + h, 0).color(r, g, b, a).uv(u1, v1).endVertex();
-		buffer.vertex(m, x + w, y, 0).color(r, g, b, a).uv(u1, v0).endVertex();
-		buffer.vertex(m, x, y, 0).color(r, g, b, a).uv(u0, v0).endVertex();
+		buffer.addVertex(m, x, y + h, 0).setUv(u0, v1).setColor(r, g, b, a);
+		buffer.addVertex(m, x + w, y + h, 0).setUv(u1, v1).setColor(r, g, b, a);
+		buffer.addVertex(m, x + w, y, 0).setUv(u1, v0).setColor(r, g, b, a);
+		buffer.addVertex(m, x, y, 0).setUv(u0, v0).setColor(r, g, b, a);
 	}
 
 	public static void drawHollowRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, boolean roundEdges) {
@@ -124,9 +123,7 @@ public class GuiHelper {
 		}
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		var tesselator = Tesselator.getInstance();
-		var buffer = tesselator.getBuilder();
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 		addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, col);
 		addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
@@ -139,14 +136,12 @@ public class GuiHelper {
 			addRectToBuffer(graphics, buffer, x, y + h - 1, w, 1, col);
 		}
 
-		tesselator.end();
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	public static void drawRectWithShade(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, int intensity) {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		var tesselator = Tesselator.getInstance();
-		var buffer = tesselator.getBuilder();
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		addRectToBuffer(graphics, buffer, x, y, w - 1, 1, col);
 		addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 1, col);
 		col = col.mutable().addBrightness(-intensity);
@@ -155,7 +150,7 @@ public class GuiHelper {
 		col = col.mutable().addBrightness(-intensity);
 		addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
 		addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 1, 1, col);
-		tesselator.end();
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	public static void drawGradientRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col1, Color4I col2) {
@@ -185,13 +180,12 @@ public class GuiHelper {
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		var m = graphics.pose().last().pose();
-		var renderer = t.getBuilder();
-		renderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-		renderer.vertex(m, x, y, 0).color(red, green, blue, alpha).endVertex();
-		renderer.vertex(m, x, y + height, 0).color(red, green, blue, alpha).endVertex();
-		renderer.vertex(m, x + width, y + height, 0).color(red, green, blue, alpha).endVertex();
-		renderer.vertex(m, x + width, y, 0).color(red, green, blue, alpha).endVertex();
-		t.end();
+		var buffer = t.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		buffer.addVertex(m, x, y, 0).setColor(red, green, blue, alpha);
+		buffer.addVertex(m, x, y + height, 0).setColor(red, green, blue, alpha);
+		buffer.addVertex(m, x + width, y + height, 0).setColor(red, green, blue, alpha);
+		buffer.addVertex(m, x + width, y, 0).setColor(red, green, blue, alpha);
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	public static void pushScissor(Window screen, int x, int y, int w, int h) {

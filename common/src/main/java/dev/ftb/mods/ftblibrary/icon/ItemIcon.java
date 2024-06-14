@@ -47,7 +47,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
 
 		return new LazyIcon(() -> {
 			var s = lazyStackString.split(" ", 4);
-			var stack = BuiltInRegistries.ITEM.get(new ResourceLocation(s[0])).getDefaultInstance();
+			var stack = BuiltInRegistries.ITEM.get(ResourceLocation.parse(s[0])).getDefaultInstance();
 
 			if (s.length >= 2 && !s[1].equals("1")) {
 				stack.setCount(Integer.parseInt(s[1]));
