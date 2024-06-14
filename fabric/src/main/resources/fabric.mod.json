@@ -33,7 +33,7 @@
 	],
 	"depends": {
 		"fabric": ">=${fabricapiversion}",
-		"minecraft": "~1.20",
+		"minecraft": "~${mcversion}",
 		"architectury": ">=${archversion}"
 	}
 }
