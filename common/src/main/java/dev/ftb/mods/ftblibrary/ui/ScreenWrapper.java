@@ -117,7 +117,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		wrappedGui.draw(graphics, theme, x, y, w, h);
 		wrappedGui.drawForeground(graphics, theme, x, y, w, h);
 
-		wrappedGui.addMouseOverText(tooltipList); //getContextMenu().orElse(wrappedGui).addMouseOverText(tooltipList);
+		wrappedGui.addMouseOverText(tooltipList);
 
 		if (!tooltipList.shouldRender()) {
 			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
@@ -137,7 +137,6 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 			graphics.renderTooltip(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
 			graphics.setColor(1f, 1f, 1f, 1f);
 			graphics.pose().translate(0, 0, -600);
-//			tooltipList.render(graphics, mouseX, Math.max(mouseY, 18), wrappedGui.getScreen().getGuiScaledWidth(), wrappedGui.getScreen().getGuiScaledHeight(), theme.getFont());
 		}
 
 		tooltipList.reset();
