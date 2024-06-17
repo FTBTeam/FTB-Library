@@ -18,8 +18,6 @@ dependencies {
 	modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.20.4:api"
 }
 
-def ENV = System.getenv()
-
 test {
 	useJUnitPlatform()
 }
@@ -42,32 +40,10 @@ artifacts {
 
 publishing {
 	publications {
-		mavenCommon(MavenPublication) {
-			artifactId = rootProject.archivesBaseName
+		mavenForge(MavenPublication) {
+			artifactId = "${rootProject.archives_base_name}"
 			version ftbPublishing.mavenVersion
 			from components.java
-		}
-	}
-
-	repositories {
-		if (ftbPublishing.ftbToken) {
-			maven {
-				url ftbPublishing.ftbURL
-				credentials {
-					username = ftbPublishing.ftbUser
-					password = ftbPublishing.ftbToken
-				}
-			}
-		}
-
-		if (ftbPublishing.sapsToken) {
-			maven {
-				url ftbPublishing.sapsURL
-				credentials {
-					username = ftbPublishing.sapsUser
-					password = ftbPublishing.sapsToken
-				}
-			}
 		}
 	}
 }
