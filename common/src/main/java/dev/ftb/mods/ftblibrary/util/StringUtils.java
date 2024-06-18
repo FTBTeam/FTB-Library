@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.util;
 
 import dev.ftb.mods.ftblibrary.math.Bits;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Nullable;
 

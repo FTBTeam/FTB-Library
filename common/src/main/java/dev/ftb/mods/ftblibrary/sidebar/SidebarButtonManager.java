@@ -66,7 +66,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 		for (var domain : manager.getNamespaces()) {
 			try {
 				// TODO: Use an alternative way to register sidebar groups because jsons are a bit messy
-				for (var resource : manager.getResourceStack((new ResourceLocation(domain, "sidebar_button_groups.json")))) {
+				for (var resource : manager.getResourceStack(ResourceLocation.fromNamespaceAndPath(domain, "sidebar_button_groups.json"))) {
 					var json = readJson(resource);
 
 					for (var entry : json.getAsJsonObject().entrySet()) {
@@ -83,7 +83,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 								pinned = groupJson.get("pinned").getAsBoolean();
 							}
 
-							var group = new SidebarButtonGroup(new ResourceLocation(domain, entry.getKey()), y, pinned);
+							var group = new SidebarButtonGroup(ResourceLocation.fromNamespaceAndPath(domain, entry.getKey()), y, pinned);
 							groupMap.put(group.getId(), group);
 						}
 					}
@@ -95,7 +95,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 		for (var domain : manager.getNamespaces()) {
 			try {
-				for (var resource : manager.getResourceStack(new ResourceLocation(domain, "sidebar_buttons.json"))) {
+				for (var resource : manager.getResourceStack(ResourceLocation.fromNamespaceAndPath(domain, "sidebar_buttons.json"))) {
 					var json = readJson(resource);
 
 					if (json.isJsonObject()) {
@@ -111,13 +111,13 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 									continue;
 								}
 
-								var group = groupMap.get(new ResourceLocation(buttonJson.get("group").getAsString()));
+								var group = groupMap.get(ResourceLocation.parse(buttonJson.get("group").getAsString()));
 
 								if (group == null) {
 									continue;
 								}
 
-								var button = new SidebarButton(new ResourceLocation(domain, entry.getKey()), group, buttonJson);
+								var button = new SidebarButton(ResourceLocation.fromNamespaceAndPath(domain, entry.getKey()), group, buttonJson);
 
 								group.getButtons().add(button);
 

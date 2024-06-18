@@ -40,8 +40,10 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
                 return true;
             } else if (search.startsWith("@")) {
                 return RegistrarManager.getId(getStack().getFluid(), Registries.FLUID).getNamespace().contains(search.substring(1));
-            } else if (search.startsWith("#") && ResourceLocation.isValidResourceLocation(search.substring(1))) {
-                return getStack().getFluid().builtInRegistryHolder().is(TagKey.create(Registries.FLUID, new ResourceLocation(search.substring(1))));
+            } else if (search.startsWith("#")) {
+                return ResourceLocation.read(search.substring(1)).result()
+                        .map(resloc -> getStack().getFluid().builtInRegistryHolder().is(TagKey.create(Registries.FLUID, resloc)))
+                        .orElse(false);
             } else {
                 return getStack().getName().getString().toLowerCase().contains(search);
             }

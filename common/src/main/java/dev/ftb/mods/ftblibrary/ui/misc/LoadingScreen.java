@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -8,6 +9,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.Theme;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -51,9 +53,7 @@ public class LoadingScreen extends BaseScreen {
 
 			var col = Color4I.WHITE;
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			var tesselator = Tesselator.getInstance();
-			var buffer = tesselator.getBuilder();
-			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 			GuiHelper.addRectToBuffer(graphics, buffer, x1, y1 + 1, 1, h1 - 2, col);
 			GuiHelper.addRectToBuffer(graphics, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
@@ -65,7 +65,9 @@ public class LoadingScreen extends BaseScreen {
 			w1 -= 2;
 			h1 -= 2;
 
-			timer += Minecraft.getInstance().getDeltaFrameTime();
+			DeltaTracker d = Minecraft.getInstance().getTimer();
+
+			timer += d.getRealtimeDeltaTicks();
 			timer = timer % (h1 * 2F);
 
 			for (var oy = 0; oy < h1; oy++) {
@@ -80,7 +82,7 @@ public class LoadingScreen extends BaseScreen {
 				}
 			}
 
-			tesselator.end();
+			BufferUploader.drawWithShader(buffer.buildOrThrow());
 
 			var s = getText();
 

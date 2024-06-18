@@ -8,8 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public interface PlayerDisplayNameCallback {
-    ResourceLocation EARLY = new ResourceLocation(FTBLibrary.MOD_ID, "early");
-    ResourceLocation LATE = new ResourceLocation(FTBLibrary.MOD_ID, "late");
+    ResourceLocation EARLY = FTBLibrary.rl("early");
+    ResourceLocation LATE = FTBLibrary.rl("late");
 
     Event<PlayerDisplayNameCallback> EVENT = EventFactory.createWithPhases(PlayerDisplayNameCallback.class,
             (listeners) -> ((player, originalName) -> {

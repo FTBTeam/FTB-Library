@@ -11,14 +11,10 @@ dependencies {
 		exclude group: "dev.architectury"
 	}
 
-// 	modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
- 	modCompileOnly("mezz.jei:jei-1.20.4-common-api:${jei_version}")
+ 	modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
 
-//	modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+${minecraft_version}:api"
-	modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.20.4:api"
+	modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+${minecraft_version}:api"
 }
-
-def ENV = System.getenv()
 
 test {
 	useJUnitPlatform()
@@ -43,31 +39,9 @@ artifacts {
 publishing {
 	publications {
 		mavenCommon(MavenPublication) {
-			artifactId = rootProject.archivesBaseName
+			artifactId = "${rootProject.archives_base_name}"
 			version ftbPublishing.mavenVersion
 			from components.java
-		}
-	}
-
-	repositories {
-		if (ftbPublishing.ftbToken) {
-			maven {
-				url ftbPublishing.ftbURL
-				credentials {
-					username = ftbPublishing.ftbUser
-					password = ftbPublishing.ftbToken
-				}
-			}
-		}
-
-		if (ftbPublishing.sapsToken) {
-			maven {
-				url ftbPublishing.sapsURL
-				credentials {
-					username = ftbPublishing.sapsUser
-					password = ftbPublishing.sapsToken
-				}
-			}
 		}
 	}
 }

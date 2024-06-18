@@ -139,16 +139,18 @@ public class ClientUtils {
 				return false;
 			}
 			case "custom":
-				if (ResourceLocation.isValidResourceLocation(path)) {
-					return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(path))).isPresent();
-				}
+				return ResourceLocation.read(path).result()
+						.map(rl -> CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent())
+						.orElse(false);
 			default:
-				if (ResourceLocation.isValidResourceLocation(scheme + ":" + path)) {
-					return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(new ResourceLocation(scheme, path))).isPresent();
+				boolean res = ResourceLocation.read(scheme + ":" + path).result()
+						.map(rl -> CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent())
+						.orElse(false);
+				if (!res) {
+					FTBLibrary.LOGGER.warn("invalid scheme/path resourcelocation for handleClick(): {}:{}", scheme, path);
 				}
+				return res;
 		}
-		FTBLibrary.LOGGER.warn("invalid scheme/path resourcelocation for handleClick(): {}:{}", scheme, path);
-		return false;
 	}
 
 	public static HolderLookup.Provider registryAccess() {

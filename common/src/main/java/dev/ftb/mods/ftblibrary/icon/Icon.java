@@ -211,7 +211,7 @@ public abstract class Icon implements Drawable {
 			}
 		}
 
-		return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(new ResourceLocation(id)) : new AtlasSpriteIcon(new ResourceLocation(id));
+		return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(ResourceLocation.parse(id)) : new AtlasSpriteIcon(ResourceLocation.parse(id));
 	}
 
 	private static boolean isNone(String id) {

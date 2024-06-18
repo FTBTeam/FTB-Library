@@ -1,9 +1,6 @@
 plugins {
 	id "com.github.johnrengelman.shadow" version "7.0.0"
-	id "com.matthewprenger.cursegradle" version "1.4.0"
 }
-
-def ENV = System.getenv()
 
 architectury {
 	platformSetupLoomIde()
@@ -39,8 +36,7 @@ dependencies {
 	modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rootProject.rei_version}"
-//	modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
-	modCompileOnly("mezz.jei:jei-1.20.4-neoforge-api:${jei_version}")
+	modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
@@ -97,26 +93,6 @@ components.java {
 	}
 }
 
-if (ENV.CURSEFORGE_KEY) {
-	curseforge {
-		apiKey = ENV.CURSEFORGE_KEY
-		project {
-			id = project.curseforge_id_forge
-			releaseType = ftbPublishing.relType
-			addGameVersion "NeoForge"
-			addGameVersion rootProject.minecraft_version
-			mainArtifact(remapJar.archiveFile)
-			relations {
-				requiredDependency 'architectury-api'
-				optionalDependency 'jei'
-				optionalDependency 'roughly-enough-items'
-			}
-			changelog = ENV.CHANGELOG  // expected to exist if ENV.CURSEFORGE does
-			changelogType = 'markdown'
-		}
-	}
-}
-
 publishing {
 	publications {
 		mavenForge(MavenPublication) {
@@ -125,28 +101,4 @@ publishing {
 			from components.java
 		}
 	}
-
-	repositories {
-		if (ftbPublishing.ftbToken) {
-			maven {
-				url ftbPublishing.ftbURL
-				credentials {
-					username = ftbPublishing.ftbUser
-					password = ftbPublishing.ftbToken
-				}
-			}
-		}
-
-		if (ftbPublishing.sapsToken) {
-			maven {
-				url ftbPublishing.sapsURL
-				credentials {
-					username = ftbPublishing.sapsUser
-					password = ftbPublishing.sapsToken
-				}
-			}
-		}
-	}
 }
-
-rootProject.tasks.getByName("curseforgePublish").dependsOn tasks.getByName("curseforge")

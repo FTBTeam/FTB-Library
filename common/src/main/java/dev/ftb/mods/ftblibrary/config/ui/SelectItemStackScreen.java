@@ -42,8 +42,10 @@ public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
                 return true;
             } else if (search.startsWith("@")) {
                 return RegistrarManager.getId(getStack().getItem(), Registries.ITEM).getNamespace().contains(search.substring(1));
-            } else if (search.startsWith("#") && ResourceLocation.isValidResourceLocation(search.substring(1))) {
-                return getStack().is(TagKey.create(Registries.ITEM, new ResourceLocation(search.substring(1))));
+            } else if (search.startsWith("#")) {
+                return ResourceLocation.read(search.substring(1)).result()
+                        .map(resloc -> getStack().is(TagKey.create(Registries.ITEM, resloc)))
+                        .orElse(false);
             } else {
                 return getStack().getHoverName().getString().toLowerCase().contains(search);
             }

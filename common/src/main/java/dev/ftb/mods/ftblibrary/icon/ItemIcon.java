@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.registry.registries.RegistrarManager;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -47,7 +48,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
 
 		return new LazyIcon(() -> {
 			var s = lazyStackString.split(" ", 4);
-			var stack = BuiltInRegistries.ITEM.get(new ResourceLocation(s[0])).getDefaultInstance();
+			var stack = BuiltInRegistries.ITEM.get(ResourceLocation.parse(s[0])).getDefaultInstance();
 
 			if (s.length >= 2 && !s[1].equals("1")) {
 				stack.setCount(Integer.parseInt(s[1]));
@@ -60,9 +61,10 @@ public class ItemIcon extends Icon implements IResourceIcon {
 			if (s.length >= 4 && !s[3].equals("null")) {
 				try {
 					DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseTag(s[3]))
-							.ifSuccess(stack::applyComponents);
+							.resultOrPartial(err -> FTBLibrary.LOGGER.error("can't parse data component map for {}: {}", s[3], err))
+							.ifPresent(stack::applyComponents);
 				} catch (CommandSyntaxException ex) {
-					ex.printStackTrace();
+					FTBLibrary.LOGGER.error("can't parse data component tag for item icon: {} ({})", lazyStackString, ex.getMessage());
 				}
 			}
 
@@ -94,11 +96,11 @@ public class ItemIcon extends Icon implements IResourceIcon {
 	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
 		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
-		poseStack.translate(x + w / 2D, y + h / 2D, 100);
+		poseStack.translate(x + w / 2D, y + h / 2D, 0);
 
 		if (w != 16 || h != 16) {
-			int s = Math.min(w, h);
-			poseStack.scale(s / 16F, s / 16F, s / 16F);
+			float s = Math.min(w, h) / 16F;
+			poseStack.scale(s, s, s);
 		}
 
 		GuiHelper.drawItem(graphics, getStack(), 0, true, null);
@@ -110,11 +112,11 @@ public class ItemIcon extends Icon implements IResourceIcon {
 	public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
 		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
-		poseStack.translate(x + w / 2D, y + h / 2D, 100);
+		poseStack.translate(x + w / 2D, y + h / 2D, 0);
 
 		if (w != 16 || h != 16) {
-			int s = Math.min(w, h);
-			poseStack.scale(s / 16F, s / 16F, s / 16F);
+			float s = Math.min(w, h) / 16F;
+			poseStack.scale(s, s, s);
 		}
 
 		GuiHelper.drawItem(graphics, getStack(), 0, false, null);

@@ -45,7 +45,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 	@Override
 	@NotNull
 	public ResourceLocation getPluginUid() {
-		return new ResourceLocation(FTBLibrary.MOD_ID, "jei");
+		return FTBLibrary.rl("jei");
 	}
 
 	@Override
