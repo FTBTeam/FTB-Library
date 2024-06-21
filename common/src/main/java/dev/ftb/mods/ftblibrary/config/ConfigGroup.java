@@ -276,7 +276,10 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
 	 */
 	public <E, CV extends ConfigValue<E>> ListConfig<E, CV> addList(String id, List<E> value, CV type, E def) {
 		type.setDefaultValue(def);
-		return add(id, new ListConfig<>(type), value, value::retainAll, Collections.emptyList());
+		return add(id, new ListConfig<>(type), value, c -> {
+			value.clear();
+			value.addAll(c);
+		}, Collections.emptyList());
 	}
 
 	/**
