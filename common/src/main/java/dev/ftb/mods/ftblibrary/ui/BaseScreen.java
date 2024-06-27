@@ -349,6 +349,10 @@ public abstract class BaseScreen extends Panel {
 		return modalPanels.isEmpty() ? this : modalPanels.peekFirst();
 	}
 
+	public int getMaxZLevel() {
+		return modalPanels.stream().map(ModalPanel::getExtraZlevel).max(Integer::compare).orElse(0);
+	}
+
 	@Override
 	public boolean mousePressed(MouseButton button) {
 		if (button == MouseButton.BACK) {

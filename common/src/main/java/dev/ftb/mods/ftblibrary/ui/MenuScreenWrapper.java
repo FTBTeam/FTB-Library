@@ -137,15 +137,16 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
 		wrappedGui.addMouseOverText(tooltipList);
 
+		int zLevel = wrappedGui.getMaxZLevel() + 100;
+
+		graphics.pose().pushPose();
 		if (!tooltipList.shouldRender()) {
 			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
 				if (underMouse.tooltip()) {
 					var ingredient = underMouse.ingredient();
 					if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
-						graphics.pose().pushPose();
-						graphics.pose().translate(0, 0, tooltipList.zOffsetItemTooltip);
+						graphics.pose().translate(0, 0, zLevel);
 						graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
-						graphics.pose().popPose();
 					}
 				}
 			});
@@ -154,12 +155,12 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 					.reduce((c1, c2) -> c1.copy().append("\n").append(c2))
 					.orElse(Component.empty())
 			);
-			graphics.pose().translate(0, 0, 600);
+			graphics.pose().translate(0, 0, zLevel);
 			graphics.setColor(1f, 1f, 1f, 0.8f);
 			graphics.renderTooltip(theme.getFont(), lines, DefaultTooltipPositioner.INSTANCE, mouseX, Math.max(mouseY, 18));
 			graphics.setColor(1f, 1f, 1f, 1f);
-			graphics.pose().translate(0, 0, -600);
 		}
+		graphics.pose().popPose();
 
 		tooltipList.reset();
 
