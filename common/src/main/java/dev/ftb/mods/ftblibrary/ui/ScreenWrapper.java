@@ -119,25 +119,26 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
 		wrappedGui.addMouseOverText(tooltipList);
 
+		int zLevel = wrappedGui.getMaxZLevel() + 100;
+
+		graphics.pose().pushPose();
 		if (!tooltipList.shouldRender()) {
 			wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
 				if (underMouse.tooltip()) {
 					var ingredient = underMouse.ingredient();
 					if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
-						graphics.pose().pushPose();
-						graphics.pose().translate(0, 0, tooltipList.zOffsetItemTooltip);
+						graphics.pose().translate(0, 0, zLevel);
 						graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
-						graphics.pose().popPose();
 					}
 				}
 			});
 		} else {
-			graphics.pose().translate(0, 0, 600);
+			graphics.pose().translate(0, 0, zLevel);
 			graphics.setColor(1f, 1f, 1f, 0.8f);
 			graphics.renderTooltip(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
 			graphics.setColor(1f, 1f, 1f, 1f);
-			graphics.pose().translate(0, 0, -600);
 		}
+		graphics.pose().popPose();
 
 		tooltipList.reset();
 	}
