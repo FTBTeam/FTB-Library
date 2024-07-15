@@ -9,7 +9,7 @@ version = "${version}"
 displayName = "FTB Library"
 authors = "FTB Team"
 description = '''
-FTB Library adds nothing.
+Foundational library for FTB mods.
 '''
 
 [[dependencies.ftblibrary]]
@@ -31,4 +31,11 @@ modId = "architectury"
 mandatory = true
 versionRange = "[${archversion},)"
 ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.ftblibrary]]
+modId = "ftbquests"
+mandatory = false
+versionRange = "[2001.4.8,)"
+ordering = "BEFORE"
 side = "BOTH"
