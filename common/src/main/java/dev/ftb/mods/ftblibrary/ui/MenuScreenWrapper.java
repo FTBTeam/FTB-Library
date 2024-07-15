@@ -15,8 +15,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.BinaryOperator;
 
 /**
  * @author LatvianModder
