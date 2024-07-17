@@ -52,11 +52,7 @@ public class ClientTextComponentUtils {
 					c.height = Integer.parseInt(map.get("height"));
 				}
 
-				switch (map.getOrDefault("align", "center").toLowerCase()) {
-					case "left" -> c.align = 0;
-					case "center" -> c.align = 1;
-					case "right" -> c.align = 2;
-				}
+				c.align = ImageComponent.ImageAlign.fromString(map.getOrDefault("align", "center"));
 
 				c.fit = map.getOrDefault("fit", "false").equals("true");
 

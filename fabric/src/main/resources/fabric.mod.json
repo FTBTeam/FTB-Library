@@ -3,7 +3,7 @@
 	"id": "ftblibrary",
 	"version": "${version}",
 	"name": "FTB Library",
-	"description": "FTB Library adds nothing.",
+	"description": "Foundational library for FTB mods.",
 	"authors": [
 		"FTB Team"
 	],
@@ -29,5 +29,8 @@
 		"fabric": ">=${fabricapiversion}",
 		"minecraft": "~1.20",
 		"architectury": ">=${archversion}"
+	},
+	"breaks": {
+		"ftbquests": "<2001.4.8"
 	}
 }
