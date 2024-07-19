@@ -35,6 +35,7 @@ public abstract class BaseScreen extends Panel {
 	private long lastClickTime = 0L;
 	private final Deque<ModalPanel> modalPanels;
 	private Widget focusedWidget = null;
+	private boolean renderBlur = true;
 
 	public BaseScreen() {
 		super(null);
@@ -102,6 +103,20 @@ public abstract class BaseScreen extends Panel {
 
 	public boolean onInit() {
 		return true;
+	}
+
+	/**
+	 * @return if the GUI should render a blur effect behind it
+	 */
+	public boolean shouldRenderBlur() {
+		return renderBlur;
+	}
+
+	/**
+	 * @param renderBlur sets if the GUI should render a blur effect behind it
+	 */
+	public void setRenderBlur(boolean renderBlur) {
+		this.renderBlur = renderBlur;
 	}
 
 	/**
@@ -337,6 +352,8 @@ public abstract class BaseScreen extends Panel {
 	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 		theme.drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
 	}
+
+
 
 	public boolean drawDefaultBackground(GuiGraphics graphics) {
 		return true;
