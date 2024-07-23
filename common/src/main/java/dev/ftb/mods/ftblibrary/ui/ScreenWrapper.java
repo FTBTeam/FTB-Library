@@ -150,6 +150,14 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 		}
 	}
 
+
+	@Override
+	protected void renderBlurredBackground(float f) {
+		if(wrappedGui.shouldRenderBlur()) {
+			super.renderBlurredBackground(f);
+		}
+	}
+
 	@Override
 	public void tick() {
 		super.tick();

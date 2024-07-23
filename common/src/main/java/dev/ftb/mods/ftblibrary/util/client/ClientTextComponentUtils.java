@@ -3,12 +3,15 @@ package dev.ftb.mods.ftblibrary.util.client;
 import dev.ftb.mods.ftblibrary.util.CustomComponentParser;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TextComponentParser;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
+import static net.minecraft.network.chat.CommonComponents.ELLIPSIS;
 
 public class ClientTextComponentUtils {
 	private static final Function<String, Component> DEFAULT_STRING_TO_COMPONENT = ClientTextComponentUtils::defaultStringToComponent;
@@ -58,5 +61,16 @@ public class ClientTextComponentUtils {
 		}
 
 		return parse(I18n.get(s));
+	}
+
+	public static FormattedText ellipsize(Font font, FormattedText text, int maxWidth) {
+		final int strWidth = font.width(text);
+		final int ellipsisWidth = font.width(ELLIPSIS);
+		if (strWidth > maxWidth) {
+			return ellipsisWidth >= maxWidth ?
+					font.substrByWidth(text, maxWidth) :
+					FormattedText.composite(font.substrByWidth(text, maxWidth - ellipsisWidth), ELLIPSIS);
+		}
+		return text;
 	}
 }
