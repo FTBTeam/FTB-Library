@@ -92,5 +92,10 @@
 	"ftblibrary.panel.position.right": "Right",
 	"ftblibrary.panel.position.bottom_left": "Bottom Left",
 	"ftblibrary.panel.position.bottom": "Bottom",
-	"ftblibrary.panel.position.bottom_right": "Bottom Right"
+	"ftblibrary.panel.position.bottom_right": "Bottom Right",
+	"dimension.minecraft.overworld": "Overworld",
+	"dimension.minecraft.the_nether": "The Nether",
+	"dimension.minecraft.the_end": "The End",
+	"dimension.hyperbox.hyperbox": "Hyperbox",
+	"dimension.ae2.spatial_storage": "AE2 Spatial Storage"
 }
