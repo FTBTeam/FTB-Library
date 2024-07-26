@@ -209,6 +209,11 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
 		}, Collections.emptyList());
 	}
 
+	public <E, CV extends ConfigValue<E>> ListConfig<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, E def) {
+		type.setDefaultValue(def);
+		return add(id, new ListConfig<>(type), value, setter, Collections.emptyList());
+	}
+
 	public EnumConfig<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter, Tristate def) {
 		return addEnum(id, value, setter, Tristate.NAME_MAP, def);
 	}
