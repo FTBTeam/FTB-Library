@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class StringValue extends BaseValue<String> {
-	private Pattern pattern;
+	protected Pattern pattern;
 
-	StringValue(SNBTConfig c, String n, String def) {
+	protected StringValue(SNBTConfig c, String n, String def) {
 		super(c, n, def);
 	}
 
