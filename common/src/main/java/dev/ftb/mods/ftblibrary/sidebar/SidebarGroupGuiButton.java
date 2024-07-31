@@ -5,6 +5,8 @@ import com.google.common.collect.Table;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.Button;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
@@ -32,8 +34,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
 	private static final int BUTTON_SPACING = 17;
 
-	private final List<SidebarGuiButton> buttons = new ArrayList<>();
-
 	private SidebarGuiButton mouseOver;
 	private SidebarGuiButton selectedButton;
 	private GridLocation selectedLocation;
@@ -46,31 +46,15 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	private int mouseOffsetX;
 	private int mouseOffsetY;
 
+	private int maxGridWith = 1;
+	private int maxGridHeight = 1;
+
+	private boolean addBoxOpen;
 
 	public SidebarGroupGuiButton() {
 		super(0, 0, 0, 0, Component.empty());
-		int rx, ry = 0;
-		boolean addedAny;
 
-		for (Map.Entry<SidebarButtonGroup, List<SidebarButton>> buttonEntry : SidebarButtonManager.INSTANCE.getButtonGroups().entrySet()) {
-			rx = 0;
-			addedAny = false;
-
-			SidebarButtonGroup group = buttonEntry.getKey();
-			for (SidebarButton sidebarButton : buttonEntry.getValue()) {
-				if(sidebarButton.isVisible()) {
-					SidebarGuiButton e = new SidebarGuiButton(rx, ry, sidebarButton);
-					buttons.add(e);
-					rx++;
-					addedAny = true;
-				}
-			}
-
-			if (addedAny) {
-				ry++;
-			}
-		}
-
+		ensureGridAlignment();
 		isMouseDown = false;
 	}
 
@@ -86,7 +70,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		var maxX = Integer.MIN_VALUE;
 		var maxY = Integer.MIN_VALUE;
 
-		for (var b : buttons) {
+		for (var b : SidebarButtonManager.INSTANCE.getButtonList()) {
 			if (b.x >= 0 && b.y >= 0) {
 				setX(Math.min(getX(), b.x));
 				setY(Math.min(getY(), b.y));
@@ -115,40 +99,47 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 		if (isEditMode) {
 			//draw box with one extra spot of 16x16 on each side with current
-			int maxWidth = buttons
+			maxGridWith = SidebarButtonManager.INSTANCE.getButtonList()
 					.stream().max(Comparator.comparingInt(SidebarGuiButton::getGridX))
 					.map(SidebarGuiButton::getGridX)
 					.orElse(1) + 2;
-			int maxHeight = buttons
+			maxGridHeight = SidebarButtonManager.INSTANCE.getButtonList()
 					.stream()
 					.max(Comparator.comparingInt(SidebarGuiButton::getGridY))
 					.map(SidebarGuiButton::getGridY)
 					.orElse(1) + 2;
 
 			//Don't show extra row on bottom if everything is vertically aligned
-			if(maxHeight == buttons.size() + 1) {
-				maxHeight--;
+			if(maxGridHeight == SidebarButtonManager.INSTANCE.getButtonList().size() + 1) {
+				maxGridHeight--;
 			}
 			//Don't show extra column on right if everything is horizontally aligned
-			if(maxWidth == buttons.size() + 1) {
-				maxWidth--;
+			if(maxGridWith == SidebarButtonManager.INSTANCE.getButtonList().size() + 1) {
+				maxGridWith--;
 			}
 
-			Color4I.GRAY.draw(graphics, 0, 0, maxWidth * BUTTON_SPACING, maxHeight * BUTTON_SPACING);
+			Color4I.GRAY.draw(graphics, 0, 0, maxGridWith * BUTTON_SPACING, maxGridHeight * BUTTON_SPACING);
 			//draw black grid lines
-			for (var i = 0; i < maxWidth + 1; i++) {
-				Color4I.BLACK.draw(graphics, i * BUTTON_SPACING, 0, 1, maxHeight * BUTTON_SPACING);
+			for (var i = 0; i < maxGridWith + 1; i++) {
+				Color4I.BLACK.draw(graphics, i * BUTTON_SPACING, 0, 1, maxGridHeight * BUTTON_SPACING);
 			}
-			for (var i = 0; i < maxHeight + 1; i++) {
-				Color4I.BLACK.draw(graphics, 0, i * BUTTON_SPACING, maxWidth * BUTTON_SPACING, 1);
+			for (var i = 0; i < maxGridHeight + 1; i++) {
+				Color4I.BLACK.draw(graphics, 0, i * BUTTON_SPACING, maxGridWith * BUTTON_SPACING, 1);
 			}
 
 			if(selectedButton != null) {
 				GridLocation gridLocation = getGridLocation(mx, my);
-				gridLocation = new GridLocation(Math.min(maxWidth - 1, Math.max(0, gridLocation.x)), Math.min(maxHeight - 1, Math.max(0, gridLocation.y)));
+				gridLocation = new GridLocation(Math.min(maxGridWith - 1, Math.max(0, gridLocation.x)), Math.min(maxGridHeight - 1, Math.max(0, gridLocation.y)));
 				Color4I.WHITE.draw(graphics, gridLocation.x * BUTTON_SPACING + 1, gridLocation.y * BUTTON_SPACING + 1, 16, 16);
 			}
+			Icons.ADD.draw(graphics, (maxGridWith - 1) * BUTTON_SPACING + 1, (maxGridHeight - 1) * BUTTON_SPACING + 1, 16, 16);
+
+			if(addBoxOpen) {
+				
+			}
 		}
+
+
 
 		graphics.pose().pushPose();
 		graphics.pose().translate(0, 0, 500);
@@ -156,7 +147,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		var font = Minecraft.getInstance().font;
 
 		//Todo better way?
-		List<SidebarGuiButton> sortedButtons = new ArrayList<>(buttons);
+		List<SidebarGuiButton> sortedButtons = new ArrayList<>(SidebarButtonManager.INSTANCE.getButtonList());
 		if(selectedButton != null) {
 			sortedButtons.remove(selectedButton);
 			sortedButtons.addLast(selectedButton);
@@ -172,6 +163,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			}
 			GuiHelper.setupDrawing();
 			button.button.icon().draw(graphics, button.x, button.y, 16, 16);
+			if(isEditMode) {
+				Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
+			}
 
 			if (button == mouseOver) {
 				Color4I.WHITE.withAlpha(33).draw(graphics, button.x, button.y, 16, 16);
@@ -237,7 +231,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				//Checks if the icon is placed in the same location picked up from, if so do nothing
                 if (!gLocation.equals(selectedLocation)) {
 					//Checks for any icon at the place location and to left of that and moves them over one
-					for (SidebarGuiButton button : buttons) {
+					for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
 						if(!selectedButton.equals(button)) {
 							if (button.getGridY() == gLocation.y && button.getGridX() >= gLocation.x) {
 								button.setGrid(button.getGridX() + 1, button.getGridY());
@@ -247,25 +241,31 @@ public class SidebarGroupGuiButton extends AbstractButton {
 					selectedButton.setGrid(gLocation.x, gLocation.y);
 				}
 				selectedButton = null;
+				ensureGridAlignment();
 
-				//Makes sure everything on the grid and far left and top that it can be
-				Map<Integer, List<SidebarGuiButton>> gridMap = new HashMap<>();
-				for (SidebarGuiButton button : buttons) {
-					if(!gridMap.containsKey(button.getGridY())) {
-						gridMap.put(button.getGridY(), new ArrayList<>());
-					}
-					gridMap.get(button.getGridY()).add(button);
-				}
-				int y = 0;
-				for (Map.Entry<Integer, List<SidebarGuiButton>> entry : gridMap.entrySet()) {
-					List<SidebarGuiButton> sorted = entry.getValue().stream().sorted(Comparator.comparingInt(SidebarGuiButton::getGridX)).toList();
-					for (int i = 0; i < sorted.size(); i++) {
-						sorted.get(i).setGrid(i, y);
-					}
-					y++;
-				}
 			}
 		}
+	}
+
+	private void ensureGridAlignment() {
+		//Makes sure everything on the grid and far left and top that it can be
+		Map<Integer, List<SidebarGuiButton>> gridMap = new HashMap<>();
+		for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
+			if(!gridMap.containsKey(button.getGridY())) {
+				gridMap.put(button.getGridY(), new ArrayList<>());
+			}
+			gridMap.get(button.getGridY()).add(button);
+		}
+		int y = 0;
+		for (Map.Entry<Integer, List<SidebarGuiButton>> entry : gridMap.entrySet()) {
+			List<SidebarGuiButton> sorted = entry.getValue().stream().sorted(Comparator.comparingInt(SidebarGuiButton::getGridX)).toList();
+			for (int i = 0; i < sorted.size(); i++) {
+				sorted.get(i).setGrid(i, y);
+			}
+			y++;
+		}
+
+		SidebarButtonManager.INSTANCE.saveConfigFromButtonList();
 	}
 
 	private GridLocation getGridLocation(int x, int y) {
@@ -282,6 +282,22 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			mouseOffsetY = currentMouseY - mouseOver.y;
 
 			if(isEditMode) {
+				//Check if clicked the remove button
+				if(currentMouseX >= mouseOver.x + 12 && currentMouseY <= mouseOver.y + 4) {
+					mouseOver.setEnabled(false);
+					mouseOver = null;
+					SidebarButtonManager.INSTANCE.saveConfigFromButtonList();
+					ensureGridAlignment();
+					return;
+				}
+
+
+				//if clicked the bottom right grid spot
+				if(currentMouseX >= (maxGridWith - 1) * BUTTON_SPACING + 1 && currentMouseY >= (maxGridHeight - 1) * BUTTON_SPACING + 1) {
+					addBoxOpen = !addBoxOpen;
+					return;
+				}
+
 				selectedButton = mouseOver;
 				selectedLocation = new GridLocation(selectedButton.getGridX(), selectedButton.getGridY());
 			}

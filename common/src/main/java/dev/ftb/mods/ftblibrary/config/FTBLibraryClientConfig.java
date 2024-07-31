@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.config;
 
-import dev.ftb.mods.ftblibrary.snbt.config.BooleanValue;
-import dev.ftb.mods.ftblibrary.snbt.config.IntArrayValue;
-import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
+import dev.ftb.mods.ftblibrary.snbt.config.*;
+
+import java.util.HashMap;
 
 import static dev.ftb.mods.ftblibrary.FTBLibrary.MOD_ID;
 import static dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil.LOCAL_DIR;
@@ -25,6 +25,9 @@ public interface FTBLibraryClientConfig {
     SNBTConfig COLOR = CONFIG.addGroup("colorselector");
     IntArrayValue RECENT = COLOR.addIntArray("recents", new int[0])
             .comment("Colors recently selected in the color selector");
+
+    SNBTConfig SIDEBAR = CONFIG.addGroup("sidebar");
+    StringSidebarMapValue SIDEBAR_BUTTONS = SIDEBAR.add(new StringSidebarMapValue(SIDEBAR, "buttons", new HashMap<>()));
 
     static void load() {
         loadDefaulted(CONFIG, LOCAL_DIR, MOD_ID);

@@ -1,33 +1,28 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
 import com.google.gson.*;
-import com.google.gson.stream.JsonWriter;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 public enum SidebarButtonManager implements ResourceManagerReloadListener {
@@ -35,8 +30,8 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	private final Map<ResourceLocation, SidebarButtonGroup> groups = new HashMap<>();
-	private final Map<ResourceLocation, SidebarButton> buttons = new HashMap<>();
+	private final List<StoredInfo<SidebarButtonGroup>> groups = new ArrayList<>();
+	private final List<StoredInfo<SidebarButton>> buttons = new ArrayList<>();
 
 	private JsonElement readJson(Resource resource) {
 		try (BufferedReader reader = resource.openAsReader()) {
@@ -47,40 +42,79 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 		return JsonNull.INSTANCE;
 	}
 
-	public Map<ResourceLocation, SidebarButton> getButtons() {
+	public List<StoredInfo<SidebarButton>> getButtons() {
 		return buttons;
 	}
 
-	public Map<SidebarButtonGroup, List<SidebarButton>> getButtonGroups() {
-		Map<SidebarButtonGroup, List<SidebarButton>> map = new HashMap<>();
-		for (SidebarButton value : buttons.values()) {
-			SidebarButtonGroup group = groups.get(value.group());
-			if(group != null) {
-				if(!map.containsKey(group)) {
-					map.put(group, new ArrayList<>());
-				}
-				map.get(group).add(value);
+//	public Map<SidebarButtonGroup, List<SidebarButton>> getButtonGroups() {
+//		Map<SidebarButtonGroup, List<SidebarButton>> map = new HashMap<>();
+//		for (SidebarButton value : buttons.values()) {
+//			SidebarButtonGroup group = groups.get(value.group());
+//			if(group != null) {
+//				if(!map.containsKey(group)) {
+//					map.put(group, new ArrayList<>());
+//				}
+//				map.get(group).add(value);
+//
+//			}else {
+//				//Todo This should never happen in theory
+//			}
+//		}
+//		return map.entrySet().stream().sorted(Comparator.comparingInt(o -> o.getKey().y())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, HashMap::new));
+//	}
 
-			}else {
-				//Todo This should never happen in theory
-			}
-		}
-		return map.entrySet().stream().sorted(Comparator.comparingInt(o -> o.getKey().y())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, HashMap::new));
-	}
+	public SidebarButtonGroup getGroup(ResourceLocation id) {
+        return groups.stream()
+				.filter(group -> group.id().equals(id))
+				.findFirst()
+				.map(StoredInfo::value)
+				.orElse(null);
+    }
 
 	@Override
 	public void onResourceManagerReload(ResourceManager manager) {
 		groups.clear();
 		buttons.clear();
 
-		loadResources(manager, "sidebar_buttons/groups", SidebarButtonGroup.CODEC, groups::put);
-		loadResources(manager, "sidebar_buttons/buttons", SidebarButton.CODEC, (fixed, result) -> {
-			if (groups.containsKey(result.group())) {
-				buttons.put(fixed, result);
-			} else {
-				LOGGER.error("Can't load Sidebar Button {} because group {} not found", fixed, result.group());
+		loadResources(manager, "sidebar_buttons/groups", SidebarButtonGroup.CODEC, groups::add);
+		loadResources(manager, "sidebar_buttons/buttons", SidebarButton.CODEC, (result) -> {
+			SidebarButtonGroup group = getGroup(result.value().group());
+			if(group != null) {
+				buttons.add(result);
+			}else {
+				LOGGER.error("Button {} not found in config", result.id());
 			}
 		});
+
+		Map<Integer, List<StoredInfo<SidebarButton>>> buttonMap = new HashMap<>();
+		for (StoredInfo<SidebarButton> storedInfo : this.buttons) {
+			buttonMap.computeIfAbsent(getGroup(storedInfo.value().group()).y(), k -> new ArrayList<>()).add(storedInfo);
+		}
+
+		//sort buttonMap by key
+		buttonMap = buttonMap.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, HashMap::new));
+
+		int y = 0;
+		for (List<StoredInfo<SidebarButton>> storedInfoList : buttonMap.values()) {
+			int x = 0;
+			storedInfoList.sort(Comparator.comparingInt(o -> o.value().x()));
+            for (StoredInfo<SidebarButton> sidebarButtonStoredInfo : storedInfoList) {
+                SidebarButton button = sidebarButtonStoredInfo.value();
+                SidebarButtonGroup group = getGroup(button.group());
+                StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(sidebarButtonStoredInfo.id().toString());
+                if (buttonSettings == null) {
+                    FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(sidebarButtonStoredInfo.id().toString(), new StringSidebarMapValue.SideButtonInfo(true, x, y));
+                }
+                x++;
+            }
+			if(x != 0) {
+				y++;
+			}
+		}
+
+		FTBLibraryClientConfig.save();
+
+		refreshButtonList();
 	}
 
 
@@ -188,7 +222,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 //
 //		saveConfig();
 
-	private <T> void loadResources(ResourceManager manager, String path, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer) {
+	private <T> void loadResources(ResourceManager manager, String path, Codec<T> codec, Consumer<StoredInfo<T>> consumer) {
 		Map<ResourceLocation, Resource> resourceLocationResourceMap = manager.listResources(path, name -> name.getPath().endsWith(".json"));
 		for (Map.Entry<ResourceLocation, Resource> resource : resourceLocationResourceMap.entrySet()) {
 			JsonElement jsonElement = readJson(resource.getValue());
@@ -199,13 +233,70 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 				T result = parse.result().get();
 				ResourceLocation key = resource.getKey();
 				ResourceLocation fixed = ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getPath().replace(path + "/", "").replace(".json", ""));
-				consumer.accept(fixed, result);
+				consumer.accept(new StoredInfo<>(fixed, result));
 			}
 		}
 	}
 
-	public void saveConfig() {	}
-//		var o = new JsonObject();
+
+	private final List<SidebarGuiButton> buttonList = new ArrayList<>();
+
+	public void refreshButtonList() {
+		buttonList.clear();
+		for (StoredInfo<SidebarButton> buttonEntry : getButtons()) {
+			ResourceLocation id = buttonEntry.id();
+			SidebarButton button = buttonEntry.value();
+
+			StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(id.toString());
+			if(buttonSettings != null) {
+				if(buttonSettings.enabled()) {
+					SidebarGuiButton e = new SidebarGuiButton(buttonSettings.xPos(), buttonSettings.yPos(), true, id, button);
+					buttonList.add(e);
+				}
+
+			}else {
+				//Todo this should not be possable
+				LOGGER.error("Button {} not found in config", id);
+			}
+		}
+
+		for (Map.Entry<String, StringSidebarMapValue.SideButtonInfo> stringSideButtonInfoEntry : FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().entrySet()) {
+			StringSidebarMapValue.SideButtonInfo buttonSettings = stringSideButtonInfoEntry.getValue();
+			if(buttonSettings != null && buttonSettings.enabled()) {
+				for (SidebarGuiButton button : buttonList) {
+					if(button.isEnabled()) {
+						if(!button.getButtonId().toString().equals(stringSideButtonInfoEntry.getKey())) {
+							if(button.getGridY() == buttonSettings.yPos() && button.getGridX() == buttonSettings.xPos()) {
+								button.setGrid(button.getGridX() + 1, button.getGridY());
+							}
+						}
+
+					}
+				}
+			}
+		}
+
+		FTBLibraryClientConfig.save();
+	}
+
+	public void saveConfigFromButtonList() {
+		for (SidebarGuiButton button : buttonList) {
+			StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(button.getButtonId().toString());
+			if(buttonSettings != null) {
+				FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getButtonId().toString(), new StringSidebarMapValue.SideButtonInfo(button.isEnabled(), button.getGridX(), button.getGridY()));
+			}
+		}
+		FTBLibraryClientConfig.save();
+		refreshButtonList();
+
+	}
+
+	public List<SidebarGuiButton> getButtonList() {
+		return buttonList;
+	}
+
+
+	//		var o = new JsonObject();
 //
 //		for (var group : groups) {
 //			for (var button : group.getButtons()) {
@@ -231,9 +322,6 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 //			ex.printStackTrace();
 //		}
 
+	public record StoredInfo<T>(ResourceLocation id, T value) {}
 
-	@Nullable
-	public SidebarButtonGroup getGroup(ResourceLocation group) {
-		return groups.get(group);
-	}
 }
