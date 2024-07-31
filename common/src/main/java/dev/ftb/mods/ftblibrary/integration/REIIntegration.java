@@ -3,6 +3,7 @@
 //import com.google.gson.Gson;
 //import com.google.gson.JsonObject;
 //import com.google.gson.JsonParser;
+//import com.mojang.datafixers.util.Pair;
 //import com.mojang.serialization.DataResult;
 //import com.mojang.serialization.Lifecycle;
 //import dev.ftb.mods.ftblibrary.FTBLibrary;
@@ -33,6 +34,8 @@
 //import net.minecraft.client.gui.screens.Screen;
 //import net.minecraft.client.resources.language.I18n;
 //import net.minecraft.nbt.CompoundTag;
+//import net.minecraft.nbt.NbtOps;
+//import net.minecraft.nbt.Tag;
 //import net.minecraft.network.chat.Component;
 //import net.minecraft.network.chat.MutableComponent;
 //import net.minecraft.resources.ResourceLocation;
@@ -43,6 +46,7 @@
 //import java.util.ArrayList;
 //import java.util.Collection;
 //import java.util.List;
+//import java.util.Map;
 //
 //public class REIIntegration implements REIClientPlugin {
 //	public static final ResourceLocation ID = FTBLibrary.rl("sidebar_button");
@@ -75,8 +79,9 @@
 //	@Override
 //	public void registerFavorites(FavoriteEntryType.Registry registry) {
 //		registry.register(ID, SidebarButtonType.INSTANCE);
-//		for (var group : SidebarButtonManager.INSTANCE.getGroups()) {
-//			List<SidebarButtonEntry> buttons = CollectionUtils.map(group.getButtons(), SidebarButtonEntry::new);
+//		for (Map.Entry<SidebarButtonGroup, List<SidebarButton>> entry : SidebarButtonManager.INSTANCE.getButtonGroups().entrySet()) {
+//			List<SidebarButtonEntry> buttons = CollectionUtils.map(entry.getValue(), SidebarButtonEntry::new);
+//            SidebarButtonGroup group = entry.getKey();
 //			if (!buttons.isEmpty()) {
 //				registry.getOrCrateSection(Component.translatable(group.getLangKey()))
 //						.add(group.isPinned(), buttons.toArray(new SidebarButtonEntry[0]));
@@ -95,16 +100,15 @@
 //
 //		@Override
 //		public CompoundTag save(SidebarButtonEntry entry, CompoundTag tag) {
-//			tag.putString("id", entry.button.getId().toString());
-//			tag.putString("json", new Gson().toJson(entry.button.getJson()));
+//            DataResult<Tag> encode = SidebarButton.CODEC.encode(entry.button, NbtOps.INSTANCE, null);
+//            encode.result().ifPresent(t -> tag.put("json", t));
 //			return tag;
 //		}
 //
 //		@Override
 //		public DataResult<SidebarButtonEntry> read(CompoundTag object) {
-//			var id = ResourceLocation.parse(object.getString("id"));
-//			var json = (JsonObject) JsonParser.parseString(object.getString("json"));
-//			return DataResult.success(new SidebarButtonEntry(createSidebarButton(id, null, json)), Lifecycle.stable());
+//            DataResult<Pair<SidebarButton, Tag>> json = SidebarButton.CODEC.decode(NbtOps.INSTANCE, object.get("json"));
+//            return json.map(pair -> new SidebarButtonEntry(pair.getFirst()));
 //		}
 //
 //		@Override

@@ -249,11 +249,8 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 			StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(id.toString());
 			if(buttonSettings != null) {
-				if(buttonSettings.enabled()) {
-					SidebarGuiButton e = new SidebarGuiButton(buttonSettings.xPos(), buttonSettings.yPos(), true, id, button);
-					buttonList.add(e);
-				}
-
+				SidebarGuiButton e = new SidebarGuiButton(buttonSettings.xPos(), buttonSettings.yPos(), buttonSettings.enabled(), id, button);
+				buttonList.add(e);
 			}else {
 				//Todo this should not be possable
 				LOGGER.error("Button {} not found in config", id);
@@ -290,9 +287,17 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 		refreshButtonList();
 
 	}
-
+//
 	public List<SidebarGuiButton> getButtonList() {
 		return buttonList;
+	}
+
+	public List<SidebarGuiButton> getEnabledButtonList() {
+		return buttonList.stream().filter(SidebarGuiButton::isEnabled).collect(Collectors.toList());
+	}
+
+	public List<SidebarGuiButton> getDisabledButtonList() {
+		return buttonList.stream().filter(button -> !button.isEnabled()).collect(Collectors.toList());
 	}
 
 

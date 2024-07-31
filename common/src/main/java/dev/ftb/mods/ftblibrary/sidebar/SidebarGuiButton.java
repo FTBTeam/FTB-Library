@@ -35,11 +35,11 @@ public class SidebarGuiButton {
 	}
 
 	public int getGridX() {
-		return gridX;
+		return enabled ? gridX : -1;
 	}
 
 	public int getGridY() {
-		return gridY;
+		return enabled ? gridY : -1;
 	}
 
 	public void setGridX(int gridX) {
