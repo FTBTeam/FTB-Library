@@ -3,15 +3,18 @@ package dev.ftb.mods.ftblibrary;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.networking.NetworkManager;
+import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import dev.ftb.mods.ftblibrary.items.ModItems;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
+import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.CreativeModeTab;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,6 +29,8 @@ public class FTBLibrary {
 		LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
 		LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
 		PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
+
+		ModItems.init();
 
 		EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::init);
 	}
@@ -43,6 +48,10 @@ public class FTBLibrary {
 	}
 
 	private void playerJoined(ServerPlayer player) {
-		NetworkManager.sendToPlayer(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
+		NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
+	}
+
+	public static DeferredSupplier<CreativeModeTab> getCreativeModeTab() {
+		return ModItems.FTB_LIBRARY_TAB;
 	}
 }
