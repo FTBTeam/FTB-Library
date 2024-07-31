@@ -45,7 +45,7 @@ public class FTBLibraryCommands {
 	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection type) {
 		var command = Commands.literal("ftblibrary")
 				.requires(commandSource -> commandSource.hasPermission(2))
-				.then(Commands.literal("gamemode")
+				.then(Commands.literal("gamemode.json")
 						.executes(context -> {
 							if (!context.getSource().getPlayerOrException().isCreative()) {
 								context.getSource().getPlayerOrException().setGameMode(GameType.CREATIVE);

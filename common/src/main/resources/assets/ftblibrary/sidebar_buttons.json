@@ -16,7 +16,7 @@
 			"ftblibrary:icons/blue_button",
 			"ftblibrary:textures/icons/toggle_rain.png"
 		],
-		"x": 110,
+		"x": 80,
 		"click": "command:/ftblibrary rain",
 		"config": true,
 		"hide_with_nei": true,

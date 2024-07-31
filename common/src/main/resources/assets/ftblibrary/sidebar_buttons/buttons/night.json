@@ -1,0 +1,13 @@
+{
+  "group": "ftblibrary:cheat",
+  "icon": [
+    "ftblibrary:icons/blue_button",
+    "ftblibrary:textures/icons/toggle_night.png"
+  ],
+  "x": 130,
+  "click": "command:/ftblibrary night",
+  "required_server_mods": [
+    "ftblibrary"
+  ],
+  "requires_op": true
+}

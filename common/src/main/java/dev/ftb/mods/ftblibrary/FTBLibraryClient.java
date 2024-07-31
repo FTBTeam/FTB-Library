@@ -15,6 +15,7 @@ import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import me.shedaniel.rei.api.client.config.ConfigObject;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -73,6 +74,16 @@ public class FTBLibraryClient {
 
 			ClientUtils.RUN_LATER.clear();
 		}
+
+
+		if(areButtonsVisible(client.screen)) {
+			for (GuiEventListener child : client.screen.children()) {
+				if(child instanceof SidebarGroupGuiButton button) {
+					button.tick();
+				}
+			}
+		}
+
 	}
 
 	public static boolean areButtonsVisible(@Nullable Screen gui) {
@@ -90,7 +101,7 @@ public class FTBLibraryClient {
 			}
 		}
 
-		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.getGroups().isEmpty();
+		return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.getButtons().isEmpty();
 	}
 
 	public static void editConfig(boolean isClientConfig) {
