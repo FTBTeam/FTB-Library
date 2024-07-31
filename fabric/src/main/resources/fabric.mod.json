@@ -32,7 +32,7 @@
 		"ftblibrary-fabric.mixins.json"
 	],
 	"depends": {
-		"fabric": ">=${fabricapiversion}",
+		"fabric": "${fabricapiversionrange}",
 		"minecraft": "~${mcversion}",
 		"architectury": ">=${archversion}"
 	}
