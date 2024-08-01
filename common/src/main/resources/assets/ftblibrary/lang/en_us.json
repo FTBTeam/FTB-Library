@@ -98,5 +98,7 @@
 	"dimension.minecraft.the_nether": "The Nether",
 	"dimension.minecraft.the_end": "The End",
 	"dimension.hyperbox.hyperbox": "Hyperbox",
-	"dimension.ae2.spatial_storage": "AE2 Spatial Storage"
+	"dimension.ae2.spatial_storage": "AE2 Spatial Storage",
+	"itemGroup.ftbsuite.creative_tab": "FTB Suite",
+	"item.ftblibrary.icon_item": "FTB Icon"
 }
