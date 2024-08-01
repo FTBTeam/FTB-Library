@@ -5,6 +5,6 @@
     "ftblibrary:textures/icons/toggle_gamemode.png"
   ],
   "x": 100,
-  "click": "command:/ftblibrary gamemode",
+  "click": ["command:/ftblibrary gamemode"],
   "requires_op": true
 }

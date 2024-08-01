@@ -1,24 +1,17 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-
-import net.minecraft.resources.ResourceLocation;
-
 public class SidebarGuiButton {
 
-	private final ResourceLocation buttonId;
-	public final SidebarButton button;
+	private final SidebarButton sidebarButton;
 	public int x, y;
-	private int gridX;
-	private int gridY;
+	private GridLocation gridLocation;
 	private boolean enabled;
 
-	public SidebarGuiButton(int gridX, int gridY, boolean enabled, ResourceLocation buttonId, SidebarButton b) {
-		button = b;
+	public SidebarGuiButton(GridLocation girdLocation, boolean enabled, SidebarButton sidebarButton) {
 		x = 0;
 		y = 0;
-		this.gridX = gridX;
-		this.gridY = gridY;
-		this.buttonId = buttonId;
+		this.gridLocation = girdLocation;
+		this.sidebarButton = sidebarButton;
 		this.enabled = enabled;
 	}
 
@@ -30,28 +23,20 @@ public class SidebarGuiButton {
 		this.enabled = enabled;
 	}
 
-	public ResourceLocation getButtonId() {
-		return buttonId;
+	public SidebarButton getSidebarButton() {
+		return sidebarButton;
 	}
 
 	public int getGridX() {
-		return enabled ? gridX : -1;
+		return enabled ? gridLocation.x() : -1;
 	}
 
 	public int getGridY() {
-		return enabled ? gridY : -1;
-	}
-
-	public void setGridX(int gridX) {
-		this.gridX = gridX;
-	}
-
-	public void setGridY(int gridY) {
-		this.gridY = gridY;
+		return enabled ? gridLocation.y() : -1;
 	}
 
 	public void setGrid(int gridX, int gridY) {
-		this.gridX = gridX;
-		this.gridY = gridY;
+		this.gridLocation = new GridLocation(gridX, gridY);
 	}
+
 }

@@ -1,23 +1,24 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import dev.architectury.annotations.ForgeEvent;
 import dev.architectury.event.Event;
 import dev.architectury.event.EventFactory;
 
 import java.util.function.Consumer;
 
+//Todo - UnReal Expose a way for other mod to reigster custom text handlers as that what this event is for
+//Todo WE DO NOT ALLOW EDITING BUTTONS AFTER CREATION ANYMORE
 // TODO currently broken for neoforge, uncomment when there's a fix in architectury
 //@ForgeEvent
 public class SidebarButtonCreatedEvent {
 	public static final Event<Consumer<SidebarButtonCreatedEvent>> EVENT = EventFactory.createConsumerLoop(SidebarButtonCreatedEvent.class);
 
-	private final SidebarButton button;
+	private final SidebarButtonData button;
 
-	public SidebarButtonCreatedEvent(SidebarButton b) {
+	public SidebarButtonCreatedEvent(SidebarButtonData b) {
 		button = b;
 	}
 
-	public SidebarButton getButton() {
+	public SidebarButtonData getButton() {
 		return button;
 	}
 }

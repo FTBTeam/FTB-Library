@@ -5,6 +5,6 @@
     "ftblibrary:textures/icons/toggle_rain.png"
   ],
   "x": 80,
-  "click": "command:/ftblibrary rain",
+  "click": ["command:/ftblibrary rain"],
   "requires_op": true
 }

@@ -5,10 +5,9 @@
     "ftblibrary:textures/icons/toggle_day.png"
   ],
   "x": 120,
-  "click": "command:/ftblibrary day",
-  "required_server_mods": [
+  "click": ["command:/ftblibrary day"],
+  "required_mods": [
     "ftblibrary"
   ],
-  "hide_with_nei": true,
   "requires_op": true
 }

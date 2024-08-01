@@ -8,6 +8,7 @@ import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 

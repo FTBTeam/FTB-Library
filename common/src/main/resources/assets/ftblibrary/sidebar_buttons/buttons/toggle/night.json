@@ -5,8 +5,8 @@
     "ftblibrary:textures/icons/toggle_night.png"
   ],
   "x": 130,
-  "click": "command:/ftblibrary night",
-  "required_server_mods": [
+  "click": ["command:/ftblibrary night"],
+  "required_mods": [
     "ftblibrary"
   ],
   "requires_op": true
