@@ -122,6 +122,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 		for (Map.Entry<Integer, List<SidebarGuiButton>> integerListEntry : Utils.sortMapByKey(buttonMap).entrySet()) {
 			if(integerListEntry.getKey() == -1) {
 				for (SidebarGuiButton button : integerListEntry.getValue()) {
+					button.setGridLocation(-1, -1);
 					FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(false, -1, -1));
 				}
 			}
@@ -131,6 +132,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 			List<SidebarGuiButton> value = integerListEntry.getValue();
 			for (SidebarGuiButton sidebarButton : value) {
 				if(sidebarButton.isEnabled()) {
+					sidebarButton.setGridLocation(x, y);
 					FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(sidebarButton.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(sidebarButton.isEnabled(), x, y));
 					x++;
 				}

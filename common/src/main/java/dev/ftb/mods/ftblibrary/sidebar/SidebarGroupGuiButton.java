@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class SidebarGroupGuiButton extends AbstractButton {
 	public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
@@ -56,20 +57,14 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 	@Override
 	public void renderWidget(GuiGraphics graphics, int mx, int my, float partialTicks) {
-
-		addBoxOpen = true;
-
 		graphics.pose().pushPose();
 		graphics.pose().translate(0, 0, 5000);
+		//Todo always?
+		addBoxOpen = true;
 		currentMouseX = mx;
 		currentMouseY = my;
-
 		mouseOver = null;
-
 		GridLocation gridLocation = getGridLocation();
-
-
-
 
 		for (Map.Entry<SidebarGuiButton, GridLocation> entry : realLocationMap.entrySet()) {
 			SidebarGuiButton button = entry.getKey();
@@ -98,8 +93,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				Icons.ADD.draw(graphics, (maxGridWith + 1) * BUTTON_SPACING + 1, 1, 16, 16);
 
 				if (addBoxOpen) {
-
-
 					int maxWidth = 0;
 					for (SidebarGuiButton button : disabledButtonList) {
 						String s = I18n.get(button.getSidebarButton().getLangKey());
@@ -107,12 +100,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 						maxWidth = Math.max(maxWidth, width);
 					}
 
-
-//					drawHoveredGrid(graphics, ( maxGridWith + 2) * BUTTON_SPACING, 0, disabledButtonList.size(),  1, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my);
-//					Color4I.GRAY.draw(graphics, ( maxGridWith + 1) * BUTTON_SPACING, BUTTON_SPACING,  1 + BUTTON_SPACING * 5, BUTTON_SPACING * disabledButtonList.size());
-					//draw black border
 					drawGrid(graphics, (maxGridWith + 1) * BUTTON_SPACING, BUTTON_SPACING, 1, disabledButtonList.size(), maxWidth + BUTTON_SPACING + 4, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
-
 
 					for (int i = 0; i < disabledButtonList.size(); i++) {
 						SidebarGuiButton button = disabledButtonList.get(i);
@@ -140,9 +128,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 		for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
 			GridLocation realGridLocation = realLocationMap.get(button);
-			if(button.getSidebarButton().getId().toString().equals("ftblibrary:test")) {
-//				continue;
-			}
 			if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
 				graphics.pose().pushPose();
 				if (isEditMode && button == selectedButton) {
@@ -160,7 +145,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				button.getSidebarButton().getData().icon().draw(graphics, button.x, button.y, 16, 16);
 
 				if (isEditMode && button != selectedButton && SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode).size() > 1) {
-					//if mouse if over cancle
 					if (mx >= button.x + 12 && my <= button.y + 4 && mx < button.x + 16 && my >= button.y) {
 						Icons.CANCEL.draw(graphics, button.x + 11, button.y - 1, 6, 6);
 					} else {
@@ -219,67 +203,57 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	public void onRelease(double d, double e) {
 		super.onRelease(d, e);
 		isMouseDown = false;
+		//Normal click action
 		if (!isEditMode && mouseOver != null) {
 			mouseOver.getSidebarButton().clickButton(Screen.hasShiftDown());
 		} else {
 			if (selectedButton != null) {
 				GridLocation gLocation = getGridLocation();
+				//Make sure the placement is in grid
                 if (!gLocation.isOutOfBounds()) {
 					//Checks if the icon is placed in the same location picked up from, if so do nothing
 					if (!gLocation.equals(selectedLocation)) {
-						int x = gLocation.y() != selectedButton.getGirdLocation().y() ? selectedButton.getGirdLocation().x() : -1;
+						//checks if moved from the first spot, so we can move other icons over but only as the same row
+						boolean isFrom0XTo1X = selectedLocation.y() == gLocation.y() && selectedLocation.x() == 0 && gLocation.x() == 1;
 						selectedButton.setGridLocation(gLocation.x(), gLocation.y());
-						//Checks for any icon at the place location and to left of that and moves them over one
+						//Checks for icon that needs to be moved over
 						List<SidebarGuiButton> buttonList = SidebarButtonManager.INSTANCE.getButtonList();
                         for (SidebarGuiButton button : buttonList) {
 							GridLocation realGridLocation = realLocationMap.get(button);
 							if(realGridLocation != null) {
 								if (!selectedButton.getSidebarButton().getId().equals(button.getSidebarButton().getId())) {
 									if (gLocation.isLatterInColumn(realGridLocation)) {
-										int moveAmount = x == 0 && realGridLocation.x() == 1 ? -1 : 1;
+										int moveAmount = isFrom0XTo1X && realGridLocation.x() == 1 ? -1 : 1;
 										button.setGridLocation(realGridLocation.x() + moveAmount, realGridLocation.y());
 									}
 								}
 							}
                         }
-//                        selectedButton.setGridLocation(gLocation.x(), gLocation.y());
+						//If the icon was disabled enable it
                         if (!selectedButton.isEnabled()) {
                             selectedButton.setEnabled(true);
+							//Todo do we want this
 							if (SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode).isEmpty()) {
 								addBoxOpen = false;
 							}
                         }
-                    }else {
-						FTBLibrary.LOGGER.info("Same location");
-					}
-                }else {
-					FTBLibrary.LOGGER.info("Out of bounds");
-				}
+                    }
+                }
 				selectedButton = null;
 				ensureGridAlignment();
-
 			}
 		}
 	}
 
 	private void ensureGridAlignment() {
-
 		List<SidebarGuiButton> enabledButtonList = SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode);
+		Map<Integer, List<SidebarGuiButton>> buttonMap = enabledButtonList
+				.stream()
+				.filter(SidebarGuiButton::isEnabled)
+				.collect(Collectors.groupingBy(button -> button.getGirdLocation().y(), TreeMap::new, Collectors.toCollection(LinkedList::new)));
 
-		// Create a TreeMap to sort buttons by their y-coordinate
-		Map<Integer, List<SidebarGuiButton>> buttonMap = new TreeMap<>();
+        realLocationMap.clear();
 
-		// Populate the TreeMap
-		for (SidebarGuiButton button : enabledButtonList) {
-			if(button.isEnabled()) {
-				buttonMap.computeIfAbsent(button.getGirdLocation().y(), k -> new LinkedList<>()).add(button);
-			}
-		}
-
-		// Clear the realLocationMap
-		realLocationMap.clear();
-
-		// Iterate through the sorted entries and update the realLocationMap
 		int y = 0;
 		for (Map.Entry<Integer, List<SidebarGuiButton>> entry : buttonMap.entrySet()) {
 			entry.getValue().sort(Comparator.comparingInt(b -> b.getGirdLocation().x()));
@@ -296,19 +270,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 		SidebarButtonManager.INSTANCE.saveConfigFromButtonList();
 		updateWidgetSize();
-
-
-
-
-
-
-
 	}
 
-	//Todo fix numbers in this
 	private void updateWidgetSize() {
-		setX(0);
-		setY(0);
 		// Important: JEI doesn't like negative X/Y values and will silently clamp them,
 		// leading it to think the values have changed every frame, and do unnecessary updating
 		// of its GUI areas, including resetting the filter textfield's selection
@@ -324,8 +288,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		int disabledList = SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode).size();
 		if(isEditMode && addBoxOpen) {
 			maxGirdX += 4;
-			int size = disabledList;
-			maxGirdY = Math.max(maxGirdY, size);
+            maxGirdY = Math.max(maxGirdY, disabledList);
 		}
 		if(isEditMode) {
 			maxGirdX += 3;
@@ -336,6 +299,10 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		width = (maxGirdX) * BUTTON_SPACING;
 		height = (maxGirdY) * BUTTON_SPACING;
 
+
+		setX(0);
+		setY(0);
+
 		lastDrawnArea = new Rect2i(getX(), getY(), width, height);
 	}
 
@@ -343,7 +310,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		int gridX = (currentMouseX - 1) / BUTTON_SPACING;
 		int gridY = (currentMouseY - 1) / BUTTON_SPACING;
 		if(gridX >= maxGridWith || gridY >= maxGridHeight) {
-			return new GridLocation(- 1, - 1);
+			return GridLocation.OUT_OF_BOUNDS;
 		}
 		return new GridLocation(gridX, gridY);
 	}
@@ -351,33 +318,19 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	@Override
 	public void onPress() {
 		if(isEditMode) {
-			//if clicked the bottom right grid spot
-			//check if mouse clicked in same spot as the plus button
-			//				drawGrid(graphics, ( maxGridWith + 1) * BUTTON_SPACING, 0, 1, 1, BUTTON_SPACING, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
 			if(currentMouseX >= ( maxGridWith + 1) * BUTTON_SPACING && currentMouseY <= BUTTON_SPACING) {
 				addBoxOpen = !addBoxOpen;
 				updateWidgetSize();
 				return;
 			}
-
-
-//			GridLocation gridLocation = getGridLocation(currentMouseX, currentMouseY);
-//			if(gridLocation.x() == maxGridWith - 1 && gridLocation.y() == maxGridHeight - 1) {
-//				addBoxOpen = !addBoxOpen;
-//				updateWidgetSize();
-//				return;
-//			}
 		}
 
 		if(mouseOver != null) {
-			Minecraft.getInstance().player.sendSystemMessage(Component.literal(mouseOver.getGirdLocation().x() + " " + mouseOver.getGirdLocation().y()));
 			isMouseDown = true;
 			mouseOffsetX = currentMouseX - mouseOver.x;
 			mouseOffsetY = currentMouseY - mouseOver.y;
 
 			if(isEditMode) {
-
-				//Check if clicked the remove button
 				if(SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode).size() > 1 && currentMouseX >= mouseOver.x + 11 && currentMouseY <= mouseOver.y + 3) {
 					mouseOver.setEnabled(false);
 					mouseOver = null;
@@ -385,15 +338,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
 					return;
 				}
 
-
-
-
 				selectedButton = mouseOver;
-				selectedLocation = realLocationMap.get(selectedButton);
-//				if(!selectedButton.isEnabled()) {
-//				}else {
-//					selectedLocation = GridLocation.OUT_OF_BOUNDS;
-//				}
+				GridLocation realGridLocation = realLocationMap.get(selectedButton);
+				selectedLocation = realGridLocation == null ? selectedButton.getGirdLocation() : realGridLocation;
 			}
 		}
 	}
@@ -404,19 +351,17 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	}
 
 
+	//Custom handling so our button click locations are where a buttons are not just a box
 	@Override
 	protected boolean isValidClickButton(int i) {
-		//Todo don't just allow edit mode try and be more specific
-//        if ( super.isValidClickButton(i)) {
-//			if(isEditMode) {
-//				//Todo let be nice and only play click sounds allow click at the right times "clean" stuff lol
-//				return true;
-//			}else {
-//				return mouseOver != null;
-//			}
-//        }
-//        return false;
-		return true;
+		if (super.isValidClickButton(i)) {
+			if (isEditMode) {
+                return selectedButton != null || mouseOver != null;
+			} else {
+				return mouseOver != null;
+			}
+		}
+		return false;
 	}
 
 	public void tick() {
