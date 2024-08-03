@@ -4,13 +4,14 @@ public class SidebarGuiButton {
 
 	private final SidebarButton sidebarButton;
 	public int x, y;
-	private GridLocation gridLocation;
+	private int gridX, gridY;
 	private boolean enabled;
 
 	public SidebarGuiButton(GridLocation girdLocation, boolean enabled, SidebarButton sidebarButton) {
 		x = 0;
 		y = 0;
-		this.gridLocation = girdLocation;
+		gridX = girdLocation.x();
+		gridY = girdLocation.y();
 		this.sidebarButton = sidebarButton;
 		this.enabled = enabled;
 	}
@@ -27,16 +28,18 @@ public class SidebarGuiButton {
 		return sidebarButton;
 	}
 
-	public int getGridX() {
-		return enabled ? gridLocation.x() : -1;
+	public GridLocation getGirdLocation() {
+		return new GridLocation(gridX, gridY);
 	}
 
-	public int getGridY() {
-		return enabled ? gridLocation.y() : -1;
+	public void setGridLocation(GridLocation gridLocation) {
+		this.gridX = gridLocation.x();
+		this.gridY = gridLocation.y();
 	}
 
-	public void setGrid(int gridX, int gridY) {
-		this.gridLocation = new GridLocation(gridX, gridY);
+	public void setGridLocation(int x, int y) {
+		this.gridX = x;
+		this.gridY = y;
 	}
 
 }

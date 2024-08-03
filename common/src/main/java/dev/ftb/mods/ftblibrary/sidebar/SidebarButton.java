@@ -67,7 +67,6 @@ public class SidebarButton {
         }
     }
 
-    //Todo mods
     public boolean canSee() {
         return visible.getAsBoolean();
     }

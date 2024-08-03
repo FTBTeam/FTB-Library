@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -33,6 +35,9 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 	private final Map<ResourceLocation, SidebarButtonGroup> groups = new HashMap<>();
 	private final Map<ResourceLocation, SidebarButton> buttons = new HashMap<>();
+
+	private final List<SidebarGuiButton> buttonList = new ArrayList<>();
+
 
 	private JsonElement readJson(Resource resource) {
 		try (BufferedReader reader = resource.openAsReader()) {
@@ -63,134 +68,15 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 			}
 		});
 
-		Map<SidebarButtonGroup, List<SidebarButton>> buttonMap = getButtonGroups();
-
-		int y = 0;
-		for (Map.Entry<SidebarButtonGroup, List<SidebarButton>> buttonGroupListEntry : buttonMap.entrySet()) {
-			int x = 0;
-			buttonGroupListEntry.getValue().sort(Comparator.comparingInt(button -> button.getData().x()));
-            for (SidebarButton sidebarButton : buttonGroupListEntry.getValue()) {
-                SidebarButtonData button = sidebarButton.getData();
-                StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(sidebarButton.getId().toString());
-                if (buttonSettings == null) {
-                    FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(sidebarButton.getId().toString(), new StringSidebarMapValue.SideButtonInfo(button.defaultEnabled(), x, y));
-                }
-                x++;
-            }
-			if(x != 0) {
-				y++;
-			}
-		}
+		buttonList.clear();
+		for (SidebarButton buttonEntry : getButtons()) {
+			StringSidebarMapValue.SideButtonInfo buttonSettings = getOrCreateButtonSettings(buttonEntry);
+            buttonList.add(new SidebarGuiButton(new GridLocation(buttonSettings.xPos(), buttonSettings.yPos()), buttonSettings.enabled(), buttonEntry));
+        }
 
 		FTBLibraryClientConfig.save();
 
-		refreshButtonList();
 	}
-
-
-//		var element = readJson(Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile());
-//		JsonObject sidebarButtonConfig;
-//
-//		if (element.isJsonObject()) {
-//			sidebarButtonConfig = element.getAsJsonObject();
-//		} else {
-//			sidebarButtonConfig = new JsonObject();
-//		}
-//
-//		Map<ResourceLocation, SidebarButtonGroup> groupMap = new HashMap<>();
-//
-//		for (var domain : manager.getNamespaces()) {
-//			try {
-//				// TODO: Use an alternative way to register sidebar groups because jsons are a bit messy
-//				for (var resource : manager.getResourceStack(ResourceLocation.fromNamespaceAndPath(domain, "sidebar_button_groups.json"))) {
-//					var json = readJson(resource);
-//
-//					for (var entry : json.getAsJsonObject().entrySet()) {
-//						if (entry.getValue().isJsonObject()) {
-//							var groupJson = entry.getValue().getAsJsonObject();
-//							var y = 0;
-//							var pinned = true;
-//
-//							if (groupJson.has("y")) {
-//								y = groupJson.get("y").getAsInt();
-//							}
-//
-//							if(groupJson.has("pinned")) {
-//								pinned = groupJson.get("pinned").getAsBoolean();
-//							}
-//
-//							var group = new SidebarButtonGroup(ResourceLocation.fromNamespaceAndPath(domain, entry.getKey()), y, pinned);
-//							groupMap.put(group.getId(), group);
-//						}
-//					}
-//				}
-//			} catch (Exception ex) {
-//				ex.printStackTrace();
-//			}
-//		}
-//
-//		for (String domain : manager.getNamespaces()) {
-//			try {
-//				for (Resource resource : manager.getResourceStack(ResourceLocation.fromNamespaceAndPath(domain, "sidebar_buttons.json"))) {
-//                    JsonElement json = readJson(resource);
-//
-//					if (json.isJsonObject()) {
-//						for (var entry : json.getAsJsonObject().entrySet()) {
-//							if (entry.getValue().isJsonObject()) {
-//								var buttonJson = entry.getValue().getAsJsonObject();
-//
-//								if (!buttonJson.has("group")) {
-//									continue;
-//								}
-//
-//								if (/*!FTBLibConfig.debugging.dev_sidebar_buttons && */buttonJson.has("dev_only") && buttonJson.get("dev_only").getAsBoolean()) {
-//									continue;
-//								}
-//
-//								var group = groupMap.get(ResourceLocation.parse(buttonJson.get("group").getAsString()));
-//
-//								if (group == null) {
-//									continue;
-//								}
-//
-//								var button = new SidebarButton(ResourceLocation.fromNamespaceAndPath(domain, entry.getKey()), group, buttonJson);
-//
-//								group.getButtons().add(button);
-//
-//								if (sidebarButtonConfig.has(button.getId().getNamespace())) {
-//									var e = sidebarButtonConfig.get(button.getId().getNamespace());
-//
-//									if (e.isJsonObject() && e.getAsJsonObject().has(button.getId().getPath())) {
-//										button.setConfig(e.getAsJsonObject().get(button.getId().getPath()).getAsBoolean());
-//									}
-//								} else if (sidebarButtonConfig.has(button.getId().toString())) {
-//									button.setConfig(sidebarButtonConfig.get(button.getId().toString()).getAsBoolean());
-//								}
-//							}
-//						}
-//					}
-//				}
-//			} catch (Exception ex) {
-//				ex.printStackTrace();
-//			}
-//		}
-//
-//		for (var group : groupMap.values()) {
-//			if (!group.getButtons().isEmpty()) {
-//				group.getButtons().sort(null);
-//				groups.add(group);
-//			}
-//		}
-//
-//		groups.sort(null);
-//
-//		for (var group : groups) {
-//			for (var button : group.getButtons()) {
-//				SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(button));
-//			}
-//		}
-//
-//		saveConfig();
 
 	private <T> void loadResources(ResourceManager manager, String path, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer) {
 		Map<ResourceLocation, Resource> resourceLocationResourceMap = manager.listResources(path, name -> name.getPath().endsWith(".json"));
@@ -210,46 +96,14 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	}
 
 
-	private final List<SidebarGuiButton> buttonList = new ArrayList<>();
-
-	public void refreshButtonList() {
-		buttonList.clear();
-		for (SidebarButton buttonEntry : getButtons()) {
-//			if(buttonEntry.canSee()) {
-				ResourceLocation id = buttonEntry.getId();
-				SidebarButtonData button = buttonEntry.getData();
-
-				StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(id.toString());
-				if(buttonSettings != null) {
-					SidebarGuiButton e = new SidebarGuiButton(new GridLocation(buttonSettings.xPos(), buttonSettings.yPos()), buttonSettings.enabled(), buttonEntry);
-					buttonList.add(e);
-				}else {
-					//Todo this should not be possable
-					LOGGER.error("Button {} not found in config", id);
-				}
-//			}
+	private StringSidebarMapValue.SideButtonInfo getOrCreateButtonSettings(SidebarButton button) {
+		StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(button.getId().toString());
+		if(buttonSettings == null) {
+			buttonSettings = new StringSidebarMapValue.SideButtonInfo(true, button.getData().x(), groups.get(button.getData().group()).y());
+			FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getId().toString(), buttonSettings);
+			FTBLibraryClientConfig.save();
 		}
-
-		for (Map.Entry<String, StringSidebarMapValue.SideButtonInfo> stringSideButtonInfoEntry : FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().entrySet()) {
-			if(!isRegistered(ResourceLocation.parse(stringSideButtonInfoEntry.getKey()))) {
-				continue;
-			}
-			StringSidebarMapValue.SideButtonInfo buttonSettings = stringSideButtonInfoEntry.getValue();
-			if(buttonSettings != null && buttonSettings.enabled()) {
-				for (SidebarGuiButton button : buttonList) {
-					if(button.getSidebarButton().canSee() && button.isEnabled()) {
-						if(!button.getSidebarButton().getId().toString().equals(stringSideButtonInfoEntry.getKey())) {
-							if(button.getGridY() == buttonSettings.yPos() && button.getGridX() == buttonSettings.xPos()) {
-								button.setGrid(button.getGridX() + 1, button.getGridY());
-							}
-						}
-
-					}
-				}
-			}
-		}
-
-		FTBLibraryClientConfig.save();
+		return buttonSettings;
 	}
 
 	private boolean isRegistered(ResourceLocation id) {
@@ -257,14 +111,43 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 	}
 
 	public void saveConfigFromButtonList() {
+
+		Map<Integer, List<SidebarGuiButton>> buttonMap = new HashMap<>();
+		for (SidebarGuiButton button : getButtonList()) {
+			int y = button.isEnabled() ? button.getGirdLocation().y() : -1;
+            buttonMap.computeIfAbsent(y, k -> new LinkedList<>()).add(button);
+		}
+
+		int y = 0;
+		for (Map.Entry<Integer, List<SidebarGuiButton>> integerListEntry : Utils.sortMapByKey(buttonMap).entrySet()) {
+			if(integerListEntry.getKey() == -1) {
+				for (SidebarGuiButton button : integerListEntry.getValue()) {
+					FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(false, -1, -1));
+				}
+			}
+			int x = 0;
+			integerListEntry.getValue()
+					.sort(Comparator.comparingInt((SidebarGuiButton button) -> button.getGirdLocation().x()));
+			List<SidebarGuiButton> value = integerListEntry.getValue();
+			for (SidebarGuiButton sidebarButton : value) {
+				if(sidebarButton.isEnabled()) {
+					FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(sidebarButton.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(sidebarButton.isEnabled(), x, y));
+					x++;
+				}
+			}
+			if(x != 0) {
+				y++;
+			}
+		}
+
+
 		for (SidebarGuiButton button : buttonList) {
 			StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(button.getSidebarButton().getId().toString());
 			if(buttonSettings != null) {
-				FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(button.isEnabled(), button.getGridX(), button.getGridY()));
+				FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(button.isEnabled(), button.getGirdLocation().x(), button.getGirdLocation().y()));
 			}
 		}
 		FTBLibraryClientConfig.save();
-		refreshButtonList();
 
 	}
 //
@@ -272,12 +155,18 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 		return buttonList;
 	}
 
-	public List<SidebarGuiButton> getEnabledButtonList() {
-		return buttonList.stream().filter(SidebarGuiButton::isEnabled).collect(Collectors.toList());
+	public List<SidebarGuiButton> getEnabledButtonList(boolean all) {
+		return buttonList.stream()
+				.filter(SidebarGuiButton::isEnabled)
+				.filter(button -> all || button.getSidebarButton().canSee())
+				.toList();
 	}
 
-	public List<SidebarGuiButton> getDisabledButtonList() {
-		return buttonList.stream().filter(button -> !button.isEnabled()).collect(Collectors.toList());
+	public List<SidebarGuiButton> getDisabledButtonList(boolean all) {
+		return buttonList.stream()
+				.filter(button -> !button.isEnabled())
+				.filter(button -> all || button.getSidebarButton().canSee())
+				.collect(Collectors.toList());
 	}
 
 
