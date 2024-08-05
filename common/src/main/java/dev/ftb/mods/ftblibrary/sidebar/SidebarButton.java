@@ -1,14 +1,19 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.architectury.platform.Platform;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.Util;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -20,6 +25,7 @@ public class SidebarButton {
     private final ResourceLocation id;
     private final String langKey;
     private final Component basicTooltip;
+    private final List<ExtraRenderer> extraRenderers;
     private Supplier<Component> tooltipOverride;
     private ChainedBooleanSupplier visible = ChainedBooleanSupplier.TRUE;
 
@@ -33,6 +39,7 @@ public class SidebarButton {
             addVisibilityCondition(ClientUtils.IS_CLIENT_OP);
         }
         data.requiredMods().ifPresent(mods -> addVisibilityCondition(() -> mods.stream().allMatch(Platform::isModLoaded)));
+        extraRenderers = new ArrayList<>();
     }
 
 
@@ -71,6 +78,19 @@ public class SidebarButton {
         return visible.getAsBoolean();
     }
 
+    @Deprecated
+    public void setCustomTextHandler(Supplier<String> customTextHandler) {
+        addExtraRenderer((graphics, font, buttonSize) -> {
+            String text = customTextHandler.get();
+            if (!text.isEmpty()) {
+                var nw = font.width(text);
+                Color4I.LIGHT_RED.draw(graphics, buttonSize - nw, -1, nw + 1, 9);
+                graphics.drawString(font, text, buttonSize - nw + 1, 0, 0xFFFFFFFF);
+                RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+            }
+        });
+    }
+
     //Todo fix both of these
     public Supplier<String> getCustomTextHandler() {
         return null;
@@ -78,6 +98,19 @@ public class SidebarButton {
 
     public Consumer<List<String>> getTooltipHandler() {
         return null;
+    }
+
+    public void addExtraRenderer(ExtraRenderer renderer) {
+        extraRenderers.add(renderer);
+    }
+
+
+    public List<ExtraRenderer> getExtraRenderers() {
+        return extraRenderers;
+    }
+
+    public interface ExtraRenderer {
+        void render(GuiGraphics graphics, Font font, int buttonSize);
     }
 }
 

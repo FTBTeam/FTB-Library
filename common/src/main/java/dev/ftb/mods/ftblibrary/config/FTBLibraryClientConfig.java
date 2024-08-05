@@ -27,6 +27,9 @@ public interface FTBLibraryClientConfig {
             .comment("Colors recently selected in the color selector");
 
     SNBTConfig SIDEBAR = CONFIG.addGroup("sidebar");
+    EnumValue<SidebarPosition> POSITION = SIDEBAR.addEnum("position", SidebarPosition.NAME_MAP, SidebarPosition.TOP_LEFT)
+            .comment("Position of the sidebar");
+
     StringSidebarMapValue SIDEBAR_BUTTONS = SIDEBAR.add(new StringSidebarMapValue(SIDEBAR, "buttons", new HashMap<>()));
 
     static void load() {
@@ -46,5 +49,30 @@ public interface FTBLibraryClientConfig {
         CONFIG.createClientConfig(group);
 
         return group;
+    }
+
+    public enum SidebarPosition {
+        TOP_LEFT(false, false),
+        TOP_RIGHT(false, true),
+        BOTTOM_LEFT(true, false),
+        BOTTOM_RIGHT(true, true);
+
+        private final boolean isBottom;
+        private final boolean isRight;
+
+        SidebarPosition(boolean isBottom, boolean isRight) {
+            this.isBottom = isBottom;
+            this.isRight = isRight;
+        }
+
+        public boolean isBottom() {
+            return isBottom;
+        }
+
+        public boolean isRight() {
+            return isRight;
+        }
+
+        public static final NameMap<SidebarPosition> NAME_MAP = NameMap.of(TOP_LEFT, SidebarPosition.values()).create();
     }
 }

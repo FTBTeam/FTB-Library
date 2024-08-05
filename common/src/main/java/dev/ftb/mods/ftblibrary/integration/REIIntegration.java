@@ -93,9 +93,10 @@ public class REIIntegration implements REIClientPlugin {
 		if (parse.error().isPresent()) {
 			FTBLibrary.LOGGER.error("Failed to parse json: {}", parse.error().get().message());
 		} else {
-			SidebarButtonData sidebarButton = parse.result().get();
+			SidebarButtonData sidebarButtonData = parse.result().get();
+			SidebarButton sidebarButton = new SidebarButton(id, sidebarButtonData);
 			SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(sidebarButton));
-			return new SidebarButton(id, sidebarButton);
+			return sidebarButton;
 		}
 		return null;
 	}

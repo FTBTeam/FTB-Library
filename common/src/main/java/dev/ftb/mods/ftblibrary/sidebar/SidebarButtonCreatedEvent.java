@@ -12,13 +12,13 @@ import java.util.function.Consumer;
 public class SidebarButtonCreatedEvent {
 	public static final Event<Consumer<SidebarButtonCreatedEvent>> EVENT = EventFactory.createConsumerLoop(SidebarButtonCreatedEvent.class);
 
-	private final SidebarButtonData button;
+	private final SidebarButton button;
 
-	public SidebarButtonCreatedEvent(SidebarButtonData b) {
-		button = b;
+	public SidebarButtonCreatedEvent(SidebarButton button) {
+		this.button = button;
 	}
 
-	public SidebarButtonData getButton() {
+	public SidebarButton getButton() {
 		return button;
 	}
 }
