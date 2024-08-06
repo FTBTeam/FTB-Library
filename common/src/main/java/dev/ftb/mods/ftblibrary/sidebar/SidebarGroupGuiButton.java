@@ -95,12 +95,14 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	private void renderSidebarButtons(GuiGraphics graphics, int mx, int my) {
 		var font = Minecraft.getInstance().font;
 
+		graphics.pose().translate(0, 0, 50);
+
 		for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
 			graphics.pose().pushPose();
 			GridLocation realGridLocation = realLocationMap.get(button);
 			if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
 				if (isEditMode && button == selectedButton) {
-					graphics.pose().translate(0, 0, 50);
+					graphics.pose().translate(0, 0, 1000);
 					button.x = mx - mouseOffsetX;
 					button.y = my - mouseOffsetY;
 				} else {
@@ -137,7 +139,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			}
 			if (!isEditMode && mouseOver == button) {
 				graphics.pose().pushPose();
-				graphics.pose().translate(0, 0, 50);
 				GuiHelper.setupDrawing();
 				var mx1 = mx + 10;
 				var my1 = Math.max(3, my - 9);
@@ -151,6 +152,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 					tw = Math.max(tw, font.width(s));
 				}
 				int fixedMouseX = gridStartRight ? mx1 - tw - 6 : mx1;
+				graphics.pose().translate(0, 0, 50);
 				Color4I.DARK_GRAY.draw(graphics, fixedMouseX - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
 
 				for (var i = 0; i < list.size(); i++) {
@@ -204,7 +206,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 						continue;
 					}
 					int buttonY = gridY + BUTTON_SPACING * i;
-					button.x = gridStartRight ? addIconX : gridX + BUTTON_SPACING;
+					button.x = gridStartRight ? addIconX : gridX;
 					button.y = buttonY;
 					GuiHelper.setupDrawing();
 
@@ -363,7 +365,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			currentGirdWidth += 1;
 			currentGridHeight += 1;
 		}
-
 
 		xRenderStart = (gridStartRight ? maxGirdAmountX - currentGirdWidth : 0) * BUTTON_SPACING;
 		yRenderStart = (gridStartBottom ? maxGirdAmountY - currentGridHeight + 1 : 0) * BUTTON_SPACING;
