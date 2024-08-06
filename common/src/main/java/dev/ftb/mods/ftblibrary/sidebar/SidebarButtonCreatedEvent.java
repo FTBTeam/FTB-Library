@@ -5,8 +5,7 @@ import dev.architectury.event.EventFactory;
 
 import java.util.function.Consumer;
 
-//Todo - UnReal Expose a way for other mod to reigster custom text handlers as that what this event is for
-//Todo WE DO NOT ALLOW EDITING BUTTONS AFTER CREATION ANYMORE
+//Todo move this to api class
 // TODO currently broken for neoforge, uncomment when there's a fix in architectury
 //@ForgeEvent
 public class SidebarButtonCreatedEvent {

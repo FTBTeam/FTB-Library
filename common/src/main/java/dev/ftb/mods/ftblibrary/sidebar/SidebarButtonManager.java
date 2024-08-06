@@ -6,7 +6,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue;
 import net.minecraft.resources.ResourceLocation;

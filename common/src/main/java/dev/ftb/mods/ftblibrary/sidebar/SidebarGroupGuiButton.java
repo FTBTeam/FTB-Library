@@ -1,13 +1,9 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.FTBLibraryClient;
+import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.ui.Button;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,14 +33,15 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	private boolean isMouseDown;
 	private int mouseDownTime;
 	private boolean isEditMode;
+
 	private int currentMouseX;
 	private int currentMouseY;
 
 	private int mouseOffsetX;
 	private int mouseOffsetY;
 
-	private int maxGridWith = 1;
-	private int maxGridHeight = 1;
+	private int currentGirdWidth = 1;
+	private int currentGridHeight = 1;
 
 	private boolean addBoxOpen;
 
@@ -54,13 +51,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	int yRenderStart;
 	int xRenderStart;
 
+	private boolean isMouseOverAdd;
 
-	private int maxGirdAmountX;
-	private int maxGirdAmountY;
-
-
-
-	private final Map<SidebarGuiButton, GridLocation> realLocationMap = new HashMap<>();
+    private final Map<SidebarGuiButton, GridLocation> realLocationMap = new HashMap<>();
 
 	public SidebarGroupGuiButton() {
 		super(0, 0, 0, 0, Component.empty());
@@ -78,6 +71,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			currentMouseX = mx;
 			currentMouseY = my;
 			mouseOver = null;
+			isMouseOverAdd = false;
 
 			GridLocation gridLocation = getGridLocation();
 
@@ -88,143 +82,147 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				}
 			}
 
-
 			if (isEditMode) {
-//
-
-
-
-				drawHoveredGrid(graphics, xRenderStart, yRenderStart , maxGridWith, maxGridHeight, BUTTON_SPACING, Color4I.GRAY.withAlpha(70), Color4I.BLACK.withAlpha(90), mx, my, gridStartBottom, gridStartRight, getX(), getY());
-
-				List<SidebarGuiButton> disabledButtonList = SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode);
-				if (!disabledButtonList.isEmpty()) {
-					int addIconY = gridStartBottom ? yRenderStart + maxGirdAmountY * BUTTON_SPACING - 4 : 0;
-					int addIconX = gridStartRight ? maxGridWith * BUTTON_SPACING : 0;
-					addIconX += (maxGridWith + 1) * BUTTON_SPACING;
-					drawGrid(graphics, addIconX, addIconY, 1, 1, BUTTON_SPACING, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
-					Icons.ADD.draw(graphics, addIconX + 1, addIconY + 1, 16, 16);
-
-					if (addBoxOpen) {
-						int maxWidth = 0;
-						for (SidebarGuiButton button : disabledButtonList) {
-							String s = I18n.get(button.getSidebarButton().getLangKey());
-							int width = Minecraft.getInstance().font.width(s);
-							maxWidth = Math.max(maxWidth, width);
-						}
-
-						int startY = gridStartBottom ? addIconY : 1;
-						int gridY = (gridStartBottom ? startY - disabledButtonList.size() * BUTTON_SPACING : BUTTON_SPACING);
-						drawGrid(graphics, (maxGridWith + 1) * BUTTON_SPACING, gridY, 1, disabledButtonList.size(), maxWidth + BUTTON_SPACING + 4, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
-						Color4I.BLACK.withAlpha(90).draw(graphics, (maxGridWith + 1) * BUTTON_SPACING + BUTTON_SPACING, gridY, 1, disabledButtonList.size() * BUTTON_SPACING);
-
-
-						for (int i = 0; i < disabledButtonList.size(); i++) {
-							SidebarGuiButton button = disabledButtonList.get(i);
-							if (selectedButton != null && selectedButton == button) {
-								continue;
-							}
-							int buttonY = gridY + BUTTON_SPACING * i;
-							button.x = (maxGridWith + 1) * BUTTON_SPACING;
-							button.y = buttonY;
-							GuiHelper.setupDrawing();
-
-							if (mx >= button.x && my >= button.y && mx < button.x + 16 && my < button.y + 16) {
-								Color4I.WHITE.withAlpha(137).draw(graphics, button.x + 1, button.y + 1, 16, 16);
-								mouseOver = button;
-							}
-
-							button.getSidebarButton().getData().icon().draw(graphics, button.x + 1, button.y + 1, 16, 16);
-
-							graphics.drawString(Minecraft.getInstance().font, I18n.get(button.getSidebarButton().getLangKey()), button.x + 20, button.y + 4, 0xFFFFFFFF);
-
-						}
-
-					}
-				}
-
+				renderEditMode(graphics, mx, my);
 			}
 
-
-
-			var font = Minecraft.getInstance().font;
-
-			for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
-				GridLocation realGridLocation = realLocationMap.get(button);
-				if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
-					{
-						boolean isThing = false;
-						if (isEditMode && button == selectedButton) {
-							graphics.pose().translate(0, 0, 5000);
-							isThing = true;
-							button.x = mx - mouseOffsetX;
-							button.y = my - mouseOffsetY;
-						} else {
-							if (realGridLocation == null) {
-								continue;
-							}
-							int adjustedX = gridStartRight ? xRenderStart + (maxGridWith - realGridLocation.x() - 1) * BUTTON_SPACING : xRenderStart + realGridLocation.x() * BUTTON_SPACING;
-							int adjustedY = gridStartBottom ? yRenderStart + (maxGridHeight - realGridLocation.y() - 1) * BUTTON_SPACING : yRenderStart + realGridLocation.y() * BUTTON_SPACING;
-
-							button.x = adjustedX + 1;
-							button.y = adjustedY + 1;
-						}
-						GuiHelper.setupDrawing();
-						button.getSidebarButton().getData().icon().draw(graphics, button.x, button.y, 16, 16);
-
-						if (isEditMode && button != selectedButton && SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode).size() > 1) {
-							if (mx >= button.x + 12 && my <= button.y + 4 && mx < button.x + 16 && my >= button.y) {
-								Icons.CANCEL.draw(graphics, button.x + 11, button.y - 1, 6, 6);
-							} else {
-								Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
-							}
-						}
-
-						if (button == mouseOver) {
-							Color4I.WHITE.withAlpha(33).draw(graphics, button.x, button.y, 16, 16);
-						}
-
-//						pose.pushPose();
-						{
-							graphics.pose().translate(button.x, button.y, 0);
-							for (SidebarButton.ExtraRenderer extraRenderer : button.getSidebarButton().getExtraRenderers()) {
-								extraRenderer.render(graphics, font, 16);
-							}
-							graphics.pose().translate(-button.x, -button.y, 0);
-
-						}
-						if(isThing) {
-							graphics.pose().translate(0, 0, -5000);
-						}
-					}
-				}
-				if (!isEditMode && mouseOver == button) {
-					GuiHelper.setupDrawing();
-					var mx1 = mx + 10;
-					var my1 = Math.max(3, my - 9);
-
-					List<String> list = new ArrayList<>();
-					list.add(I18n.get(mouseOver.getSidebarButton().getLangKey()));
-
-					if (mouseOver.getSidebarButton().getTooltipHandler() != null) {
-						mouseOver.getSidebarButton().getTooltipHandler().accept(list);
-					}
-
-					var tw = 0;
-
-					for (String s : list) {
-						tw = Math.max(tw, font.width(s));
-					}
-					int fixedMouseX = gridStartRight ? mx1 - tw - 6 : mx1;
-					Color4I.DARK_GRAY.draw(graphics, fixedMouseX - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
-
-					for (var i = 0; i < list.size(); i++) {
-						graphics.drawString(font, list.get(i), fixedMouseX, my1 + i * 10, 0xFFFFFFFF);
-					}
-				}
-			}
+			renderSidebarButtons(graphics, mx, my);
 
 		}
 		graphics.pose().popPose();
+	}
+
+	private void renderSidebarButtons(GuiGraphics graphics, int mx, int my) {
+		var font = Minecraft.getInstance().font;
+
+		for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
+			graphics.pose().pushPose();
+			GridLocation realGridLocation = realLocationMap.get(button);
+			if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
+				if (isEditMode && button == selectedButton) {
+					graphics.pose().translate(0, 0, 50);
+					button.x = mx - mouseOffsetX;
+					button.y = my - mouseOffsetY;
+				} else {
+					if (realGridLocation == null) {
+						continue;
+					}
+					int adjustedX = gridStartRight ? xRenderStart + (currentGirdWidth - realGridLocation.x() - 1) * BUTTON_SPACING : xRenderStart + realGridLocation.x() * BUTTON_SPACING;
+					int adjustedY = gridStartBottom ? yRenderStart + (currentGridHeight - realGridLocation.y() - 1) * BUTTON_SPACING : yRenderStart + realGridLocation.y() * BUTTON_SPACING;
+
+					button.x = adjustedX + 1;
+					button.y = adjustedY + 1;
+				}
+				GuiHelper.setupDrawing();
+				button.getSidebarButton().getData().icon().draw(graphics, button.x, button.y, 16, 16);
+
+				if (isEditMode && button != selectedButton && SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode).size() > 1) {
+					if (mx >= button.x + 12 && my <= button.y + 4 && mx < button.x + 16 && my >= button.y) {
+						Icons.CANCEL.draw(graphics, button.x + 11, button.y - 1, 6, 6);
+					} else {
+						Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
+					}
+				}
+
+				if (button == mouseOver) {
+					Color4I.WHITE.withAlpha(33).draw(graphics, button.x, button.y, 16, 16);
+				}
+
+				graphics.pose().translate(button.x, button.y, 0);
+				for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
+					buttonOverlayRender.render(graphics, font, 16);
+				}
+				graphics.pose().translate(-button.x, -button.y, 0);
+
+			}
+			if (!isEditMode && mouseOver == button) {
+				graphics.pose().pushPose();
+				graphics.pose().translate(0, 0, 50);
+				GuiHelper.setupDrawing();
+				var mx1 = mx + 10;
+				var my1 = Math.max(3, my - 9);
+
+				List<String> list = new ArrayList<>();
+				list.add(I18n.get(mouseOver.getSidebarButton().getLangKey()));
+
+				var tw = 0;
+
+				for (String s : list) {
+					tw = Math.max(tw, font.width(s));
+				}
+				int fixedMouseX = gridStartRight ? mx1 - tw - 6 : mx1;
+				Color4I.DARK_GRAY.draw(graphics, fixedMouseX - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
+
+				for (var i = 0; i < list.size(); i++) {
+					graphics.drawString(font, list.get(i), fixedMouseX, my1 + i * 10, 0xFFFFFFFF);
+				}
+				graphics.pose().popPose();
+			}
+			graphics.pose().popPose();
+		}
+	}
+
+	private void renderEditMode(GuiGraphics graphics, int mx, int my) {
+		drawHoveredGrid(graphics, xRenderStart, yRenderStart, currentGirdWidth, currentGridHeight, BUTTON_SPACING, Color4I.GRAY.withAlpha(70), Color4I.BLACK.withAlpha(90), mx, my, gridStartBottom, gridStartRight, getX(), getY());
+
+		List<SidebarGuiButton> disabledButtonList = SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode);
+		if (!disabledButtonList.isEmpty()) {
+			int addIconY = gridStartBottom ? yRenderStart + ((currentGridHeight - 1) * BUTTON_SPACING) : 0;
+			int addIconX = gridStartRight ? xRenderStart - (2 * BUTTON_SPACING) : (currentGirdWidth + 1) * BUTTON_SPACING;
+			drawGrid(graphics, addIconX, addIconY, 1, 1, BUTTON_SPACING, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
+			Icons.ADD.draw(graphics, addIconX + 1, addIconY + 1, 16, 16);
+
+			if (mx >= addIconX && my >= addIconY && mx < addIconX + 16 && my < addIconY + 16) {
+				isMouseOverAdd = true;
+				Color4I.WHITE.withAlpha(137).draw(graphics, addIconX + 1, addIconY + 1, 16, 16);
+			}
+
+			if (addBoxOpen) {
+				int maxWidth = 0;
+				for (SidebarGuiButton button : disabledButtonList) {
+					String s = I18n.get(button.getSidebarButton().getLangKey());
+					int width = Minecraft.getInstance().font.width(s);
+					maxWidth = Math.max(maxWidth, width);
+				}
+
+				int gridY = gridStartBottom ? addIconY - disabledButtonList.size() * BUTTON_SPACING : BUTTON_SPACING;
+				int gridX = gridStartRight ? addIconX - maxWidth - 6 : (currentGirdWidth + 1) * BUTTON_SPACING;
+
+				graphics.pose().pushPose();
+				graphics.pose().translate(0, 0, 1000);
+				if (gridStartRight) {
+					drawHoveredGrid(graphics, addIconX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight, gridX, gridY);
+					drawGrid(graphics, addIconX - maxWidth - 6, gridY, 1, disabledButtonList.size(), maxWidth + 6, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
+				} else {
+					drawHoveredGrid(graphics, gridX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight, gridX, gridY);
+					drawGrid(graphics, gridX + BUTTON_SPACING, gridY, 1, disabledButtonList.size(), maxWidth + 6, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
+				}
+
+				for (int i = 0; i < disabledButtonList.size(); i++) {
+					SidebarGuiButton button = disabledButtonList.get(i);
+					if (selectedButton != null && selectedButton == button) {
+						continue;
+					}
+					int buttonY = gridY + BUTTON_SPACING * i;
+					button.x = gridStartRight ? addIconX : gridX + BUTTON_SPACING;
+					button.y = buttonY;
+					GuiHelper.setupDrawing();
+
+					if (mx >= button.x && my >= button.y && mx < button.x + 16 && my < button.y + 16) {
+						Color4I.WHITE.withAlpha(137).draw(graphics, button.x + 1, button.y + 1, 16, 16);
+						mouseOver = button;
+					}
+
+					button.getSidebarButton().getData().icon().draw(graphics, button.x + 1, button.y + 1, 16, 16);
+
+					String langText = I18n.get(button.getSidebarButton().getLangKey());
+					int textXPos = gridStartRight ? addIconX - Minecraft.getInstance().font.width(langText) - 2 : gridX + BUTTON_SPACING;
+					graphics.drawString(Minecraft.getInstance().font, langText, textXPos, buttonY + 4, 0xFFFFFFFF);
+				}
+				graphics.pose().popPose();
+
+			}
+		}
 	}
 
 	@Override
@@ -260,7 +258,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 						//If the icon was disabled enable it
                         if (!selectedButton.isEnabled()) {
                             selectedButton.setEnabled(true);
-							//Todo do we want this
 							if (SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode).isEmpty()) {
 								addBoxOpen = false;
 							}
@@ -327,8 +324,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		int screenWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
 		int screenHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
-		maxGirdAmountX = screenWidth / BUTTON_SPACING;
-		maxGirdAmountY = screenHeight / BUTTON_SPACING;
+        int maxGirdAmountX = screenWidth / BUTTON_SPACING;
+        int maxGirdAmountY = screenHeight / BUTTON_SPACING;
 		girdAmountX = Math.min(girdAmountX, maxGirdAmountX);
 		girdAmountY = Math.min(girdAmountY, maxGirdAmountY);
 
@@ -337,6 +334,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		height = (girdAmountY) * BUTTON_SPACING;
 
 		FTBLibraryClientConfig.SidebarPosition sidebarPosition = FTBLibraryClientConfig.POSITION.get();
+
 		if (sidebarPosition.isBottom()) {
 			setY(screenHeight - height - 2);
 			gridStartBottom = true;
@@ -352,22 +350,24 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			gridStartRight = false;
 		}
 
-		maxGridWith = 1;
-		maxGridHeight = 1;
+		currentGirdWidth = 1;
+		currentGridHeight = 1;
+
 		for (Map.Entry<SidebarGuiButton, GridLocation> value : realLocationMap.entrySet()) {
 			GridLocation location = value.getValue();
-			maxGridWith = Math.max(maxGridWith, location.x() + 1);
-			maxGridHeight = Math.max(maxGridHeight, location.y() + 1);
+			currentGirdWidth = Math.max(currentGirdWidth, location.x() + 1);
+			currentGridHeight = Math.max(currentGridHeight, location.y() + 1);
 		}
 
 		if(isEditMode) {
-			maxGridWith += 1;
-			maxGridHeight += 1;
+			currentGirdWidth += 1;
+			currentGridHeight += 1;
 		}
 
 
-		xRenderStart = (gridStartRight ? maxGirdAmountX - maxGridWith : 0) * BUTTON_SPACING;
-		yRenderStart = (gridStartBottom ? maxGirdAmountY - maxGridHeight + 1 : 0) * BUTTON_SPACING;
+		xRenderStart = (gridStartRight ? maxGirdAmountX - currentGirdWidth : 0) * BUTTON_SPACING;
+		yRenderStart = (gridStartBottom ? maxGirdAmountY - currentGridHeight + 1 : 0) * BUTTON_SPACING;
+
 		if(gridStartBottom) {
 			yRenderStart -= 4;
 		}
@@ -384,14 +384,14 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		int gridY = (currentMouseY - yRenderStart - 1) / BUTTON_SPACING;
 
 		if (gridStartRight) {
-			gridX = maxGridWith - gridX - 1;
+			gridX = currentGirdWidth - gridX - 1;
 		}
 
 		if (gridStartBottom) {
-			gridY = maxGridHeight - gridY - 1;
+			gridY = currentGridHeight - gridY - 1;
 		}
 
-		if (gridX >= maxGridWith || gridY >= maxGridHeight || gridX < 0 || gridY < 0) {
+		if (gridX >= currentGirdWidth || gridY >= currentGridHeight || gridX < 0 || gridY < 0) {
 			return GridLocation.OUT_OF_BOUNDS;
 		}
 
@@ -400,13 +400,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 	@Override
 	public void onPress() {
-//		lastX = currentMouseX;
-//		lastY = currentMouseY;
-//		updateWidgetSize();
 		if(isEditMode) {
-			int adjustedY = gridStartBottom ? height - BUTTON_SPACING : 0;
-			if (currentMouseX >= getX() + (maxGridWith + 1) * BUTTON_SPACING && currentMouseX < getX() + (maxGridWith + 1) * BUTTON_SPACING + 16 &&
-					currentMouseY <= getY() + adjustedY + BUTTON_SPACING && currentMouseY > getY() + adjustedY + BUTTON_SPACING - 16) {
+			if (isMouseOverAdd) {
 				addBoxOpen = !addBoxOpen;
 				updateWidgetSize();
 				return;
@@ -442,16 +437,17 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	//Custom handling so our button click locations are where a buttons are not just a box
 	@Override
 	protected boolean isValidClickButton(int i) {
-//		if (super.isValidClickButton(i)) {
-//			if (isEditMode) {
-//                return selectedButton != null || mouseOver != null;
-//			} else {
-//				return mouseOver != null;
-//			}
-//		}
-		return true;
+		if (super.isValidClickButton(i)) {
+			if (isEditMode) {
+				return isMouseOverAdd || selectedButton != null || mouseOver != null;
+			} else {
+				return mouseOver != null;
+			}
+		}
+		return false;
 	}
 
+	//Check if mouse is down for 1 second and if so enter edit mode
 	public void tick() {
 		if(isMouseDown) {
 			mouseDownTime++;

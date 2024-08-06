@@ -1,32 +1,29 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.architectury.platform.Platform;
-import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.Util;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class SidebarButton {
+//Todo better name?
+public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton {
 
     private final SidebarButtonData data;
     private final ResourceLocation id;
     private final String langKey;
     private final Component basicTooltip;
-    private final List<ExtraRenderer> extraRenderers;
-    private Supplier<Component> tooltipOverride;
+    private final List<ButtonOverlayRender> extraRenderers;
+    private Supplier<List<Component>> tooltipOverride;
     private ChainedBooleanSupplier visible = ChainedBooleanSupplier.TRUE;
 
 
@@ -43,15 +40,11 @@ public class SidebarButton {
     }
 
 
-    public void addVisibilityCondition(BooleanSupplier condition) {
-        visible = visible.and(condition);
-    }
-
-
     public SidebarButtonData getData() {
         return data;
     }
 
+    @Override
     public ResourceLocation getId() {
         return id;
     }
@@ -61,7 +54,7 @@ public class SidebarButton {
     }
 
     public List<Component> getTooltip() {
-        return tooltipOverride == null ? List.of(basicTooltip) : List.of(basicTooltip, tooltipOverride.get());
+        return tooltipOverride == null ? List.of(basicTooltip) : tooltipOverride.get();
     }
 
     public void clickButton(boolean shift) {
@@ -78,39 +71,26 @@ public class SidebarButton {
         return visible.getAsBoolean();
     }
 
-    @Deprecated
-    public void setCustomTextHandler(Supplier<String> customTextHandler) {
-        addExtraRenderer((graphics, font, buttonSize) -> {
-            String text = customTextHandler.get();
-            if (!text.isEmpty()) {
-                var nw = font.width(text);
-                Color4I.LIGHT_RED.draw(graphics, buttonSize - nw, -1, nw + 1, 9);
-                graphics.drawString(font, text, buttonSize - nw + 1, 0, 0xFFFFFFFF);
-                RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-            }
-        });
+    @Override
+    public void addVisibilityCondition(BooleanSupplier condition) {
+        visible = visible.and(condition);
     }
 
-    //Todo fix both of these
-    public Supplier<String> getCustomTextHandler() {
-        return null;
-    }
-
-    public Consumer<List<String>> getTooltipHandler() {
-        return null;
-    }
-
-    public void addExtraRenderer(ExtraRenderer renderer) {
+    @Override
+    public void addOverlayRender(ButtonOverlayRender renderer) {
         extraRenderers.add(renderer);
     }
 
-
-    public List<ExtraRenderer> getExtraRenderers() {
-        return extraRenderers;
+    @Override
+    public void setTooltipOverride(Supplier<List<Component>> tooltipOverride) {
+        this.tooltipOverride = tooltipOverride;
     }
 
-    public interface ExtraRenderer {
-        void render(GuiGraphics graphics, Font font, int buttonSize);
+    /**
+     * @return a list of custom button overlay renderers to render on top of the button icon
+     */
+    public List<ButtonOverlayRender> getExtraRenderers() {
+        return extraRenderers;
     }
 }
 

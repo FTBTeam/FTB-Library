@@ -6,6 +6,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
 import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
 import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
@@ -154,14 +155,8 @@ public class REIIntegration implements REIClientPlugin {
 				public void render(GuiGraphics graphics, Rectangle bounds, int mouseX, int mouseY, float delta) {
 					GuiHelper.setupDrawing();
 					button.getData().icon().draw(graphics, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
-					if (button.getCustomTextHandler() != null) {
-						String text = button.getCustomTextHandler().get();
-						Font font  = Minecraft.getInstance().font;
-						if (!text.isEmpty()) {
-							var width = font.width(text);
-							Color4I.LIGHT_RED.draw(graphics, bounds.getX() + bounds.getWidth() - width, bounds.getY() - 1, width + 1, font.lineHeight);
-							graphics.drawString(font, text, bounds.getX() + bounds.getWidth() - width + 1, bounds.getY(), 0xFFFFFFFF);
-						}
+					for (ButtonOverlayRender extraRenderer : button.getExtraRenderers()) {
+						extraRenderer.render(graphics, Minecraft.getInstance().font, 16);
 					}
 				}
 
