@@ -1,10 +1,8 @@
 {
-  "group": "ftblibrary:cheat",
   "icon": [
     "ftblibrary:icons/blue_button",
     "ftblibrary:textures/icons/toggle_gamemode.png"
   ],
-  "x": 100,
   "click": ["command:/ftblibrary gamemode"],
   "requires_op": true
 }

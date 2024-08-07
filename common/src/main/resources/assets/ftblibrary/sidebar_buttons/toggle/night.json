@@ -1,0 +1,11 @@
+{
+  "icon": [
+    "ftblibrary:icons/blue_button",
+    "ftblibrary:textures/icons/toggle_night.png"
+  ],
+  "click": ["command:/ftblibrary night"],
+  "required_mods": [
+    "ftblibrary"
+  ],
+  "requires_op": true
+}

@@ -1,10 +1,8 @@
 {
-  "group": "ftblibrary:cheat",
   "icon": [
     "ftblibrary:icons/blue_button",
     "ftblibrary:textures/icons/toggle_day.png"
   ],
-  "x": 120,
   "click": ["command:/ftblibrary day"],
   "required_mods": [
     "ftblibrary"

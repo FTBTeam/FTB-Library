@@ -27,7 +27,9 @@ public interface FTBLibraryClientConfig {
             .comment("Colors recently selected in the color selector");
 
     SNBTConfig SIDEBAR = CONFIG.addGroup("sidebar");
-    EnumValue<SidebarPosition> POSITION = SIDEBAR.addEnum("position", SidebarPosition.NAME_MAP, SidebarPosition.TOP_LEFT)
+    BooleanValue SIDEBAR_ENABLED = SIDEBAR.addBoolean("enabled", true)
+            .comment("Enable the sidebar");
+    EnumValue<SidebarPosition> SIDEBAR_POSITION = SIDEBAR.addEnum("position", SidebarPosition.NAME_MAP, SidebarPosition.TOP_LEFT)
             .comment("Position of the sidebar");
 
     StringSidebarMapValue SIDEBAR_BUTTONS = SIDEBAR.add(new StringSidebarMapValue(SIDEBAR, "buttons", new HashMap<>()));

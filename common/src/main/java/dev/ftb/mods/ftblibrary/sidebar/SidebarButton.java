@@ -86,9 +86,6 @@ public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.Sideba
         this.tooltipOverride = tooltipOverride;
     }
 
-    /**
-     * @return a list of custom button overlay renderers to render on top of the button icon
-     */
     public List<ButtonOverlayRender> getExtraRenderers() {
         return extraRenderers;
     }

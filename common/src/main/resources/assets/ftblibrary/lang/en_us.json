@@ -100,5 +100,7 @@
 	"dimension.hyperbox.hyperbox": "Hyperbox",
 	"dimension.ae2.spatial_storage": "AE2 Spatial Storage",
 	"itemGroup.ftbsuite.creative_tab": "FTB Suite",
-	"item.ftblibrary.icon_item": "FTB Icon"
+	"item.ftblibrary.icon_item": "FTB Icon",
+	"ftblibrary.sidebar.no_buttons.enabled": "No Sidebar Buttons Enabled",
+	"ftblibrary.sidebar.no_buttons.info": "You can disabled sidebar buttons in the FTB Client Library config"
 }

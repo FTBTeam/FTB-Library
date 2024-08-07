@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.sidebar;
 import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
@@ -10,9 +11,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -97,72 +101,69 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 		graphics.pose().translate(0, 0, 50);
 
-		for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
-			graphics.pose().pushPose();
-			GridLocation realGridLocation = realLocationMap.get(button);
-			if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
-				if (isEditMode && button == selectedButton) {
-					graphics.pose().translate(0, 0, 1000);
-					button.x = mx - mouseOffsetX;
-					button.y = my - mouseOffsetY;
-				} else {
-					if (realGridLocation == null) {
-						continue;
-					}
-					int adjustedX = gridStartRight ? xRenderStart + (currentGirdWidth - realGridLocation.x() - 1) * BUTTON_SPACING : xRenderStart + realGridLocation.x() * BUTTON_SPACING;
-					int adjustedY = gridStartBottom ? yRenderStart + (currentGridHeight - realGridLocation.y() - 1) * BUTTON_SPACING : yRenderStart + realGridLocation.y() * BUTTON_SPACING;
+		//If there are no sidebar buttons enabled render "fake" button
+        if (!isEditMode && SidebarButtonManager.INSTANCE.getEnabledButtonList(false).isEmpty()) {
 
-					button.x = adjustedX + 1;
-					button.y = adjustedY + 1;
-				}
-				GuiHelper.setupDrawing();
-				button.getSidebarButton().getData().icon().draw(graphics, button.x, button.y, 16, 16);
+            if(mx >= xRenderStart + 2 && my >= yRenderStart + 2 && mx < xRenderStart + 18 && my < yRenderStart + 18) {
+				String enabledText = I18n.get("ftblibrary.sidebar.no_buttons.enabled");
+				String infoText = I18n.get("ftblibrary.sidebar.no_buttons.info");
+				int maxWidth = Math.max(font.width(enabledText), font.width(infoText));
+				graphics.drawString(font, enabledText, xRenderStart + 20, yRenderStart + 4, 0xFFFFFFFF);
+				graphics.drawString(font, infoText, xRenderStart + 20, yRenderStart + 12, 0xFFFFFFFF);
+				Color4I.DARK_GRAY.draw(graphics, xRenderStart + 2, yRenderStart + 2, maxWidth + 16, 16);
+				graphics.renderTooltip(font, List.of(Component.translatable("ftblibrary.sidebar.no_buttons.enabled"), Component.translatable("ftblibrary.sidebar.no_buttons.info")), Optional.empty(), mx, my + 5);
+            }
+            Icons.INFO.draw(graphics, xRenderStart + 2, yRenderStart + 2, 16, 16);
 
-				if (isEditMode && button != selectedButton && SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode).size() > 1) {
-					if (mx >= button.x + 12 && my <= button.y + 4 && mx < button.x + 16 && my >= button.y) {
-						Icons.CANCEL.draw(graphics, button.x + 11, button.y - 1, 6, 6);
-					} else {
-						Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
-					}
-				}
+        } else {
+            for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
+                graphics.pose().pushPose();
+                GridLocation realGridLocation = realLocationMap.get(button);
+                if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
+                    if (isEditMode && button == selectedButton) {
+                        graphics.pose().translate(0, 0, 1000);
+                        button.x = mx - mouseOffsetX;
+                        button.y = my - mouseOffsetY;
+                    } else {
+                        if (realGridLocation == null) {
+                            continue;
+                        }
+                        int adjustedX = gridStartRight ? xRenderStart + (currentGirdWidth - realGridLocation.x() - 1) * BUTTON_SPACING : xRenderStart + realGridLocation.x() * BUTTON_SPACING;
+                        int adjustedY = gridStartBottom ? yRenderStart + (currentGridHeight - realGridLocation.y() - 1) * BUTTON_SPACING : yRenderStart + realGridLocation.y() * BUTTON_SPACING;
 
-				if (button == mouseOver) {
-					Color4I.WHITE.withAlpha(33).draw(graphics, button.x, button.y, 16, 16);
-				}
+                        button.x = adjustedX + 1;
+                        button.y = adjustedY + 1;
+                    }
+                    GuiHelper.setupDrawing();
+                    button.getSidebarButton().getData().icon().draw(graphics, button.x, button.y, 16, 16);
 
-				graphics.pose().translate(button.x, button.y, 0);
-				for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
-					buttonOverlayRender.render(graphics, font, 16);
-				}
-				graphics.pose().translate(-button.x, -button.y, 0);
+                    if (isEditMode) {
+                        if (mx >= button.x + 12 && my <= button.y + 4 && mx < button.x + 16 && my >= button.y) {
+                            Icons.CANCEL.draw(graphics, button.x + 11, button.y - 1, 6, 6);
+                        } else {
+                            Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
+                        }
+                    }
 
-			}
-			if (!isEditMode && mouseOver == button) {
-				graphics.pose().pushPose();
-				GuiHelper.setupDrawing();
-				var mx1 = mx + 10;
-				var my1 = Math.max(3, my - 9);
+                    if (button == mouseOver) {
+                        Color4I.WHITE.withAlpha(33).draw(graphics, button.x, button.y, 16, 16);
+                    }
 
-				List<String> list = new ArrayList<>();
-				list.add(I18n.get(mouseOver.getSidebarButton().getLangKey()));
+                    graphics.pose().translate(button.x, button.y, 0);
+                    for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
+                        buttonOverlayRender.render(graphics, font, 16);
+                    }
+                    graphics.pose().translate(-button.x, -button.y, 0);
 
-				var tw = 0;
-
-				for (String s : list) {
-					tw = Math.max(tw, font.width(s));
-				}
-				int fixedMouseX = gridStartRight ? mx1 - tw - 6 : mx1;
-				graphics.pose().translate(0, 0, 50);
-				Color4I.DARK_GRAY.draw(graphics, fixedMouseX - 3, my1 - 2, tw + 6, 2 + list.size() * 10);
-
-				for (var i = 0; i < list.size(); i++) {
-					graphics.drawString(font, list.get(i), fixedMouseX, my1 + i * 10, 0xFFFFFFFF);
-				}
-				graphics.pose().popPose();
-			}
-			graphics.pose().popPose();
-		}
-	}
+                }
+                if (!isEditMode && mouseOver == button) {
+					MutableComponent translatable = Component.translatable(mouseOver.getSidebarButton().getLangKey());
+					graphics.renderTooltip(font, translatable,  mx, Math.max(7, my - 9) + 10);
+                }
+                graphics.pose().popPose();
+            }
+        }
+    }
 
 	private void renderEditMode(GuiGraphics graphics, int mx, int my) {
 		drawHoveredGrid(graphics, xRenderStart, yRenderStart, currentGirdWidth, currentGridHeight, BUTTON_SPACING, Color4I.GRAY.withAlpha(70), Color4I.BLACK.withAlpha(90), mx, my, gridStartBottom, gridStartRight, getX(), getY());
@@ -272,6 +273,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		}
 	}
 
+	//Aligns icons to a 'realLocationMap' this uses the button config as base, but checks if button is "visible" then aligns it to the grid
 	private void ensureGridAlignment() {
 		List<SidebarGuiButton> enabledButtonList = SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode);
 		Map<Integer, List<SidebarGuiButton>> buttonMap = enabledButtonList
@@ -295,7 +297,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		}
 
 
-
 		SidebarButtonManager.INSTANCE.saveConfigFromButtonList();
 		updateWidgetSize();
 	}
@@ -306,6 +307,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		// of its GUI areas, including resetting the filter textfield's selection
 		// https://github.com/FTBTeam/FTB-Mods-Issues/issues/262
 		// https://github.com/mezz/JustEnoughItems/issues/2938
+		//This calculates the grid size
 		int girdAmountX = 1;
 		int girdAmountY = 1;
 		for (SidebarGuiButton b : SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode)) {
@@ -313,16 +315,19 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			girdAmountY = Math.max(girdAmountY, b.getGirdLocation().y() + 1);
 		}
 
-		int disabledList = SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode).size();
 		if(isEditMode && addBoxOpen) {
+			int disabledList = SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode).size();
 			girdAmountX += 4;
             girdAmountY = Math.max(girdAmountY, disabledList);
 		}
 		if(isEditMode) {
+			//Add 3 extra to the x so that add button is clickable
 			girdAmountX += 3;
+			//Add one extra y, so you can place widgets at the bottom
 			girdAmountY += 1;
 		}
 
+		//ensure the grid size is not bigger than the screen
 		int screenWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
 		int screenHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
@@ -335,7 +340,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		width = (girdAmountX) * BUTTON_SPACING;
 		height = (girdAmountY) * BUTTON_SPACING;
 
-		FTBLibraryClientConfig.SidebarPosition sidebarPosition = FTBLibraryClientConfig.POSITION.get();
+		FTBLibraryClientConfig.SidebarPosition sidebarPosition = FTBLibraryClientConfig.SIDEBAR_POSITION.get();
 
 		if (sidebarPosition.isBottom()) {
 			setY(screenHeight - height - 2);
@@ -376,6 +381,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			xRenderStart += 3;
 		}
 
+		//Set the last drawn area so recipe viewer knows where we are and we can move it out the way
 		lastDrawnArea = new Rect2i(getX(), getY(), width, height);
 	}
 
@@ -408,14 +414,14 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				return;
 			}
 		}
-
+		isMouseDown = true;
 		if(mouseOver != null) {
-			isMouseDown = true;
+
 			mouseOffsetX = currentMouseX - mouseOver.x;
 			mouseOffsetY = currentMouseY - mouseOver.y;
 
 			if(isEditMode) {
-				if(SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode).size() > 1 && currentMouseX >= mouseOver.x + 12 && currentMouseY <= mouseOver.y + 4 && currentMouseX < mouseOver.x + 16 && currentMouseY >= mouseOver.y) {
+				if(currentMouseX >= mouseOver.x + 12 && currentMouseY <= mouseOver.y + 4 && currentMouseX < mouseOver.x + 16 && currentMouseY >= mouseOver.y) {
 					mouseOver.setEnabled(false);
 					mouseOver = null;
 					ensureGridAlignment();
@@ -442,7 +448,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			if (isEditMode) {
 				return isMouseOverAdd || selectedButton != null || mouseOver != null;
 			} else {
-				return mouseOver != null;
+				GridLocation gridLocation = getGridLocation();
+				return (gridLocation.y() == 0 && gridLocation.x() == 0) || mouseOver != null;
 			}
 		}
 		return false;
@@ -497,4 +504,5 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			Color4I.WHITE.withAlpha(127).draw(graphics, gridX * BUTTON_SPACING + 1, gridY * BUTTON_SPACING + 1, spacing - 1, spacing - 1);
 		}
 	}
+
 }

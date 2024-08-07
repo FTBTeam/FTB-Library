@@ -2,12 +2,12 @@
   "group": "ftblibrary:cheat",
   "icon": [
     "ftblibrary:icons/blue_button",
-    "ftblibrary:textures/icons/toggle_night.png"
+    "ftblibrary:textures/icons/camera.png"
   ],
-  "x": 130,
-  "click": ["command:/ftblibrary night"],
+  "click": ["command:/say hi"],
   "required_mods": [
-    "ftblibrary"
+    "ftblibrary",
+    "neotech"
   ],
   "requires_op": true
 }

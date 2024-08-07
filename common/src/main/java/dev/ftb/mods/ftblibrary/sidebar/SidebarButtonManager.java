@@ -8,6 +8,7 @@ import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue;
+import dev.ftb.mods.ftblibrary.util.MapUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -32,11 +33,9 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	private final Map<ResourceLocation, SidebarButtonGroup> groups = new HashMap<>();
 	private final Map<ResourceLocation, SidebarButton> buttons = new HashMap<>();
 
 	private final List<SidebarGuiButton> buttonList = new ArrayList<>();
-
 
 	private JsonElement readJson(Resource resource) {
 		try (BufferedReader reader = resource.openAsReader()) {
@@ -53,28 +52,29 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
 	@Override
 	public void onResourceManagerReload(ResourceManager manager) {
-		groups.clear();
 		buttons.clear();
 
 		//Read the button and group json files and register them to their 'registry' map
-		loadResources(manager, "sidebar_buttons/groups", SidebarButtonGroup.CODEC, groups::put);
-		loadResources(manager, "sidebar_buttons/buttons", SidebarButtonData.CODEC, (id, buttonData) -> {
-			SidebarButtonGroup group = groups.get(buttonData.group());
-			if(group != null) {
-				buttons.put(id, new SidebarButton(id, buttonData));
-			}else {
-				LOGGER.error("Could not register button {} as group {} does not exist", id, buttonData.group());
-			}
-		});
+		loadResources(manager, "sidebar_buttons", SidebarButtonData.CODEC, (id, buttonData) -> buttons.put(id, new SidebarButton(id, buttonData)));
 
 		buttonList.clear();
-		for (SidebarButton buttonEntry : getButtons()) {
-			StringSidebarMapValue.SideButtonInfo buttonSettings = getOrCreateButtonSettings(buttonEntry);
+		int y = 0;
+		int x = 0;
+		for (SidebarButton buttonEntry : buttons.values()) {
+			StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(buttonEntry.getId().toString());
+			if(buttonSettings == null) {
+				buttonSettings = new StringSidebarMapValue.SideButtonInfo(true, x, y);
+				FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(buttonEntry.getId().toString(), buttonSettings);
+				FTBLibraryClientConfig.save();
+			}
             buttonList.add(new SidebarGuiButton(new GridLocation(buttonSettings.xPos(), buttonSettings.yPos()), buttonSettings.enabled(), buttonEntry));
+			x++;
+			if(x >= 4) {
+				x = 0;
+				y++;
+			}
         }
-
 		FTBLibraryClientConfig.save();
-
 	}
 
 	private <T> void loadResources(ResourceManager manager, String path, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer) {
@@ -94,23 +94,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 		}
 	}
 
-
-	private StringSidebarMapValue.SideButtonInfo getOrCreateButtonSettings(SidebarButton button) {
-		StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(button.getId().toString());
-		if(buttonSettings == null) {
-			buttonSettings = new StringSidebarMapValue.SideButtonInfo(true, button.getData().x(), groups.get(button.getData().group()).y());
-			FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getId().toString(), buttonSettings);
-			FTBLibraryClientConfig.save();
-		}
-		return buttonSettings;
-	}
-
-	private boolean isRegistered(ResourceLocation id) {
-		return buttons.values().stream().anyMatch(button -> button.getId().equals(id));
-	}
-
 	public void saveConfigFromButtonList() {
-
 		Map<Integer, List<SidebarGuiButton>> buttonMap = new HashMap<>();
 		for (SidebarGuiButton button : getButtonList()) {
 			int y = button.isEnabled() ? button.getGirdLocation().y() : -1;
@@ -118,7 +102,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 		}
 
 		int y = 0;
-		for (Map.Entry<Integer, List<SidebarGuiButton>> integerListEntry : Utils.sortMapByKey(buttonMap).entrySet()) {
+		for (Map.Entry<Integer, List<SidebarGuiButton>> integerListEntry : MapUtils.sortMapByKey(buttonMap).entrySet()) {
 			if(integerListEntry.getKey() == -1) {
 				for (SidebarGuiButton button : integerListEntry.getValue()) {
 					button.setGridLocation(-1, -1);
@@ -141,7 +125,6 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 			}
 		}
 
-
 		for (SidebarGuiButton button : buttonList) {
 			StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(button.getSidebarButton().getId().toString());
 			if(buttonSettings != null) {
@@ -149,9 +132,8 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 			}
 		}
 		FTBLibraryClientConfig.save();
-
 	}
-//
+
 	public List<SidebarGuiButton> getButtonList() {
 		return buttonList;
 	}
@@ -168,44 +150,6 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 				.filter(button -> !button.isEnabled())
 				.filter(button -> all || button.getSidebarButton().canSee())
 				.collect(Collectors.toList());
-	}
-
-
-	public Map<SidebarButtonGroup, List<SidebarButton>> getButtonGroups() {
-		Map<SidebarButtonGroup, List<SidebarButton>> buttonMap = new HashMap<>();
-		for (SidebarButton buttonData : this.buttons.values()) {
-			buttonMap.computeIfAbsent(groups.get(buttonData.getData().group()), k -> new ArrayList<>()).add(buttonData);
-		}
-
-		return Utils.sortMapByKey(buttonMap);
-	}
-
-
-
-	//Todo cleanup
-	public static class Utils {
-
-		public static <K, V> Map<K, V> sortMapByKey(Map<K, V> map, Comparator<K> comparator) {
-			return map.entrySet().stream()
-					.sorted(Map.Entry.comparingByKey(comparator))
-					.collect(Collectors.toMap(
-							Map.Entry::getKey,
-							Map.Entry::getValue,
-							(a, b) -> a,
-							HashMap::new
-					));
-		}
-
-		public static<K extends Comparable<? super K>, V> Map<K, V> sortMapByKey(Map<K, V> map) {
-			return map.entrySet().stream()
-					.sorted(Map.Entry.comparingByKey())
-					.collect(Collectors.toMap(
-							Map.Entry::getKey,
-							Map.Entry::getValue,
-							(a, b) -> a,
-							HashMap::new
-					));
-		}
 	}
 
 }
