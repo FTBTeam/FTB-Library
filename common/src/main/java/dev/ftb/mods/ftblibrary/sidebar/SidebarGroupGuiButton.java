@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.sidebar;
 import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
@@ -11,13 +10,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,8 +25,14 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class SidebarGroupGuiButton extends AbstractButton {
+
 	public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
 	private static final int BUTTON_SPACING = 17;
+
+	private static final List<Component> noButtonComponents = List.of(
+			Component.translatable("ftblibrary.sidebar.no_buttons.enabled"),
+			Component.translatable("ftblibrary.sidebar.no_buttons.info"));
+
 
 	private SidebarGuiButton mouseOver;
 	private SidebarGuiButton selectedButton;
@@ -103,17 +106,11 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 		//If there are no sidebar buttons enabled render "fake" button
         if (!isEditMode && SidebarButtonManager.INSTANCE.getEnabledButtonList(false).isEmpty()) {
-
-            if(mx >= xRenderStart + 2 && my >= yRenderStart + 2 && mx < xRenderStart + 18 && my < yRenderStart + 18) {
-				String enabledText = I18n.get("ftblibrary.sidebar.no_buttons.enabled");
-				String infoText = I18n.get("ftblibrary.sidebar.no_buttons.info");
-				int maxWidth = Math.max(font.width(enabledText), font.width(infoText));
-				graphics.drawString(font, enabledText, xRenderStart + 20, yRenderStart + 4, 0xFFFFFFFF);
-				graphics.drawString(font, infoText, xRenderStart + 20, yRenderStart + 12, 0xFFFFFFFF);
-				Color4I.DARK_GRAY.draw(graphics, xRenderStart + 2, yRenderStart + 2, maxWidth + 16, 16);
-				graphics.renderTooltip(font, List.of(Component.translatable("ftblibrary.sidebar.no_buttons.enabled"), Component.translatable("ftblibrary.sidebar.no_buttons.info")), Optional.empty(), mx, my + 5);
+			if(mx >= xRenderStart + 2 && my >= yRenderStart + 2 && mx < xRenderStart + 18 && my < yRenderStart + 18) {
+				graphics.renderTooltip(font, noButtonComponents, Optional.empty(), mx, my + 5);
+				Color4I.WHITE.withAlpha(33).draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
             }
-            Icons.INFO.draw(graphics, xRenderStart + 2, yRenderStart + 2, 16, 16);
+            Icons.INFO.draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
 
         } else {
             for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
@@ -149,11 +146,12 @@ public class SidebarGroupGuiButton extends AbstractButton {
                         Color4I.WHITE.withAlpha(33).draw(graphics, button.x, button.y, 16, 16);
                     }
 
+					graphics.pose().pushPose();
                     graphics.pose().translate(button.x, button.y, 0);
                     for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
                         buttonOverlayRender.render(graphics, font, 16);
                     }
-                    graphics.pose().translate(-button.x, -button.y, 0);
+					graphics.pose().popPose();
 
                 }
                 if (!isEditMode && mouseOver == button) {
