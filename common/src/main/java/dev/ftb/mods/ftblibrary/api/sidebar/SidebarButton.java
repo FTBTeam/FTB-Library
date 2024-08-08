@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public interface SidebarButton {
 
     /**
-     * @return id of button used for storing
+     * @return the id of the button used for saving config data created from the location button in resource path
      */
     ResourceLocation getId();
 

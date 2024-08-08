@@ -72,7 +72,7 @@ public class RegisteredSidebarButton implements dev.ftb.mods.ftblibrary.api.side
             new LoadingScreen(Component.translatable(getLangKey())).openGui();
         }
 
-        boolean canShift = data.shiftClickEvent().isPresent();
+        boolean canShift = shift && data.shiftClickEvent().isPresent();
         List<String> clickEvents = canShift ? data.shiftClickEvent().get() : data.clickEvents();
         for (String event : clickEvents) {
             GuiHelper.BLANK_GUI.handleClick(event);

@@ -33,7 +33,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
     private static final List<Component> noButtonComponents = List.of(
             Component.translatable("sidebar_button.ftblibrary.config"),
-            Component.translatable("sidebar_button.ftblibrary.config.enter_edit_mode"));
+            Component.translatable("sidebar_button.ftblibrary.config.enter_edit_mode")
+    );
 
     private SidebarGuiButton mouseOver;
     private SidebarGuiButton selectedButton;
@@ -71,31 +72,29 @@ public class SidebarGroupGuiButton extends AbstractButton {
     @Override
     public void renderWidget(GuiGraphics graphics, int mx, int my, float partialTicks) {
         graphics.pose().pushPose();
-        {
-            graphics.pose().translate(0, 0, 5000);
+        graphics.pose().translate(0, 0, 5000);
 
-            currentMouseX = mx;
-            currentMouseY = my;
-            mouseOver = null;
-            isMouseOverAdd = false;
-            mouseOverSettingsIcon = false;
+        currentMouseX = mx;
+        currentMouseY = my;
+        mouseOver = null;
+        isMouseOverAdd = false;
+        mouseOverSettingsIcon = false;
 
-            GridLocation gridLocation = getGridLocation();
+        GridLocation gridLocation = getGridLocation();
 
-            for (Map.Entry<SidebarGuiButton, GridLocation> entry : realLocationMap.entrySet()) {
-                SidebarGuiButton button = entry.getKey();
-                if (entry.getValue().equals(gridLocation)) {
-                    mouseOver = button;
-                }
+        for (Map.Entry<SidebarGuiButton, GridLocation> entry : realLocationMap.entrySet()) {
+            SidebarGuiButton button = entry.getKey();
+            if (entry.getValue().equals(gridLocation)) {
+                mouseOver = button;
             }
-
-            if (isEditMode) {
-                renderEditMode(graphics, mx, my);
-            }
-
-            renderSidebarButtons(graphics, mx, my);
-
         }
+
+        if (isEditMode) {
+            renderEditMode(graphics, mx, my);
+        }
+
+        renderSidebarButtons(graphics, mx, my);
+
         graphics.pose().popPose();
     }
 
@@ -237,7 +236,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
             mouseOver.getSidebarButton().clickButton(Screen.hasShiftDown());
         } else if (selectedButton != null) {
             GridLocation gLocation = getGridLocation();
-            // Make sure the placement is in grid and that is not in the same location
+            // Make sure the placement is in grid and that is not in the same location that it was picked up from
             if (!gLocation.isOutOfBounds() && !gLocation.equals(selectedLocation)) {
                 updateButtonLocations(gLocation);
             }
@@ -247,7 +246,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     private void updateButtonLocations(GridLocation gLocation) {
-        // checks if moved from the first spot, so we can move other icons over but only as the same row
+        // Checks if moved from the first spot, so we can move other icons over but only as the same row
 
         boolean isFrom0XTo1X = selectedLocation.y() == gLocation.y() && selectedLocation.x() == 0 && gLocation.x() == 1;
         selectedButton.setGridLocation(gLocation.x(), gLocation.y());
