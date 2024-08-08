@@ -1,11 +1,11 @@
-package dev.ftb.mods.ftblibrary.sidebar;
+package dev.ftb.mods.ftblibrary.api.sidebar;
 
 import dev.architectury.event.Event;
 import dev.architectury.event.EventFactory;
+import dev.ftb.mods.ftblibrary.sidebar.RegisteredSidebarButton;
 
 import java.util.function.Consumer;
 
-// Todo move this to api class in the future - unreal
 // TODO currently broken for neoforge, uncomment when there's a fix in architectury
 //@ForgeEvent
 public class SidebarButtonCreatedEvent {

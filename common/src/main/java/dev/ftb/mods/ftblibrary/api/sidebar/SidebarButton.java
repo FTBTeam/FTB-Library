@@ -15,15 +15,6 @@ public interface SidebarButton {
     ResourceLocation getId();
 
     /**
-     * @param customTextHandler A supplier that returns the text to be displayed on the button
-     * @deprecated Use {@link #addOverlayRender(ButtonOverlayRender)} instead
-     */
-    @Deprecated(forRemoval = true)
-    default void setCustomTextHandler(Supplier<String> customTextHandler) {
-        addOverlayRender(ButtonOverlayRender.ofSimpleString(customTextHandler));
-    }
-
-    /**
      * Register a condition that must be met for the button to be visible
      * @param condition a condition that must be met for the button to be visible
      */

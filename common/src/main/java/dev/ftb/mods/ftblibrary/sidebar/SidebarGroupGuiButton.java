@@ -125,9 +125,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
                         if (realGridLocation == null) {
                             continue;
                         }
+
                         int adjustedX = gridStartRight ? xRenderStart + (currentGirdWidth - realGridLocation.x() - 1) * BUTTON_SPACING : xRenderStart + realGridLocation.x() * BUTTON_SPACING;
                         int adjustedY = gridStartBottom ? yRenderStart + (currentGridHeight - realGridLocation.y() - 1) * BUTTON_SPACING : yRenderStart + realGridLocation.y() * BUTTON_SPACING;
-
                         button.x = adjustedX + 1;
                         button.y = adjustedY + 1;
                     }
@@ -190,6 +190,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
                 graphics.pose().pushPose();
                 graphics.pose().translate(0, 0, 1000);
+
                 if (gridStartRight) {
                     drawHoveredGrid(graphics, addIconX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight, gridX, gridY);
                     drawGrid(graphics, addIconX - maxWidth - 6, gridY, 1, disabledButtonList.size(), maxWidth + 6, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
@@ -203,6 +204,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
                     if (selectedButton != null && selectedButton == button) {
                         continue;
                     }
+
                     int buttonY = gridY + BUTTON_SPACING * i;
                     button.x = gridStartRight ? addIconX : gridX;
                     button.y = buttonY;
@@ -236,6 +238,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
             mouseOver.getSidebarButton().clickButton(Screen.hasShiftDown());
         } else if (selectedButton != null) {
             GridLocation gLocation = getGridLocation();
+
             // Make sure the placement is in grid and that is not in the same location that it was picked up from
             if (!gLocation.isOutOfBounds() && !gLocation.equals(selectedLocation)) {
                 updateButtonLocations(gLocation);
@@ -255,14 +258,16 @@ public class SidebarGroupGuiButton extends AbstractButton {
         List<SidebarGuiButton> buttonList = SidebarButtonManager.INSTANCE.getButtonList();
         for (SidebarGuiButton button : buttonList) {
             GridLocation realGridLocation = realLocationMap.get(button);
-            if (realGridLocation != null) {
-                if (!selectedButton.getSidebarButton().getId().equals(button.getSidebarButton().getId())) {
-                    if (gLocation.isLatterInColumn(realGridLocation)) {
-                        int moveAmount = isFrom0XTo1X && realGridLocation.x() == 1 ? -1 : 1;
-                        button.setGridLocation(realGridLocation.x() + moveAmount, realGridLocation.y());
-                    }
-                }
+            if (realGridLocation == null || selectedButton.getSidebarButton().getId().equals(button.getSidebarButton().getId())) {
+                continue;
             }
+
+            if (!gLocation.isLatterInColumn(realGridLocation)) {
+                continue;
+            }
+
+            int moveAmount = isFrom0XTo1X && realGridLocation.x() == 1 ? -1 : 1;
+            button.setGridLocation(realGridLocation.x() + moveAmount, realGridLocation.y());
         }
 
         // If the icon was disabled enable it
@@ -287,6 +292,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
         int y = 0;
         for (Map.Entry<Integer, List<SidebarGuiButton>> entry : buttonMap.entrySet()) {
             entry.getValue().sort(Comparator.comparingInt(b -> b.getGirdLocation().x()));
+
             int x = 0;
             for (SidebarGuiButton button : entry.getValue()) {
                 realLocationMap.put(button, new GridLocation(x, y));
@@ -296,7 +302,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
                 y++;
             }
         }
-
 
         SidebarButtonManager.INSTANCE.saveConfigFromButtonList();
         updateWidgetSize();
@@ -350,6 +355,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
             setY(0);
             gridStartBottom = false;
         }
+
         if (sidebarPosition.isRight()) {
             setX(screenWidth - width - 2);
             gridStartRight = true;
@@ -387,7 +393,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     private GridLocation getGridLocation() {
-
         int gridX = (currentMouseX - xRenderStart - 1) / BUTTON_SPACING;
         int gridY = (currentMouseY - yRenderStart - 1) / BUTTON_SPACING;
 
@@ -414,34 +419,40 @@ public class SidebarGroupGuiButton extends AbstractButton {
             ensureGridAlignment();
             return;
         }
+
         if (mouseOverSettingsIcon) {
             FTBLibraryClient.editConfig(true);
             return;
         }
+
         if (isEditMode && isMouseOverAdd) {
             addBoxOpen = !addBoxOpen;
             updateWidgetSize();
             return;
         }
-        if (mouseOver != null) {
 
-            mouseOffsetX = currentMouseX - mouseOver.x;
-            mouseOffsetY = currentMouseY - mouseOver.y;
-
-            if (isEditMode) {
-                // if the mouse is over the cancel icon
-                if (currentMouseX >= mouseOver.x + 12 && currentMouseY <= mouseOver.y + 4 && currentMouseX < mouseOver.x + 16 && currentMouseY >= mouseOver.y) {
-                    mouseOver.setEnabled(false);
-                    mouseOver = null;
-                    ensureGridAlignment();
-                    return;
-                }
-
-                selectedButton = mouseOver;
-                GridLocation realGridLocation = realLocationMap.get(selectedButton);
-                selectedLocation = realGridLocation == null ? selectedButton.getGirdLocation() : realGridLocation;
-            }
+        if (mouseOver == null) {
+            return;
         }
+
+        mouseOffsetX = currentMouseX - mouseOver.x;
+        mouseOffsetY = currentMouseY - mouseOver.y;
+
+        if (!isEditMode) {
+            return;
+        }
+
+        // if the mouse is over the cancel icon
+        if (currentMouseX >= mouseOver.x + 12 && currentMouseY <= mouseOver.y + 4 && currentMouseX < mouseOver.x + 16 && currentMouseY >= mouseOver.y) {
+            mouseOver.setEnabled(false);
+            mouseOver = null;
+            ensureGridAlignment();
+            return;
+        }
+
+        selectedButton = mouseOver;
+        GridLocation realGridLocation = realLocationMap.get(selectedButton);
+        selectedLocation = realGridLocation == null ? selectedButton.getGirdLocation() : realGridLocation;
     }
 
     @Override
@@ -457,10 +468,12 @@ public class SidebarGroupGuiButton extends AbstractButton {
             isEditMode = false;
             return false;
         }
+
         lastMouseClickButton = i;
         if (i == 1) {
             return inBounds;
         }
+
         if (super.isValidClickButton(i)) {
             if (isEditMode) {
                 return isMouseOverAdd || selectedButton != null || mouseOver != null;
@@ -474,9 +487,11 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
     private static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacingWidth, int spacingHeight, Color4I backgroundColor, Color4I gridColor) {
         backgroundColor.draw(graphics, x, y, width * spacingWidth, height * spacingHeight);
+
         for (var i = 0; i < width + 1; i++) {
             gridColor.draw(graphics, x + i * spacingWidth, y, 1, height * spacingHeight + 1);
         }
+
         for (var i = 0; i < height + 1; i++) {
             gridColor.draw(graphics, x, y + i * spacingHeight, width * spacingWidth, 1);
         }

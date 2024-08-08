@@ -9,6 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue;
 import dev.ftb.mods.ftblibrary.util.MapUtils;
@@ -62,8 +63,10 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 
         buttonList.clear();
         List<RegisteredSidebarButton> sortedButtons = buttons.values().stream().sorted(Comparator.comparingInt(value -> value.getData().sortIndex())).toList();
+
         int y = 0;
         int x = 0;
+
         for (RegisteredSidebarButton buttonEntry : sortedButtons) {
             StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(buttonEntry.getId().toString());
             if (buttonSettings == null) {
@@ -72,12 +75,14 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
                 FTBLibraryClientConfig.save();
             }
             buttonList.add(new SidebarGuiButton(new GridLocation(buttonSettings.xPos(), buttonSettings.yPos()), buttonSettings.enabled(), buttonEntry));
+
             x++;
             if (x >= 4) {
                 x = 0;
                 y++;
             }
         }
+
         for (RegisteredSidebarButton value : buttons.values()) {
             SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(value));
         }
@@ -89,6 +94,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
         for (Map.Entry<ResourceLocation, Resource> resource : resourceLocationResourceMap.entrySet()) {
             JsonElement jsonElement = readJson(resource.getValue());
             DataResult<T> parse = codec.parse(JsonOps.INSTANCE, jsonElement);
+
             if (parse.error().isPresent()) {
                 FTBLibrary.LOGGER.error("Failed to parse json: {}", parse.error().get().message());
             } else {
@@ -116,10 +122,12 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
                     FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(false, -1, -1));
                 }
             }
+
             int x = 0;
             integerListEntry.getValue()
                     .sort(Comparator.comparingInt((SidebarGuiButton button) -> button.getGirdLocation().x()));
             List<SidebarGuiButton> value = integerListEntry.getValue();
+
             for (SidebarGuiButton sidebarButton : value) {
                 if (sidebarButton.isEnabled()) {
                     sidebarButton.setGridLocation(x, y);
