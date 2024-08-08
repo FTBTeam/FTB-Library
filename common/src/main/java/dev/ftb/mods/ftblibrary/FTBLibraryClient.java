@@ -69,7 +69,7 @@ public class FTBLibraryClient {
 			return false;
 		}
 
-		if(!FTBLibraryClientConfig.SIDEBAR_ENABLED.get()) {
+		if (!FTBLibraryClientConfig.SIDEBAR_ENABLED.get()) {
 			return false;
 		}
 

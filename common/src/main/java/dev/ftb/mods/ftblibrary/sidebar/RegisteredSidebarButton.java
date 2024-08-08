@@ -16,8 +16,7 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-//Todo better name? - unreal
-public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton {
+public class RegisteredSidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton {
 
     private final SidebarButtonData data;
     private final ResourceLocation id;
@@ -27,12 +26,12 @@ public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.Sideba
     private Supplier<List<Component>> tooltipOverride;
     private ChainedBooleanSupplier visible = ChainedBooleanSupplier.TRUE;
 
-    public SidebarButton(ResourceLocation id, SidebarButtonData data) {
+    public RegisteredSidebarButton(ResourceLocation id, SidebarButtonData data) {
         this.id = id;
         this.data = data;
         this.langKey = Util.makeDescriptionId("sidebar_button", id);
         tooltip = Component.translatable(langKey + ".tooltip");
-        if(data.requiresOp()) {
+        if (data.requiresOp()) {
             addVisibilityCondition(ClientUtils.IS_CLIENT_OP);
         }
         data.requiredMods().ifPresent(mods -> addVisibilityCondition(() -> mods.stream().allMatch(Platform::isModLoaded)));
@@ -54,12 +53,12 @@ public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.Sideba
     }
 
     public List<Component> getTooltip(boolean shift) {
-        if(tooltipOverride != null) {
+        if (tooltipOverride != null) {
             return tooltipOverride.get();
-        }else {
+        } else {
             List<Component> tooltips = new ArrayList<>();
             tooltips.add(Component.translatable(langKey));
-            if(shift) {
+            if (shift) {
                 tooltips.add(tooltip);
             }
             Optional<List<Component>> components = shift ? data.shiftTooltip() : data.tooltip();
@@ -73,7 +72,9 @@ public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.Sideba
             new LoadingScreen(Component.translatable(getLangKey())).openGui();
         }
 
-        for (String event : (shift && data.shiftClickEvent().isPresent() ? data.shiftClickEvent().get() : data.clickEvents())) {
+        boolean canShift = data.shiftClickEvent().isPresent();
+        List<String> clickEvents = canShift ? data.shiftClickEvent().get() : data.clickEvents();
+        for (String event : clickEvents) {
             GuiHelper.BLANK_GUI.handleClick(event);
         }
     }
