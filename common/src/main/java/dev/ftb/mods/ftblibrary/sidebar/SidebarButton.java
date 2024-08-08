@@ -11,13 +11,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-//Todo better name?
+//Todo better name? - unreal
 public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton {
 
     private final SidebarButtonData data;

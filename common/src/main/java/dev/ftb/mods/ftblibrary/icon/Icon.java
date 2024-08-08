@@ -29,7 +29,6 @@ public abstract class Icon implements Drawable {
 		return Color4I.EMPTY_ICON;
 	}
 
-	//Todo Fix me
 	public static final Codec<Icon> CODEC = ExtraCodecs.JSON.xmap(Icon::getIcon, Icon::getJson);
 
 	public static final StreamCodec<FriendlyByteBuf,Icon> STREAM_CODEC = new StreamCodec<>() {

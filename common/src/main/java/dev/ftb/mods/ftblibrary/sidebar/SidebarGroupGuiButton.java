@@ -35,7 +35,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			Component.translatable("sidebar_button.ftblibrary.config"),
 			Component.translatable("sidebar_button.ftblibrary.config.enter_edit_mode"));
 
-
 	private SidebarGuiButton mouseOver;
 	private SidebarGuiButton selectedButton;
 	private GridLocation selectedLocation;
