@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
+import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -15,6 +16,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,15 +32,14 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	private static final int BUTTON_SPACING = 17;
 
 	private static final List<Component> noButtonComponents = List.of(
-			Component.translatable("ftblibrary.sidebar.no_buttons.enabled"),
-			Component.translatable("ftblibrary.sidebar.no_buttons.info"));
+			Component.translatable("sidebar_button.ftblibrary.config"),
+			Component.translatable("sidebar_button.ftblibrary.config.enter_edit_mode"));
 
 
 	private SidebarGuiButton mouseOver;
 	private SidebarGuiButton selectedButton;
 	private GridLocation selectedLocation;
-	private boolean isMouseDown;
-	private int mouseDownTime;
+	private int lastMouseClickButton = 0;
 	private boolean isEditMode;
 
 	private int currentMouseX;
@@ -59,12 +60,12 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	int xRenderStart;
 
 	private boolean isMouseOverAdd;
+	private boolean mouseOverSettingsIcon;
 
     private final Map<SidebarGuiButton, GridLocation> realLocationMap = new HashMap<>();
 
 	public SidebarGroupGuiButton() {
 		super(0, 0, 0, 0, Component.empty());
-		isMouseDown = false;
 		ensureGridAlignment();
 
 	}
@@ -79,6 +80,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			currentMouseY = my;
 			mouseOver = null;
 			isMouseOverAdd = false;
+			mouseOverSettingsIcon = false;
 
 			GridLocation gridLocation = getGridLocation();
 
@@ -109,8 +111,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			if(mx >= xRenderStart + 2 && my >= yRenderStart + 2 && mx < xRenderStart + 18 && my < yRenderStart + 18) {
 				graphics.renderTooltip(font, noButtonComponents, Optional.empty(), mx, my + 5);
 				Color4I.WHITE.withAlpha(33).draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
+				mouseOverSettingsIcon = true;
             }
-            Icons.INFO.draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
+            Icons.SETTINGS.draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
 
         } else {
             for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
@@ -155,8 +158,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
                 }
                 if (!isEditMode && mouseOver == button) {
-					MutableComponent translatable = Component.translatable(mouseOver.getSidebarButton().getLangKey());
-					graphics.renderTooltip(font, translatable,  mx, Math.max(7, my - 9) + 10);
+					graphics.renderTooltip(font, button.getSidebarButton().getTooltip(Screen.hasShiftDown()), Optional.empty(),  mx, Math.max(7, my - 9) + 10);
                 }
                 graphics.pose().popPose();
             }
@@ -217,8 +219,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
 					button.getSidebarButton().getData().icon().draw(graphics, button.x + 1, button.y + 1, 16, 16);
 
 					String langText = I18n.get(button.getSidebarButton().getLangKey());
-					int textXPos = gridStartRight ? addIconX - Minecraft.getInstance().font.width(langText) - 2 : gridX + BUTTON_SPACING;
-					graphics.drawString(Minecraft.getInstance().font, langText, textXPos, buttonY + 4, 0xFFFFFFFF);
+					int textXPos = gridStartRight ? addIconX - Minecraft.getInstance().font.width(langText) - 2 : gridX + BUTTON_SPACING + 3;
+					graphics.drawString(Minecraft.getInstance().font, langText, textXPos, buttonY + 5, 0xFFFFFFFF);
 				}
 				graphics.pose().popPose();
 
@@ -228,8 +230,10 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
 	@Override
 	public void onRelease(double d, double e) {
+		if(lastMouseClickButton == 1) {
+			return;
+		}
 		super.onRelease(d, e);
-		isMouseDown = false;
 		//Normal click action
 		if (!isEditMode && mouseOver != null) {
 			mouseOver.getSidebarButton().clickButton(Screen.hasShiftDown());
@@ -403,8 +407,18 @@ public class SidebarGroupGuiButton extends AbstractButton {
 		return new GridLocation(gridX, gridY);
 	}
 
+
 	@Override
 	public void onPress() {
+		if(lastMouseClickButton == 1) {
+			isEditMode = !isEditMode;
+			ensureGridAlignment();
+			return;
+		}
+		if(mouseOverSettingsIcon) {
+			FTBLibraryClient.editConfig(true);
+			return;
+		}
 		if(isEditMode) {
 			if (isMouseOverAdd) {
 				addBoxOpen = !addBoxOpen;
@@ -412,7 +426,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 				return;
 			}
 		}
-		isMouseDown = true;
 		if(mouseOver != null) {
 
 			mouseOffsetX = currentMouseX - mouseOver.x;
@@ -442,6 +455,15 @@ public class SidebarGroupGuiButton extends AbstractButton {
 	//Custom handling so our button click locations are where a buttons are not just a box
 	@Override
 	protected boolean isValidClickButton(int i) {
+		boolean inBounds = clicked(currentMouseX, currentMouseY);
+		if(!inBounds && isEditMode) {
+			isEditMode = false;
+			return false;
+		}
+		lastMouseClickButton = i;
+		if(i == 1) {
+			return inBounds;
+		}
 		if (super.isValidClickButton(i)) {
 			if (isEditMode) {
 				return isMouseOverAdd || selectedButton != null || mouseOver != null;
@@ -451,21 +473,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 			}
 		}
 		return false;
-	}
-
-	//Check if mouse is down for 1 second and if so enter edit mode
-	public void tick() {
-		if(isMouseDown) {
-			mouseDownTime++;
-			if(!isEditMode && mouseDownTime > 20) {
-				isEditMode = true;
-				mouseOver = null;
-				ensureGridAlignment();
-				updateWidgetSize();
-			}
-		}else {
-			mouseDownTime = 0;
-		}
 	}
 
 	private static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacingWidth, int spacingHeight, Color4I backgroundColor, Color4I gridColor) {

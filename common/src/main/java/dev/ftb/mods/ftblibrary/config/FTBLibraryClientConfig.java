@@ -75,6 +75,6 @@ public interface FTBLibraryClientConfig {
             return isRight;
         }
 
-        public static final NameMap<SidebarPosition> NAME_MAP = NameMap.of(TOP_LEFT, SidebarPosition.values()).create();
+        public static final NameMap<SidebarPosition> NAME_MAP = NameMap.of(TOP_LEFT, SidebarPosition.values()).baseNameKey("ftblibrary.panel.position").create();
     }
 }

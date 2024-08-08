@@ -1,9 +1,9 @@
 {
-  "group": "ftblibrary:cheat",
   "icon": [
     "ftblibrary:icons/blue_button",
     "ftblibrary:textures/icons/camera.png"
   ],
+  "sort_index": 5000,
   "click": ["command:/say hi"],
   "required_mods": [
     "ftblibrary",

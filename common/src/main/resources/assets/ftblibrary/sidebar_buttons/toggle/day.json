@@ -3,6 +3,7 @@
     "ftblibrary:icons/blue_button",
     "ftblibrary:textures/icons/toggle_day.png"
   ],
+  "sort_index": 200,
   "click": ["command:/ftblibrary day"],
   "required_mods": [
     "ftblibrary"

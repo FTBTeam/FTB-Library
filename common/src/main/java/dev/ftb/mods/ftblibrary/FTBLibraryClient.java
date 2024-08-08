@@ -62,15 +62,6 @@ public class FTBLibraryClient {
 			ClientUtils.RUN_LATER.clear();
 		}
 
-
-		if(areButtonsVisible(client.screen)) {
-			for (GuiEventListener child : client.screen.children()) {
-				if(child instanceof SidebarGroupGuiButton button) {
-					button.tick();
-				}
-			}
-		}
-
 	}
 
 	public static boolean areButtonsVisible(@Nullable Screen gui) {

@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 
@@ -58,9 +59,10 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 		loadResources(manager, "sidebar_buttons", SidebarButtonData.CODEC, (id, buttonData) -> buttons.put(id, new SidebarButton(id, buttonData)));
 
 		buttonList.clear();
+		List<SidebarButton> sortedButtons = buttons.values().stream().sorted(Comparator.comparingInt(value -> value.getData().sortIndex())).toList();
 		int y = 0;
 		int x = 0;
-		for (SidebarButton buttonEntry : buttons.values()) {
+		for (SidebarButton buttonEntry : sortedButtons) {
 			StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(buttonEntry.getId().toString());
 			if(buttonSettings == null) {
 				buttonSettings = new StringSidebarMapValue.SideButtonInfo(true, x, y);
@@ -74,6 +76,9 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
 				y++;
 			}
         }
+		for (SidebarButton value : buttons.values()) {
+			SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(value));
+		}
 		FTBLibraryClientConfig.save();
 	}
 

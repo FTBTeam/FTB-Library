@@ -11,7 +11,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -21,17 +23,16 @@ public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.Sideba
     private final SidebarButtonData data;
     private final ResourceLocation id;
     private final String langKey;
-    private final Component basicTooltip;
+    private final Component tooltip;
     private final List<ButtonOverlayRender> extraRenderers;
     private Supplier<List<Component>> tooltipOverride;
     private ChainedBooleanSupplier visible = ChainedBooleanSupplier.TRUE;
-
 
     public SidebarButton(ResourceLocation id, SidebarButtonData data) {
         this.id = id;
         this.data = data;
         this.langKey = Util.makeDescriptionId("sidebar_button", id);
-        basicTooltip = Component.translatable(langKey + ".tooltip");
+        tooltip = Component.translatable(langKey + ".tooltip");
         if(data.requiresOp()) {
             addVisibilityCondition(ClientUtils.IS_CLIENT_OP);
         }
@@ -53,8 +54,19 @@ public class SidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.Sideba
         return langKey;
     }
 
-    public List<Component> getTooltip() {
-        return tooltipOverride == null ? List.of(basicTooltip) : tooltipOverride.get();
+    public List<Component> getTooltip(boolean shift) {
+        if(tooltipOverride != null) {
+            return tooltipOverride.get();
+        }else {
+            List<Component> tooltips = new ArrayList<>();
+            tooltips.add(Component.translatable(langKey));
+            if(shift) {
+                tooltips.add(tooltip);
+            }
+            Optional<List<Component>> components = shift ? data.shiftTooltip() : data.tooltip();
+            components.ifPresent(tooltips::addAll);
+            return tooltips;
+        }
     }
 
     public void clickButton(boolean shift) {

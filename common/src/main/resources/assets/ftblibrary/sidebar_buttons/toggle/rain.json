@@ -3,6 +3,7 @@
     "ftblibrary:icons/blue_button",
     "ftblibrary:textures/icons/toggle_rain.png"
   ],
+  "sort_index": 400,
   "click": ["command:/ftblibrary rain"],
   "requires_op": true
 }
