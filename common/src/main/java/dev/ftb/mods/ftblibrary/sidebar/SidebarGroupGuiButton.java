@@ -161,7 +161,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     private void renderEditMode(GuiGraphics graphics, int mx, int my) {
-        drawHoveredGrid(graphics, xRenderStart, yRenderStart, currentGirdWidth, currentGridHeight, BUTTON_SPACING, Color4I.GRAY.withAlpha(70), Color4I.BLACK.withAlpha(90), mx, my, gridStartBottom, gridStartRight, getX(), getY());
+        drawHoveredGrid(graphics, xRenderStart, yRenderStart, currentGirdWidth, currentGridHeight, BUTTON_SPACING, Color4I.GRAY.withAlpha(70), Color4I.BLACK.withAlpha(90), mx, my, gridStartBottom, gridStartRight);
 
         List<SidebarGuiButton> disabledButtonList = SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode);
         if (!disabledButtonList.isEmpty()) {
@@ -190,10 +190,10 @@ public class SidebarGroupGuiButton extends AbstractButton {
                 graphics.pose().translate(0, 0, 1000);
 
                 if (gridStartRight) {
-                    drawHoveredGrid(graphics, addIconX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight, gridX, gridY);
+                    drawHoveredGrid(graphics, addIconX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight);
                     drawGrid(graphics, addIconX - maxWidth - 6, gridY, 1, disabledButtonList.size(), maxWidth + 6, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
                 } else {
-                    drawHoveredGrid(graphics, gridX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight, gridX, gridY);
+                    drawHoveredGrid(graphics, gridX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight);
                     drawGrid(graphics, gridX + BUTTON_SPACING, gridY, 1, disabledButtonList.size(), maxWidth + 6, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
                 }
 
@@ -376,17 +376,15 @@ public class SidebarGroupGuiButton extends AbstractButton {
             currentGridHeight += 1;
         }
 
-        xRenderStart = (gridStartRight ? maxGirdAmountX - currentGirdWidth : 0) * BUTTON_SPACING;
-        yRenderStart = (gridStartBottom ? maxGirdAmountY - currentGridHeight + 1 : 0) * BUTTON_SPACING;
+        // Calculates the renderStart values need for drawing the grid at the correct location
+        // do to the fact the getX() and getY() change if is edit mode we want to make sure we are always
+        // drawing the main grid at the correct location
+        // when starting from bottom or right, calculate the value from the screen size of that axis
+        // Subtracts are need to make gird align correctly
+        yRenderStart = gridStartBottom ? (screenHeight - currentGridHeight * BUTTON_SPACING - 2) : 0;
+        xRenderStart = gridStartRight ? (screenWidth - currentGirdWidth * BUTTON_SPACING - 1) : 0;
 
-        if (gridStartBottom) {
-            yRenderStart -= 4;
-        }
-        if (gridStartRight) {
-            xRenderStart += 3;
-        }
-
-        // Set the last drawn area so recipe viewer knows where we are and we can move it out the way
+        // Set the last drawn area so recipe viewer knows where we are, and we can move it out the way
         lastDrawnArea = new Rect2i(getX(), getY(), width, height);
     }
 
@@ -499,25 +497,25 @@ public class SidebarGroupGuiButton extends AbstractButton {
         drawGrid(graphics, x, y, width, height, spacing, spacing, backgroundColor, gridColor);
     }
 
-    private static void drawHoveredGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor, int mx, int my, boolean gridStartBottom, boolean gridStartRight, int posX, int posY) {
+    private static void drawHoveredGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor, int mx, int my, boolean gridStartBottom, boolean gridStartRight) {
         drawGrid(graphics, x, y, width, height, spacing, backgroundColor, gridColor);
 
-        int adjustedMx = mx;
-        int adjustedMy = my;
+        int adjustedMx = gridStartRight ? x + width * spacing - (mx - x) : mx;
+        int adjustedMy = gridStartBottom ? y + height * spacing - (my - y) : my;
 
-        if (gridStartRight) {
-            adjustedMx = x + width * spacing - (mx - x);
-        }
+        if (adjustedMx >= x && adjustedMy >= y && adjustedMx < x + width * spacing && adjustedMy < y + height * spacing) {
+            int gridX = (adjustedMx - x) / spacing;
+            int gridY = (adjustedMy - y) / spacing;
 
-        if (gridStartBottom) {
-            adjustedMy = y + height * spacing - (my - y);
-        }
+            if (gridStartRight) {
+                gridX = width - gridX - 1;
+            }
 
-        if (adjustedMx >= x + posX && adjustedMy >= y + posY && adjustedMx < x + posX + width * spacing && adjustedMy < y + posY + height * spacing) {
-            int gridX = (adjustedMx - x - posX) / spacing;
-            int gridY = (adjustedMy - y - posY) / spacing;
-            Color4I.WHITE.withAlpha(127).draw(graphics, gridX * BUTTON_SPACING + 1, gridY * BUTTON_SPACING + 1, spacing - 1, spacing - 1);
+            if (gridStartBottom) {
+                gridY = height - gridY - 1;
+            }
+
+            Color4I.WHITE.withAlpha(127).draw(graphics, x + gridX * spacing + 1, y + gridY * spacing + 1, spacing - 1, spacing - 1);
         }
     }
-
 }
