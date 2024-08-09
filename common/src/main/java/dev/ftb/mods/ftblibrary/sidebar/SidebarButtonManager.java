@@ -1,187 +1,166 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.google.gson.*;
-import com.google.gson.stream.JsonWriter;
-import dev.architectury.platform.Platform;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButtonCreatedEvent;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue;
+import dev.ftb.mods.ftblibrary.util.MapUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 
-public enum SidebarButtonManager implements ResourceManagerReloadListener {
-	INSTANCE;
+public class SidebarButtonManager extends SimpleJsonResourceReloadListener {
 
-	private final List<SidebarButtonGroup> groups = new ArrayList<>();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-	public List<SidebarButtonGroup> getGroups() {
-		return groups;
-	}
+    public static final SidebarButtonManager INSTANCE = new SidebarButtonManager();
+    private final Map<ResourceLocation, RegisteredSidebarButton> buttons = new HashMap<>();
+    private final List<SidebarGuiButton> buttonList = new ArrayList<>();
 
-	private JsonElement readJson(Resource resource) {
-		try (var reader = resource.openAsReader()) {
-			return JsonParser.parseReader(reader);
-		} catch (JsonParseException | IOException e) {
-			FTBLibrary.LOGGER.warn("can't read {}: {}", resource.sourcePackId(), e.getMessage());
-		}
+    public SidebarButtonManager() {
+        super(GSON, "sidebar_buttons");
+    }
 
-		return JsonNull.INSTANCE;
-	}
+    @Override
+    protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+        buttons.clear();
 
-	private JsonElement readJson(File file) {
-		try (var reader = new FileReader(file)) {
-			return JsonParser.parseReader(reader);
-		} catch (JsonParseException | IOException e) {
-			FTBLibrary.LOGGER.warn("can't read {}: {}", file.getAbsolutePath(), e.getMessage());
-		}
+        // Read the button and group json files and register them to their 'registry' map
+        loadResources(object, SidebarButtonData.CODEC, (id, buttonData) -> buttons.put(id, new RegisteredSidebarButton(id, buttonData)));
 
-		return JsonNull.INSTANCE;
-	}
+        buttonList.clear();
+        List<RegisteredSidebarButton> sortedButtons = buttons.values().stream().sorted(Comparator.comparingInt(value -> value.getData().sortIndex())).toList();
 
-	@Override
-	public void onResourceManagerReload(ResourceManager manager) {
-		groups.clear();
+        int y = 0;
+        int x = 0;
 
-		var element = readJson(Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile());
-		JsonObject sidebarButtonConfig;
+        for (RegisteredSidebarButton buttonEntry : sortedButtons) {
+            StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(buttonEntry.getId().toString());
+            if (buttonSettings == null) {
+                buttonSettings = new StringSidebarMapValue.SideButtonInfo(true, x, y);
+                FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(buttonEntry.getId().toString(), buttonSettings);
+                FTBLibraryClientConfig.save();
+            }
+            buttonList.add(new SidebarGuiButton(new GridLocation(buttonSettings.xPos(), buttonSettings.yPos()), buttonSettings.enabled(), buttonEntry));
 
-		if (element.isJsonObject()) {
-			sidebarButtonConfig = element.getAsJsonObject();
-		} else {
-			sidebarButtonConfig = new JsonObject();
-		}
+            x++;
+            if (x >= 4) {
+                x = 0;
+                y++;
+            }
+        }
 
-		Map<ResourceLocation, SidebarButtonGroup> groupMap = new HashMap<>();
+        for (RegisteredSidebarButton value : buttons.values()) {
+            SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(value));
+        }
+        FTBLibraryClientConfig.save();
+    }
 
-		for (var domain : manager.getNamespaces()) {
-			try {
-				// TODO: Use an alternative way to register sidebar groups because jsons are a bit messy
-				for (var resource : manager.getResourceStack(ResourceLocation.fromNamespaceAndPath(domain, "sidebar_button_groups.json"))) {
-					var json = readJson(resource);
+    private <T> void loadResources(Map<ResourceLocation, JsonElement> objects, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer) {
+        for (Map.Entry<ResourceLocation, JsonElement> resource : objects.entrySet()) {
+            JsonElement jsonElement = resource.getValue();
+            DataResult<T> parse = codec.parse(JsonOps.INSTANCE, jsonElement);
 
-					for (var entry : json.getAsJsonObject().entrySet()) {
-						if (entry.getValue().isJsonObject()) {
-							var groupJson = entry.getValue().getAsJsonObject();
-							var y = 0;
-							var pinned = true;
+            if (parse.error().isPresent()) {
+                FTBLibrary.LOGGER.error("Failed to parse json: {}", parse.error().get().message());
+            } else {
+                T result = parse.result().get();
+                ResourceLocation key = resource.getKey();
+                String path1 = key.getPath();
+                ResourceLocation fixed = ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getPath());
+                consumer.accept(fixed, result);
+            }
+        }
+    }
 
-							if (groupJson.has("y")) {
-								y = groupJson.get("y").getAsInt();
-							}
+    public void saveConfigFromButtonList() {
+        Map<Integer, List<SidebarGuiButton>> buttonMap = new HashMap<>();
+        for (SidebarGuiButton button : getButtonList()) {
+            int y = button.isEnabled() ? button.getGirdLocation().y() : -1;
+            buttonMap.computeIfAbsent(y, k -> new LinkedList<>()).add(button);
+        }
 
-							if(groupJson.has("pinned")) {
-								pinned = groupJson.get("pinned").getAsBoolean();
-							}
+        int y = 0;
+        for (Map.Entry<Integer, List<SidebarGuiButton>> integerListEntry : MapUtils.sortMapByKey(buttonMap).entrySet()) {
+            if (integerListEntry.getKey() == -1) {
+                for (SidebarGuiButton button : integerListEntry.getValue()) {
+                    button.setGridLocation(-1, -1);
+                    FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(false, -1, -1));
+                }
+            }
 
-							var group = new SidebarButtonGroup(ResourceLocation.fromNamespaceAndPath(domain, entry.getKey()), y, pinned);
-							groupMap.put(group.getId(), group);
-						}
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
+            int x = 0;
+            integerListEntry.getValue()
+                    .sort(Comparator.comparingInt((SidebarGuiButton button) -> button.getGirdLocation().x()));
+            List<SidebarGuiButton> value = integerListEntry.getValue();
 
-		for (var domain : manager.getNamespaces()) {
-			try {
-				for (var resource : manager.getResourceStack(ResourceLocation.fromNamespaceAndPath(domain, "sidebar_buttons.json"))) {
-					var json = readJson(resource);
+            for (SidebarGuiButton sidebarButton : value) {
+                if (sidebarButton.isEnabled()) {
+                    sidebarButton.setGridLocation(x, y);
+                    FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(sidebarButton.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(sidebarButton.isEnabled(), x, y));
+                    x++;
+                }
+            }
+            if (x != 0) {
+                y++;
+            }
+        }
 
-					if (json.isJsonObject()) {
-						for (var entry : json.getAsJsonObject().entrySet()) {
-							if (entry.getValue().isJsonObject()) {
-								var buttonJson = entry.getValue().getAsJsonObject();
+        for (SidebarGuiButton button : buttonList) {
+            StringSidebarMapValue.SideButtonInfo buttonSettings = FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().get(button.getSidebarButton().getId().toString());
+            if (buttonSettings != null) {
+                FTBLibraryClientConfig.SIDEBAR_BUTTONS.get().put(button.getSidebarButton().getId().toString(), new StringSidebarMapValue.SideButtonInfo(button.isEnabled(), button.getGirdLocation().x(), button.getGirdLocation().y()));
+            }
+        }
+        FTBLibraryClientConfig.save();
+    }
 
-								if (!buttonJson.has("group")) {
-									continue;
-								}
+    public List<SidebarGuiButton> getButtonList() {
+        return buttonList;
+    }
 
-								if (/*!FTBLibConfig.debugging.dev_sidebar_buttons && */buttonJson.has("dev_only") && buttonJson.get("dev_only").getAsBoolean()) {
-									continue;
-								}
+    public List<SidebarGuiButton> getEnabledButtonList(boolean all) {
+        return buttonList.stream()
+                .filter(SidebarGuiButton::isEnabled)
+                .filter(button -> all || button.getSidebarButton().canSee())
+                .toList();
+    }
 
-								var group = groupMap.get(ResourceLocation.parse(buttonJson.get("group").getAsString()));
+    public List<SidebarGuiButton> getDisabledButtonList(boolean all) {
+        return buttonList.stream()
+                .filter(button -> !button.isEnabled())
+                .filter(button -> all || button.getSidebarButton().canSee())
+                .collect(Collectors.toList());
+    }
 
-								if (group == null) {
-									continue;
-								}
-
-								var button = new SidebarButton(ResourceLocation.fromNamespaceAndPath(domain, entry.getKey()), group, buttonJson);
-
-								group.getButtons().add(button);
-
-								if (sidebarButtonConfig.has(button.getId().getNamespace())) {
-									var e = sidebarButtonConfig.get(button.getId().getNamespace());
-
-									if (e.isJsonObject() && e.getAsJsonObject().has(button.getId().getPath())) {
-										button.setConfig(e.getAsJsonObject().get(button.getId().getPath()).getAsBoolean());
-									}
-								} else if (sidebarButtonConfig.has(button.getId().toString())) {
-									button.setConfig(sidebarButtonConfig.get(button.getId().toString()).getAsBoolean());
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-
-		for (var group : groupMap.values()) {
-			if (!group.getButtons().isEmpty()) {
-				group.getButtons().sort(null);
-				groups.add(group);
-			}
-		}
-
-		groups.sort(null);
-
-		for (var group : groups) {
-			for (var button : group.getButtons()) {
-				SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(button));
-			}
-		}
-
-		saveConfig();
-	}
-
-	public void saveConfig() {
-		var o = new JsonObject();
-
-		for (var group : groups) {
-			for (var button : group.getButtons()) {
-				var o1 = o.getAsJsonObject(button.getId().getNamespace());
-
-				if (o1 == null) {
-					o1 = new JsonObject();
-					o.add(button.getId().getNamespace(), o1);
-				}
-
-				o1.addProperty(button.getId().getPath(), button.getConfig());
-			}
-		}
-
-		var file = Platform.getConfigFolder().resolve("sidebar_buttons.json").toFile();
-
-		try (var writer = new FileWriter(file)) {
-			var gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-			var jsonWriter = new JsonWriter(writer);
-			jsonWriter.setIndent("\t");
-			gson.toJson(o, jsonWriter);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+    public Collection<RegisteredSidebarButton> getButtons() {
+        return buttons.values();
+    }
 }

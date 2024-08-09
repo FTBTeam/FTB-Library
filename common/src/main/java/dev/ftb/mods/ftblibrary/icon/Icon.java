@@ -2,11 +2,20 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import com.mojang.datafixers.FunctionType;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Decoder;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Encoder;
 import dev.ftb.mods.ftblibrary.config.ImageResourceConfig;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
@@ -19,6 +28,8 @@ public abstract class Icon implements Drawable {
 	public static Color4I empty() {
 		return Color4I.EMPTY_ICON;
 	}
+
+	public static final Codec<Icon> CODEC = ExtraCodecs.JSON.xmap(Icon::getIcon, Icon::getJson);
 
 	public static final StreamCodec<FriendlyByteBuf,Icon> STREAM_CODEC = new StreamCodec<>() {
         @Override

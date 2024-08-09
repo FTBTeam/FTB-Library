@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.config;
 
-import dev.ftb.mods.ftblibrary.snbt.config.BooleanValue;
-import dev.ftb.mods.ftblibrary.snbt.config.IntArrayValue;
-import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
+import dev.ftb.mods.ftblibrary.snbt.config.*;
+
+import java.util.HashMap;
 
 import static dev.ftb.mods.ftblibrary.FTBLibrary.MOD_ID;
 import static dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil.LOCAL_DIR;
@@ -26,6 +26,14 @@ public interface FTBLibraryClientConfig {
     IntArrayValue RECENT = COLOR.addIntArray("recents", new int[0])
             .comment("Colors recently selected in the color selector");
 
+    SNBTConfig SIDEBAR = CONFIG.addGroup("sidebar");
+    BooleanValue SIDEBAR_ENABLED = SIDEBAR.addBoolean("enabled", true)
+            .comment("Enable the sidebar");
+    EnumValue<SidebarPosition> SIDEBAR_POSITION = SIDEBAR.addEnum("position", SidebarPosition.NAME_MAP, SidebarPosition.TOP_LEFT)
+            .comment("Position of the sidebar");
+
+    StringSidebarMapValue SIDEBAR_BUTTONS = SIDEBAR.add(new StringSidebarMapValue(SIDEBAR, "buttons", new HashMap<>()));
+
     static void load() {
         loadDefaulted(CONFIG, LOCAL_DIR, MOD_ID);
     }
@@ -43,5 +51,30 @@ public interface FTBLibraryClientConfig {
         CONFIG.createClientConfig(group);
 
         return group;
+    }
+
+    public enum SidebarPosition {
+        TOP_LEFT(false, false),
+        TOP_RIGHT(false, true),
+        BOTTOM_LEFT(true, false),
+        BOTTOM_RIGHT(true, true);
+
+        private final boolean isBottom;
+        private final boolean isRight;
+
+        SidebarPosition(boolean isBottom, boolean isRight) {
+            this.isBottom = isBottom;
+            this.isRight = isRight;
+        }
+
+        public boolean isBottom() {
+            return isBottom;
+        }
+
+        public boolean isRight() {
+            return isRight;
+        }
+
+        public static final NameMap<SidebarPosition> NAME_MAP = NameMap.of(TOP_LEFT, SidebarPosition.values()).baseNameKey("ftblibrary.panel.position").create();
     }
 }
