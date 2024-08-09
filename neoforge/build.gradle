@@ -42,6 +42,8 @@ dependencies {
 	shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
 }
 
+apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
+
 processResources {
 	exclude '.cache'
 
