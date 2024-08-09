@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
@@ -17,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
@@ -32,34 +36,24 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 
-public enum SidebarButtonManager implements ResourceManagerReloadListener {
-    INSTANCE;
+public class SidebarButtonManager extends SimpleJsonResourceReloadListener {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
+    public static final SidebarButtonManager INSTANCE = new SidebarButtonManager();
     private final Map<ResourceLocation, RegisteredSidebarButton> buttons = new HashMap<>();
-
     private final List<SidebarGuiButton> buttonList = new ArrayList<>();
 
-    private JsonElement readJson(Resource resource) {
-        try (BufferedReader reader = resource.openAsReader()) {
-            return JsonParser.parseReader(reader);
-        } catch (JsonParseException | IOException e) {
-            LOGGER.error("can't read {}: {}", resource.sourcePackId(), e.getMessage());
-        }
-        return JsonNull.INSTANCE;
-    }
-
-    public Collection<RegisteredSidebarButton> getButtons() {
-        return buttons.values();
+    public SidebarButtonManager() {
+        super(GSON, "sidebar_buttons");
     }
 
     @Override
-    public void onResourceManagerReload(ResourceManager manager) {
+    protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         buttons.clear();
 
         // Read the button and group json files and register them to their 'registry' map
-        loadResources(manager, "sidebar_buttons", SidebarButtonData.CODEC, (id, buttonData) -> buttons.put(id, new RegisteredSidebarButton(id, buttonData)));
+        loadResources(object, SidebarButtonData.CODEC, (id, buttonData) -> buttons.put(id, new RegisteredSidebarButton(id, buttonData)));
 
         buttonList.clear();
         List<RegisteredSidebarButton> sortedButtons = buttons.values().stream().sorted(Comparator.comparingInt(value -> value.getData().sortIndex())).toList();
@@ -89,10 +83,9 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
         FTBLibraryClientConfig.save();
     }
 
-    private <T> void loadResources(ResourceManager manager, String path, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer) {
-        Map<ResourceLocation, Resource> resourceLocationResourceMap = manager.listResources(path, name -> name.getPath().endsWith(".json"));
-        for (Map.Entry<ResourceLocation, Resource> resource : resourceLocationResourceMap.entrySet()) {
-            JsonElement jsonElement = readJson(resource.getValue());
+    private <T> void loadResources(Map<ResourceLocation, JsonElement> objects, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer) {
+        for (Map.Entry<ResourceLocation, JsonElement> resource : objects.entrySet()) {
+            JsonElement jsonElement = resource.getValue();
             DataResult<T> parse = codec.parse(JsonOps.INSTANCE, jsonElement);
 
             if (parse.error().isPresent()) {
@@ -101,7 +94,7 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
                 T result = parse.result().get();
                 ResourceLocation key = resource.getKey();
                 String path1 = key.getPath();
-                ResourceLocation fixed = ResourceLocation.fromNamespaceAndPath(key.getNamespace(), path1.replace(path + "/", "").replace(".json", ""));
+                ResourceLocation fixed = ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getPath());
                 consumer.accept(fixed, result);
             }
         }
@@ -165,5 +158,9 @@ public enum SidebarButtonManager implements ResourceManagerReloadListener {
                 .filter(button -> !button.isEnabled())
                 .filter(button -> all || button.getSidebarButton().canSee())
                 .collect(Collectors.toList());
+    }
+
+    public Collection<RegisteredSidebarButton> getButtons() {
+        return buttons.values();
     }
 }

@@ -14,9 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -262,7 +260,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
                 continue;
             }
 
-            if (!gLocation.isLatterInColumn(realGridLocation)) {
+            if (!gLocation.isLaterInColumn(realGridLocation)) {
                 continue;
             }
 

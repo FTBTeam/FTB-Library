@@ -8,11 +8,11 @@ public record GridLocation(int x, int y) {
         return x < 0 || y < 0;
     }
 
-    public boolean isLatterInRow(GridLocation other) {
+    public boolean isLaterInRow(GridLocation other) {
         return x == other.x && y <= other.y;
     }
 
-    public boolean isLatterInColumn(GridLocation other) {
+    public boolean isLaterInColumn(GridLocation other) {
         return x <= other.x && y == other.y;
     }
 }

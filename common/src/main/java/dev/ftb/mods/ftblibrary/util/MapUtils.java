@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.util;
 
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,7 +14,7 @@ public class MapUtils {
 						Map.Entry::getKey,
 						Map.Entry::getValue,
 						(a, b) -> a,
-						HashMap::new
+						LinkedHashMap::new
 				));
 	}
 
@@ -25,7 +25,7 @@ public class MapUtils {
 						Map.Entry::getKey,
 						Map.Entry::getValue,
 						(a, b) -> a,
-						HashMap::new
+						LinkedHashMap::new
 				));
 	}
 }
