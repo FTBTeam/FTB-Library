@@ -379,7 +379,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
         // Calculates the renderStart values need for drawing the grid at the correct location
         // do to the fact the getX() and getY() change if is edit mode we want to make sure we are always
         // drawing the main grid at the correct location
-        // when starting from bottom or right, calculate the value max screen size of that axis
+        // when starting from bottom or right, calculate the value from the screen size of that axis
         // Subtracts are need to make gird align correctly
         yRenderStart = gridStartBottom ? (screenHeight - currentGridHeight * BUTTON_SPACING - 2) : 0;
         xRenderStart = gridStartRight ? (screenWidth - currentGirdWidth * BUTTON_SPACING - 1) : 0;
