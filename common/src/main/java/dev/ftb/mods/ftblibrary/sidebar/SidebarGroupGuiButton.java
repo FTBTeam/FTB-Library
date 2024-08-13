@@ -138,18 +138,18 @@ public class SidebarGroupGuiButton extends AbstractButton {
                         } else {
                             Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
                         }
+                    }else {
+                        graphics.pose().pushPose();
+                        graphics.pose().translate(button.x, button.y, 0);
+                        for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
+                            buttonOverlayRender.render(graphics, font, 16);
+                        }
+                        graphics.pose().popPose();
                     }
 
                     if (button == mouseOver) {
                         Color4I.WHITE.withAlpha(33).draw(graphics, button.x, button.y, 16, 16);
                     }
-
-                    graphics.pose().pushPose();
-                    graphics.pose().translate(button.x, button.y, 0);
-                    for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
-                        buttonOverlayRender.render(graphics, font, 16);
-                    }
-                    graphics.pose().popPose();
 
                 }
                 if (!isEditMode && mouseOver == button) {
