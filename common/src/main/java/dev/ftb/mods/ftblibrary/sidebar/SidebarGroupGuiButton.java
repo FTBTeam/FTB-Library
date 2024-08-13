@@ -138,7 +138,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
                         } else {
                             Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
                         }
-                    }else {
+                    } else {
                         graphics.pose().pushPose();
                         graphics.pose().translate(button.x, button.y, 0);
                         for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {

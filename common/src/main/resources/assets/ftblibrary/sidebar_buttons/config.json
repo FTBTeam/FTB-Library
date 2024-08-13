@@ -2,7 +2,7 @@
   "icon": [
     "ftblibrary:icons/settings"
   ],
-  "sort_index": 1000,
+  "sort_index": 2147483647,
   "click": ["command:/ftblibrary clientconfig"],
   "required_mods": [
     "ftblibrary"
