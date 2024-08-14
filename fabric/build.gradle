@@ -30,11 +30,13 @@ dependencies {
 
 	modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-	modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
+	modCompileOnlyApi("mezz.jei:jei-1.21-fabric-api:${jei_version}")
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
+
+apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
 
 processResources {
 	inputs.property "version", project.version

@@ -6,6 +6,7 @@
 		"PlayerMixin"
 	],
 	"client": [
+		"AbstractContainerScreenMixin",
 		"KeyMappingAccessor"
 	],
 	"injectors": {

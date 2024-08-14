@@ -13,6 +13,7 @@
 /run
 /classes
 logs/
+**/extra-mods-*/
 
 # IDE nonsense that could go in source control but really shouldn't
 *.ipr
