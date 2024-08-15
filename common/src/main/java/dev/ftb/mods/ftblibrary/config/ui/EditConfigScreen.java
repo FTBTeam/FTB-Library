@@ -39,6 +39,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 	private int widestKey = 0;
 	private int widestValue = 0;
 	private boolean changed = false;
+	private boolean openPrevScreenOnClose = true;
 
 	public EditConfigScreen(ConfigGroup configGroup) {
 		super();
@@ -129,6 +130,11 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 		return this;
 	}
 
+	public EditConfigScreen setOpenPrevScreenOnClose(boolean openPrevScreenOnClose) {
+		this.openPrevScreenOnClose = openPrevScreenOnClose;
+		return this;
+	}
+
 	@Override
 	protected int getTopPanelHeight() {
 		return 20;
@@ -147,7 +153,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 	@Override
 	protected void doAccept() {
 		group.save(true);
-		if (autoclose) closeGui();
+		if (autoclose) closeGui(openPrevScreenOnClose);
 	}
 
 	@Override
@@ -161,7 +167,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
 	private void reallyCancel() {
 		group.save(false);
-		if (autoclose) closeGui();
+		if (autoclose) closeGui(openPrevScreenOnClose);
 	}
 
 	@Override
