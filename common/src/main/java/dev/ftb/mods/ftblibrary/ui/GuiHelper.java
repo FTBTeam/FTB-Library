@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -20,6 +21,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 
 public class GuiHelper {
@@ -50,6 +53,9 @@ public class GuiHelper {
 			GL11.glScissor(sx, sy, sw, sh);
 		}
 	}
+
+	private static final BiFunction<Color4I,Boolean,Color4I> BRIGHTEN = Util.memoize((col,outset) -> col.addBrightness(outset ? 0.15f : -0.1f));
+	private static final BiFunction<Color4I,Boolean,Color4I> DARKEN = Util.memoize((col,outset) -> col.addBrightness(outset ? -0.1f : 0.15f));
 
 	private static final Stack<Scissor> SCISSOR = new Stack<>();
 
@@ -242,12 +248,14 @@ public class GuiHelper {
 	public static void drawBorderedPanel(GuiGraphics graphics, int x, int y, int w, int h, Color4I color, boolean outset) {
 		w--; h--;
 
-		Color4I hi = color.addBrightness(outset ? 0.15f : -0.1f);
-		Color4I lo = color.addBrightness(outset ? -0.1f : 0.15f);
+		Color4I hi = BRIGHTEN.apply(color, outset);
+		Color4I lo = DARKEN.apply(color, outset);
 
 		graphics.fill(x, y, x + w, y + h, color.rgba());
 		graphics.hLine(x, x + w - 1, y, hi.rgba());
+		graphics.hLine(x + w, x + w, y, color.rgba());
 		graphics.vLine(x, y, y + h, hi.rgba());
+		graphics.vLine(x, y + h, y + h, color.rgba());
 		graphics.hLine(x + 1, x + w, y + h, lo.rgba());
 		graphics.vLine(x + w, y, y + h, lo.rgba());
 	}
