@@ -36,7 +36,7 @@ dependencies {
 	modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rootProject.rei_version}"
-	modCompileOnly("mezz.jei:jei-1.21-neoforge-api:${jei_version}")
+	modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
 
 	common(project(path: ":common", configuration: "dev")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
