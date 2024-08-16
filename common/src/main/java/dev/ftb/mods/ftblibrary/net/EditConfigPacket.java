@@ -11,7 +11,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 public record EditConfigPacket(boolean isClientConfig) implements CustomPacketPayload {
     public static final Type<EditConfigPacket> TYPE = new Type<>(FTBLibrary.rl("edit_config"));
 
-    public static final StreamCodec<FriendlyByteBuf,EditConfigPacket> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<FriendlyByteBuf, EditConfigPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL, EditConfigPacket::isClientConfig,
             EditConfigPacket::new
     );

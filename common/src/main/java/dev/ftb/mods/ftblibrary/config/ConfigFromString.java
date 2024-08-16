@@ -11,42 +11,42 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public abstract class ConfigFromString<T> extends ConfigValue<T> {
-	public abstract boolean parse(@Nullable Consumer<T> callback, String string);
+    public abstract boolean parse(@Nullable Consumer<T> callback, String string);
 
-	public String getStringFromValue(@Nullable T v) {
-		return String.valueOf(v);
-	}
+    public String getStringFromValue(@Nullable T v) {
+        return String.valueOf(v);
+    }
 
-	@Override
-	public Component getStringForGUI(@Nullable T v) {
-		return Component.literal(getStringFromValue(v));
-	}
+    @Override
+    public Component getStringForGUI(@Nullable T v) {
+        return Component.literal(getStringFromValue(v));
+    }
 
-	@Override
-	public void onClicked(Widget clicked, MouseButton button, ConfigCallback callback) {
-		BaseScreen gui = clicked.getGui();
+    @Override
+    public void onClicked(Widget clicked, MouseButton button, ConfigCallback callback) {
+        BaseScreen gui = clicked.getGui();
 
-		EditStringConfigOverlay.PosProvider.Offset offset = clicked instanceof EditStringConfigOverlay.PosProvider p ?
-				p.getOverlayOffset() :
-				EditStringConfigOverlay.PosProvider.Offset.NONE;
-		int xPos = clicked.getX() - gui.getX() + offset.x();
-		int yPos = clicked.getY() - gui.getY() + offset.y();
+        EditStringConfigOverlay.PosProvider.Offset offset = clicked instanceof EditStringConfigOverlay.PosProvider p ?
+                p.getOverlayOffset() :
+                EditStringConfigOverlay.PosProvider.Offset.NONE;
+        int xPos = clicked.getX() - gui.getX() + offset.x();
+        int yPos = clicked.getY() - gui.getY() + offset.y();
 
-		EditStringConfigOverlay<T> panel = new EditStringConfigOverlay<>(gui, this, callback);
-		panel.setPos(xPos, yPos);
-		gui.pushModalPanel(panel);
-	}
+        EditStringConfigOverlay<T> panel = new EditStringConfigOverlay<>(gui, this, callback);
+        panel.setPos(xPos, yPos);
+        gui.pushModalPanel(panel);
+    }
 
-	public boolean canScroll() {
-		return false;
-	}
+    public boolean canScroll() {
+        return false;
+    }
 
-	public Optional<T> scrollValue(T currentValue, boolean forward) {
-		return Optional.empty();
-	}
+    public Optional<T> scrollValue(T currentValue, boolean forward) {
+        return Optional.empty();
+    }
 
-	protected boolean okValue(@Nullable Consumer<T> callback, T v) {
-		if (callback != null) callback.accept(v);
-		return true;
-	}
+    protected boolean okValue(@Nullable Consumer<T> callback, T v) {
+        if (callback != null) callback.accept(v);
+        return true;
+    }
 }

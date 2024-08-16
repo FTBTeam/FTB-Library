@@ -1,115 +1,115 @@
 plugins {
-	id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
 def ENV = System.getenv()
 
 architectury {
-	platformSetupLoomIde()
-	forge()
+    platformSetupLoomIde()
+    forge()
 }
 
 configurations {
-	common
-	shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-	compileClasspath.extendsFrom common
-	runtimeClasspath.extendsFrom common
-	developmentForge.extendsFrom common
-	dev
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
+    dev
 }
 
 loom {
-	accessWidenerPath = project(":common").file("src/main/resources/ftblibrary.accesswidener")
-	forge {
-		mixinConfigs = [
-				/*"ftblibrary-forge.mixins.json", */
-				"ftblibrary-common.mixins.json"
-		]
-	}
+    accessWidenerPath = project(":common").file("src/main/resources/ftblibrary.accesswidener")
+    forge {
+        mixinConfigs = [
+                /*"ftblibrary-forge.mixins.json", */
+                "ftblibrary-common.mixins.json"
+        ]
+    }
 }
 
 artifacts {
-	dev(jar)
+    dev(jar)
 }
 
 repositories {
-	maven {
-		name "ModMaven (JEI)"
-		url "https://modmaven.dev/"
-		content {
-			includeGroup "mezz.jei"
-		}
-	}
+    maven {
+        name "ModMaven (JEI)"
+        url "https://modmaven.dev/"
+        content {
+            includeGroup "mezz.jei"
+        }
+    }
 }
 
 dependencies {
-	forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-	modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-	modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
+    modCompileOnlyApi("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
 
-	common(project(path: ":common", configuration: "dev")) { transitive false }
-	shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
+    common(project(path: ":common", configuration: "dev")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
 }
 
 processResources {
-	exclude '.cache'
+    exclude '.cache'
 
-	inputs.property "version", project.version
+    inputs.property "version", project.version
 
-	filesMatching("META-INF/mods.toml") {
-		expand "version": project.version,
-				"archversion": project.architectury_version,
-				"forgeversion": project.forge_version,
-				"forgeshortversion": project.forge_version.split("\\.")[0],
-				"mcversion": project.minecraft_version
-	}
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version,
+                "archversion": project.architectury_version,
+                "forgeversion": project.forge_version,
+                "forgeshortversion": project.forge_version.split("\\.")[0],
+                "mcversion": project.minecraft_version
+    }
 }
 
 shadowJar {
-	exclude "fabric.mod.json"
+    exclude "fabric.mod.json"
 
-	configurations = [project.configurations.shadowCommon]
-	setArchiveClassifier("dev-shadow")
+    configurations = [project.configurations.shadowCommon]
+    setArchiveClassifier("dev-shadow")
 }
 
 remapJar {
-	inputFile.set shadowJar.archiveFile
-	dependsOn shadowJar
-	archiveBaseName.set "${rootProject.archives_base_name}-${project.name}"
-	archiveClassifier.set null
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveBaseName.set "${rootProject.archives_base_name}-${project.name}"
+    archiveClassifier.set null
 }
 
 jar {
-	manifest {
-		attributes([
-				"Specification-Title"     : project.mod_id,
-				"Specification-Vendor"    : project.mod_author,
-				"Specification-Version"   : "1",
-				"Implementation-Title"    : project.name,
-				"Implementation-Version"  : version,
-				"Implementation-Vendor"   : project.mod_author,
-				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-		])
-	}
+    manifest {
+        attributes([
+                "Specification-Title"     : project.mod_id,
+                "Specification-Vendor"    : project.mod_author,
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : version,
+                "Implementation-Vendor"   : project.mod_author,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 
-	setArchiveClassifier("dev")
+    setArchiveClassifier("dev")
 }
 
 components.java {
-	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-		skip()
-	}
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
 }
 
 publishing {
-	publications {
-		mavenForge(MavenPublication) {
-			artifactId = "${rootProject.archives_base_name}-${project.name}"
-			version ftbPublishing.mavenVersion
-			from components.java
-		}
-	}
+    publications {
+        mavenForge(MavenPublication) {
+            artifactId = "${rootProject.archives_base_name}-${project.name}"
+            version ftbPublishing.mavenVersion
+            from components.java
+        }
+    }
 }

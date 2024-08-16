@@ -47,5 +47,6 @@ public class StringSidebarMapValue extends BaseValue<Map<String, StringSidebarMa
     }
 
 
-    public record SideButtonInfo(boolean enabled, int xPos, int yPos) {}
+    public record SideButtonInfo(boolean enabled, int xPos, int yPos) {
+    }
 }

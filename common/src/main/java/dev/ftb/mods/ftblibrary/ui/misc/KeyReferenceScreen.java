@@ -15,13 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeyReferenceScreen extends BaseScreen {
+    private static final int SCROLLBAR_WIDTH = 16;
+    private static final int GUTTER_SIZE = 2;
     private final Panel textPanel;
     private final PanelScrollBar scrollBar;
     private final SimpleTextButton closeButton;
     private final String[] translationKeys;
-
-    private static final int SCROLLBAR_WIDTH = 16;
-    private static final int GUTTER_SIZE = 2;
 
     public KeyReferenceScreen(String... translationKeys) {
         this.translationKeys = translationKeys;
@@ -35,6 +34,24 @@ public class KeyReferenceScreen extends BaseScreen {
             }
         };
         scrollBar = new PanelScrollBar(this, textPanel);
+    }
+
+    private static List<Pair<Component, Component>> buildText(String... translationKeys) {
+        List<Pair<Component, Component>> res = new ArrayList<>();
+        for (String translationKey : translationKeys) {
+            for (String line : I18n.get(translationKey).split("\\n")) {
+                String[] parts = line.split(";", 2);
+                switch (parts.length) {
+                    case 0 -> res.add(Pair.of(Component.empty(), Component.empty()));
+                    case 1 ->
+                            res.add(Pair.of(Component.literal(parts[0]).withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE), Component.empty()));
+                    default ->
+                            res.add(Pair.of(Component.literal(parts[0]), Component.literal(parts[1]).withStyle(ChatFormatting.GRAY)));
+                }
+            }
+            res.add(Pair.of(Component.empty(), Component.empty()));
+        }
+        return res;
     }
 
     @Override
@@ -81,50 +98,6 @@ public class KeyReferenceScreen extends BaseScreen {
 
     protected void drawTextBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawPanelBackground(graphics, x, y, w, h);
-    }
-
-    private static List<Pair<Component, Component>> buildText(String... translationKeys) {
-        List<Pair<Component,Component>> res = new ArrayList<>();
-        for (String translationKey: translationKeys) {
-            for (String line : I18n.get(translationKey).split("\\n")) {
-                String[] parts = line.split(";", 2);
-                switch (parts.length) {
-                    case 0 -> res.add(Pair.of(Component.empty(), Component.empty()));
-                    case 1 -> res.add(Pair.of(Component.literal(parts[0]).withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE), Component.empty()));
-                    default -> res.add(Pair.of(Component.literal(parts[0]), Component.literal(parts[1]).withStyle(ChatFormatting.GRAY)));
-                }
-            }
-            res.add(Pair.of(Component.empty(), Component.empty()));
-        }
-        return res;
-    }
-
-    private class TextPanel extends Panel {
-        private final TwoColumnList textWidget;
-
-        public TextPanel(Panel panel) {
-            super(panel);
-
-            textWidget = new TwoColumnList(this, buildText(translationKeys));
-        }
-
-        @Override
-        public void addWidgets() {
-            add(textWidget);
-        }
-
-        @Override
-        public void alignWidgets() {
-            align(WidgetLayout.VERTICAL);
-
-            textWidget.setPos(4, 2);
-            textWidget.setWidth(width);
-        }
-
-        @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            drawTextBackground(graphics, theme, x, y, w, h);
-        }
     }
 
     private static class TwoColumnList extends Widget {
@@ -188,6 +161,34 @@ public class KeyReferenceScreen extends BaseScreen {
                 }
                 yPos += theme.getFontHeight() + (header ? 3 : 1);
             }
+        }
+    }
+
+    private class TextPanel extends Panel {
+        private final TwoColumnList textWidget;
+
+        public TextPanel(Panel panel) {
+            super(panel);
+
+            textWidget = new TwoColumnList(this, buildText(translationKeys));
+        }
+
+        @Override
+        public void addWidgets() {
+            add(textWidget);
+        }
+
+        @Override
+        public void alignWidgets() {
+            align(WidgetLayout.VERTICAL);
+
+            textWidget.setPos(4, 2);
+            textWidget.setWidth(width);
+        }
+
+        @Override
+        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+            drawTextBackground(graphics, theme, x, y, w, h);
         }
     }
 }

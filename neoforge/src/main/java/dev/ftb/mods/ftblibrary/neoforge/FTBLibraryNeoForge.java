@@ -5,7 +5,7 @@ import net.neoforged.fml.common.Mod;
 
 @Mod(FTBLibrary.MOD_ID)
 public class FTBLibraryNeoForge {
-	public FTBLibraryNeoForge() {
-		new FTBLibrary();
-	}
+    public FTBLibraryNeoForge() {
+        new FTBLibrary();
+    }
 }

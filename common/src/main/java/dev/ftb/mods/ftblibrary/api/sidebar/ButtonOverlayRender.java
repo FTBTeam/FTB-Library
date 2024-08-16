@@ -9,15 +9,6 @@ import java.util.function.Supplier;
 
 public interface ButtonOverlayRender {
 
-    /**
-     * Called when the button is rendering
-     * graphics is aligned so that 0, 0 is the top left corner of the button
-     * @param graphics The graphics object
-     * @param font The font object
-     * @param buttonSize The size of the button
-     */
-    void render(GuiGraphics graphics, Font font, int buttonSize);
-
     static ButtonOverlayRender ofSimpleString(Supplier<String> customTextHandler) {
         return (graphics, font, buttonSize) -> {
             String text = customTextHandler.get();
@@ -29,4 +20,13 @@ public interface ButtonOverlayRender {
             }
         };
     }
+
+    /**
+     * Called when the button is rendering
+     * graphics is aligned so that 0, 0 is the top left corner of the button
+     * @param graphics The graphics object
+     * @param font The font object
+     * @param buttonSize The size of the button
+     */
+    void render(GuiGraphics graphics, Font font, int buttonSize);
 }

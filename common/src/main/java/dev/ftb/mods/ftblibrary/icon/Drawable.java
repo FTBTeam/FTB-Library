@@ -6,19 +6,19 @@ import net.minecraft.client.gui.GuiGraphics;
 
 
 public interface Drawable {
-	@Environment(EnvType.CLIENT)
-	void draw(GuiGraphics graphics, int x, int y, int w, int h);
+    @Environment(EnvType.CLIENT)
+    void draw(GuiGraphics graphics, int x, int y, int w, int h);
 
-	@Environment(EnvType.CLIENT)
-	default void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
-		draw(graphics, x, y, w, h);
-	}
+    @Environment(EnvType.CLIENT)
+    default void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
+        draw(graphics, x, y, w, h);
+    }
 
-	@Environment(EnvType.CLIENT)
-	default void draw3D(GuiGraphics graphics) {
-		graphics.pose().pushPose();
-		graphics.pose().scale(1F / 16F, 1F / 16F, 1F);
-		draw(graphics, -8, -8, 16, 16);
-		graphics.pose().popPose();
-	}
+    @Environment(EnvType.CLIENT)
+    default void draw3D(GuiGraphics graphics) {
+        graphics.pose().pushPose();
+        graphics.pose().scale(1F / 16F, 1F / 16F, 1F);
+        draw(graphics, -8, -8, 16, 16);
+        graphics.pose().popPose();
+    }
 }

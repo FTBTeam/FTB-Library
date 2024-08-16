@@ -9,17 +9,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ResourceLocation.class)
 public class ResourceLocationMixin {
-	@Inject(method = {"validPathChar", "validNamespaceChar"}, at = @At("HEAD"), cancellable = true)
-	private static void validCharFTBJ(char c, CallbackInfoReturnable<Boolean> ci) {
-		if (StringUtils.ignoreResourceLocationErrors) {
-			ci.setReturnValue(true);
-		}
-	}
+    @Inject(method = {"validPathChar", "validNamespaceChar"}, at = @At("HEAD"), cancellable = true)
+    private static void validCharFTBJ(char c, CallbackInfoReturnable<Boolean> ci) {
+        if (StringUtils.ignoreResourceLocationErrors) {
+            ci.setReturnValue(true);
+        }
+    }
 
-	@Inject(method = {"isValidPath", "isValidNamespace"}, at = @At("HEAD"), cancellable = true)
-	private static void validStringFTBJ(String s, CallbackInfoReturnable<Boolean> ci) {
-		if (StringUtils.ignoreResourceLocationErrors) {
-			ci.setReturnValue(true);
-		}
-	}
+    @Inject(method = {"isValidPath", "isValidNamespace"}, at = @At("HEAD"), cancellable = true)
+    private static void validStringFTBJ(String s, CallbackInfoReturnable<Boolean> ci) {
+        if (StringUtils.ignoreResourceLocationErrors) {
+            ci.setReturnValue(true);
+        }
+    }
 }

@@ -6,19 +6,19 @@ import net.minecraft.nbt.NbtIo;
 import java.io.DataOutputStream;
 
 public class NBTUtils {
-	public static long getSizeInBytes(CompoundTag nbt, boolean compressed) {
-		try {
-			var byteCounter = new ByteCounterOutputStream();
+    public static long getSizeInBytes(CompoundTag nbt, boolean compressed) {
+        try {
+            var byteCounter = new ByteCounterOutputStream();
 
-			if (compressed) {
-				NbtIo.writeCompressed(nbt, byteCounter);
-			} else {
-				NbtIo.write(nbt, new DataOutputStream(byteCounter));
-			}
+            if (compressed) {
+                NbtIo.writeCompressed(nbt, byteCounter);
+            } else {
+                NbtIo.write(nbt, new DataOutputStream(byteCounter));
+            }
 
-			return byteCounter.getSize();
-		} catch (Exception ex) {
-			return -1L;
-		}
-	}
+            return byteCounter.getSize();
+        } catch (Exception ex) {
+            return -1L;
+        }
+    }
 }

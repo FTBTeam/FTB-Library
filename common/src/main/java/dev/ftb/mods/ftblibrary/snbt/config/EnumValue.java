@@ -12,45 +12,45 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EnumValue<T> extends BaseValue<T> {
-	private final NameMap<T> nameMap;
+    private final NameMap<T> nameMap;
 
-	EnumValue(SNBTConfig c, String key, NameMap<T> nameMap) {
-		this(c, key, nameMap, nameMap.defaultValue);
-	}
+    EnumValue(SNBTConfig c, String key, NameMap<T> nameMap) {
+        this(c, key, nameMap, nameMap.defaultValue);
+    }
 
-	EnumValue(SNBTConfig c, String key, NameMap<T> nameMap, T def) {
-		super(c, key, def);
-		this.nameMap = nameMap;
-	}
+    EnumValue(SNBTConfig c, String key, NameMap<T> nameMap, T def) {
+        super(c, key, def);
+        this.nameMap = nameMap;
+    }
 
-	@Override
-	public void set(T v) {
-		if (nameMap.values.contains(v)) {
-			super.set(v);
-		} else {
-			super.set(defaultValue);
-		}
-	}
+    @Override
+    public void set(T v) {
+        if (nameMap.values.contains(v)) {
+            super.set(v);
+        } else {
+            super.set(defaultValue);
+        }
+    }
 
-	@Override
-	public void write(SNBTCompoundTag tag) {
-		List<String> s = new ArrayList<>(comment);
-		s.add("Default: \"" + nameMap.getName(defaultValue) + "\"");
-		s.add("Valid values: " + nameMap.keys.stream().map(StringTag::quoteAndEscape).collect(Collectors.joining(", ")));
-		tag.comment(key, String.join("\n", s));
-		tag.putString(key, nameMap.getName(get()));
-	}
+    @Override
+    public void write(SNBTCompoundTag tag) {
+        List<String> s = new ArrayList<>(comment);
+        s.add("Default: \"" + nameMap.getName(defaultValue) + "\"");
+        s.add("Valid values: " + nameMap.keys.stream().map(StringTag::quoteAndEscape).collect(Collectors.joining(", ")));
+        tag.comment(key, String.join("\n", s));
+        tag.putString(key, nameMap.getName(get()));
+    }
 
-	@Override
-	public void read(SNBTCompoundTag tag) {
-		set(nameMap.get(tag.getString(key)));
-	}
+    @Override
+    public void read(SNBTCompoundTag tag) {
+        set(nameMap.get(tag.getString(key)));
+    }
 
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void createClientConfig(ConfigGroup group) {
-		group.addEnum(key, get(), this::set, nameMap)
-				.setCanEdit(enabled.getAsBoolean())
-		;
-	}
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void createClientConfig(ConfigGroup group) {
+        group.addEnum(key, get(), this::set, nameMap)
+                .setCanEdit(enabled.getAsBoolean())
+        ;
+    }
 }

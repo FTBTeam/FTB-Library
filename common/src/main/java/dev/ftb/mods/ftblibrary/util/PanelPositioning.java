@@ -38,7 +38,7 @@ public enum PanelPositioning {
     }
 
     public PanelPos getPanelPos(int screenW, int screenH, int panelW, int panelH, float insetX, float insetY) {
-        return getPanelPos(screenW, screenH, panelW, panelH, (int)(screenW * insetX / 2), (int)(screenH * insetY / 2));
+        return getPanelPos(screenW, screenH, panelW, panelH, (int) (screenW * insetX / 2), (int) (screenH * insetY / 2));
     }
 
     public record PanelPos(int x, int y) {

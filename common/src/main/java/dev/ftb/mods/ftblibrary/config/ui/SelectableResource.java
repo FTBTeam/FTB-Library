@@ -19,9 +19,19 @@ import net.minecraft.world.item.ItemStack;
  * @param <T> the resource type
  */
 public interface SelectableResource<T> {
+    static SelectableResource<ItemStack> item(ItemStack stack) {
+        return new ItemStackResource(stack);
+    }
+
+    static SelectableResource<FluidStack> fluid(FluidStack stack) {
+        return new FluidStackResource(stack);
+    }
+
     T stack();
 
     long getCount();
+
+    void setCount(int count);
 
     default boolean isEmpty() {
         return getCount() == 0;
@@ -33,24 +43,19 @@ public interface SelectableResource<T> {
 
     SelectableResource<T> copyWithCount(long count);
 
-    static SelectableResource<ItemStack> item(ItemStack stack) {
-        return new ItemStackResource(stack);
-    }
-
-    static SelectableResource<FluidStack> fluid(FluidStack stack) {
-        return new FluidStackResource(stack);
-    }
-
     CompoundTag getComponentsTag();
 
     void applyComponentsTag(CompoundTag tag);
-
-    void setCount(int count);
 
     record ItemStackResource(ItemStack stack) implements SelectableResource<ItemStack> {
         @Override
         public long getCount() {
             return stack.getCount();
+        }
+
+        @Override
+        public void setCount(int count) {
+            stack.setCount(count);
         }
 
         @Override
@@ -80,17 +85,17 @@ public interface SelectableResource<T> {
             DataComponentMap.CODEC.parse(NbtOps.INSTANCE, tag).result()
                     .ifPresent(stack::applyComponents);
         }
-
-        @Override
-        public void setCount(int count) {
-            stack.setCount(count);
-        }
     }
 
     record FluidStackResource(FluidStack stack) implements SelectableResource<FluidStack> {
         @Override
         public long getCount() {
             return stack().getAmount();
+        }
+
+        @Override
+        public void setCount(int count) {
+            stack.setAmount(count);
         }
 
         @Override
@@ -120,11 +125,6 @@ public interface SelectableResource<T> {
             DataComponentMap.CODEC.parse(NbtOps.INSTANCE, tag).result()
                     .ifPresent(stack::applyComponents);
         }
-
-        @Override
-        public void setCount(int count) {
-            stack.setAmount(count);
-        }
     }
 
     class ImageResource implements SelectableResource<ResourceLocation> {
@@ -137,7 +137,7 @@ public interface SelectableResource<T> {
 
             name = location == null ? Component.translatable("gui.none").withStyle(ChatFormatting.GRAY) :
                     Component.literal(location.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
-                    .append(Component.literal(location.getPath()).withStyle(ChatFormatting.YELLOW));
+                            .append(Component.literal(location.getPath()).withStyle(ChatFormatting.YELLOW));
             icon = Icon.getIcon(location);
         }
 
@@ -149,6 +149,10 @@ public interface SelectableResource<T> {
         @Override
         public long getCount() {
             return 1;
+        }
+
+        @Override
+        public void setCount(int count) {
         }
 
         @Override
@@ -173,10 +177,6 @@ public interface SelectableResource<T> {
 
         @Override
         public void applyComponentsTag(CompoundTag tag) {
-        }
-
-        @Override
-        public void setCount(int count) {
         }
     }
 }
