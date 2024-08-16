@@ -7,5 +7,5 @@ import net.minecraft.resources.ResourceLocation;
 
 
 public record CustomClickEvent(ResourceLocation id) {
-	public static final Event<EventActor<CustomClickEvent>> EVENT = EventFactory.createEventActorLoop(CustomClickEvent.class);
+    public static final Event<EventActor<CustomClickEvent>> EVENT = EventFactory.createEventActorLoop(CustomClickEvent.class);
 }

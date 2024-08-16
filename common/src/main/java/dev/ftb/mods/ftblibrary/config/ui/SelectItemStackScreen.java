@@ -8,6 +8,7 @@ import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -20,14 +21,26 @@ import net.minecraft.world.item.TooltipFlag;
 import java.util.Objects;
 
 public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
-    public static final SearchModeIndex<ResourceSearchMode<ItemStack>> KNOWN_MODES = new SearchModeIndex<>();
-    static {
-        KNOWN_MODES.appendMode(ResourceSearchMode.ALL_ITEMS);
-        KNOWN_MODES.appendMode(ResourceSearchMode.INVENTORY);
-    }
+    public static final SearchModeIndex<ResourceSearchMode<ItemStack>> KNOWN_MODES = Util.make(
+            new SearchModeIndex<>(),
+            index -> {
+                index.appendMode(ResourceSearchMode.ALL_ITEMS);
+                index.appendMode(ResourceSearchMode.INVENTORY);
+            }
+    );
 
     public SelectItemStackScreen(ItemStackConfig config, ConfigCallback callback) {
         super(config, callback);
+    }
+
+    @Override
+    protected SearchModeIndex<ResourceSearchMode<ItemStack>> getSearchModeIndex() {
+        return KNOWN_MODES;
+    }
+
+    @Override
+    protected ResourceSelectorScreen<ItemStack>.ResourceButton makeResourceButton(Panel panel, SelectableResource<ItemStack> resource) {
+        return new ItemStackButton(panel, Objects.requireNonNullElse(resource, SelectableResource.item(ItemStack.EMPTY)));
     }
 
     private class ItemStackButton extends ResourceButton {
@@ -62,15 +75,5 @@ public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
                 }
             }
         }
-    }
-
-    @Override
-    protected SearchModeIndex<ResourceSearchMode<ItemStack>> getSearchModeIndex() {
-        return KNOWN_MODES;
-    }
-
-    @Override
-    protected ResourceSelectorScreen<ItemStack>.ResourceButton makeResourceButton(Panel panel, SelectableResource<ItemStack> resource) {
-        return new ItemStackButton(panel, Objects.requireNonNullElse(resource, SelectableResource.item(ItemStack.EMPTY)));
     }
 }

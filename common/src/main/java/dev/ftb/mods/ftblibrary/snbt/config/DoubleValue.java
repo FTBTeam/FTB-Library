@@ -7,36 +7,36 @@ import net.fabricmc.api.Environment;
 import net.minecraft.util.Mth;
 
 public class DoubleValue extends NumberValue<Double> {
-	DoubleValue(SNBTConfig c, String n, double def) {
-		super(c, n, def);
-	}
+    DoubleValue(SNBTConfig c, String n, double def) {
+        super(c, n, def);
+    }
 
-	public NumberValue<Double> range(double max) {
-		return range(0D, max);
-	}
+    public NumberValue<Double> range(double max) {
+        return range(0D, max);
+    }
 
-	@Override
-	public void set(Double v) {
-		super.set(Mth.clamp(v, minValue == null ? Double.NEGATIVE_INFINITY : minValue, maxValue == null ? Double.POSITIVE_INFINITY : maxValue));
-	}
+    @Override
+    public void set(Double v) {
+        super.set(Mth.clamp(v, minValue == null ? Double.NEGATIVE_INFINITY : minValue, maxValue == null ? Double.POSITIVE_INFINITY : maxValue));
+    }
 
-	@Override
-	public void write(SNBTCompoundTag tag) {
-		super.write(tag);
-		tag.putDouble(key, get());
-	}
+    @Override
+    public void write(SNBTCompoundTag tag) {
+        super.write(tag);
+        tag.putDouble(key, get());
+    }
 
-	@Override
-	public void read(SNBTCompoundTag tag) {
-		set(tag.getDouble(key));
-	}
+    @Override
+    public void read(SNBTCompoundTag tag) {
+        set(tag.getDouble(key));
+    }
 
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void createClientConfig(ConfigGroup group) {
-		group.addDouble(key, get(), this::set, defaultValue, minValue == null ? Double.NEGATIVE_INFINITY : minValue, maxValue == null ? Double.POSITIVE_INFINITY : maxValue)
-				.fader(fader)
-				.setCanEdit(enabled.getAsBoolean())
-		;
-	}
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void createClientConfig(ConfigGroup group) {
+        group.addDouble(key, get(), this::set, defaultValue, minValue == null ? Double.NEGATIVE_INFINITY : minValue, maxValue == null ? Double.POSITIVE_INFINITY : maxValue)
+                .fader(fader)
+                .setCanEdit(enabled.getAsBoolean())
+        ;
+    }
 }

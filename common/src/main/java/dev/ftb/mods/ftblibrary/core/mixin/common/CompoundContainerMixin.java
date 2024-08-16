@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(CompoundContainer.class)
 public abstract class CompoundContainerMixin implements CompoundContainerFTBL {
-	@Override
-	@Accessor("container1")
-	public abstract Container getContainer1FTBL();
+    @Override
+    @Accessor("container1")
+    public abstract Container getContainer1FTBL();
 
-	@Override
-	@Accessor("container2")
-	public abstract Container getContainer2FTBL();
+    @Override
+    @Accessor("container2")
+    public abstract Container getContainer2FTBL();
 }

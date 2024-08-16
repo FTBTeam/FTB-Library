@@ -19,39 +19,39 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class FTBLibrary {
-	public static final String MOD_ID = "ftblibrary";
-	public static final String MOD_NAME = "FTB Library";
-	public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
+    public static final String MOD_ID = "ftblibrary";
+    public static final String MOD_NAME = "FTB Library";
+    public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
-	public FTBLibrary() {
-		CommandRegistrationEvent.EVENT.register(FTBLibraryCommands::registerCommands);
-		FTBLibraryNet.register();
-		LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
-		LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
-		PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
+    public FTBLibrary() {
+        CommandRegistrationEvent.EVENT.register(FTBLibraryCommands::registerCommands);
+        FTBLibraryNet.register();
+        LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
+        LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
+        PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
 
-		ModItems.init();
+        ModItems.init();
 
-		EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::init);
-	}
+        EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::init);
+    }
 
-	public static ResourceLocation rl(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
-	}
+    public static ResourceLocation rl(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    }
 
-	private void serverStarted(MinecraftServer server) {
-		KnownServerRegistries.server = KnownServerRegistries.create(server);
-	}
+    public static DeferredSupplier<CreativeModeTab> getCreativeModeTab() {
+        return ModItems.FTB_LIBRARY_TAB;
+    }
 
-	private void serverStopped(MinecraftServer server) {
-		KnownServerRegistries.server = null;
-	}
+    private void serverStarted(MinecraftServer server) {
+        KnownServerRegistries.server = KnownServerRegistries.create(server);
+    }
 
-	private void playerJoined(ServerPlayer player) {
-		NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
-	}
+    private void serverStopped(MinecraftServer server) {
+        KnownServerRegistries.server = null;
+    }
 
-	public static DeferredSupplier<CreativeModeTab> getCreativeModeTab() {
-		return ModItems.FTB_LIBRARY_TAB;
-	}
+    private void playerJoined(ServerPlayer player) {
+        NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
+    }
 }

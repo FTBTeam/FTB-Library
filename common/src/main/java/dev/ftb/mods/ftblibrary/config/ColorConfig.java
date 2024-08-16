@@ -9,29 +9,29 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 public class ColorConfig extends ConfigValue<Color4I> {
-	private boolean allowAlphaEdit = false;
+    private boolean allowAlphaEdit = false;
 
-	public ColorConfig() {
-		defaultValue = Icon.empty();
-		value = Icon.empty();
-	}
+    public ColorConfig() {
+        defaultValue = Icon.empty();
+        value = Icon.empty();
+    }
 
-	public ColorConfig withAlphaEditing() {
-		allowAlphaEdit = true;
-		return this;
-	}
+    public ColorConfig withAlphaEditing() {
+        allowAlphaEdit = true;
+        return this;
+    }
 
-	public boolean isAllowAlphaEdit() {
-		return allowAlphaEdit;
-	}
+    public boolean isAllowAlphaEdit() {
+        return allowAlphaEdit;
+    }
 
-	@Override
-	public void onClicked(Widget clicked, MouseButton button, ConfigCallback callback) {
-		ColorSelectorPanel.popupAtMouse(clicked.getGui(), this, callback);
-	}
+    @Override
+    public void onClicked(Widget clicked, MouseButton button, ConfigCallback callback) {
+        ColorSelectorPanel.popupAtMouse(clicked.getGui(), this, callback);
+    }
 
-	@Override
-	public Component getStringForGUI(@Nullable Color4I v) {
-		return super.getStringForGUI(v).copy().append(Component.literal(" ■").withColor(allowAlphaEdit ? value.rgba() : value.rgb()));
-	}
+    @Override
+    public Component getStringForGUI(@Nullable Color4I v) {
+        return super.getStringForGUI(v).copy().append(Component.literal(" ■").withColor(allowAlphaEdit ? value.rgba() : value.rgb()));
+    }
 }

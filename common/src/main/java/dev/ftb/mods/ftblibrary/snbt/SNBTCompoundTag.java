@@ -9,161 +9,159 @@ import java.util.*;
 
 
 public class SNBTCompoundTag extends CompoundTag {
-	public static final StreamCodec<FriendlyByteBuf,SNBTCompoundTag> STREAM_CODEC = new StreamCodec<>() {
+    public static final StreamCodec<FriendlyByteBuf, SNBTCompoundTag> STREAM_CODEC = new StreamCodec<>() {
         @Override
         public SNBTCompoundTag decode(FriendlyByteBuf object) {
-			return SNBTNet.readCompound(object);
+            return SNBTNet.readCompound(object);
         }
 
         @Override
         public void encode(FriendlyByteBuf object, SNBTCompoundTag object2) {
-			SNBTNet.write(object, object2);
+            SNBTNet.write(object, object2);
         }
     };
+    boolean singleLine;
+    private HashMap<String, SNBTTagProperties> properties;
+    public SNBTCompoundTag() {
+        super(new LinkedHashMap<>());
+        singleLine = false;
+    }
 
-	public static SNBTCompoundTag of(@Nullable Tag tag) {
-		if (tag instanceof SNBTCompoundTag) {
-			return (SNBTCompoundTag) tag;
-		} else if (tag instanceof CompoundTag) {
-			var tag1 = new SNBTCompoundTag();
+    public static SNBTCompoundTag of(@Nullable Tag tag) {
+        if (tag instanceof SNBTCompoundTag) {
+            return (SNBTCompoundTag) tag;
+        } else if (tag instanceof CompoundTag) {
+            var tag1 = new SNBTCompoundTag();
 
-			for (var s : ((CompoundTag) tag).getAllKeys()) {
-				tag1.put(s, ((CompoundTag) tag).get(s));
-			}
+            for (var s : ((CompoundTag) tag).getAllKeys()) {
+                tag1.put(s, ((CompoundTag) tag).get(s));
+            }
 
-			return tag1;
-		}
+            return tag1;
+        }
 
-		return new SNBTCompoundTag();
-	}
+        return new SNBTCompoundTag();
+    }
 
-	private HashMap<String, SNBTTagProperties> properties;
-	boolean singleLine;
+    SNBTTagProperties getOrCreateProperties(String key) {
+        if (properties == null) {
+            properties = new HashMap<>();
+        }
 
-	public SNBTCompoundTag() {
-		super(new LinkedHashMap<>());
-		singleLine = false;
-	}
+        var p = properties.get(key);
 
-	SNBTTagProperties getOrCreateProperties(String key) {
-		if (properties == null) {
-			properties = new HashMap<>();
-		}
+        if (p == null) {
+            p = new SNBTTagProperties();
+            properties.put(key, p);
+        }
 
-		var p = properties.get(key);
+        return p;
+    }
 
-		if (p == null) {
-			p = new SNBTTagProperties();
-			properties.put(key, p);
-		}
+    SNBTTagProperties getProperties(String key) {
+        if (properties != null) {
+            var p = properties.get(key);
 
-		return p;
-	}
+            if (p != null) {
+                return p;
+            }
+        }
 
-	SNBTTagProperties getProperties(String key) {
-		if (properties != null) {
-			var p = properties.get(key);
+        return SNBTTagProperties.DEFAULT;
+    }
 
-			if (p != null) {
-				return p;
-			}
-		}
+    public void comment(String key, String... comment) {
+        if (comment.length > 0) {
+            comment(key, String.join("\n", comment));
+        }
+    }
 
-		return SNBTTagProperties.DEFAULT;
-	}
+    public void comment(String key, String comment) {
+        var s = comment == null ? "" : comment.trim();
 
-	public void comment(String key, String... comment) {
-		if (comment.length > 0) {
-			comment(key, String.join("\n", comment));
-		}
-	}
+        if (!s.isEmpty()) {
+            getOrCreateProperties(key).comment = comment;
+        }
+    }
 
-	public void comment(String key, String comment) {
-		var s = comment == null ? "" : comment.trim();
+    public String getComment(String key) {
+        return getProperties(key).comment;
+    }
 
-		if (!s.isEmpty()) {
-			getOrCreateProperties(key).comment = comment;
-		}
-	}
+    public void singleLine() {
+        singleLine = true;
+    }
 
-	public String getComment(String key) {
-		return getProperties(key).comment;
-	}
+    public void singleLine(String key) {
+        getOrCreateProperties(key).singleLine = true;
+    }
 
-	public void singleLine() {
-		singleLine = true;
-	}
+    @Override
+    public void putBoolean(String key, boolean value) {
+        getOrCreateProperties(key).valueType = value ? SNBTTagProperties.TYPE_TRUE : SNBTTagProperties.TYPE_FALSE;
+        super.putBoolean(key, value);
+    }
 
-	public void singleLine(String key) {
-		getOrCreateProperties(key).singleLine = true;
-	}
+    public boolean isBoolean(String key) {
+        var t = getProperties(key).valueType;
+        return t == SNBTTagProperties.TYPE_TRUE || t == SNBTTagProperties.TYPE_FALSE;
+    }
 
-	@Override
-	public void putBoolean(String key, boolean value) {
-		getOrCreateProperties(key).valueType = value ? SNBTTagProperties.TYPE_TRUE : SNBTTagProperties.TYPE_FALSE;
-		super.putBoolean(key, value);
-	}
+    @Override
+    public SNBTCompoundTag getCompound(String string) {
+        return of(get(string));
+    }
 
-	public boolean isBoolean(String key) {
-		var t = getProperties(key).valueType;
-		return t == SNBTTagProperties.TYPE_TRUE || t == SNBTTagProperties.TYPE_FALSE;
-	}
+    public void putNumber(String key, Number number) {
+        if (number instanceof Double) {
+            putDouble(key, number.doubleValue());
+        } else if (number instanceof Float) {
+            putFloat(key, number.floatValue());
+        } else if (number instanceof Long) {
+            putLong(key, number.longValue());
+        } else if (number instanceof Integer) {
+            putInt(key, number.intValue());
+        } else if (number instanceof Short) {
+            putShort(key, number.shortValue());
+        } else if (number instanceof Byte) {
+            putByte(key, number.byteValue());
+        } else if (number.toString().contains(".")) {
+            putDouble(key, number.doubleValue());
+        } else {
+            putInt(key, number.intValue());
+        }
+    }
 
-	@Override
-	public SNBTCompoundTag getCompound(String string) {
-		return of(get(string));
-	}
+    public void putNull(String key) {
+        put(key, EndTag.INSTANCE);
+    }
 
-	public void putNumber(String key, Number number) {
-		if (number instanceof Double) {
-			putDouble(key, number.doubleValue());
-		} else if (number instanceof Float) {
-			putFloat(key, number.floatValue());
-		} else if (number instanceof Long) {
-			putLong(key, number.longValue());
-		} else if (number instanceof Integer) {
-			putInt(key, number.intValue());
-		} else if (number instanceof Short) {
-			putShort(key, number.shortValue());
-		} else if (number instanceof Byte) {
-			putByte(key, number.byteValue());
-		} else if (number.toString().contains(".")) {
-			putDouble(key, number.doubleValue());
-		} else {
-			putInt(key, number.intValue());
-		}
-	}
+    @Nullable
+    public ListTag getNullableList(String key, byte type) {
+        var tag = get(key);
+        return tag instanceof ListTag && (((ListTag) tag).isEmpty() || type == 0 || ((ListTag) tag).getElementType() == type) ? (ListTag) tag : null;
+    }
 
-	public void putNull(String key) {
-		put(key, EndTag.INSTANCE);
-	}
+    @SuppressWarnings("unchecked")
+    public <T extends Tag> List<T> getList(String key, Class<T> type) {
+        var tag = get(key);
 
-	@Nullable
-	public ListTag getNullableList(String key, byte type) {
-		var tag = get(key);
-		return tag instanceof ListTag && (((ListTag) tag).isEmpty() || type == 0 || ((ListTag) tag).getElementType() == type) ? (ListTag) tag : null;
-	}
+        if (!(tag instanceof CollectionTag<?> l)) {
+            return Collections.emptyList();
+        }
 
-	@SuppressWarnings("unchecked")
-	public <T extends Tag> List<T> getList(String key, Class<T> type) {
-		var tag = get(key);
+        if (l.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-		if (!(tag instanceof CollectionTag<?> l)) {
-			return Collections.emptyList();
-		}
+        List<T> list = new ArrayList<>(l.size());
 
-		if (l.isEmpty()) {
-			return Collections.emptyList();
-		}
+        for (Tag t : l) {
+            if (type.isAssignableFrom(t.getClass())) {
+                list.add((T) t);
+            }
+        }
 
-		List<T> list = new ArrayList<>(l.size());
-
-		for (Tag t : l) {
-			if (type.isAssignableFrom(t.getClass())) {
-				list.add((T) t);
-			}
-		}
-
-		return list;
-	}
+        return list;
+    }
 }

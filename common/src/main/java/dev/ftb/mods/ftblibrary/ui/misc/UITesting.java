@@ -28,32 +28,46 @@ public class UITesting {
     public static void openTestScreen() {
         var group = new ConfigGroup("test", accepted ->
                 Minecraft.getInstance().player.displayClientMessage(Component.literal("Accepted: " + accepted), false));
-        group.add("image", new ImageResourceConfig(), ImageResourceConfig.NONE, v -> { }, ImageResourceConfig.NONE);
+        group.add("image", new ImageResourceConfig(), ImageResourceConfig.NONE, v -> {
+        }, ImageResourceConfig.NONE);
 
-        group.addItemStack("itemstack", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, true);
-        group.addItemStack("item", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, 1).setAllowNBTEdit(false);
-        group.addFluidStack("fluidstack", FluidStack.empty(), v -> {}, FluidStack.empty(), true);
+        group.addItemStack("itemstack", ItemStack.EMPTY, v -> {
+        }, ItemStack.EMPTY, false, true);
+        group.addItemStack("item", ItemStack.EMPTY, v -> {
+        }, ItemStack.EMPTY, 1).setAllowNBTEdit(false);
+        group.addFluidStack("fluidstack", FluidStack.empty(), v -> {
+        }, FluidStack.empty(), true);
         FluidStack water = FluidStack.create(Fluids.WATER, FluidStackHooks.bucketAmount());
-        group.addFluidStack("fluid", water, v -> {}, water, water.getAmount()).showAmount(false).setAllowNBTEdit(false);
+        group.addFluidStack("fluid", water, v -> {
+        }, water, water.getAmount()).showAmount(false).setAllowNBTEdit(false);
 
         ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
-        grp1.addInt("integer", 1, v -> {}, 0, 0, 10);
-        grp1.addLong("long", 10L, v -> {}, 0L, 0L, 1000L);
-        grp1.addDouble("double", 1.5, v -> {}, 0.0, -10.0, 10.0);
-        grp1.addBool("bool", true, v -> {}, false);
-        grp1.addString("string", "some text", v -> {}, "");
+        grp1.addInt("integer", 1, v -> {
+        }, 0, 0, 10);
+        grp1.addLong("long", 10L, v -> {
+        }, 0L, 0L, 1000L);
+        grp1.addDouble("double", 1.5, v -> {
+        }, 0.0, -10.0, 10.0);
+        grp1.addBool("bool", true, v -> {
+        }, false);
+        grp1.addString("string", "some text", v -> {
+        }, "");
 
         ConfigGroup grp2 = grp1.getOrCreateSubgroup("subgroup1");
-        grp2.addEnum("enum", Direction.UP, v -> {}, NameMap.of(Direction.UP, Direction.values()).create());
+        grp2.addEnum("enum", Direction.UP, v -> {
+        }, NameMap.of(Direction.UP, Direction.values()).create());
         List<Integer> integers = new ArrayList<>(List.of(1, 2, 3, 4));
         grp2.addList("int_list", integers, new IntConfig(0, 10), 1);
         List<String> strings = new ArrayList<>(List.of("line one", "line two", "line three"));
         grp2.addList("str_list", strings, new StringConfig(), "");
 
         ConfigGroup grp3 = grp2.getOrCreateSubgroup("subgroup2");
-        grp3.addColor("color", Color4I.WHITE, v -> { }, Color4I.GRAY);
-        grp3.addColor("color_alpha", Color4I.WHITE, v -> { }, Color4I.GRAY).withAlphaEditing();
-        grp3.addItemStack("itemstack", ItemStack.EMPTY, v -> { }, ItemStack.EMPTY, false, false);
+        grp3.addColor("color", Color4I.WHITE, v -> {
+        }, Color4I.GRAY);
+        grp3.addColor("color_alpha", Color4I.WHITE, v -> {
+        }, Color4I.GRAY).withAlphaEditing();
+        grp3.addItemStack("itemstack", ItemStack.EMPTY, v -> {
+        }, ItemStack.EMPTY, false, false);
 
         new TestConfigScreen(group).setAutoclose(true).openGuiLater();
     }
@@ -68,16 +82,6 @@ public class UITesting {
             return new TestTopPanel();
         }
 
-        private class TestTopPanel extends CustomTopPanel {
-            @Override
-            public boolean mousePressed(MouseButton mouseButton) {
-                if (Platform.isDevelopmentEnvironment() && mouseButton.isRight()) {
-                    openTestContextMenu(this);
-                }
-                return super.mousePressed(mouseButton);
-            }
-        }
-
         private void openTestContextMenu(Panel parent) {
             ContextMenu menu = new ContextMenu(parent, List.of(
                     ContextMenuItem.title(Component.literal("Title")),
@@ -88,7 +92,8 @@ public class UITesting {
                     ContextMenuItem.subMenu(Component.literal("line 2 >"), Icons.REMOVE, List.of(
                             ContextMenuItem.title(Component.literal("Submenu")),
                             ContextMenuItem.SEPARATOR,
-                            new ContextMenuItem(Component.literal("line 2a"), Icons.BELL, button1 -> {}
+                            new ContextMenuItem(Component.literal("line 2a"), Icons.BELL, button1 -> {
+                            }
                             ))),
                     new ContextMenuItem(Component.literal("Test Search"), Icon.empty(), button -> openTestButtonList()) {
                         @Override
@@ -104,6 +109,16 @@ public class UITesting {
             TestButtonListScreen screen = new TestButtonListScreen(this);
             screen.setTitle(Component.literal("Test Search List"));
             screen.openGui();
+        }
+
+        private class TestTopPanel extends CustomTopPanel {
+            @Override
+            public boolean mousePressed(MouseButton mouseButton) {
+                if (Platform.isDevelopmentEnvironment() && mouseButton.isRight()) {
+                    openTestContextMenu(this);
+                }
+                return super.mousePressed(mouseButton);
+            }
         }
     }
 

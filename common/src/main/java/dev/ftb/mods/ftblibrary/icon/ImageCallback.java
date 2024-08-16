@@ -5,5 +5,5 @@ import org.jetbrains.annotations.Nullable;
 
 @FunctionalInterface
 public interface ImageCallback<T> {
-	void imageLoaded(boolean queued, @Nullable T image);
+    void imageLoaded(boolean queued, @Nullable T image);
 }

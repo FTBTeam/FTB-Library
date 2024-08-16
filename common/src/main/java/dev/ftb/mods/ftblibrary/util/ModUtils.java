@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ModUtils {
-    private static final Map<String,String> modId2Name = new HashMap<>();
+    private static final Map<String, String> modId2Name = new HashMap<>();
 
     public static Optional<String> getModName(String modId) {
         if (modId2Name.isEmpty()) {

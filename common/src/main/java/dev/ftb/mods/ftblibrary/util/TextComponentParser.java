@@ -2,7 +2,11 @@ package dev.ftb.mods.ftblibrary.util;
 
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.*;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,190 +14,187 @@ import java.util.function.Function;
 
 
 public class TextComponentParser {
-	public static final Char2ObjectOpenHashMap<ChatFormatting> CODE_TO_FORMATTING = new Char2ObjectOpenHashMap<>();
+    public static final Char2ObjectOpenHashMap<ChatFormatting> CODE_TO_FORMATTING = Util.make(new Char2ObjectOpenHashMap<>(), map -> {
+        map.put('0', ChatFormatting.BLACK);
+        map.put('1', ChatFormatting.DARK_BLUE);
+        map.put('2', ChatFormatting.DARK_GREEN);
+        map.put('3', ChatFormatting.DARK_AQUA);
+        map.put('4', ChatFormatting.DARK_RED);
+        map.put('5', ChatFormatting.DARK_PURPLE);
+        map.put('6', ChatFormatting.GOLD);
+        map.put('7', ChatFormatting.GRAY);
+        map.put('8', ChatFormatting.DARK_GRAY);
+        map.put('9', ChatFormatting.BLUE);
+        map.put('a', ChatFormatting.GREEN);
+        map.put('b', ChatFormatting.AQUA);
+        map.put('c', ChatFormatting.RED);
+        map.put('d', ChatFormatting.LIGHT_PURPLE);
+        map.put('e', ChatFormatting.YELLOW);
+        map.put('f', ChatFormatting.WHITE);
+        map.put('k', ChatFormatting.OBFUSCATED);
+        map.put('l', ChatFormatting.BOLD);
+        map.put('m', ChatFormatting.STRIKETHROUGH);
+        map.put('n', ChatFormatting.UNDERLINE);
+        map.put('o', ChatFormatting.ITALIC);
+        map.put('r', ChatFormatting.RESET);
+    });
 
-	static {
-		CODE_TO_FORMATTING.put('0', ChatFormatting.BLACK);
-		CODE_TO_FORMATTING.put('1', ChatFormatting.DARK_BLUE);
-		CODE_TO_FORMATTING.put('2', ChatFormatting.DARK_GREEN);
-		CODE_TO_FORMATTING.put('3', ChatFormatting.DARK_AQUA);
-		CODE_TO_FORMATTING.put('4', ChatFormatting.DARK_RED);
-		CODE_TO_FORMATTING.put('5', ChatFormatting.DARK_PURPLE);
-		CODE_TO_FORMATTING.put('6', ChatFormatting.GOLD);
-		CODE_TO_FORMATTING.put('7', ChatFormatting.GRAY);
-		CODE_TO_FORMATTING.put('8', ChatFormatting.DARK_GRAY);
-		CODE_TO_FORMATTING.put('9', ChatFormatting.BLUE);
-		CODE_TO_FORMATTING.put('a', ChatFormatting.GREEN);
-		CODE_TO_FORMATTING.put('b', ChatFormatting.AQUA);
-		CODE_TO_FORMATTING.put('c', ChatFormatting.RED);
-		CODE_TO_FORMATTING.put('d', ChatFormatting.LIGHT_PURPLE);
-		CODE_TO_FORMATTING.put('e', ChatFormatting.YELLOW);
-		CODE_TO_FORMATTING.put('f', ChatFormatting.WHITE);
-		CODE_TO_FORMATTING.put('k', ChatFormatting.OBFUSCATED);
-		CODE_TO_FORMATTING.put('l', ChatFormatting.BOLD);
-		CODE_TO_FORMATTING.put('m', ChatFormatting.STRIKETHROUGH);
-		CODE_TO_FORMATTING.put('n', ChatFormatting.UNDERLINE);
-		CODE_TO_FORMATTING.put('o', ChatFormatting.ITALIC);
-		CODE_TO_FORMATTING.put('r', ChatFormatting.RESET);
-	}
+    private final String text;
+    private final Function<String, Component> substitutes;
+    private MutableComponent component;
+    private StringBuilder builder;
+    private Style style;
 
-	private static class BadFormatException extends IllegalArgumentException {
-		private BadFormatException(String s) {
-			super(s);
-		}
-	}
+    private TextComponentParser(String txt, @Nullable Function<String, Component> sub) {
+        text = txt;
+        substitutes = sub;
+    }
 
-	public static Component parse(String text, @Nullable Function<String, Component> substitutes) {
-		var c = parse0(text, substitutes);
+    public static Component parse(String text, @Nullable Function<String, Component> substitutes) {
+        var c = parse0(text, substitutes);
 
-		if (c == Component.EMPTY) {
-			return c;
-		}
+        if (c == Component.EMPTY) {
+            return c;
+        }
 
-		while (c.getContents() == PlainTextContents.EMPTY && c.getStyle().equals(Style.EMPTY) && c.getSiblings().size() == 1) {
-			c = c.getSiblings().get(0);
-		}
+        while (c.getContents() == PlainTextContents.EMPTY && c.getStyle().equals(Style.EMPTY) && c.getSiblings().size() == 1) {
+            c = c.getSiblings().get(0);
+        }
 
-		return c;
-	}
+        return c;
+    }
 
-	private static Component parse0(String text, @Nullable Function<String, Component> substitutes) {
-		try {
-			return new TextComponentParser(text, substitutes).parse();
-		} catch (BadFormatException ex) {
-			return Component.literal(ex.getMessage()).withStyle(ChatFormatting.RED);
-		} catch (Exception ex) {
-			return Component.literal(ex.toString()).withStyle(ChatFormatting.RED);
-		}
-	}
+    private static Component parse0(String text, @Nullable Function<String, Component> substitutes) {
+        try {
+            return new TextComponentParser(text, substitutes).parse();
+        } catch (BadFormatException ex) {
+            return Component.literal(ex.getMessage()).withStyle(ChatFormatting.RED);
+        } catch (Exception ex) {
+            return Component.literal(ex.toString()).withStyle(ChatFormatting.RED);
+        }
+    }
 
-	private final String text;
-	private final Function<String, Component> substitutes;
+    private Component parse() throws BadFormatException {
+        if (text.isEmpty()) {
+            return Component.empty();
+        }
 
-	private MutableComponent component;
-	private StringBuilder builder;
-	private Style style;
+        var c = text.replaceAll("\\\\n", "\n").toCharArray();
+        var hasSpecialCodes = false;
 
-	private TextComponentParser(String txt, @Nullable Function<String, Component> sub) {
-		text = txt;
-		substitutes = sub;
-	}
+        for (var c1 : c) {
+            if (c1 == '{' || c1 == '&' || c1 == '\u00a7') {
+                hasSpecialCodes = true;
+                break;
+            }
+        }
 
-	private Component parse() throws BadFormatException {
-		if (text.isEmpty()) {
-			return Component.empty();
-		}
+        if (!hasSpecialCodes) {
+            return Component.literal(new String(c));
+        }
 
-		var c = text.replaceAll("\\\\n", "\n").toCharArray();
-		var hasSpecialCodes = false;
+        component = Component.literal("");
+        style = Style.EMPTY;
+        builder = new StringBuilder();
+        var sub = false;
 
-		for (var c1 : c) {
-			if (c1 == '{' || c1 == '&' || c1 == '\u00a7') {
-				hasSpecialCodes = true;
-				break;
-			}
-		}
+        for (var i = 0; i < c.length; i++) {
+            var escape = i > 0 && c[i - 1] == '\\';
+            var end = i == c.length - 1;
 
-		if (!hasSpecialCodes) {
-			return Component.literal(new String(c));
-		}
+            if (sub && (end || c[i] == '{' || c[i] == '}')) {
+                if (c[i] == '{') {
+                    throw new BadFormatException("Invalid formatting! Can't nest multiple substitutes!");
+                }
 
-		component = Component.literal("");
-		style = Style.EMPTY;
-		builder = new StringBuilder();
-		var sub = false;
+                finishPart();
+                sub = false;
+                continue;
+            }
 
-		for (var i = 0; i < c.length; i++) {
-			var escape = i > 0 && c[i - 1] == '\\';
-			var end = i == c.length - 1;
+            if (!escape) {
+                if (c[i] == '&' || c[i] == '\u00a7') {
+                    finishPart();
 
-			if (sub && (end || c[i] == '{' || c[i] == '}')) {
-				if (c[i] == '{') {
-					throw new BadFormatException("Invalid formatting! Can't nest multiple substitutes!");
-				}
+                    if (end) {
+                        throw new BadFormatException("Invalid formatting! Can't end string with &!");
+                    }
 
-				finishPart();
-				sub = false;
-				continue;
-			}
+                    i++;
 
-			if (!escape) {
-				if (c[i] == '&' || c[i] == '\u00a7') {
-					finishPart();
+                    if (c[i] == '#') {
+                        var rrggbb = new char[7];
+                        rrggbb[0] = '#';
+                        System.arraycopy(c, i + 1, rrggbb, 1, 6);
+                        i += 6;
+                        style = style.withColor(TextColor.parseColor(new String(rrggbb)).result().orElse(TextColor.fromRgb(0xFFFFFF)));
+                    } else {
+                        if (c[i] == ' ') {
+                            throw new BadFormatException("Invalid formatting! You must escape whitespace after & with \\&!");
+                        }
 
-					if (end) {
-						throw new BadFormatException("Invalid formatting! Can't end string with &!");
-					}
+                        var formatting = CODE_TO_FORMATTING.get(c[i]);
 
-					i++;
+                        if (formatting == null) {
+                            throw new BadFormatException("Invalid formatting! Unknown formatting symbol after &: '" + c[i] + "'!");
+                        }
 
-					if (c[i] == '#') {
-						var rrggbb = new char[7];
-						rrggbb[0] = '#';
-						System.arraycopy(c, i + 1, rrggbb, 1, 6);
-						i += 6;
-						style = style.withColor(TextColor.parseColor(new String(rrggbb)).result().orElse(TextColor.fromRgb(0xFFFFFF)));
-					} else {
-						if (c[i] == ' ') {
-							throw new BadFormatException("Invalid formatting! You must escape whitespace after & with \\&!");
-						}
+                        style = style.applyFormat(formatting);
+                    }
 
-						var formatting = CODE_TO_FORMATTING.get(c[i]);
+                    continue;
+                } else if (c[i] == '{') {
+                    finishPart();
 
-						if (formatting == null) {
-							throw new BadFormatException("Invalid formatting! Unknown formatting symbol after &: '" + c[i] + "'!");
-						}
+                    if (end) {
+                        throw new BadFormatException("Invalid formatting! Can't end string with {!");
+                    }
 
-						style = style.applyFormat(formatting);
-					}
+                    sub = true;
+                }
+            }
 
-					continue;
-				} else if (c[i] == '{') {
-					finishPart();
+            if (c[i] != '\\' || escape) {
+                builder.append(c[i]);
+            }
+        }
 
-					if (end) {
-						throw new BadFormatException("Invalid formatting! Can't end string with {!");
-					}
+        finishPart();
+        return component;
+    }
 
-					sub = true;
-				}
-			}
+    private void finishPart() throws BadFormatException {
+        var string = builder.toString();
+        builder.setLength(0);
 
-			if (c[i] != '\\' || escape) {
-				builder.append(c[i]);
-			}
-		}
+        if (string.isEmpty()) {
+            return;
+        } else if (string.length() < 2 || string.charAt(0) != '{') {
+            var component1 = Component.literal(string);
+            component1.setStyle(style);
+            component.append(component1);
+            return;
+        }
 
-		finishPart();
-		return component;
-	}
+        var component1 = substitutes.apply(string.substring(1));
 
-	private void finishPart() throws BadFormatException {
-		var string = builder.toString();
-		builder.setLength(0);
+        if (component1 != null) {
+            var style0 = component1.getStyle();
+            var style1 = style;
+            style1 = style1.withHoverEvent(style0.getHoverEvent());
+            style1 = style1.withClickEvent(style0.getClickEvent());
+            style1 = style1.withInsertion(style0.getInsertion());
+            component1 = Component.literal("").append(component1).withStyle(style1);
+        } else {
+            throw new BadFormatException("Invalid formatting! Unknown substitute: " + string.substring(1));
+        }
 
-		if (string.isEmpty()) {
-			return;
-		} else if (string.length() < 2 || string.charAt(0) != '{') {
-			var component1 = Component.literal(string);
-			component1.setStyle(style);
-			component.append(component1);
-			return;
-		}
+        component.append(component1);
+    }
 
-		var component1 = substitutes.apply(string.substring(1));
-
-		if (component1 != null) {
-			var style0 = component1.getStyle();
-			var style1 = style;
-			style1 = style1.withHoverEvent(style0.getHoverEvent());
-			style1 = style1.withClickEvent(style0.getClickEvent());
-			style1 = style1.withInsertion(style0.getInsertion());
-			component1 = Component.literal("").append(component1).withStyle(style1);
-		} else {
-			throw new BadFormatException("Invalid formatting! Unknown substitute: " + string.substring(1));
-		}
-
-		component.append(component1);
-	}
+    private static class BadFormatException extends IllegalArgumentException {
+        private BadFormatException(String s) {
+            super(s);
+        }
+    }
 }

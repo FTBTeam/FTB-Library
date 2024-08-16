@@ -10,20 +10,20 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public record EditNBTPacket(CompoundTag info, CompoundTag tag) implements CustomPacketPayload {
-	public static final Type<EditNBTPacket> TYPE = new Type<>(FTBLibrary.rl("edit_nbt"));
+    public static final Type<EditNBTPacket> TYPE = new Type<>(FTBLibrary.rl("edit_nbt"));
 
-	public static StreamCodec<FriendlyByteBuf, EditNBTPacket> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.COMPOUND_TAG, EditNBTPacket::info,
-			ByteBufCodecs.COMPOUND_TAG, EditNBTPacket::tag,
-			EditNBTPacket::new
-	);
+    public static StreamCodec<FriendlyByteBuf, EditNBTPacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.COMPOUND_TAG, EditNBTPacket::info,
+            ByteBufCodecs.COMPOUND_TAG, EditNBTPacket::tag,
+            EditNBTPacket::new
+    );
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
-	}
+    public static void handle(EditNBTPacket packet, NetworkManager.PacketContext context) {
+        context.queue(() -> NBTEditorScreen.openEditor(packet.info, packet.tag));
+    }
 
-	public static void handle(EditNBTPacket packet, NetworkManager.PacketContext context) {
-		context.queue(() -> NBTEditorScreen.openEditor(packet.info, packet.tag));
-	}
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
 }

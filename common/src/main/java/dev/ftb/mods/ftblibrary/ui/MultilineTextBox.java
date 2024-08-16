@@ -7,7 +7,6 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultilineTextField;
@@ -25,7 +24,8 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
     private MultilineTextField textField;
     private Component placeHolder = Component.empty();
     private int frame;
-    private Consumer<String> valueListener = str -> {};
+    private Consumer<String> valueListener = str -> {
+    };
 
     public MultilineTextBox(Panel panel) {
         super(panel);
@@ -329,7 +329,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
     }
 
     public record StringExtents(int start, int end) {
-        public static StringExtents of (MultilineTextField.StringView view) {
+        public static StringExtents of(MultilineTextField.StringView view) {
             return new StringExtents(view.beginIndex(), view.endIndex());
         }
     }

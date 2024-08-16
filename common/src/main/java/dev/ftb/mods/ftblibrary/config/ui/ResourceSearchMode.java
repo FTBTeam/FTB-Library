@@ -16,106 +16,106 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public interface ResourceSearchMode<T> {
-	/**
-	 * The icon used to represent this mode, for example on buttons and other widgets.
-	 */
-	Icon getIcon();
+    ResourceSearchMode<ItemStack> ALL_ITEMS = new ResourceSearchMode<>() {
+        private List<SelectableResource<ItemStack>> allItemsCache = null;
 
-	/**
-	 * The name used to describe this mode.
-	 */
-	MutableComponent getDisplayName();
+        @Override
+        public Icon getIcon() {
+            return Icons.COMPASS;
+        }
 
-	/**
-	 * Gets an *unfiltered* collection of all items available in the current search mode.
-	 */
-	Collection<? extends SelectableResource<T>> getAllResources();
+        @Override
+        public MutableComponent getDisplayName() {
+            return Component.translatable("ftblibrary.select_item.list_mode.all");
+        }
 
-	ResourceSearchMode<ItemStack> ALL_ITEMS = new ResourceSearchMode<>() {
-		private List<SelectableResource<ItemStack>> allItemsCache = null;
+        @Override
+        public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
+            if (allItemsCache == null) {
+                CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false, ClientUtils.registryAccess());
+                allItemsCache = CreativeModeTabs.searchTab().getDisplayItems().stream()
+                        .map(SelectableResource::item)
+                        .toList();
+            }
+            return allItemsCache;
+        }
+    };
+    ResourceSearchMode<ItemStack> INVENTORY = new ResourceSearchMode<>() {
+        @Override
+        public Icon getIcon() {
+            return ItemIcon.getItemIcon(Items.CHEST);
+        }
 
-		@Override
-		public Icon getIcon() {
-			return Icons.COMPASS;
-		}
+        @Override
+        public MutableComponent getDisplayName() {
+            return Component.translatable("ftblibrary.select_item.list_mode.inv");
+        }
 
-		@Override
-		public MutableComponent getDisplayName() {
-			return Component.translatable("ftblibrary.select_item.list_mode.all");
-		}
+        @Override
+        public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
+            Player player = Minecraft.getInstance().player;
+            if (player == null) {
+                return Collections.emptySet();
+            }
 
-		@Override
-		public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
-			if (allItemsCache == null) {
-				CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false, ClientUtils.registryAccess());
-				allItemsCache = CreativeModeTabs.searchTab().getDisplayItems().stream()
-						.map(SelectableResource::item)
-						.toList();
-			}
-			return allItemsCache;
-		}
-	};
+            var invSize = player.getInventory().getContainerSize();
+            List<SelectableResource<ItemStack>> items = new ArrayList<>(invSize);
+            for (var i = 0; i < invSize; i++) {
+                var stack = player.getInventory().getItem(i);
+                if (!stack.isEmpty()) {
+                    items.add(SelectableResource.item(stack));
+                }
+            }
+            return items;
+        }
+    };
+    ResourceSearchMode<FluidStack> ALL_FLUIDS = new ResourceSearchMode<>() {
+        private List<SelectableResource<FluidStack>> allFluidsCache = null;
 
-	ResourceSearchMode<ItemStack> INVENTORY = new ResourceSearchMode<>() {
-		@Override
-		public Icon getIcon() {
-			return ItemIcon.getItemIcon(Items.CHEST);
-		}
+        @Override
+        public Icon getIcon() {
+            return ItemIcon.getItemIcon(Items.COMPASS);
+        }
 
-		@Override
-		public MutableComponent getDisplayName() {
-			return Component.translatable("ftblibrary.select_item.list_mode.inv");
-		}
+        @Override
+        public MutableComponent getDisplayName() {
+            return Component.translatable("ftblibrary.select_fluid.list_mode.all");
+        }
 
-		@Override
-		public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
-			Player player = Minecraft.getInstance().player;
-			if (player == null) {
-				return Collections.emptySet();
-			}
+        @Override
+        public Collection<? extends SelectableResource<FluidStack>> getAllResources() {
+            if (allFluidsCache == null) {
+                List<SelectableResource<FluidStack>> fluidstacks = new ArrayList<>();
+                BuiltInRegistries.FLUID.forEach(f -> {
+                    if (f.isSource(f.defaultFluidState())) {
+                        fluidstacks.add(SelectableResource.fluid(FluidStack.create(f, FluidStackHooks.bucketAmount())));
+                    }
+                });
+                allFluidsCache = List.copyOf(fluidstacks);
+            }
+            return allFluidsCache;
+        }
+    };
 
-			var invSize = player.getInventory().getContainerSize();
-			List<SelectableResource<ItemStack>> items = new ArrayList<>(invSize);
-			for (var i = 0; i < invSize; i++) {
-				var stack = player.getInventory().getItem(i);
-				if (!stack.isEmpty()) {
-					items.add(SelectableResource.item(stack));
-				}
-			}
-			return items;
-		}
-	};
+    /**
+     * The icon used to represent this mode, for example on buttons and other widgets.
+     */
+    Icon getIcon();
 
-	ResourceSearchMode<FluidStack> ALL_FLUIDS = new ResourceSearchMode<>() {
-		private List<SelectableResource<FluidStack>> allFluidsCache = null;
+    /**
+     * The name used to describe this mode.
+     */
+    MutableComponent getDisplayName();
 
-		@Override
-		public Icon getIcon() {
-			return ItemIcon.getItemIcon(Items.COMPASS);
-		}
-
-		@Override
-		public MutableComponent getDisplayName() {
-			return Component.translatable("ftblibrary.select_fluid.list_mode.all");
-		}
-
-		@Override
-		public Collection<? extends SelectableResource<FluidStack>> getAllResources() {
-			if (allFluidsCache == null) {
-				List<SelectableResource<FluidStack>> fluidstacks = new ArrayList<>();
-				BuiltInRegistries.FLUID.forEach(f -> {
-					if (f.isSource(f.defaultFluidState())) {
-						fluidstacks.add(SelectableResource.fluid(FluidStack.create(f, FluidStackHooks.bucketAmount())));
-					}
-				});
-				allFluidsCache = List.copyOf(fluidstacks);
-			}
-			return allFluidsCache;
-		}
-	};
-
+    /**
+     * Gets an *unfiltered* collection of all items available in the current search mode.
+     */
+    Collection<? extends SelectableResource<T>> getAllResources();
 
 }

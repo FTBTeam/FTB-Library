@@ -13,97 +13,97 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class SimpleToast implements Toast {
-	private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.parse("toast/advancement");
-	private boolean hasPlayedSound = false;
+    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.parse("toast/advancement");
+    private boolean hasPlayedSound = false;
 
-	@Override
-	public Visibility render(GuiGraphics graphics, ToastComponent gui, long delta) {
-		GuiHelper.setupDrawing();
-		var mc = gui.getMinecraft();
+    public static void info(Component title, Component subtitle) {
+        Minecraft.getInstance().getToasts().addToast(
+                new SimpleToast() {
+                    @Override
+                    public Component getTitle() {
+                        return title;
+                    }
 
-		graphics.blitSprite(BACKGROUND_SPRITE, 0, 0, 160, 32);
+                    @Override
+                    public Component getSubtitle() {
+                        return subtitle;
+                    }
+                });
+    }
 
-		var list = mc.font.split(getSubtitle(), 125);
-		var i = isImportant() ? 0x00FF88FF : 0x00FFFF00;
+    public static void error(Component title, Component subtitle) {
+        Minecraft.getInstance().getToasts().addToast(
+                new SimpleToast() {
+                    @Override
+                    public Component getTitle() {
+                        return title;
+                    }
 
-		if (list.size() == 1) {
-			graphics.drawString(mc.font, getTitle(), 30, 7, i | 0xFF000000, true);
-			graphics.drawString(mc.font, list.get(0), 30, 18, -1);
-		} else {
-			if (delta < 1500L) {
-				var k = Mth.floor(Mth.clamp((float) (1500L - delta) / 300F, 0F, 1F) * 255F) << 24 | 67108864;
-				graphics.drawString(mc.font, getTitle(), 30, 11, i | k, true);
-			} else {
-				var i1 = Mth.floor(Mth.clamp((float) (delta - 1500L) / 300F, 0F, 1F) * 252F) << 24 | 67108864;
-				var l = 16 - list.size() * mc.font.lineHeight / 2;
+                    @Override
+                    public Component getSubtitle() {
+                        return subtitle;
+                    }
 
-				for (var s : list) {
-					graphics.drawString(mc.font, s, 30, l, 0x00FFFFFF | i1, true);
-					l += mc.font.lineHeight;
-				}
-			}
-		}
+                    @Override
+                    public Icon getIcon() {
+                        return Icons.BARRIER;
+                    }
+                });
+    }
 
-		if (!hasPlayedSound && delta > 0L) {
-			hasPlayedSound = true;
-			playSound(mc.getSoundManager());
-		}
+    @Override
+    public Visibility render(GuiGraphics graphics, ToastComponent gui, long delta) {
+        GuiHelper.setupDrawing();
+        var mc = gui.getMinecraft();
 
-		getIcon().draw(graphics, 8, 8, 16, 16);
-		return delta >= 5000L * gui.getNotificationDisplayTimeMultiplier() ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
-	}
+        graphics.blitSprite(BACKGROUND_SPRITE, 0, 0, 160, 32);
 
-	public Component getTitle() {
-		return Component.literal("<error>");
-	}
+        var list = mc.font.split(getSubtitle(), 125);
+        var i = isImportant() ? 0x00FF88FF : 0x00FFFF00;
 
-	public Component getSubtitle() {
-		return Component.empty();
-	}
+        if (list.size() == 1) {
+            graphics.drawString(mc.font, getTitle(), 30, 7, i | 0xFF000000, true);
+            graphics.drawString(mc.font, list.get(0), 30, 18, -1);
+        } else {
+            if (delta < 1500L) {
+                var k = Mth.floor(Mth.clamp((float) (1500L - delta) / 300F, 0F, 1F) * 255F) << 24 | 67108864;
+                graphics.drawString(mc.font, getTitle(), 30, 11, i | k, true);
+            } else {
+                var i1 = Mth.floor(Mth.clamp((float) (delta - 1500L) / 300F, 0F, 1F) * 252F) << 24 | 67108864;
+                var l = 16 - list.size() * mc.font.lineHeight / 2;
 
-	public boolean isImportant() {
-		return false;
-	}
+                for (var s : list) {
+                    graphics.drawString(mc.font, s, 30, l, 0x00FFFFFF | i1, true);
+                    l += mc.font.lineHeight;
+                }
+            }
+        }
 
-	public Icon getIcon() {
-		return Icons.INFO;
-	}
+        if (!hasPlayedSound && delta > 0L) {
+            hasPlayedSound = true;
+            playSound(mc.getSoundManager());
+        }
 
-	public void playSound(SoundManager handler) {
-	}
+        getIcon().draw(graphics, 8, 8, 16, 16);
+        return delta >= 5000L * gui.getNotificationDisplayTimeMultiplier() ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
+    }
 
-	public static void info(Component title, Component subtitle) {
-		Minecraft.getInstance().getToasts().addToast(
-		new SimpleToast() {
-			@Override
-			public Component getTitle() {
-				return title;
-			}
+    public Component getTitle() {
+        return Component.literal("<error>");
+    }
 
-			@Override
-			public Component getSubtitle() {
-				return subtitle;
-			}
-		});
-	}
+    public Component getSubtitle() {
+        return Component.empty();
+    }
 
-	public static void error(Component title, Component subtitle) {
-		Minecraft.getInstance().getToasts().addToast(
-				new SimpleToast() {
-					@Override
-					public Component getTitle() {
-						return title;
-					}
+    public boolean isImportant() {
+        return false;
+    }
 
-					@Override
-					public Component getSubtitle() {
-						return subtitle;
-					}
+    public Icon getIcon() {
+        return Icons.INFO;
+    }
 
-					@Override
-					public Icon getIcon() {
-						return Icons.BARRIER;
-					}
-				});
-	}
+    public void playSound(SoundManager handler) {
+    }
 }

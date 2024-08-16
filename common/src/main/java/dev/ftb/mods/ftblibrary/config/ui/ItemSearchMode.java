@@ -18,75 +18,74 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public interface ItemSearchMode {
-	/**
-	 * The icon used to represent this mode, for example on buttons and other widgets.
-	 */
-	Icon getIcon();
+    ItemSearchMode ALL_ITEMS = new ItemSearchMode() {
+        private final Supplier<Collection<ItemStack>> supplier = Suppliers.memoize(this::computeStacks);
 
-	/**
-	 * The name used to describe this mode.
-	 */
-	MutableComponent getDisplayName();
+        @Override
+        public Icon getIcon() {
+            return ItemIcon.getItemIcon(Items.COMPASS);
+        }
 
-	/**
-	 * Gets an *unfiltered* collection of all items available in the current search mode.
-	 */
-	Collection<ItemStack> getAllItems();
+        @Override
+        public MutableComponent getDisplayName() {
+            return Component.translatable("ftblibrary.select_item.list_mode.all");
+        }
 
-	ItemSearchMode ALL_ITEMS = new ItemSearchMode() {
-		private final Supplier<Collection<ItemStack>> supplier = Suppliers.memoize(this::computeStacks);
+        @Override
+        public Collection<ItemStack> getAllItems() {
+            return supplier.get();
+        }
 
-		@Override
-		public Icon getIcon() {
-			return ItemIcon.getItemIcon(Items.COMPASS);
-		}
+        private Set<ItemStack> computeStacks() {
+            CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false, ClientUtils.registryAccess());
+            return new SetOfItemStack(CreativeModeTabs.allTabs().stream()
+                    .flatMap(tab -> tab.getDisplayItems().stream())
+                    .toList());
+        }
+    };
+    ItemSearchMode INVENTORY = new ItemSearchMode() {
+        @Override
+        public Icon getIcon() {
+            return ItemIcon.getItemIcon(Items.CHEST);
+        }
 
-		@Override
-		public MutableComponent getDisplayName() {
-			return Component.translatable("ftblibrary.select_item.list_mode.all");
-		}
+        @Override
+        public MutableComponent getDisplayName() {
+            return Component.translatable("ftblibrary.select_item.list_mode.inv");
+        }
 
-		@Override
-		public Collection<ItemStack> getAllItems() {
-			return supplier.get();
-		}
+        @Override
+        public Collection<ItemStack> getAllItems() {
+            Player player = Minecraft.getInstance().player;
+            if (player == null) {
+                return Collections.emptySet();
+            }
 
-		private Set<ItemStack> computeStacks() {
-			CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false, ClientUtils.registryAccess());
-			return new SetOfItemStack(CreativeModeTabs.allTabs().stream()
-					.flatMap(tab -> tab.getDisplayItems().stream())
-					.toList());
-		}
-	};
+            var invSize = player.getInventory().getContainerSize();
+            List<ItemStack> items = new ArrayList<>(invSize);
+            for (var i = 0; i < invSize; i++) {
+                var stack = player.getInventory().getItem(i);
+                if (!stack.isEmpty()) {
+                    items.add(stack);
+                }
+            }
+            return items;
+        }
+    };
 
-	ItemSearchMode INVENTORY = new ItemSearchMode() {
-		@Override
-		public Icon getIcon() {
-			return ItemIcon.getItemIcon(Items.CHEST);
-		}
+    /**
+     * The icon used to represent this mode, for example on buttons and other widgets.
+     */
+    Icon getIcon();
 
-		@Override
-		public MutableComponent getDisplayName() {
-			return Component.translatable("ftblibrary.select_item.list_mode.inv");
-		}
+    /**
+     * The name used to describe this mode.
+     */
+    MutableComponent getDisplayName();
 
-		@Override
-		public Collection<ItemStack> getAllItems() {
-			Player player = Minecraft.getInstance().player;
-			if (player == null) {
-				return Collections.emptySet();
-			}
-
-			var invSize = player.getInventory().getContainerSize();
-			List<ItemStack> items = new ArrayList<>(invSize);
-			for (var i = 0; i < invSize; i++) {
-				var stack = player.getInventory().getItem(i);
-				if (!stack.isEmpty()) {
-					items.add(stack);
-				}
-			}
-			return items;
-		}
-	};
+    /**
+     * Gets an *unfiltered* collection of all items available in the current search mode.
+     */
+    Collection<ItemStack> getAllItems();
 
 }

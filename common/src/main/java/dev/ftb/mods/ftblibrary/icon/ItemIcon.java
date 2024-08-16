@@ -25,159 +25,159 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemIcon extends Icon implements IResourceIcon {
-	private final ItemStack stack;
+    private final ItemStack stack;
 
-	public static Icon getItemIcon(ItemStack stack) {
-		if (stack.isEmpty()) {
-			return empty();
-		} else if (stack.getItem() instanceof CustomIconItem) {
-			return ((CustomIconItem) stack.getItem()).getCustomIcon(stack);
-		}
+    private ItemIcon(ItemStack is) {
+        stack = is;
+    }
 
-		return new ItemIcon(stack);
-	}
+    public static Icon getItemIcon(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return empty();
+        } else if (stack.getItem() instanceof CustomIconItem) {
+            return ((CustomIconItem) stack.getItem()).getCustomIcon(stack);
+        }
 
-	public static Icon getItemIcon(Item item) {
-		return item == Items.AIR ? empty() : getItemIcon(item.getDefaultInstance());
-	}
+        return new ItemIcon(stack);
+    }
 
-	public static Icon getItemIcon(String lazyStackString) {
-		if (lazyStackString.isEmpty()) {
-			return empty();
-		}
+    public static Icon getItemIcon(Item item) {
+        return item == Items.AIR ? empty() : getItemIcon(item.getDefaultInstance());
+    }
 
-		return new LazyIcon(() -> {
-			var s = lazyStackString.split(" ", 4);
-			var stack = BuiltInRegistries.ITEM.get(ResourceLocation.parse(s[0])).getDefaultInstance();
+    public static Icon getItemIcon(String lazyStackString) {
+        if (lazyStackString.isEmpty()) {
+            return empty();
+        }
 
-			if (s.length >= 2 && !s[1].equals("1")) {
-				stack.setCount(Integer.parseInt(s[1]));
-			}
+        return new LazyIcon(() -> {
+            var s = lazyStackString.split(" ", 4);
+            var stack = BuiltInRegistries.ITEM.get(ResourceLocation.parse(s[0])).getDefaultInstance();
 
-			if (s.length >= 3 && !s[2].equals("0")) {
-				stack.setDamageValue(Integer.parseInt(s[2]));
-			}
+            if (s.length >= 2 && !s[1].equals("1")) {
+                stack.setCount(Integer.parseInt(s[1]));
+            }
 
-			if (s.length >= 4 && !s[3].equals("null")) {
-				try {
-					DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseTag(s[3]))
-							.resultOrPartial(err -> FTBLibrary.LOGGER.error("can't parse data component map for {}: {}", s[3], err))
-							.ifPresent(stack::applyComponents);
-				} catch (CommandSyntaxException ex) {
-					FTBLibrary.LOGGER.error("can't parse data component tag for item icon: {} ({})", lazyStackString, ex.getMessage());
-				}
-			}
+            if (s.length >= 3 && !s[2].equals("0")) {
+                stack.setDamageValue(Integer.parseInt(s[2]));
+            }
 
-			if (stack.isEmpty()) {
-				ItemStack fallback = new ItemStack(Items.BARRIER);
-				fallback.set(DataComponents.CUSTOM_NAME, Component.literal(lazyStackString));
-				return getItemIcon(fallback);
-			}
+            if (s.length >= 4 && !s[3].equals("null")) {
+                try {
+                    DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseTag(s[3]))
+                            .resultOrPartial(err -> FTBLibrary.LOGGER.error("can't parse data component map for {}: {}", s[3], err))
+                            .ifPresent(stack::applyComponents);
+                } catch (CommandSyntaxException ex) {
+                    FTBLibrary.LOGGER.error("can't parse data component tag for item icon: {} ({})", lazyStackString, ex.getMessage());
+                }
+            }
 
-			return getItemIcon(stack);
-		}) {
-			@Override
-			public String toString() {
-				return "item:" + lazyStackString;
-			}
-		};
-	}
+            if (stack.isEmpty()) {
+                ItemStack fallback = new ItemStack(Items.BARRIER);
+                fallback.set(DataComponents.CUSTOM_NAME, Component.literal(lazyStackString));
+                return getItemIcon(fallback);
+            }
 
-	private ItemIcon(ItemStack is) {
-		stack = is;
-	}
+            return getItemIcon(stack);
+        }) {
+            @Override
+            public String toString() {
+                return "item:" + lazyStackString;
+            }
+        };
+    }
 
-	public ItemStack getStack() {
-		return stack;
-	}
+    @Environment(EnvType.CLIENT)
+    public static void drawItem3D(GuiGraphics graphics, ItemStack stack) {
+        //FIXME: Draw flat 3D item
+        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, graphics.pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
+    }
 
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-		PoseStack poseStack = graphics.pose();
-		poseStack.pushPose();
-		poseStack.translate(x + w / 2D, y + h / 2D, 0);
+    public ItemStack getStack() {
+        return stack;
+    }
 
-		if (w != 16 || h != 16) {
-			float s = Math.min(w, h) / 16F;
-			poseStack.scale(s, s, s);
-		}
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
+        PoseStack poseStack = graphics.pose();
+        poseStack.pushPose();
+        poseStack.translate(x + w / 2D, y + h / 2D, 0);
 
-		GuiHelper.drawItem(graphics, getStack(), 0, true, null);
-		poseStack.popPose();
-	}
+        if (w != 16 || h != 16) {
+            float s = Math.min(w, h) / 16F;
+            poseStack.scale(s, s, s);
+        }
 
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
-		PoseStack poseStack = graphics.pose();
-		poseStack.pushPose();
-		poseStack.translate(x + w / 2D, y + h / 2D, 0);
+        GuiHelper.drawItem(graphics, getStack(), 0, true, null);
+        poseStack.popPose();
+    }
 
-		if (w != 16 || h != 16) {
-			float s = Math.min(w, h) / 16F;
-			poseStack.scale(s, s, s);
-		}
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
+        PoseStack poseStack = graphics.pose();
+        poseStack.pushPose();
+        poseStack.translate(x + w / 2D, y + h / 2D, 0);
 
-		GuiHelper.drawItem(graphics, getStack(), 0, false, null);
-		poseStack.popPose();
-	}
+        if (w != 16 || h != 16) {
+            float s = Math.min(w, h) / 16F;
+            poseStack.scale(s, s, s);
+        }
 
-	@Environment(EnvType.CLIENT)
-	public static void drawItem3D(GuiGraphics graphics, ItemStack stack) {
-		//FIXME: Draw flat 3D item
-		Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, graphics.pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
-	}
+        GuiHelper.drawItem(graphics, getStack(), 0, false, null);
+        poseStack.popPose();
+    }
 
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void draw3D(GuiGraphics graphics) {
-		drawItem3D(graphics, getStack());
-	}
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void draw3D(GuiGraphics graphics) {
+        drawItem3D(graphics, getStack());
+    }
 
-	public String toString() {
-		var stack = getStack();
-		var builder = new StringBuilder("item:");
-		builder.append(RegistrarManager.getId(stack.getItem(), Registries.ITEM));
-		var count = stack.getCount();
-		var damage = stack.getDamageValue();
-		var nbt = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()
-				.orElse(null);
+    public String toString() {
+        var stack = getStack();
+        var builder = new StringBuilder("item:");
+        builder.append(RegistrarManager.getId(stack.getItem(), Registries.ITEM));
+        var count = stack.getCount();
+        var damage = stack.getDamageValue();
+        var nbt = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()
+                .orElse(null);
 
-		if (count > 1 || damage > 0 || nbt != null) {
-			builder.append(' ');
-			builder.append(count);
-		}
+        if (count > 1 || damage > 0 || nbt != null) {
+            builder.append(' ');
+            builder.append(count);
+        }
 
-		if (damage > 0 || nbt != null) {
-			builder.append(' ');
-			builder.append(damage);
-		}
+        if (damage > 0 || nbt != null) {
+            builder.append(' ');
+            builder.append(damage);
+        }
 
-		if (nbt != null) {
-			builder.append(' ');
-			builder.append(nbt);
-		}
+        if (nbt != null) {
+            builder.append(' ');
+            builder.append(nbt);
+        }
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 
-	public int hashCode() {
-		return ItemStack.hashItemAndComponents(getStack());
-	}
+    public int hashCode() {
+        return ItemStack.hashItemAndComponents(getStack());
+    }
 
-	public boolean equals(Object o) {
-		return o == this || o instanceof ItemIcon && ItemStack.matches(getStack(), ((ItemIcon) o).getStack());
-	}
+    public boolean equals(Object o) {
+        return o == this || o instanceof ItemIcon && ItemStack.matches(getStack(), ((ItemIcon) o).getStack());
+    }
 
-	@Override
-	@Nullable
-	public Object getIngredient() {
-		return getStack();
-	}
+    @Override
+    @Nullable
+    public Object getIngredient() {
+        return getStack();
+    }
 
-	@Override
-	public ResourceLocation getResourceLocation() {
-		return BuiltInRegistries.ITEM.getKey(stack.getItem());
-	}
+    @Override
+    public ResourceLocation getResourceLocation() {
+        return BuiltInRegistries.ITEM.getKey(stack.getItem());
+    }
 }

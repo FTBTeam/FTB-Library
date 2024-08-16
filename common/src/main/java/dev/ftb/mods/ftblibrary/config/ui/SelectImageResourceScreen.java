@@ -12,6 +12,7 @@ import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -28,16 +29,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLocation> {
-    private static final ResourceSearchMode<ResourceLocation> ALL_IMAGES = new AllImagesMode();
-
-    public static final SearchModeIndex<ResourceSearchMode<ResourceLocation>> KNOWN_MODES = new SearchModeIndex<>();
     private static final SelectableResource<ResourceLocation> NO_IMAGE = new SelectableResource.ImageResource(ImageResourceConfig.NONE);
-
-    static {
-        KNOWN_MODES.appendMode(ALL_IMAGES);
-    }
-
     private static List<SelectableResource.ImageResource> cachedImages = null;
+
+    public static final SearchModeIndex<ResourceSearchMode<ResourceLocation>> KNOWN_MODES = Util.make(
+            new SearchModeIndex<>(), idx -> idx.appendMode(AllImagesMode.INSTANCE)
+    );
 
     public SelectImageResourceScreen(ResourceConfigValue<ResourceLocation> config, ConfigCallback callback) {
         super(config, callback);
@@ -45,6 +42,10 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
 
     private static void clearCachedImages() {
         cachedImages = null;
+    }
+
+    private static boolean isValidImage(ResourceLocation id) {
+        return !id.getPath().startsWith("textures/font/");
     }
 
     @Override
@@ -57,39 +58,6 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
         return KNOWN_MODES;
     }
 
-    private static boolean isValidImage(ResourceLocation id) {
-        return !id.getPath().startsWith("textures/font/");
-    }
-
-    private class ImageButton extends ResourceButton {
-        protected ImageButton(Panel panel, SelectableResource<ResourceLocation> resource) {
-            super(panel, resource);
-        }
-
-        @Override
-        public boolean shouldAdd(String search) {
-            search = search.toLowerCase();
-            if (search.isEmpty()) {
-                return true;
-            } else if (search.startsWith("@")) {
-                return getStack().getNamespace().contains(search.substring(1));
-            } else {
-                return getStack().getPath().contains(search);
-            }
-        }
-
-        @Override
-        public void addMouseOverText(TooltipList list) {
-            Component text = Component.literal(getStack().getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
-                    .append(Component.literal(getStack().getPath()).withStyle(ChatFormatting.YELLOW));
-            list.add(text);
-            if (FTBLibraryClientConfig.IMAGE_MODNAME.get()) {
-                ModUtils.getModName(getStack().getNamespace())
-                        .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
-            }
-        }
-    }
-
     public enum ResourceListener implements ResourceManagerReloadListener {
         INSTANCE;
 
@@ -99,7 +67,9 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
         }
     }
 
-    private static class AllImagesMode implements ResourceSearchMode<ResourceLocation> {
+    private enum AllImagesMode implements ResourceSearchMode<ResourceLocation> {
+        INSTANCE;
+
         @Override
         public Icon getIcon() {
             return Icons.ART;
@@ -145,6 +115,35 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
                 }).toList();
             }
             return cachedImages;
+        }
+    }
+
+    private class ImageButton extends ResourceButton {
+        protected ImageButton(Panel panel, SelectableResource<ResourceLocation> resource) {
+            super(panel, resource);
+        }
+
+        @Override
+        public boolean shouldAdd(String search) {
+            search = search.toLowerCase();
+            if (search.isEmpty()) {
+                return true;
+            } else if (search.startsWith("@")) {
+                return getStack().getNamespace().contains(search.substring(1));
+            } else {
+                return getStack().getPath().contains(search);
+            }
+        }
+
+        @Override
+        public void addMouseOverText(TooltipList list) {
+            Component text = Component.literal(getStack().getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
+                    .append(Component.literal(getStack().getPath()).withStyle(ChatFormatting.YELLOW));
+            list.add(text);
+            if (FTBLibraryClientConfig.IMAGE_MODNAME.get()) {
+                ModUtils.getModName(getStack().getNamespace())
+                        .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+            }
         }
     }
 

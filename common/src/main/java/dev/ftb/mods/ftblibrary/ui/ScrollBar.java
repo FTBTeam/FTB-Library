@@ -5,187 +5,184 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.util.Mth;
 
 public class ScrollBar extends Widget {
-	public enum Plane {
-		HORIZONTAL(false),
-		VERTICAL(true);
+    protected final Plane plane;
+    private final int scrollBarSize;
+    private double value = 0;
+    private double scrollStep = 20;
+    private double grab = -10000;
+    private double minValue = 0;
+    private double maxValue = 100;
+    private boolean canAlwaysScroll = false;
+    private boolean canAlwaysScrollPlane = true;
+    public ScrollBar(Panel parent, Plane p, int ss) {
+        super(parent);
+        plane = p;
+        scrollBarSize = Math.max(ss, 0);
+    }
 
-		public final boolean isVertical;
+    public void setCanAlwaysScroll(boolean v) {
+        canAlwaysScroll = v;
+    }
 
-		Plane(boolean v) {
-			isVertical = v;
-		}
-	}
+    public void setCanAlwaysScrollPlane(boolean v) {
+        canAlwaysScrollPlane = v;
+    }
 
-	protected final Plane plane;
+    public Plane getPlane() {
+        return plane;
+    }
 
-	private final int scrollBarSize;
-	private double value = 0;
-	private double scrollStep = 20;
-	private double grab = -10000;
-	private double minValue = 0;
-	private double maxValue = 100;
-	private boolean canAlwaysScroll = false;
-	private boolean canAlwaysScrollPlane = true;
+    public double getMinValue() {
+        return minValue;
+    }
 
-	public ScrollBar(Panel parent, Plane p, int ss) {
-		super(parent);
-		plane = p;
-		scrollBarSize = Math.max(ss, 0);
-	}
+    public void setMinValue(double min) {
+        minValue = min;
+        setValue(getValue());
+    }
 
-	public void setCanAlwaysScroll(boolean v) {
-		canAlwaysScroll = v;
-	}
+    public double getMaxValue() {
+        return maxValue;
+    }
 
-	public void setCanAlwaysScrollPlane(boolean v) {
-		canAlwaysScrollPlane = v;
-	}
+    public void setMaxValue(double max) {
+        maxValue = max;
+        setValue(getValue());
+    }
 
-	public Plane getPlane() {
-		return plane;
-	}
+    public int getScrollBarSize() {
+        return scrollBarSize;
+    }
 
-	public void setMinValue(double min) {
-		minValue = min;
-		setValue(getValue());
-	}
+    @Override
+    public boolean mousePressed(MouseButton button) {
+        if (isMouseOver()) {
+            grab = (plane.isVertical ?
+                    (getMouseY() - (getY() + getMappedValue(height - getScrollBarSize()))) :
+                    (getMouseX() - (getX() + getMappedValue(width - getScrollBarSize()))));
+            return true;
+        }
 
-	public double getMinValue() {
-		return minValue;
-	}
+        return false;
+    }
 
-	public void setMaxValue(double max) {
-		maxValue = max;
-		setValue(getValue());
-	}
+    @Override
+    public boolean mouseScrolled(double scroll) {
+        if (scroll != 0 && canMouseScrollPlane() && canMouseScroll()) {
+            setValue(getValue() - getScrollStep() * scroll);
+            return true;
+        }
 
-	public double getMaxValue() {
-		return maxValue;
-	}
+        return false;
+    }
 
-	public void setScrollStep(double s) {
-		scrollStep = Math.max(0D, s);
-	}
+    @Override
+    public void addMouseOverText(TooltipList list) {
+        if (showValueOnMouseOver()) {
+            var t = getTitle();
+            list.string(t.getContents() == PlainTextContents.EMPTY ? (Double.toString(getValue())) : (t + ": " + getValue()));
+        }
 
-	public int getScrollBarSize() {
-		return scrollBarSize;
-	}
+        if (Theme.renderDebugBoxes) {
+            list.styledString("Size: " + getScrollBarSize(), ChatFormatting.DARK_GRAY);
+            list.styledString("Max: " + getMaxValue(), ChatFormatting.DARK_GRAY);
+            list.styledString("Value: " + getValue(), ChatFormatting.DARK_GRAY);
+        }
+    }
 
-	@Override
-	public boolean mousePressed(MouseButton button) {
-		if (isMouseOver()) {
-			grab = (plane.isVertical ?
-					(getMouseY() - (getY() + getMappedValue(height - getScrollBarSize()))) :
-					(getMouseX() - (getX() + getMappedValue(width - getScrollBarSize()))));
-			return true;
-		}
+    public boolean showValueOnMouseOver() {
+        return false;
+    }
 
-		return false;
-	}
+    @Override
+    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        var scrollBarSize = getScrollBarSize();
 
-	@Override
-	public boolean mouseScrolled(double scroll) {
-		if (scroll != 0 && canMouseScrollPlane() && canMouseScroll()) {
-			setValue(getValue() - getScrollStep() * scroll);
-			return true;
-		}
+        if (scrollBarSize > 0) {
+            var v = getValue();
 
-		return false;
-	}
+            if (grab != -10000) {
+                if (isMouseButtonDown(MouseButton.LEFT)) {
+                    if (plane.isVertical) {
+                        v = (getMouseY() - (y + grab)) * getMaxValue() / (double) (height - scrollBarSize);
+                    } else {
+                        v = (getMouseX() - (x + grab)) * getMaxValue() / (double) (width - scrollBarSize);
+                    }
+                } else {
+                    grab = -10000;
+                }
+            }
 
-	@Override
-	public void addMouseOverText(TooltipList list) {
-		if (showValueOnMouseOver()) {
-			var t = getTitle();
-			list.string(t.getContents() == PlainTextContents.EMPTY ? (Double.toString(getValue())) : (t + ": " + getValue()));
-		}
+            setValue(v);
+        }
 
-		if (Theme.renderDebugBoxes) {
-			list.styledString("Size: " + getScrollBarSize(), ChatFormatting.DARK_GRAY);
-			list.styledString("Max: " + getMaxValue(), ChatFormatting.DARK_GRAY);
-			list.styledString("Value: " + getValue(), ChatFormatting.DARK_GRAY);
-		}
-	}
+        drawBackground(graphics, theme, x, y, width, height);
 
-	public boolean showValueOnMouseOver() {
-		return false;
-	}
+        if (scrollBarSize > 0) {
+            if (plane.isVertical) {
+                drawScrollBar(graphics, theme, x, (int) (y + getMappedValue(height - scrollBarSize)), width, scrollBarSize);
+            } else {
+                drawScrollBar(graphics, theme, (int) (x + getMappedValue(width - scrollBarSize)), y, scrollBarSize, height);
+            }
+        }
+    }
 
-	@Override
-	public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-		var scrollBarSize = getScrollBarSize();
+    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        theme.drawScrollBarBackground(graphics, x, y, w, h, getWidgetType());
+    }
 
-		if (scrollBarSize > 0) {
-			var v = getValue();
+    public void drawScrollBar(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        theme.drawScrollBar(graphics, x, y, w, h, WidgetType.mouseOver(grab != -10000), plane.isVertical);
+    }
 
-			if (grab != -10000) {
-				if (isMouseButtonDown(MouseButton.LEFT)) {
-					if (plane.isVertical) {
-						v = (getMouseY() - (y + grab)) * getMaxValue() / (double) (height - scrollBarSize);
-					} else {
-						v = (getMouseX() - (x + grab)) * getMaxValue() / (double) (width - scrollBarSize);
-					}
-				} else {
-					grab = -10000;
-				}
-			}
+    public void onMoved() {
+    }
 
-			setValue(v);
-		}
+    public boolean canMouseScrollPlane() {
+        return canAlwaysScrollPlane || isShiftKeyDown() != plane.isVertical;
+    }
 
-		drawBackground(graphics, theme, x, y, width, height);
+    public boolean canMouseScroll() {
+        return canAlwaysScroll || isMouseOver();
+    }
 
-		if (scrollBarSize > 0) {
-			if (plane.isVertical) {
-				drawScrollBar(graphics, theme, x, (int) (y + getMappedValue(height - scrollBarSize)), width, scrollBarSize);
-			} else {
-				drawScrollBar(graphics, theme, (int) (x + getMappedValue(width - scrollBarSize)), y, scrollBarSize, height);
-			}
-		}
-	}
+    public double getValue() {
+        return value;
+    }
 
-	public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-		theme.drawScrollBarBackground(graphics, x, y, w, h, getWidgetType());
-	}
+    public void setValue(double v) {
+        v = Mth.clamp(v, getMinValue(), getMaxValue());
 
-	public void drawScrollBar(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-		theme.drawScrollBar(graphics, x, y, w, h, WidgetType.mouseOver(grab != -10000), plane.isVertical);
-	}
+        if (value != v) {
+            value = v;
+            onMoved();
+        }
+    }
 
-	public void onMoved() {
-	}
+    public double getMappedValue(double max) {
+        return MathUtils.map(getMinValue(), getMaxValue(), 0, max, value);
+    }
 
-	public boolean canMouseScrollPlane() {
-		return canAlwaysScrollPlane || isShiftKeyDown() != plane.isVertical;
-	}
+    public double getScrollStep() {
+        return scrollStep;
+    }
 
-	public boolean canMouseScroll() {
-		return canAlwaysScroll || isMouseOver();
-	}
+    public void setScrollStep(double s) {
+        scrollStep = Math.max(0D, s);
+    }
 
-	public void setValue(double v) {
-		v = Mth.clamp(v, getMinValue(), getMaxValue());
+    public enum Plane {
+        HORIZONTAL(false),
+        VERTICAL(true);
 
-		if (value != v) {
-			value = v;
-			onMoved();
-		}
-	}
+        public final boolean isVertical;
 
-	public double getValue() {
-		return value;
-	}
-
-	public double getMappedValue(double max) {
-		return MathUtils.map(getMinValue(), getMaxValue(), 0, max, value);
-	}
-
-	public double getScrollStep() {
-		return scrollStep;
-	}
+        Plane(boolean v) {
+            isVertical = v;
+        }
+    }
 }
