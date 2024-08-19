@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -39,8 +40,8 @@ public class FTBLibraryCommands {
 
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection type) {
         var command = Commands.literal("ftblibrary")
-                .requires(commandSource -> commandSource.hasPermission(2))
                 .then(Commands.literal("gamemode")
+                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .executes(context -> {
                             if (!context.getSource().getPlayerOrException().isCreative()) {
                                 context.getSource().getPlayerOrException().setGameMode(GameType.CREATIVE);
@@ -48,20 +49,23 @@ public class FTBLibraryCommands {
                                 context.getSource().getPlayerOrException().setGameMode(GameType.SURVIVAL);
                             }
 
-                            return 1;
+                            return Command.SINGLE_SUCCESS;
                         })
                 )
                 .then(Commands.literal("rain")
+                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .executes(context -> {
-                            if (context.getSource().getLevel().isRaining()) {
-                                context.getSource().getLevel().setWeatherParameters(6000, 0, false, false); // clear
+                            //Use overworld as that controls the weather for the whole server
+                            if (context.getSource().getServer().overworld().isRaining()) {
+                                context.getSource().getServer().overworld().setWeatherParameters(6000, 0, false, false); // clear
                             } else {
-                                context.getSource().getLevel().setWeatherParameters(0, 6000, true, false);// rain
+                                context.getSource().getServer().overworld().setWeatherParameters(0, 6000, true, false);// rain
                             }
-                            return 1;
+                            return Command.SINGLE_SUCCESS;
                         })
                 )
                 .then(Commands.literal("day")
+                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .executes(context -> {
                             var addDay = (24000L - (context.getSource().getLevel().getDayTime() % 24000L) + 6000L) % 24000L;
 
@@ -71,10 +75,11 @@ public class FTBLibraryCommands {
                                 }
                             }
 
-                            return 1;
+                            return Command.SINGLE_SUCCESS;
                         })
                 )
                 .then(Commands.literal("night")
+                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .executes(context -> {
                             var addDay = (24000L - (context.getSource().getLevel().getDayTime() % 24000L) + 18000L) % 24000L;
 
@@ -84,10 +89,11 @@ public class FTBLibraryCommands {
                                 }
                             }
 
-                            return 1;
+                            return Command.SINGLE_SUCCESS;
                         })
                 )
                 .then(Commands.literal("nbtedit")
+                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("block")
                                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
                                         .executes(context -> editNBT(context, (info, tag) -> editBlockNBT(context, info, tag)))
@@ -111,7 +117,7 @@ public class FTBLibraryCommands {
                         .requires(CommandSourceStack::isPlayer)
                         .executes(context -> {
                             NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(true));
-                            return 1;
+                            return Command.SINGLE_SUCCESS;
                         })
                 );
 
@@ -123,7 +129,7 @@ public class FTBLibraryCommands {
                         } else {
                             UITesting.openTestScreen();
                         }
-                        return 1;
+                        return Command.SINGLE_SUCCESS;
                     })
             );
         }
@@ -140,7 +146,7 @@ public class FTBLibraryCommands {
         if (!info.isEmpty()) {
             EDITING_NBT.put(player.getUUID(), info);
             NetworkManager.sendToPlayer(player, new EditNBTPacket(info, tag));
-            return 1;
+            return Command.SINGLE_SUCCESS;
         }
 
         return 0;
