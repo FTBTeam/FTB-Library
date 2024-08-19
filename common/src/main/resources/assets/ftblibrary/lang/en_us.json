@@ -75,6 +75,8 @@
   "ftblibrary.gui.edit_tag_value": "Edit Tag Value",
   "ftblibrary.gui.no_selection": "Nothing Selected",
   "ftblibrary.gui.key_reference": "Key Reference",
+  "ftblibrary.gui.enabled": "Enabled",
+  "ftblibrary.gui.disabled": "Disabled",
   "ftblibrary.client_settings": "Client Config",
   "ftblibrary.client_settings.tooltips": "Tooltips",
   "ftblibrary.client_settings.tooltips.item_modname": "Show Mod Name in Item Select GUI",
