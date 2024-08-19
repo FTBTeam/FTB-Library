@@ -35,74 +35,8 @@ import java.util.Optional;
 
 @JeiPlugin
 public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
-	public static IJeiRuntime runtime = null;
-
-	@Override
-	public void onRuntimeAvailable(IJeiRuntime r) {
-		runtime = r;
-	}
-
-	@Override
-	@NotNull
-	public ResourceLocation getPluginUid() {
-		return FTBLibrary.rl("jei");
-	}
-
-	@Override
-	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-		if (Platform.isModLoaded("roughlyenoughitems")) {
-			return;
-		}
-		registration.addGlobalGuiHandler(this);
-	}
-
-	@Override
-	@NotNull
-	public Collection<Rect2i> getGuiExtraAreas() {
-		var currentScreen = Minecraft.getInstance().screen;
-
-		if (FTBLibraryClient.areButtonsVisible(currentScreen)) {
-			return Collections.singleton(SidebarGroupGuiButton.lastDrawnArea);
-		}
-
-		return Collections.emptySet();
-	}
-
-	@Override
-	public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(double mouseX, double mouseY) {
-		var currentScreen = Minecraft.getInstance().screen;
-
-		if (currentScreen instanceof IScreenWrapper wrapper && wrapper.getGui().getIngredientUnderMouse().isPresent()) {
-			PositionedIngredient underMouse = wrapper.getGui().getIngredientUnderMouse().get();
-			if (underMouse.ingredient() instanceof ItemStack stack) {
-				Optional<ITypedIngredient<ItemStack>> typed = runtime.getIngredientManager().createTypedIngredient(VanillaTypes.ITEM_STACK, stack);
-				if (typed.isPresent()) {
-					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
-				}
-				// TODO this could work, but an Arch FLUID_STACK needs to be registered with JEI
-				//   and this is non-trivial to do. The handleExtraIngredientTypes fallback below
-				//   works fine for native FluidStacks on NeoForge/Fabric/Forge
-//			} else if (underMouse.ingredient() instanceof FluidStack stack) {
-//				// This should work if Arch has setup their fluidstack properly
-//				Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(FLUID_STACK, stack);
-//				if (typed.isPresent()) {
-//					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
-//				}
-			} else {
-				// Allow us to fallback onto Fluid handlers for the native implementations
-				return handleExtraIngredientTypes(runtime, underMouse);
-			}
-		}
-
-		return Optional.empty();
-	}
-
-	@ExpectPlatform
-	public static Optional<IClickableIngredient<?>> handleExtraIngredientTypes(IJeiRuntime runtime, PositionedIngredient underMouse) {
-		throw new AssertionError();
-	}
-
-	private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
+    public static IJeiRuntime runtime = null;
+    private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
         @Override
         public Icon getIcon() {
             return ItemIcon.getItemIcon(Items.APPLE);
@@ -125,25 +59,91 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
         }
     };
 
-	static {
-		if (!Platform.isModLoaded("roughlyenoughitems")) {
+    static {
+        if (!Platform.isModLoaded("roughlyenoughitems")) {
             SelectItemStackScreen.KNOWN_MODES.prependMode(JEI_ITEMS);
-		}
-	}
+        }
+    }
 
-	public record ClickableIngredient<T>(ITypedIngredient<T> typedStack, Rect2i clickedArea) implements IClickableIngredient<T> {
-		@Override
-		public ITypedIngredient<T> getTypedIngredient() {
-			return typedStack;
-		}
+    @ExpectPlatform
+    public static Optional<IClickableIngredient<?>> handleExtraIngredientTypes(IJeiRuntime runtime, PositionedIngredient underMouse) {
+        throw new AssertionError();
+    }
 
-		@Override
-		public Rect2i getArea() {
-			return clickedArea;
-		}
-	}
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime r) {
+        runtime = r;
+    }
 
-	// TODO see above TODO about registering an Arch fluid stack ingredient type
+    @Override
+    @NotNull
+    public ResourceLocation getPluginUid() {
+        return FTBLibrary.rl("jei");
+    }
+
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        if (Platform.isModLoaded("roughlyenoughitems")) {
+            return;
+        }
+        registration.addGlobalGuiHandler(this);
+    }
+
+    @Override
+    @NotNull
+    public Collection<Rect2i> getGuiExtraAreas() {
+        var currentScreen = Minecraft.getInstance().screen;
+
+        if (FTBLibraryClient.areButtonsVisible(currentScreen)) {
+            return Collections.singleton(SidebarGroupGuiButton.lastDrawnArea);
+        }
+
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(double mouseX, double mouseY) {
+        var currentScreen = Minecraft.getInstance().screen;
+
+        if (currentScreen instanceof IScreenWrapper wrapper && wrapper.getGui().getIngredientUnderMouse().isPresent()) {
+            PositionedIngredient underMouse = wrapper.getGui().getIngredientUnderMouse().get();
+            if (underMouse.ingredient() instanceof ItemStack stack) {
+                Optional<ITypedIngredient<ItemStack>> typed = runtime.getIngredientManager().createTypedIngredient(VanillaTypes.ITEM_STACK, stack);
+                if (typed.isPresent()) {
+                    return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
+                }
+                // TODO this could work, but an Arch FLUID_STACK needs to be registered with JEI
+                //   and this is non-trivial to do. The handleExtraIngredientTypes fallback below
+                //   works fine for native FluidStacks on NeoForge/Fabric/Forge
+//			} else if (underMouse.ingredient() instanceof FluidStack stack) {
+//				// This should work if Arch has setup their fluidstack properly
+//				Optional<ITypedIngredient<FluidStack>> typed = runtime.getIngredientManager().createTypedIngredient(FLUID_STACK, stack);
+//				if (typed.isPresent()) {
+//					return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
+//				}
+            } else {
+                // Allow us to fallback onto Fluid handlers for the native implementations
+                return handleExtraIngredientTypes(runtime, underMouse);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public record ClickableIngredient<T>(ITypedIngredient<T> typedStack,
+                                         Rect2i clickedArea) implements IClickableIngredient<T> {
+        @Override
+        public ITypedIngredient<T> getTypedIngredient() {
+            return typedStack;
+        }
+
+        @Override
+        public Rect2i getArea() {
+            return clickedArea;
+        }
+    }
+
+    // TODO see above TODO about registering an Arch fluid stack ingredient type
 //	/**
 //	 * Wrapper around Archs fluid stack to provide JEI with the correct type for each platform
 //	 * @implNote This might not work.

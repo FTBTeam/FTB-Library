@@ -1,16 +1,16 @@
 {
-	"required": true,
-	"package": "dev.ftb.mods.ftblibrary.core.mixin.fabric",
-	"compatibilityLevel": "JAVA_8",
-	"mixins": [
-		"PlayerMixin"
-	],
-	"client": [
-		"AbstractContainerScreenMixin",
-		"KeyMappingAccessor"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"minVersion": "0.8"
+  "required": true,
+  "package": "dev.ftb.mods.ftblibrary.core.mixin.fabric",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "PlayerMixin"
+  ],
+  "client": [
+    "AbstractContainerScreenMixin",
+    "KeyMappingAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
 }

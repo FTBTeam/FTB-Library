@@ -26,6 +26,8 @@ public class ColorSelectorPanel extends ModalPanel {
     private static final Icon WHEEL = Icon.getIcon(FTBLibrary.rl("textures/gui/rgbcolorwheel.png"));
     private static final MutableComponent ARGB = Component.literal("ARGB");
     private static final MutableComponent RGB = Component.literal("RGB");
+    private static final Map<String, List<Integer>> PRESETS = Util.make(new LinkedHashMap<>(), ColorSelectorPanel::setupPalettes);
+    private static String curPalette = "chat";
 
     private final ColorConfig config;
     private final ConfigCallback callback;
@@ -36,16 +38,8 @@ public class ColorSelectorPanel extends ModalPanel {
     private final Button acceptBtn, cancelBtn;
     private final PaletteSelectorButton presetBtn;
     private final List<PaletteButton> paletteButtons = new ArrayList<>();
-
     private final float[] hsb = new float[3];
-
     private boolean allowAlphaEdit = false;
-
-    private static String curPalette = "chat";
-    private static final Map<String,List<Integer>> PRESETS = new LinkedHashMap<>();
-    static {
-        setupPalettes();
-    }
 
     public ColorSelectorPanel(Panel panel, ColorConfig config, ConfigCallback callback) {
         super(panel);
@@ -82,6 +76,43 @@ public class ColorSelectorPanel extends ModalPanel {
 
         gui.pushModalPanel(selector);
         return selector;
+    }
+
+    private static MutableComponent getPaletteName(String palette) {
+        return Component.translatable("ftblibrary.palette." + palette);
+    }
+
+    private static void setupPalettes(Map<String,List<Integer>> presetMap) {
+        presetMap.put("chat", Util.make(new ArrayList<>(), l -> {
+            Arrays.stream(ChatFormatting.values()).filter(ChatFormatting::isColor).map(ChatFormatting::getColor).forEach(e -> l.add(e | 0xFF000000));
+        }));
+
+        presetMap.put("dye", Util.make(new ArrayList<>(), l -> {
+            Arrays.stream(DyeColor.values()).map(DyeColor::getTextColor).forEach(e -> l.add(e | 0xFF000000));
+        }));
+
+        presetMap.put("nord", List.of(
+                0xFF2E3440, 0xFF3B4252, 0xFF434C5E, 0xFF4C566A,
+                0xFFD8DEE9, 0xFFE5E9F0, 0xFFECEFF4, 0xFF8FBCBB,
+                0xFF88C0D0, 0xFF81A1C1, 0xFF5E81AC, 0xFFBF616A,
+                0xFFD08770, 0xFFEBCB8B, 0xFFA3BE8C, 0xFFB48EAD
+        ));
+
+        presetMap.put("reds", List.of(
+                0xFF560d0d, 0xFF5c1010, 0xFF6f0000, 0xFF940000, 0xFFc30101, 0xFFFF0000
+        ));
+
+        presetMap.put("greens", List.of(
+                0xFF1E5631, 0xFF4C9A2A, 0xFF76BA1B, 0xFF68BB59, 0xFFA4DE02, 0xFFACDF87
+        ));
+
+        presetMap.put("blues", List.of(
+                0xFF0000FF, 0xFF0044FF, 0xFF0066FF, 0xFF3388FF, 0xFF55AAFF, 0xFF77CCFF
+        ));
+
+        presetMap.put("recent", Util.make(new ArrayList<>(), l -> {
+            Arrays.stream(FTBLibraryClientConfig.RECENT.get()).forEach(l::add);
+        }));
     }
 
     public void setAllowAlphaEdit(boolean allowAlphaEdit) {
@@ -144,7 +175,7 @@ public class ColorSelectorPanel extends ModalPanel {
             if (!l.contains(config.getValue().rgba())) {
                 l.add(config.getValue().rgba());
                 if (l.size() > 16) {
-                    l.remove(0);
+                    l.removeFirst();
                 }
                 FTBLibraryClientConfig.RECENT.set(Ints.toArray(l));
                 FTBLibraryClientConfig.save();
@@ -176,13 +207,10 @@ public class ColorSelectorPanel extends ModalPanel {
         }
     }
 
-    private static MutableComponent getPaletteName(String palette) {
-        return Component.translatable("ftblibrary.palette." + palette);
-    }
-
     private class BrightnessButton extends SimpleButton {
         public BrightnessButton() {
-            super(ColorSelectorPanel.this, Component.empty(), Color4I.empty(), (b,m) -> {});
+            super(ColorSelectorPanel.this, Component.empty(), Color4I.empty(), (b, m) -> {
+            });
         }
 
         @Override
@@ -225,7 +253,15 @@ public class ColorSelectorPanel extends ModalPanel {
 
     private class HueSaturationButton extends SimpleButton {
         public HueSaturationButton() {
-            super(ColorSelectorPanel.this, Component.empty(), Color4I.empty(), (b,m) -> {});
+            super(ColorSelectorPanel.this, Component.empty(), Color4I.empty(), (b, m) -> {
+            });
+        }
+
+        private static double flippedAtan2(double y, double x) {
+            double angle = Math.atan2(y, x);
+            double flippedAngle = Math.PI / 2 - angle;
+            //  additionally put the angle into [0; 2*Pi) range from its [-pi; +pi] range
+            return (flippedAngle >= 0) ? flippedAngle : flippedAngle + 2 * Math.PI;
         }
 
         @Override
@@ -271,7 +307,7 @@ public class ColorSelectorPanel extends ModalPanel {
             if (dSq < xc * xc) {
                 double a = flippedAtan2(dy, dx); // north at 0, going clockwise
                 hsb[0] = (float) (a / (Math.PI * 2)); // hue = angle (0 is north, moving clockwise)
-                hsb[1] = (float) Math.sqrt((float)dSq / (xc * xc));  // saturation = dist from center
+                hsb[1] = (float) Math.sqrt((float) dSq / (xc * xc));  // saturation = dist from center
 
                 setColor(Color4I.rgb(Color4I.HSBtoRGB(hsb[0], hsb[1], hsb[2])).withAlpha(config.getValue().alphai()));
                 return true;
@@ -283,18 +319,12 @@ public class ColorSelectorPanel extends ModalPanel {
         public boolean mouseDragged(int button, double dragX, double dragY) {
             return adjustToMouseXY();
         }
-
-        private static double flippedAtan2(double y, double x) {
-            double angle = Math.atan2(y, x);
-            double flippedAngle = Math.PI / 2 - angle;
-            //  additionally put the angle into [0; 2*Pi) range from its [-pi; +pi] range
-            return (flippedAngle >= 0) ? flippedAngle : flippedAngle + 2 * Math.PI;
-        }
     }
 
     private class AlphaButton extends SimpleButton {
         public AlphaButton() {
-            super(ColorSelectorPanel.this, Component.empty(), Color4I.empty(), (b,m) -> {});
+            super(ColorSelectorPanel.this, Component.empty(), Color4I.empty(), (b, m) -> {
+            });
         }
 
         @Override
@@ -424,38 +454,5 @@ public class ColorSelectorPanel extends ModalPanel {
                 updateHSB(col);
             }
         }
-    }
-
-    private static void setupPalettes() {
-        PRESETS.put("chat", Util.make(new ArrayList<>(), l -> {
-            Arrays.stream(ChatFormatting.values()).filter(ChatFormatting::isColor).map(ChatFormatting::getColor).forEach(e -> l.add(e | 0xFF000000));
-        }));
-
-        PRESETS.put("dye", Util.make(new ArrayList<>(), l -> {
-            Arrays.stream(DyeColor.values()).map(DyeColor::getTextColor).forEach(e -> l.add(e | 0xFF000000));
-        }));
-
-        PRESETS.put("nord", List.of(
-                0xFF2E3440, 0xFF3B4252, 0xFF434C5E, 0xFF4C566A,
-                0xFFD8DEE9, 0xFFE5E9F0, 0xFFECEFF4, 0xFF8FBCBB,
-                0xFF88C0D0, 0xFF81A1C1, 0xFF5E81AC, 0xFFBF616A,
-                0xFFD08770, 0xFFEBCB8B, 0xFFA3BE8C, 0xFFB48EAD
-        ));
-
-        PRESETS.put("reds", List.of(
-                0xFF560d0d, 0xFF5c1010, 0xFF6f0000, 0xFF940000, 0xFFc30101, 0xFFFF0000
-        ));
-
-        PRESETS.put("greens", List.of(
-                0xFF1E5631, 0xFF4C9A2A, 0xFF76BA1B, 0xFF68BB59, 0xFFA4DE02, 0xFFACDF87
-        ));
-
-        PRESETS.put("blues", List.of(
-                0xFF0000FF, 0xFF0044FF, 0xFF0066FF, 0xFF3388FF, 0xFF55AAFF, 0xFF77CCFF
-        ));
-
-        PRESETS.put("recent", Util.make(new ArrayList<>(), l -> {
-            Arrays.stream(FTBLibraryClientConfig.RECENT.get()).forEach(l::add);
-        }));
     }
 }

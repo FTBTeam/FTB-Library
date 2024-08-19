@@ -24,47 +24,47 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
-	public static final BooleanSupplier IS_CLIENT_OP = () -> Minecraft.getInstance().player != null && Minecraft.getInstance().player.hasPermissions(1);
-	public static final List<Runnable> RUN_LATER = new ArrayList<>();
-	private static final MethodType EMPTY_METHOD_TYPE = MethodType.methodType(void.class);
-	private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
+    public static final BooleanSupplier IS_CLIENT_OP = () -> Minecraft.getInstance().player != null && Minecraft.getInstance().player.hasPermissions(1);
+    public static final List<Runnable> RUN_LATER = new ArrayList<>();
+    private static final MethodType EMPTY_METHOD_TYPE = MethodType.methodType(void.class);
+    private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
 
-	public static void execClientCommand(String command, boolean printChat) {
-		if (!command.isEmpty() && Minecraft.getInstance().player != null) {
-			EventResult res = ClientChatEvent.SEND.invoker().send(command, null);
+    public static void execClientCommand(String command, boolean printChat) {
+        if (!command.isEmpty() && Minecraft.getInstance().player != null) {
+            EventResult res = ClientChatEvent.SEND.invoker().send(command, null);
 
-			if (!res.interruptsFurtherEvaluation()) {
-				if (printChat) {
-					Minecraft.getInstance().gui.getChat().addRecentChat(command);
-				}
-				Minecraft.getInstance().player.connection.sendCommand(command.replace("/", ""));
-			}
-		}
-	}
+            if (!res.interruptsFurtherEvaluation()) {
+                if (printChat) {
+                    Minecraft.getInstance().gui.getChat().addRecentChat(command);
+                }
+                Minecraft.getInstance().player.connection.sendCommand(command.replace("/", ""));
+            }
+        }
+    }
 
-	public static void runLater(final Runnable runnable) {
-		RUN_LATER.add(runnable);
-	}
+    public static void runLater(final Runnable runnable) {
+        RUN_LATER.add(runnable);
+    }
 
-	@Nullable
-	@SuppressWarnings("unchecked")
-	public static <T> T getGuiAs(Screen gui, Class<T> clazz) {
-		if (gui instanceof IScreenWrapper wrapper) {
-			var guiBase = wrapper.getGui();
-			if (clazz.isAssignableFrom(guiBase.getClass())) {
-				return (T) guiBase;
-			}
-		}
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static <T> T getGuiAs(Screen gui, Class<T> clazz) {
+        if (gui instanceof IScreenWrapper wrapper) {
+            var guiBase = wrapper.getGui();
+            if (clazz.isAssignableFrom(guiBase.getClass())) {
+                return (T) guiBase;
+            }
+        }
 
-		return clazz.isAssignableFrom(gui.getClass()) ? (T) Minecraft.getInstance().screen : null;
-	}
+        return clazz.isAssignableFrom(gui.getClass()) ? (T) Minecraft.getInstance().screen : null;
+    }
 
-	@Nullable
-	public static <T> T getCurrentGuiAs(Class<T> clazz) {
-		return Minecraft.getInstance().screen == null ? null : getGuiAs(Minecraft.getInstance().screen, clazz);
-	}
+    @Nullable
+    public static <T> T getCurrentGuiAs(Class<T> clazz) {
+        return Minecraft.getInstance().screen == null ? null : getGuiAs(Minecraft.getInstance().screen, clazz);
+    }
 
-	public static boolean handleClick(String scheme, String path) {
+    public static boolean handleClick(String scheme, String path) {
         switch (scheme) {
             case "http", "https" -> {
                 String uriStr = scheme + ':' + path;
@@ -130,34 +130,34 @@ public class ClientUtils {
                 return trySendCustomClickEvent(scheme + ":" + path);
             }
         }
-	}
+    }
 
-	private static boolean trySendCustomClickEvent(String name) {
-		try {
-			ResourceLocation rl = ResourceLocation.parse(name);
-			return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent();
-		} catch (ResourceLocationException ex) {
-			logHandleClickFailure("custom", name, ex);
-			return false;
-		}
-	}
+    private static boolean trySendCustomClickEvent(String name) {
+        try {
+            ResourceLocation rl = ResourceLocation.parse(name);
+            return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent();
+        } catch (ResourceLocationException ex) {
+            logHandleClickFailure("custom", name, ex);
+            return false;
+        }
+    }
 
-	private static void logHandleClickFailure(String scheme, String path, Throwable ex) {
-		FTBLibrary.LOGGER.warn("handleClick: unexpected exception handling action {} / {}: {}", scheme, path, ex.getMessage());
-	}
+    private static void logHandleClickFailure(String scheme, String path, Throwable ex) {
+        FTBLibrary.LOGGER.warn("handleClick: unexpected exception handling action {} / {}: {}", scheme, path, ex.getMessage());
+    }
 
-	public static HolderLookup.Provider registryAccess() {
-		return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
-	}
+    public static HolderLookup.Provider registryAccess() {
+        return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
+    }
 
-	@ExpectPlatform
-	public static ResourceLocation getStillTexture(FluidStack stack) {
-		throw new AssertionError();
-	}
+    @ExpectPlatform
+    public static ResourceLocation getStillTexture(FluidStack stack) {
+        throw new AssertionError();
+    }
 
-	@ExpectPlatform
-	public static int getFluidColor(FluidStack stack) {
-		throw new AssertionError();
-	}
+    @ExpectPlatform
+    public static int getFluidColor(FluidStack stack) {
+        throw new AssertionError();
+    }
 
 }

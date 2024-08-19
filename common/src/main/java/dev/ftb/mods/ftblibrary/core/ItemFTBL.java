@@ -4,5 +4,5 @@ import net.minecraft.world.item.Item;
 
 
 public interface ItemFTBL {
-	void setCraftingRemainingItemFTBL(Item i);
+    void setCraftingRemainingItemFTBL(Item i);
 }

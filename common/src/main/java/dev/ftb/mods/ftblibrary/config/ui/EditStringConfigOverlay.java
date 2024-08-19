@@ -103,6 +103,17 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         getGui().popModalPanel();
     }
 
+    /**
+     * Provides positioning information for when an edit panel needs to be overlaid on the widget
+     */
+    public interface PosProvider {
+        Offset getOverlayOffset();
+
+        record Offset(int x, int y) {
+            public static final Offset NONE = new Offset(0, 0);
+        }
+    }
+
     private class EditField extends TextBox {
         public EditField() {
             super(EditStringConfigOverlay.this);
@@ -147,17 +158,6 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
                 textBox.setSelectionPos(textBox.getCursorPos());
                 return true;
             }).orElse(super.mouseScrolled(scroll));
-        }
-    }
-
-    /**
-     * Provides positioning information for when an edit panel needs to be overlaid on the widget
-     */
-    public interface PosProvider {
-        Offset getOverlayOffset();
-
-        record Offset(int x, int y) {
-            public static final Offset NONE = new Offset(0, 0);
         }
     }
 }

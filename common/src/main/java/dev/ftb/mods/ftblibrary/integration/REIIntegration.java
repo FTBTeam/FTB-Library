@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.integration;
 
-import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
 import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
+import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
 import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
@@ -24,38 +24,38 @@ import java.util.List;
 
 public class REIIntegration implements REIClientPlugin {
 
-	private static final ResourceSearchMode<ItemStack> REI_ITEMS = new ResourceSearchMode<>() {
-		@Override
-		public Icon getIcon() {
-			return ItemIcon.getItemIcon(Items.GLOW_BERRIES);
-		}
+    private static final ResourceSearchMode<ItemStack> REI_ITEMS = new ResourceSearchMode<>() {
+        @Override
+        public Icon getIcon() {
+            return ItemIcon.getItemIcon(Items.GLOW_BERRIES);
+        }
 
-		@Override
-		public MutableComponent getDisplayName() {
-			return Component.translatable("ftblibrary.select_item.list_mode.rei");
-		}
+        @Override
+        public MutableComponent getDisplayName() {
+            return Component.translatable("ftblibrary.select_item.list_mode.rei");
+        }
 
-		@Override
-		public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
-			return CollectionUtils.filterAndMap(
-					EntryRegistry.getInstance().getPreFilteredList(),
-					stack -> stack.getType().equals(VanillaEntryTypes.ITEM),
-					stack -> SelectableResource.item(stack.castValue())
-			);
-		}
-	};
+        @Override
+        public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
+            return CollectionUtils.filterAndMap(
+                    EntryRegistry.getInstance().getPreFilteredList(),
+                    stack -> stack.getType().equals(VanillaEntryTypes.ITEM),
+                    stack -> SelectableResource.item(stack.castValue())
+            );
+        }
+    };
 
-	static {
-		SelectItemStackScreen.KNOWN_MODES.prependMode(REI_ITEMS);
-	}
+    static {
+        SelectItemStackScreen.KNOWN_MODES.prependMode(REI_ITEMS);
+    }
 
-	@Override
-	public void registerExclusionZones(ExclusionZones zones) {
-		zones.register(AbstractContainerScreen.class, screen -> {
+    @Override
+    public void registerExclusionZones(ExclusionZones zones) {
+        zones.register(AbstractContainerScreen.class, screen -> {
             Rect2i lastDrawnArea = SidebarGroupGuiButton.lastDrawnArea;
             Rectangle sidebar = new Rectangle(lastDrawnArea.getX(), lastDrawnArea.getY(), lastDrawnArea.getWidth(), lastDrawnArea.getHeight());
             return List.of(sidebar);
         });
-	}
+    }
 
 }

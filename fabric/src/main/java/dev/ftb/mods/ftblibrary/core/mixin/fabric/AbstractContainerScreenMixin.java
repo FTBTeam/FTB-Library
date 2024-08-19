@@ -19,7 +19,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 
     @Inject(at = @At("HEAD"), method = "mouseReleased", cancellable = true)
     public void onMouseReleased(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> info) {
-        if(super.mouseReleased(mouseX, mouseY, button)) {
+        if (super.mouseReleased(mouseX, mouseY, button)) {
             info.setReturnValue(true);
         }
     }

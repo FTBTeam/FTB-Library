@@ -12,170 +12,168 @@ import java.util.*;
 import java.util.function.Function;
 
 public final class NameMap<E> implements Iterable<E> {
-	public static final class Builder<T> {
-		private final T defaultValue;
-		private final List<T> values;
+    public final E defaultValue;
+    public final Map<String, E> map;
+    public final List<String> keys;
+    public final List<E> values;
+    private final Builder<E> builder;
+    private NameMap(Builder<E> b) {
+        builder = b;
+        values = Collections.unmodifiableList(b.values);
 
-		private Function<T, String> idProvider = t -> StringUtils.getID(t, StringUtils.FLAG_ID_FIX | StringUtils.FLAG_ID_ONLY_LOWERCASE);
-		private Function<T, Component> nameProvider = t -> Component.literal(idProvider.apply(t));
-		private Function<T, Color4I> colorProvider = t -> Icon.empty();
-		private Function<T, Icon> iconProvider = t -> Icon.empty();
+        Map<String, E> map0 = new LinkedHashMap<>(size());
 
-		private Builder(T def, List<T> v) {
-			defaultValue = def;
-			values = v;
-		}
+        for (var value : values) {
+            map0.put(getName(value), value);
+        }
 
-		public Builder<T> id(Function<T, String> p) {
-			idProvider = p;
-			return this;
-		}
+        map = Collections.unmodifiableMap(map0);
+        keys = List.copyOf(map.keySet());
+        defaultValue = get(getName(builder.defaultValue));
+    }
+    private NameMap(E def, NameMap<E> n) {
+        builder = n.builder;
+        map = n.map;
+        keys = n.keys;
+        values = n.values;
+        defaultValue = get(getName(def));
+    }
 
-		public Builder<T> name(Function<T, Component> p) {
-			nameProvider = p;
-			return this;
-		}
+    public static <T> NameMap.Builder<T> of(T defaultValue, List<T> values) {
+        return new Builder<>(defaultValue, values);
+    }
 
-		public Builder<T> nameKey(Function<T, String> p) {
-			return name(v -> Component.translatable(p.apply(v)));
-		}
+    public static <T> NameMap.Builder<T> of(T defaultValue, T[] values) {
+        return of(defaultValue, Arrays.asList(values));
+    }
 
-		public Builder<T> baseNameKey(String key) {
-			return name(v -> Component.translatable(key + '.' + idProvider.apply(v)));
-		}
+    public String getName(E value) {
+        return builder.idProvider.apply(value);
+    }
 
-		public Builder<T> color(Function<T, Color4I> p) {
-			colorProvider = p;
-			return this;
-		}
+    public Component getDisplayName(E value) {
+        return builder.nameProvider.apply(value);
+    }
 
-		public Builder<T> icon(Function<T, Icon> p) {
-			iconProvider = p;
-			return this;
-		}
+    public Color4I getColor(E value) {
+        return builder.colorProvider.apply(value);
+    }
 
-		public NameMap<T> create() {
-			return new NameMap<>(this);
-		}
-	}
+    public NameMap<E> withDefault(E def) {
+        if (def == defaultValue) {
+            return this;
+        }
 
-	public static <T> NameMap.Builder<T> of(T defaultValue, List<T> values) {
-		return new Builder<>(defaultValue, values);
-	}
+        return new NameMap<>(def, this);
+    }
 
-	public static <T> NameMap.Builder<T> of(T defaultValue, T[] values) {
-		return of(defaultValue, Arrays.asList(values));
-	}
+    public int size() {
+        return values.size();
+    }
 
-	private final Builder<E> builder;
-	public final E defaultValue;
-	public final Map<String, E> map;
-	public final List<String> keys;
-	public final List<E> values;
+    public E get(@Nullable String s) {
+        var value = getNullable(s);
+        return value == null ? defaultValue : value;
+    }
 
-	private NameMap(Builder<E> b) {
-		builder = b;
-		values = Collections.unmodifiableList(b.values);
+    @Nullable
+    public E getNullable(@Nullable String s) {
+        if (s == null || s.isEmpty() || s.charAt(0) == '-') {
+            return null;
+        } else {
+            return map.get(s);
+        }
+    }
 
-		Map<String, E> map0 = new LinkedHashMap<>(size());
+    public E get(int index) {
+        return index < 0 || index >= size() ? defaultValue : values.get(index);
+    }
 
-		for (var value : values) {
-			map0.put(getName(value), value);
-		}
+    public E offset(E value, int index) {
+        return get(MathUtils.mod(getIndex(value) + index, size()));
+    }
 
-		map = Collections.unmodifiableMap(map0);
-		keys = List.copyOf(map.keySet());
-		defaultValue = get(getName(builder.defaultValue));
-	}
+    public E getNext(E value) {
+        return offset(value, 1);
+    }
 
-	private NameMap(E def, NameMap<E> n) {
-		builder = n.builder;
-		map = n.map;
-		keys = n.keys;
-		values = n.values;
-		defaultValue = get(getName(def));
-	}
+    public E getPrevious(E value) {
+        return offset(value, -1);
+    }
 
-	public String getName(E value) {
-		return builder.idProvider.apply(value);
-	}
+    public int getIndex(E e) {
+        return values.indexOf(e);
+    }
 
-	public Component getDisplayName(E value) {
-		return builder.nameProvider.apply(value);
-	}
+    public int getStringIndex(String s) {
+        return getIndex(map.get(s));
+    }
 
-	public Color4I getColor(E value) {
-		return builder.colorProvider.apply(value);
-	}
+    public E getRandom(Random rand) {
+        return values.get(rand.nextInt(size()));
+    }
 
-	public NameMap<E> withDefault(E def) {
-		if (def == defaultValue) {
-			return this;
-		}
+    @Override
+    public Iterator<E> iterator() {
+        return values.iterator();
+    }
 
-		return new NameMap<>(def, this);
-	}
+    public void write(FriendlyByteBuf data, E object) {
+        data.writeVarInt(getIndex(object));
+    }
 
-	public int size() {
-		return values.size();
-	}
+    public E read(FriendlyByteBuf data) {
+        return get(data.readVarInt());
+    }
 
-	public E get(@Nullable String s) {
-		var value = getNullable(s);
-		return value == null ? defaultValue : value;
-	}
+    public Icon getIcon(E v) {
+        return builder.iconProvider.apply(v);
+    }
 
-	@Nullable
-	public E getNullable(@Nullable String s) {
-		if (s == null || s.isEmpty() || s.charAt(0) == '-') {
-			return null;
-		} else {
-			return map.get(s);
-		}
-	}
+    public static final class Builder<T> {
+        private final T defaultValue;
+        private final List<T> values;
 
-	public E get(int index) {
-		return index < 0 || index >= size() ? defaultValue : values.get(index);
-	}
+        private Function<T, String> idProvider = t -> StringUtils.getID(t, StringUtils.FLAG_ID_FIX | StringUtils.FLAG_ID_ONLY_LOWERCASE);
+        private Function<T, Component> nameProvider = t -> Component.literal(idProvider.apply(t));
+        private Function<T, Color4I> colorProvider = t -> Icon.empty();
+        private Function<T, Icon> iconProvider = t -> Icon.empty();
 
-	public E offset(E value, int index) {
-		return get(MathUtils.mod(getIndex(value) + index, size()));
-	}
+        private Builder(T def, List<T> v) {
+            defaultValue = def;
+            values = v;
+        }
 
-	public E getNext(E value) {
-		return offset(value, 1);
-	}
+        public Builder<T> id(Function<T, String> p) {
+            idProvider = p;
+            return this;
+        }
 
-	public E getPrevious(E value) {
-		return offset(value, -1);
-	}
+        public Builder<T> name(Function<T, Component> p) {
+            nameProvider = p;
+            return this;
+        }
 
-	public int getIndex(E e) {
-		return values.indexOf(e);
-	}
+        public Builder<T> nameKey(Function<T, String> p) {
+            return name(v -> Component.translatable(p.apply(v)));
+        }
 
-	public int getStringIndex(String s) {
-		return getIndex(map.get(s));
-	}
+        public Builder<T> baseNameKey(String key) {
+            return name(v -> Component.translatable(key + '.' + idProvider.apply(v)));
+        }
 
-	public E getRandom(Random rand) {
-		return values.get(rand.nextInt(size()));
-	}
+        public Builder<T> color(Function<T, Color4I> p) {
+            colorProvider = p;
+            return this;
+        }
 
-	@Override
-	public Iterator<E> iterator() {
-		return values.iterator();
-	}
+        public Builder<T> icon(Function<T, Icon> p) {
+            iconProvider = p;
+            return this;
+        }
 
-	public void write(FriendlyByteBuf data, E object) {
-		data.writeVarInt(getIndex(object));
-	}
-
-	public E read(FriendlyByteBuf data) {
-		return get(data.readVarInt());
-	}
-
-	public Icon getIcon(E v) {
-		return builder.iconProvider.apply(v);
-	}
+        public NameMap<T> create() {
+            return new NameMap<>(this);
+        }
+    }
 }

@@ -4,7 +4,6 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.PartIcon;
 import dev.ftb.mods.ftblibrary.ui.misc.NordColors;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
@@ -48,7 +47,7 @@ public class NordTheme extends Theme {
 
     @Override
     public void drawContextMenuBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-        NordColors.POLAR_NIGHT_1.draw(graphics, x, y , w , h );
+        NordColors.POLAR_NIGHT_1.draw(graphics, x, y, w, h);
         GuiHelper.drawHollowRect(graphics, x - 1, y - 1, w + 2, h + 2, Color4I.rgb(0x101010), false);
     }
 

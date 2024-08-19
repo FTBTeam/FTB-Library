@@ -4,26 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 class SNBTBuilder {
-	public String indent = "";
-	public final List<String> lines = new ArrayList<>();
-	public final StringBuilder line = new StringBuilder();
-	public int singleLine = 0;
+    public final List<String> lines = new ArrayList<>();
+    public final StringBuilder line = new StringBuilder();
+    public String indent = "";
+    public int singleLine = 0;
 
-	public void print(Object string) {
-		line.append(string);
-	}
+    public void print(Object string) {
+        line.append(string);
+    }
 
-	public void println() {
-		line.insert(0, indent);
-		lines.add(line.toString());
-		line.setLength(0);
-	}
+    public void println() {
+        line.insert(0, indent);
+        lines.add(line.toString());
+        line.setLength(0);
+    }
 
-	public void push() {
-		indent += "\t";
-	}
+    public void push() {
+        indent += "\t";
+    }
 
-	public void pop() {
-		indent = indent.substring(1);
-	}
+    public void pop() {
+        indent = indent.substring(1);
+    }
 }

@@ -9,68 +9,66 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 
 public enum Tristate {
-	FALSE("false", "false", InteractionResult.FAIL, Color4I.rgb(0xD52834), 1, Icons.ACCEPT_GRAY),
-	TRUE("true", "true", InteractionResult.SUCCESS, Color4I.rgb(0x33AA33), 0, Icons.ACCEPT),
-	DEFAULT("default", "Default", InteractionResult.PASS, Color4I.rgb(0x0094FF), 2, Icons.SETTINGS);
+    FALSE("false", "false", InteractionResult.FAIL, Color4I.rgb(0xD52834), 1, Icons.ACCEPT_GRAY),
+    TRUE("true", "true", InteractionResult.SUCCESS, Color4I.rgb(0x33AA33), 0, Icons.ACCEPT),
+    DEFAULT("default", "Default", InteractionResult.PASS, Color4I.rgb(0x0094FF), 2, Icons.SETTINGS);
 
-	public static final Tristate[] VALUES = values();
-	public static final NameMap<Tristate> NAME_MAP = NameMap.of(DEFAULT, VALUES).id(v -> v.name).name(v -> Component.literal(v.displayName)).color(v -> v.color).icon(v -> v.icon).create();
+    public static final Tristate[] VALUES = values();
+    public static final NameMap<Tristate> NAME_MAP = NameMap.of(DEFAULT, VALUES).id(v -> v.name).name(v -> Component.literal(v.displayName)).color(v -> v.color).icon(v -> v.icon).create();
+    public final String name;
+    public final String displayName;
+    public final InteractionResult result;
+    public final Color4I color;
+    public final Icon icon;
+    private final int opposite;
+    Tristate(String n, String dn, InteractionResult r, Color4I c, int o, Icon i) {
+        name = n;
+        displayName = dn;
+        result = r;
+        color = c;
+        opposite = o;
+        icon = i;
+    }
 
-	public static Tristate read(CompoundTag nbt, String key) {
-		return nbt.contains(key) ? nbt.getBoolean(key) ? TRUE : FALSE : DEFAULT;
-	}
+    public static Tristate read(CompoundTag nbt, String key) {
+        return nbt.contains(key) ? nbt.getBoolean(key) ? TRUE : FALSE : DEFAULT;
+    }
 
-	public static Tristate read(FriendlyByteBuf buffer) {
-		return VALUES[buffer.readUnsignedByte()];
-	}
+    public static Tristate read(FriendlyByteBuf buffer) {
+        return VALUES[buffer.readUnsignedByte()];
+    }
 
-	public final String name;
-	public final String displayName;
-	public final InteractionResult result;
-	public final Color4I color;
-	private final int opposite;
-	public final Icon icon;
+    public boolean isTrue() {
+        return this == TRUE;
+    }
 
-	Tristate(String n, String dn, InteractionResult r, Color4I c, int o, Icon i) {
-		name = n;
-		displayName = dn;
-		result = r;
-		color = c;
-		opposite = o;
-		icon = i;
-	}
+    public boolean isFalse() {
+        return this == FALSE;
+    }
 
-	public boolean isTrue() {
-		return this == TRUE;
-	}
+    public boolean isDefault() {
+        return this == DEFAULT;
+    }
 
-	public boolean isFalse() {
-		return this == FALSE;
-	}
+    public boolean get(boolean def) {
+        return isDefault() ? def : isTrue();
+    }
 
-	public boolean isDefault() {
-		return this == DEFAULT;
-	}
+    public Tristate getOpposite() {
+        return NAME_MAP.get(opposite);
+    }
 
-	public boolean get(boolean def) {
-		return isDefault() ? def : isTrue();
-	}
+    public String toString() {
+        return name;
+    }
 
-	public Tristate getOpposite() {
-		return NAME_MAP.get(opposite);
-	}
+    public void write(CompoundTag nbt, String key) {
+        if (!isDefault()) {
+            nbt.putBoolean(key, isTrue());
+        }
+    }
 
-	public String toString() {
-		return name;
-	}
-
-	public void write(CompoundTag nbt, String key) {
-		if (!isDefault()) {
-			nbt.putBoolean(key, isTrue());
-		}
-	}
-
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeByte(ordinal());
-	}
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeByte(ordinal());
+    }
 }

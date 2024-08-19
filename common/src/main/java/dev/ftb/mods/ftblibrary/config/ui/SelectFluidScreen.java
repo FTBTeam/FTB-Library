@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
 import dev.architectury.fluid.FluidStack;
-import dev.architectury.hooks.fluid.FluidBucketHooks;
 import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
@@ -11,6 +10,7 @@ import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,13 +19,27 @@ import net.minecraft.tags.TagKey;
 import java.util.Objects;
 
 public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
-    public static final SearchModeIndex<ResourceSearchMode<FluidStack>> KNOWN_MODES = new SearchModeIndex<>();
-    static {
-        KNOWN_MODES.appendMode(ResourceSearchMode.ALL_FLUIDS);
-    }
+    public static final SearchModeIndex<ResourceSearchMode<FluidStack>> KNOWN_MODES = Util.make(
+            new SearchModeIndex<>(), idx -> idx.appendMode(ResourceSearchMode.ALL_FLUIDS)
+    );
 
     public SelectFluidScreen(FluidConfig config, ConfigCallback callback) {
         super(config, callback);
+    }
+
+    @Override
+    protected int defaultQuantity() {
+        return (int) FluidStackHooks.bucketAmount();
+    }
+
+    @Override
+    protected SearchModeIndex<ResourceSearchMode<FluidStack>> getSearchModeIndex() {
+        return KNOWN_MODES;
+    }
+
+    @Override
+    protected ResourceSelectorScreen<FluidStack>.ResourceButton makeResourceButton(Panel panel, SelectableResource<FluidStack> resource) {
+        return new FluidStackButton(panel, Objects.requireNonNullElse(resource, SelectableResource.fluid(FluidStack.empty())));
     }
 
     private class FluidStackButton extends ResourceButton {
@@ -59,20 +73,5 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
                 }
             }
         }
-    }
-
-    @Override
-    protected int defaultQuantity() {
-        return (int) FluidStackHooks.bucketAmount();
-    }
-
-    @Override
-    protected SearchModeIndex<ResourceSearchMode<FluidStack>> getSearchModeIndex() {
-        return KNOWN_MODES;
-    }
-
-    @Override
-    protected ResourceSelectorScreen<FluidStack>.ResourceButton makeResourceButton(Panel panel, SelectableResource<FluidStack> resource) {
-        return new FluidStackButton(panel, Objects.requireNonNullElse(resource, SelectableResource.fluid(FluidStack.empty())));
     }
 }

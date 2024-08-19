@@ -15,56 +15,78 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SidebarGroupGuiButton extends AbstractButton {
 
-    public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
     private static final int BUTTON_SPACING = 17;
-
     private static final List<Component> noButtonComponents = List.of(
             Component.translatable("sidebar_button.ftblibrary.config"),
             Component.translatable("sidebar_button.ftblibrary.config.enter_edit_mode")
     );
-
+    public static Rect2i lastDrawnArea = new Rect2i(0, 0, 0, 0);
+    private final Map<SidebarGuiButton, GridLocation> realLocationMap = new HashMap<>();
+    boolean gridStartBottom = false;
+    boolean gridStartRight = false;
+    int yRenderStart;
+    int xRenderStart;
     private SidebarGuiButton mouseOver;
     private SidebarGuiButton selectedButton;
     private GridLocation selectedLocation;
     private int lastMouseClickButton = 0;
     private boolean isEditMode;
-
     private int currentMouseX;
     private int currentMouseY;
-
     private int mouseOffsetX;
     private int mouseOffsetY;
-
     private int currentGirdWidth = 1;
     private int currentGridHeight = 1;
-
     private boolean addBoxOpen;
-
-    boolean gridStartBottom = false;
-    boolean gridStartRight = false;
-
-    int yRenderStart;
-    int xRenderStart;
-
     private boolean isMouseOverAdd;
     private boolean mouseOverSettingsIcon;
-
-    private final Map<SidebarGuiButton, GridLocation> realLocationMap = new HashMap<>();
 
     public SidebarGroupGuiButton() {
         super(0, 0, 0, 0, Component.empty());
         ensureGridAlignment();
+    }
+
+    private static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacingWidth, int spacingHeight, Color4I backgroundColor, Color4I gridColor) {
+        backgroundColor.draw(graphics, x, y, width * spacingWidth, height * spacingHeight);
+
+        for (var i = 0; i < width + 1; i++) {
+            gridColor.draw(graphics, x + i * spacingWidth, y, 1, height * spacingHeight + 1);
+        }
+
+        for (var i = 0; i < height + 1; i++) {
+            gridColor.draw(graphics, x, y + i * spacingHeight, width * spacingWidth, 1);
+        }
+    }
+
+    public static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor) {
+        drawGrid(graphics, x, y, width, height, spacing, spacing, backgroundColor, gridColor);
+    }
+
+    private static void drawHoveredGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor, int mx, int my, boolean gridStartBottom, boolean gridStartRight) {
+        drawGrid(graphics, x, y, width, height, spacing, backgroundColor, gridColor);
+
+        int adjustedMx = gridStartRight ? x + width * spacing - (mx - x) : mx;
+        int adjustedMy = gridStartBottom ? y + height * spacing - (my - y) : my;
+
+        if (adjustedMx >= x && adjustedMy >= y && adjustedMx < x + width * spacing && adjustedMy < y + height * spacing) {
+            int gridX = (adjustedMx - x) / spacing;
+            int gridY = (adjustedMy - y) / spacing;
+
+            if (gridStartRight) {
+                gridX = width - gridX - 1;
+            }
+
+            if (gridStartBottom) {
+                gridY = height - gridY - 1;
+            }
+
+            Color4I.WHITE.withAlpha(127).draw(graphics, x + gridX * spacing + 1, y + gridY * spacing + 1, spacing - 1, spacing - 1);
+        }
     }
 
     @Override
@@ -407,7 +429,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
         return new GridLocation(gridX, gridY);
     }
 
-
     @Override
     public void onPress() {
         if (lastMouseClickButton == 1) {
@@ -479,43 +500,5 @@ public class SidebarGroupGuiButton extends AbstractButton {
             }
         }
         return false;
-    }
-
-    private static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacingWidth, int spacingHeight, Color4I backgroundColor, Color4I gridColor) {
-        backgroundColor.draw(graphics, x, y, width * spacingWidth, height * spacingHeight);
-
-        for (var i = 0; i < width + 1; i++) {
-            gridColor.draw(graphics, x + i * spacingWidth, y, 1, height * spacingHeight + 1);
-        }
-
-        for (var i = 0; i < height + 1; i++) {
-            gridColor.draw(graphics, x, y + i * spacingHeight, width * spacingWidth, 1);
-        }
-    }
-
-    public static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor) {
-        drawGrid(graphics, x, y, width, height, spacing, spacing, backgroundColor, gridColor);
-    }
-
-    private static void drawHoveredGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor, int mx, int my, boolean gridStartBottom, boolean gridStartRight) {
-        drawGrid(graphics, x, y, width, height, spacing, backgroundColor, gridColor);
-
-        int adjustedMx = gridStartRight ? x + width * spacing - (mx - x) : mx;
-        int adjustedMy = gridStartBottom ? y + height * spacing - (my - y) : my;
-
-        if (adjustedMx >= x && adjustedMy >= y && adjustedMx < x + width * spacing && adjustedMy < y + height * spacing) {
-            int gridX = (adjustedMx - x) / spacing;
-            int gridY = (adjustedMy - y) / spacing;
-
-            if (gridStartRight) {
-                gridX = width - gridX - 1;
-            }
-
-            if (gridStartBottom) {
-                gridY = height - gridY - 1;
-            }
-
-            Color4I.WHITE.withAlpha(127).draw(graphics, x + gridX * spacing + 1, y + gridY * spacing + 1, spacing - 1, spacing - 1);
-        }
     }
 }

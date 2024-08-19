@@ -52,20 +52,17 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
     private final ResourceConfigValue<T> config;
     private final ConfigCallback callback;
-    private SelectableResource<T> selectedStack;
-    private int refreshTimer = 0;
-
     private final TextField selectedLabel;
     private final TextBox searchBox;
     private final CountTextBox countBox;
     private final Button upBtn, downBtn;
     private final SearchModeButton searchModeButton;
     private final NBTButton nbtButton;
-
+    public long update = Long.MAX_VALUE;
+    private SelectableResource<T> selectedStack;
+    private int refreshTimer = 0;
     private int nRows = ITEM_ROWS;
     private int nCols = ITEM_COLS;
-
-    public long update = Long.MAX_VALUE;
 
     public ResourceSelectorScreen(ResourceConfigValue<T> config, ConfigCallback callback) {
         super();
@@ -290,7 +287,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             super.addMouseOverText(list);
             getActiveSearchMode().ifPresent(mode ->
                     list.add(mode.getDisplayName().withStyle(ChatFormatting.GRAY)
-                        .append(Component.literal(" [" + mainPanel.getWidgets().size() + "]").withStyle(ChatFormatting.DARK_GRAY)))
+                            .append(Component.literal(" [" + mainPanel.getWidgets().size() + "]").withStyle(ChatFormatting.DARK_GRAY)))
             );
         }
 
