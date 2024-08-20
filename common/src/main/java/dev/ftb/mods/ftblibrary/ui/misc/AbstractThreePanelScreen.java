@@ -34,7 +34,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
     public void addWidgets() {
         add(topPanel);
         add(mainPanel);
-        if(showScrollBar) {
+        if (showScrollBar) {
             add(scrollBar);
         }
         if (showBottomPanel) {
@@ -61,7 +61,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
             bottomPanel.alignWidgets();
         }
 
-        if(showScrollBar) {
+        if (showScrollBar) {
             scrollBar.setPosAndSize(mainPanel.getPosX() + mainPanel.getWidth() - getScrollbarWidth(), mainPanel.getPosY(), getScrollbarWidth(), mainPanel.getHeight());
         }
     }

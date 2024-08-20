@@ -44,7 +44,7 @@ public class SimpleButton extends Button {
     @Override
     public void onClicked(MouseButton button) {
         playClickSound();
-        if(consumer != null) {
+        if (consumer != null) {
             consumer.onClicked(this, button);
         }
     }
