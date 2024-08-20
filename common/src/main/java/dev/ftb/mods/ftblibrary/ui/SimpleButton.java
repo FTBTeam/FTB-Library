@@ -9,8 +9,9 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 
 public class SimpleButton extends Button {
-    private final Callback consumer;
+    private Callback consumer;
     private final List<Component> tooltip;
+
     public SimpleButton(Panel panel, Component text, Icon icon, Callback c) {
         super(panel, text, icon);
         consumer = c;
@@ -32,6 +33,10 @@ public class SimpleButton extends Button {
         }
     }
 
+    public void setConsumer(Callback consumer) {
+        this.consumer = consumer;
+    }
+
     @Override
     public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
     }
@@ -39,7 +44,9 @@ public class SimpleButton extends Button {
     @Override
     public void onClicked(MouseButton button) {
         playClickSound();
-        consumer.onClicked(this, button);
+        if (consumer != null) {
+            consumer.onClicked(this, button);
+        }
     }
 
     public interface Callback {
