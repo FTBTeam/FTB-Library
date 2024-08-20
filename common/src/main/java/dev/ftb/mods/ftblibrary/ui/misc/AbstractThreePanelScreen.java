@@ -50,14 +50,14 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         topPanel.alignWidgets();
 
         var inset = mainPanelInset();
-        int bottomPanelHeight = showBottomPanel ? BOTTOM_PANEL_H + inset.getSecond() : 0;
+        int bottomPanelHeight = showBottomPanel ? getBottomPanelHeight() + inset.getSecond() : 0;
 
         mainPanel.setPosAndSize(inset.getFirst(), topPanelHeight + inset.getSecond(),
                 width - inset.getFirst() * 2, height - topPanelHeight - inset.getSecond() * 2 - bottomPanelHeight);
         mainPanel.alignWidgets();
 
         if (showBottomPanel) {
-            bottomPanel.setPosAndSize(0, height - BOTTOM_PANEL_H, width, BOTTOM_PANEL_H);
+            bottomPanel.setPosAndSize(0, height - getBottomPanelHeight(), width, getBottomPanelHeight());
             bottomPanel.alignWidgets();
         }
 
@@ -94,6 +94,10 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
 
     protected Pair<Integer, Integer> mainPanelInset() {
         return NO_INSET;
+    }
+
+    protected int getBottomPanelHeight() {
+        return BOTTOM_PANEL_H;
     }
 
     protected int getScrollbarWidth() {
