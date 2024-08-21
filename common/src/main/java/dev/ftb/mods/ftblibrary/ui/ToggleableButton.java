@@ -17,6 +17,7 @@ public class ToggleableButton extends SimpleButton {
         this.setConsumer((widget, button) -> {
             this.state = !this.state;
             widget.setIcon(this.state ? enabled : disabled);
+            updateTitle();
             toggleableCallback.onClicked(widget, this.state);
         });
         this.enabledText = Component.translatable("ftblibrary.gui.enabled").withStyle(ChatFormatting.GREEN);
