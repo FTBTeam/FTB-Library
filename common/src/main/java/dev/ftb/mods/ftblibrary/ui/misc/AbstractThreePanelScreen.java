@@ -77,7 +77,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         super.tick();
 
         int prevWidth = mainPanel.width;
-        int newWidth = (!showScrollBar && scrollBar.shouldDraw() ? getGui().width - getScrollbarWidth() - 2 : getGui().width) - mainPanelInset().getFirst() * 2;
+        int newWidth = (showScrollBar && scrollBar.shouldDraw() ? getGui().width - getScrollbarWidth() - 2 : getGui().width) - mainPanelInset().getFirst() * 2;
         if (prevWidth != newWidth) {
             mainPanel.setWidth(newWidth);
             mainPanel.alignWidgets();
