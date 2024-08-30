@@ -16,15 +16,15 @@ import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButtonListScreen {
     protected final List<GroupData<G, E>> groups;
-    private final Map<G, Boolean> collapsed = new HashMap<>();
+    private final Set<G> collapsed = new HashSet<>();
 
     private final Button buttonCollapseAll, buttonExpandAll;
     private final Component title;
@@ -36,9 +36,10 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
         this.title = title;
         this.groups = getGroups();
 
-        for (GroupData<G, E> entityType : groups) {
-            collapsed.put(entityType.group(), entityType.defaultState());
-        }
+        groups.stream()
+                .filter(GroupData::defaultedCollapsed)
+                .map(GroupData::group)
+                .forEach(collapsed::add);
 
         buttonExpandAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.UP,
                 (widget, button) -> toggleAll(true));
@@ -55,12 +56,12 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
     protected abstract RowPanel createRowPanel(Panel panel, E value);
 
     private void toggleAll(boolean collapsed) {
-        boolean allOpen = this.collapsed.values().stream().noneMatch(b -> b);
+        boolean allOpen = this.groups.stream().noneMatch(g -> isCollapsed(g.group));
         // Don't try and re-render if everything is already open
         if (allOpen && !collapsed) {
             return;
         }
-        this.collapsed.keySet().forEach(levelResourceKey -> this.collapsed.put(levelResourceKey, collapsed));
+        this.groups.forEach(group -> setCollapsed(group.group(), collapsed));
         scrollBar.setValue(0);
         getGui().refreshWidgets();
     }
@@ -115,7 +116,20 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
         }
     }
 
-    public record GroupData<G, E>(G group, boolean defaultState, Component groupName, List<E> values) {
+
+    public boolean isCollapsed(G group) {
+        return collapsed.contains(group);
+    }
+
+    public void setCollapsed(G group, boolean collapsed) {
+        if (collapsed) {
+            this.collapsed.add(group);
+        } else {
+            this.collapsed.remove(group);
+        }
+    }
+
+    public record GroupData<G, E>(G group, boolean defaultedCollapsed, Component groupName, List<E> values) {
     }
 
     protected class CustomTopPanel extends TopPanel {
@@ -172,11 +186,11 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
         }
 
         public boolean isCollapsed() {
-            return collapsed.get(group);
+            return AbstractGroupedButtonListScreen.this.isCollapsed(group);
         }
 
         public void setCollapsed(boolean collapsed) {
-            AbstractGroupedButtonListScreen.this.collapsed.put(group, collapsed);
+            AbstractGroupedButtonListScreen.this.setCollapsed(group, collapsed);
             boolean isCollapsed = isCollapsed();
             setTitle(Component.literal(isCollapsed ? "▶ " : "▼ ").withStyle(isCollapsed ? ChatFormatting.RED : ChatFormatting.GREEN).append(titleText));
         }
