@@ -11,6 +11,7 @@ import java.util.Optional;
 public abstract class Button extends Widget {
     protected Component title;
     protected Icon icon;
+    private boolean forceButtonSize;
 
     public Button(Panel panel, Component t, Icon i) {
         super(panel);
@@ -38,6 +39,11 @@ public abstract class Button extends Widget {
         return this;
     }
 
+    public Button setForceButtonSize(boolean forceButtonSize) {
+        this.forceButtonSize = forceButtonSize;
+        return this;
+    }
+
     public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawButton(graphics, x, y, w, h, getWidgetType());
     }
@@ -49,9 +55,13 @@ public abstract class Button extends Widget {
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         GuiHelper.setupDrawing();
-        var s = h >= 16 ? 16 : 8;
         drawBackground(graphics, theme, x, y, w, h);
-        drawIcon(graphics, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
+        if (forceButtonSize) {
+            var s = h >= 16 ? 16 : 8;
+            drawIcon(graphics, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
+        }else {
+            drawIcon(graphics, theme, x, y, w, h);
+        }
     }
 
     @Override

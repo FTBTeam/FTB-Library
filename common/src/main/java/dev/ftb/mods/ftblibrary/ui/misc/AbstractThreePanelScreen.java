@@ -19,13 +19,14 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
     protected final PanelScrollBar scrollBar;
     private boolean showBottomPanel = true;
     private boolean showCloseButton = false;
+    private boolean showScrollBar = true;
 
     protected AbstractThreePanelScreen() {
         super();
 
         topPanel = createTopPanel();
         mainPanel = createMainPanel();
-        bottomPanel = new BottomPanel();
+        bottomPanel = createBottomPanel();
         scrollBar = new PanelScrollBar(this, ScrollBar.Plane.VERTICAL, mainPanel);
     }
 
@@ -33,7 +34,9 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
     public void addWidgets() {
         add(topPanel);
         add(mainPanel);
-        add(scrollBar);
+        if (showScrollBar) {
+            add(scrollBar);
+        }
         if (showBottomPanel) {
             add(bottomPanel);
         }
@@ -47,18 +50,20 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         topPanel.alignWidgets();
 
         var inset = mainPanelInset();
-        int bottomPanelHeight = showBottomPanel ? BOTTOM_PANEL_H + inset.getSecond() : 0;
+        int bottomPanelHeight = showBottomPanel ? getBottomPanelHeight() + inset.getSecond() : 0;
 
         mainPanel.setPosAndSize(inset.getFirst(), topPanelHeight + inset.getSecond(),
                 width - inset.getFirst() * 2, height - topPanelHeight - inset.getSecond() * 2 - bottomPanelHeight);
         mainPanel.alignWidgets();
 
         if (showBottomPanel) {
-            bottomPanel.setPosAndSize(0, height - BOTTOM_PANEL_H, width, BOTTOM_PANEL_H);
+            bottomPanel.setPosAndSize(0, height - getBottomPanelHeight(), width, getBottomPanelHeight());
             bottomPanel.alignWidgets();
         }
 
-        scrollBar.setPosAndSize(mainPanel.getPosX() + mainPanel.getWidth() - getScrollbarWidth(), mainPanel.getPosY(), getScrollbarWidth(), mainPanel.getHeight());
+        if (showScrollBar) {
+            scrollBar.setPosAndSize(mainPanel.getPosX() + mainPanel.getWidth() - getScrollbarWidth(), mainPanel.getPosY(), getScrollbarWidth(), mainPanel.getHeight());
+        }
     }
 
     @Override
@@ -72,7 +77,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         super.tick();
 
         int prevWidth = mainPanel.width;
-        int newWidth = (scrollBar.shouldDraw() ? getGui().width - getScrollbarWidth() - 2 : getGui().width) - mainPanelInset().getFirst() * 2;
+        int newWidth = (showScrollBar && scrollBar.shouldDraw() ? getGui().width - getScrollbarWidth() - 2 : getGui().width) - mainPanelInset().getFirst() * 2;
         if (prevWidth != newWidth) {
             mainPanel.setWidth(newWidth);
             mainPanel.alignWidgets();
@@ -91,6 +96,10 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         return NO_INSET;
     }
 
+    protected int getBottomPanelHeight() {
+        return BOTTOM_PANEL_H;
+    }
+
     protected int getScrollbarWidth() {
         return SCROLLBAR_WIDTH;
     }
@@ -99,12 +108,20 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         return new TopPanel();
     }
 
+    protected Panel createBottomPanel() {
+        return new BottomPanel();
+    }
+
     public void showBottomPanel(boolean show) {
         showBottomPanel = show;
     }
 
     public void showCloseButton(boolean show) {
         showCloseButton = show;
+    }
+
+    public void showScrollBar(boolean show) {
+        showScrollBar = show;
     }
 
     protected class TopPanel extends Panel {
