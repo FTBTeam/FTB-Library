@@ -10,7 +10,6 @@ import dev.ftb.mods.ftblibrary.ui.TextField;
 import dev.ftb.mods.ftblibrary.ui.Theme;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.ui.misc.AbstractButtonListScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -24,7 +23,7 @@ import java.util.Map;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButtonListScreen {
-    private final List<GroupData<G, E>> groups;
+    protected final List<GroupData<G, E>> groups;
     private final Map<G, Boolean> collapsed = new HashMap<>();
 
     private final Button buttonCollapseAll, buttonExpandAll;
@@ -54,9 +53,6 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
     }
 
     protected abstract RowPanel createRowPanel(Panel panel, E value);
-
-    public record GroupData<G, E>(G group, boolean defaultState, Component groupName, List<E> values) {
-    }
 
     private void toggleAll(boolean collapsed) {
         boolean allOpen = this.collapsed.values().stream().noneMatch(b -> b);
@@ -98,7 +94,6 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
         return false;
     }
 
-
     @Override
     protected int getTopPanelHeight() {
         return 22;
@@ -118,6 +113,9 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
                 panel.addAll(groupButton.collectPanels());
             }
         }
+    }
+
+    public record GroupData<G, E>(G group, boolean defaultState, Component groupName, List<E> values) {
     }
 
     protected class CustomTopPanel extends TopPanel {
@@ -146,9 +144,9 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
     }
 
     protected class GroupButton extends Button {
+        protected final G group;
         private final Component titleText;
         private final List<RowPanel> rowPanels;
-        private final G group;
 
         public GroupButton(Panel panel, G group, Component titleText, List<E> values) {
             super(panel);
@@ -220,7 +218,5 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
             }
             return super.mousePressed(button);
         }
-
     }
-
 }
