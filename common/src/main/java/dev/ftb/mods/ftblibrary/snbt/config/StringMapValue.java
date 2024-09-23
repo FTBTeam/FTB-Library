@@ -28,7 +28,8 @@ public class StringMapValue extends BaseValue<Map<String, String>> {
     public void read(SNBTCompoundTag tag) {
         Map<String, String> map = new HashMap<>();
 
-        for (String key : tag.getAllKeys()) {
+        SNBTCompoundTag compound = tag.getCompound(key);
+        for (String key : compound.getAllKeys()) {
             map.put(key, tag.getString(key));
         }
 
