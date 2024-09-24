@@ -30,7 +30,7 @@ public class StringMapValue extends BaseValue<Map<String, String>> {
 
         SNBTCompoundTag compound = tag.getCompound(key);
         for (String key : compound.getAllKeys()) {
-            map.put(key, tag.getString(key));
+            map.put(key, compound.getString(key));
         }
 
         set(map);
