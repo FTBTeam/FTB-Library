@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2101.1.3]
 * Fixed an issue in config loading/saving of certain data types (affects FTB Chunks minimap info settings)
+* Added tr_tr translations (thanks @RuyaSavascisi)
 
 ## [2101.1.2]
 
