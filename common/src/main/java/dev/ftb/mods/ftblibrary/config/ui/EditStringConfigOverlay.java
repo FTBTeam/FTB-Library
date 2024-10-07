@@ -90,7 +90,7 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         theme.drawContextMenuBackground(graphics, x - 1, y - 1, w + 2, h + 2);
     }
 
-    private void onAccepted(Button btn, MouseButton mb) {
+    protected void onAccepted(Button btn, MouseButton mb) {
         if (textBox.isTextValid()) {
             config.setCurrentValue(currentValue);
             callback.save(true);
@@ -98,7 +98,7 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         }
     }
 
-    private void onCancelled(Button btn, MouseButton mb) {
+    protected void onCancelled(Button btn, MouseButton mb) {
         callback.save(false);
         getGui().popModalPanel();
     }
