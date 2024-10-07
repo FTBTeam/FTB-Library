@@ -276,7 +276,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 
     @Override
     public boolean mousePressed(MouseButton button) {
-        if (isMouseOver()) {
+        if (allowInput() && isMouseOver()) {
             setFocused(true);
 
             if (button.isLeft()) {
@@ -305,6 +305,9 @@ public class TextBox extends Widget implements IFocusableWidget {
 
     @Override
     public boolean keyPressed(Key key) {
+        if(!allowInput()) {
+            return false;
+        }
         if (!isFocused()) {
             return false;
         } else if (key.selectAll()) {
@@ -381,7 +384,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 
     @Override
     public boolean charTyped(char c, KeyModifiers modifiers) {
-        if (isFocused()) {
+        if (allowInput() && isFocused()) {
             if (StringUtil.isAllowedChatCharacter(c)) {
                 insertText(Character.toString(c));
             }

@@ -34,8 +34,11 @@ public class IntTextBox extends TextBox {
 
     @Override
     public boolean mouseScrolled(double scroll) {
-        setAmount(getIntValue() + (int) scroll);
-        return true;
+        if(allowInput()) {
+            setAmount(getIntValue() + (int) scroll);
+            return true;
+        }
+        return false;
     }
 
     public void setAmount(int amount) {
