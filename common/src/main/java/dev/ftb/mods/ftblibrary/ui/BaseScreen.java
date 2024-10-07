@@ -311,28 +311,42 @@ public abstract class BaseScreen extends Panel {
     }
 
     public Optional<ModalPanel> getContextMenu() {
-        return modalPanels.stream().filter(p -> p instanceof ContextMenu).findFirst();
+        return modalPanels.stream().filter(p -> p instanceof PopupMenu).findFirst();
     }
 
-    public void openContextMenu(@Nullable ContextMenu newContextMenu) {
-        if (newContextMenu == null) {
-            modalPanels.removeIf(p -> p instanceof ContextMenu);
+    public void openPopupMenu(@Nullable PopupMenu popupMenu) {
+        if (popupMenu == null) {
+            modalPanels.removeIf(p -> p instanceof PopupMenu);
             return;
         }
 
-        pushModalPanel(newContextMenu);
+        pushModalPanel(popupMenu.getModalPanel());
 
         // default positioning where the mouse was clicked. caller is free to reposition if needed
         var x = getX();
         var y = getY();
-        int px = Math.min((getMouseX() - x), screen.getGuiScaledWidth() - newContextMenu.width - x) - 3;
-        int py = Math.min((getMouseY() - y), screen.getGuiScaledHeight() - newContextMenu.height - y) - 3;
-        newContextMenu.setPos(px, py);
+        int px = Math.min((getMouseX() - x), screen.getGuiScaledWidth() - popupMenu.getModalPanel().width - x) - 3;
+        int py = Math.min((getMouseY() - y), screen.getGuiScaledHeight() - popupMenu.getModalPanel().height - y) - 3;
+        popupMenu.getModalPanel().setPos(px, py);
+    }
+
+    public void openContextMenu(@Nullable ContextMenu newContextMenu) {
+        openPopupMenu(newContextMenu);
     }
 
     public ContextMenu openContextMenu(@NotNull List<ContextMenuItem> menuItems) {
         var contextMenu = new ContextMenu(this, menuItems);
         openContextMenu(contextMenu);
+        return contextMenu;
+    }
+
+    public void openDropdownMenu(@Nullable DropDownMenu dropDownMenu) {
+        openPopupMenu(dropDownMenu);
+    }
+
+    public DropDownMenu openDropdownMenu(@NotNull List<ContextMenuItem> menuItems) {
+        var contextMenu = new DropDownMenu(this, menuItems);
+        openDropdownMenu(contextMenu);
         return contextMenu;
     }
 
