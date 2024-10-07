@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -32,6 +33,8 @@ public class TextBox extends Widget implements IFocusableWidget {
     private boolean validText = true;
     private int maxLength = 1024;
     private Predicate<String> filter;
+    private Component label;
+    private Color4I labelColor = Color4I.WHITE;
 
     public TextBox(Panel panel) {
         super(panel);
@@ -68,6 +71,14 @@ public class TextBox extends Widget implements IFocusableWidget {
 
     public void setFilter(Predicate<String> filter) {
         this.filter = filter;
+    }
+
+    public void setLabel(Component label) {
+        this.label = label;
+    }
+
+    public void setLabelColor(Color4I color) {
+        this.labelColor = color;
     }
 
     public final String getText() {
@@ -473,6 +484,14 @@ public class TextBox extends Widget implements IFocusableWidget {
 
     public void drawTextBox(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawTextBox(graphics, x, y, w, h);
+        if(label != null) {
+            PoseStack pose = graphics.pose();
+            pose.pushPose();
+            pose.translate(x + 1, y - 5, 0);
+            pose.scale(0.5F, 0.5F, 1);
+            theme.drawString(graphics, label, 0, 0, labelColor, Theme.SHADOW);
+            pose.popPose();
+        }
     }
 
     public boolean isValid(String txt) {
