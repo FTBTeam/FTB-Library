@@ -70,6 +70,7 @@
   "ftblibrary.gui.listSize1": "1 item",
   "ftblibrary.gui.listSize": "%d items",
   "ftblibrary.gui.error": "Error!",
+  "ftblibrary.gui.search": "Search...",
   "ftblibrary.gui.nbt_copied": "NBT copied to clipboard",
   "ftblibrary.gui.edit_tag_name": "Edit Tag Name",
   "ftblibrary.gui.edit_tag_value": "Edit Tag Value",

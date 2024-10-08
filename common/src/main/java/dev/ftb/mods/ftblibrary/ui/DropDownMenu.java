@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.ui;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -24,7 +25,7 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
                 super.onTextChanged();
             }
         };
-        this.textBox.ghostText = "Search...";
+        this.textBox.ghostText = Component.translatable("ftblibrary.gui.search").getString();
         boolean hasIcons = i.stream().anyMatch(item -> !item.getIcon().isEmpty());
         this.mainPanel = new MainPanel(this, i, hasIcons, textBox::getText);
         this.scrollBar = new PanelScrollBar(this, ScrollBar.Plane.VERTICAL, mainPanel);

@@ -316,7 +316,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 
     @Override
     public boolean keyPressed(Key key) {
-        if(!allowInput()) {
+        if (!allowInput()) {
             return false;
         }
         if (!isFocused()) {
@@ -484,7 +484,8 @@ public class TextBox extends Widget implements IFocusableWidget {
 
     public void drawTextBox(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawTextBox(graphics, x, y, w, h);
-        if(label != null) {
+
+        if (label != null) {
             PoseStack pose = graphics.pose();
             pose.pushPose();
             pose.translate(x + 1, y - 5, 0);

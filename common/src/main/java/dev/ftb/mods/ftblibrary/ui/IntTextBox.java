@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 public class IntTextBox extends TextBox {
 
-    private static final Predicate<String> IS_NUMBER = s -> s.matches("^[0-9-]+$");
+    private static final Predicate<String> IS_NUMBER = s -> s.matches("^-?[0-9]+$");
     private int min = Integer.MIN_VALUE;
     private int max = Integer.MAX_VALUE;
 
@@ -34,7 +34,7 @@ public class IntTextBox extends TextBox {
 
     @Override
     public boolean mouseScrolled(double scroll) {
-        if(allowInput()) {
+        if (allowInput()) {
             setAmount(getIntValue() + (int) scroll);
             return true;
         }
