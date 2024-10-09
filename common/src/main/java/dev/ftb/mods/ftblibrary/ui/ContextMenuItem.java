@@ -100,7 +100,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
     }
 
     public Widget createWidget(ContextMenu panel) {
-        return new ContextMenu.CButton(panel, this);
+        return new ContextButton(panel, this, panel.hasIcons());
     }
 
     @Override
