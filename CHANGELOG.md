@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * Fixed `allowEditMode` in `TextBox` not applying in all situations
+* Fixed items/fluids/images in respective resource search screens being jammed together too closely
 
 ## [2101.1.3]
 
