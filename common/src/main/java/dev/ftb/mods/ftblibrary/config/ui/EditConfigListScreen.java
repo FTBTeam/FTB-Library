@@ -118,9 +118,6 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends Abstract
     public boolean keyPressed(Key key) {
         if (super.keyPressed(key)) {
             return true;
-        } else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
-            doAccept();
-            return true;
         } else if (key.is(InputConstants.KEY_INSERT)) {
             addButton.onClicked(MouseButton.LEFT);
             return true;
