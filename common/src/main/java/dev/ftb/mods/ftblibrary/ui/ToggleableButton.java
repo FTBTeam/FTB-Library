@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -23,6 +24,10 @@ public class ToggleableButton extends SimpleButton {
         this.enabledText = Component.translatable("ftblibrary.gui.enabled").withStyle(ChatFormatting.GREEN);
         this.disabledText = Component.translatable("ftblibrary.gui.disabled").withStyle(ChatFormatting.RED);
         updateTitle();
+    }
+
+    public ToggleableButton(Panel panel, boolean defaultState, ToggleableCallback toggleableCallback) {
+        this(panel, defaultState, Icons.VISIBILITY_SHOW, Icons.VISIBILITY_HIDE, toggleableCallback);
     }
 
     public Component getEnabledText() {
