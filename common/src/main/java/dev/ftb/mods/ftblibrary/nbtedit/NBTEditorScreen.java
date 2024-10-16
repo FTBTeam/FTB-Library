@@ -171,9 +171,6 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     public boolean keyPressed(Key key) {
         if (super.keyPressed(key)) {
             return true;
-        } else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
-            doAccept();
-            return true;
         } else if (key.is(InputConstants.KEY_ADD) || key.is(InputConstants.KEY_EQUALS)) {
             collapseAll(false);
         } else if (key.is(InputConstants.KEY_MINUS) || key.is(GLFW.GLFW_KEY_KP_SUBTRACT)) {

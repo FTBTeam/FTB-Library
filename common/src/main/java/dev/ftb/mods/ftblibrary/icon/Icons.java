@@ -78,6 +78,8 @@ public interface Icons {
     Icon LOCK = get("lock");
     Icon LOCK_OPEN = get("lock_open");
     Icon SUPPORT = getImage("support");
+    Icon DROPDOWN_OUT = get("dropdown_out");
+    Icon DROPDOWN_IN = get("dropdown_in");
 
     static Icon get(String id) {
         return Icon.getIcon(FTBLibrary.MOD_ID + ":icons/" + id);

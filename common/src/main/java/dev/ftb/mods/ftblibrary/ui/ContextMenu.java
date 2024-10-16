@@ -2,13 +2,11 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-public class ContextMenu extends ModalPanel {
+public class ContextMenu extends ModalPanel implements PopupMenu {
     private static final int MARGIN = 3;
 
     private final List<ContextMenuItem> items;
@@ -113,60 +111,9 @@ public class ContextMenu extends ModalPanel {
         graphics.pose().popPose();
     }
 
-    public static class CButton extends Button {
-        public final ContextMenu contextMenu;
-        public final ContextMenuItem item;
-
-        public CButton(ContextMenu panel, ContextMenuItem item) {
-            super(panel, item.getTitle(), item.getIcon());
-            contextMenu = panel;
-            this.item = item;
-            setSize(panel.getGui().getTheme().getStringWidth(item.getTitle()) + (contextMenu.hasIcons ? 14 : 4), 12);
-        }
-
-        @Override
-        public void addMouseOverText(TooltipList list) {
-            item.addMouseOverText(list);
-        }
-
-        @Override
-        public WidgetType getWidgetType() {
-            if (!item.isClickable()) {
-                return WidgetType.NORMAL;  // no hovered highlighting
-            }
-
-            return item.isEnabled() ? super.getWidgetType() : WidgetType.DISABLED;
-        }
-
-        @Override
-        public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            item.drawIcon(graphics, theme, x, y, w, h);
-        }
-
-        @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            GuiHelper.setupDrawing();
-
-            if (contextMenu.hasIcons) {
-                drawIcon(graphics, theme, x + 1, y + 2, 8, 8);
-                theme.drawString(graphics, getTitle(), x + 11, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
-            } else {
-                theme.drawString(graphics, getTitle(), x + 2, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);
-            }
-        }
-
-        @Override
-        public void onClicked(MouseButton button) {
-            if (item.isClickable()) {
-                playClickSound();
-            }
-
-            if (item.getYesNoText().getString().isEmpty()) {
-                item.onClicked(CButton.this, contextMenu, button);
-            } else {
-                getGui().openYesNo(item.getYesNoText(), Component.literal(""), () -> item.onClicked(CButton.this, contextMenu, button));
-            }
-        }
+    @Override
+    public ModalPanel getModalPanel() {
+        return this;
     }
 
     public static class CSeparator extends Button {
@@ -184,5 +131,9 @@ public class ContextMenu extends ModalPanel {
         @Override
         public void onClicked(MouseButton button) {
         }
+    }
+
+    public boolean hasIcons() {
+        return hasIcons;
     }
 }

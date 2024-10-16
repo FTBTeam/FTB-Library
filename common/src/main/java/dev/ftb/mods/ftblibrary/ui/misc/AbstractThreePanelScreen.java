@@ -1,9 +1,11 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.*;
+import dev.ftb.mods.ftblibrary.ui.input.Key;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -81,6 +83,18 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         if (prevWidth != newWidth) {
             mainPanel.setWidth(newWidth);
             mainPanel.alignWidgets();
+        }
+    }
+
+    @Override
+    public boolean keyPressed(Key key) {
+        if (super.keyPressed(key)) {
+            return true;
+        } else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
+            this.doAccept();
+            return true;
+        } else {
+            return false;
         }
     }
 

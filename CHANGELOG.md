@@ -4,7 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.4]
+
+### Added
+* Added a dropdown menu widget
+* Exposed some more methods in `EditStringConfigOverlay`
+
+### Changed
+* Replaced `ContextMenu.CButton` with `ContextButton`
+
+### Fixed
+* Fixed `allowEditMode` in `TextBox` not applying in all situations
+* Fixed items/fluids/images in respective resource search screens being jammed together too closely
+
 ## [2101.1.3]
+
+### Fixed
 * Fixed an issue in config loading/saving of certain data types (affects FTB Chunks minimap info settings)
 * Added tr_tr translations (thanks @RuyaSavascisi)
 

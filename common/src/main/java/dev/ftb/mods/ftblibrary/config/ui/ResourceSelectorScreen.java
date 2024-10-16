@@ -160,18 +160,6 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         }
     }
 
-    @Override
-    public boolean keyPressed(Key key) {
-        if (super.keyPressed(key)) {
-            return true;
-        } else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers.shift()) {
-            doAccept();
-            return true;
-        }
-
-        return false;
-    }
-
     protected void setSelected(SelectableResource<T> stack) {
         long count = selectedStack == null || selectedStack.isEmpty() ? Math.max(stack.getCount(), countBox.getCount()) : selectedStack.getCount();
         selectedStack = stack.copyWithCount(count);
@@ -433,7 +421,15 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
         @Override
         public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            theme.drawSlot(graphics, x, y, w, h, getWidgetType());
+            theme.drawSlot(graphics, x, y, w, h, WidgetType.NORMAL);
+            if (isMouseOver) {
+                Color4I.WHITE.withAlpha(30).draw(graphics, x + 1, y + 1, w - 2, h - 2);
+            }
+        }
+
+        @Override
+        public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+            super.drawIcon(graphics, theme, x + 1, y + 1, w - 2, h - 2);
         }
 
         @Override

@@ -14,12 +14,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class EditStringConfigOverlay<T> extends ModalPanel {
-    private final EditField textBox;
+    protected final EditField textBox;
     private final Button accept, cancel;
     private final ConfigFromString<T> config;
     private final ConfigCallback callback;
     private final TextField titleField;
     private final Component title;
+    private boolean addAcceptCancelButtons = true;
 
     private T currentValue;
 
@@ -60,8 +61,10 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
             add(titleField);
         }
         add(textBox);
-        add(accept);
-        add(cancel);
+        if(addAcceptCancelButtons) {
+            add(accept);
+            add(cancel);
+        }
     }
 
     @Override
@@ -70,8 +73,11 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
             titleField.setPosAndSize(2, 2, width, getGui().getTheme().getFontHeight() + 4);
         }
         textBox.setPosAndSize(2, titleField.getHeight() + 1, width - 36, 14);
-        accept.setPos(textBox.width + 2, textBox.getPosY());
-        cancel.setPos(accept.getPosX() + accept.width + 2, textBox.getPosY());
+        if(addAcceptCancelButtons) {
+            accept.setPos(textBox.width + 2, textBox.getPosY());
+            cancel.setPos(accept.getPosX() + accept.width + 2, textBox.getPosY());
+        }
+
 
         height = title == null ? 16 : 30;
     }
@@ -90,7 +96,7 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         theme.drawContextMenuBackground(graphics, x - 1, y - 1, w + 2, h + 2);
     }
 
-    private void onAccepted(Button btn, MouseButton mb) {
+    protected void onAccepted(Button btn, MouseButton mb) {
         if (textBox.isTextValid()) {
             config.setCurrentValue(currentValue);
             callback.save(true);
@@ -98,9 +104,16 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         }
     }
 
-    private void onCancelled(Button btn, MouseButton mb) {
+    protected void onCancelled(Button btn, MouseButton mb) {
         callback.save(false);
         getGui().popModalPanel();
+    }
+
+    /**
+     * @param addAcceptCancelButtons if true, accept and cancel buttons will be added to the overlay
+     */
+    public void setAddAcceptCancelButtons(boolean addAcceptCancelButtons) {
+        this.addAcceptCancelButtons = addAcceptCancelButtons;
     }
 
     /**
@@ -114,7 +127,7 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         }
     }
 
-    private class EditField extends TextBox {
+    protected class EditField extends TextBox {
         public EditField() {
             super(EditStringConfigOverlay.this);
 

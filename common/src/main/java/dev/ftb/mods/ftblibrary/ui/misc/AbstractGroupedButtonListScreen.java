@@ -42,9 +42,9 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
                 .forEach(collapsed::add);
 
         buttonExpandAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.UP,
-                (widget, button) -> toggleAll(true));
-        buttonCollapseAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.DOWN,
                 (widget, button) -> toggleAll(false));
+        buttonCollapseAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.DOWN,
+                (widget, button) -> toggleAll(true));
     }
 
     protected abstract List<GroupData<G, E>> getGroups();
