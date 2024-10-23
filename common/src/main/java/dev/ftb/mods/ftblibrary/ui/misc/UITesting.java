@@ -92,7 +92,7 @@ public class UITesting {
                     ContextMenuItem.subMenu(Component.literal("line 2 >"), Icons.REMOVE, List.of(
                             ContextMenuItem.title(Component.literal("Submenu")),
                             ContextMenuItem.SEPARATOR,
-                            new ContextMenuItem(Component.literal("line 2a"), Icons.BELL, button1 -> {
+                            new ContextMenuItem(Component.literal("line 2a"), Icons.FRIENDS_GROUP, button1 -> {
                             }
                             ))),
                     new ContextMenuItem(Component.literal("Test Search"), Icon.empty(), button -> openTestButtonList()) {

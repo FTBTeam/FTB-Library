@@ -4,7 +4,7 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 
 @SuppressWarnings("unused")
 public interface Icons {
-    Icon BLUE_BUTTON = get("blue_button");
+    Icon BLUE_BUTTON = get("blank_blue");
     Icon UP = get("up");
     Icon DOWN = get("down");
     Icon LEFT = get("left");
@@ -21,7 +21,12 @@ public interface Icons {
     Icon SETTINGS_RED = get("settings_red");
     Icon CANCEL = get("cancel");
     Icon BACK = get("back");
-    Icon CLOSE = get("close");
+
+    /**
+     * @deprecated Use {@link #CANCEL} instead
+     */
+    @Deprecated(forRemoval = true)
+    Icon CLOSE = CANCEL;
     Icon REFRESH = get("refresh");
     Icon PLAYER = get("player");
     Icon PLAYER_GRAY = get("player_gray");
@@ -30,15 +35,20 @@ public interface Icons {
     Icon FRIENDS = get("friends");
     Icon BUG = get("bug");
     Icon JACKET = get("jacket");
-    Icon BED = get("bed");
-    Icon BELL = get("bell");
-    Icon COMPASS = get("compass");
+    Icon BED = Icon.getIcon("minecraft:item/bed");
+    Icon FRIENDS_GROUP = get("friends_group");
+    /**
+     * @deprecated Use {@link #FRIENDS_GROUP} instead
+     */
+    @Deprecated(forRemoval = true)
+    Icon BELL = FRIENDS_GROUP;
+    Icon COMPASS = Icon.getIcon("minecraft:item/compass_19");
     Icon MAP = get("map");
-    Icon SHIELD = get("shield");
+    Icon SHIELD = Icon.getIcon("minecraft:item/diamond_sword");
     Icon ART = get("art");
     Icon MONEY_BAG = get("money_bag");
     Icon CONTROLLER = get("controller");
-    Icon FEATHER = get("feather");
+    Icon FEATHER = Icon.getIcon("minecraft:item/feather");
     Icon CAMERA = get("camera");
     Icon INV_IO = get("inv_io");
     Icon INV_IN = get("inv_in");
@@ -61,7 +71,7 @@ public interface Icons {
     Icon MARKER = get("marker");
     Icon BEACON = get("beacon");
     Icon DICE = get("dice");
-    Icon DIAMOND = get("diamond");
+    Icon DIAMOND = Icon.getIcon("minecraft:item/diamond");
     Icon TIME = get("time");
     Icon GLOBE = get("globe");
     Icon MONEY = get("money");
@@ -80,6 +90,8 @@ public interface Icons {
     Icon SUPPORT = getImage("support");
     Icon DROPDOWN_OUT = get("dropdown_out");
     Icon DROPDOWN_IN = get("dropdown_in");
+    Icon VISIBILITY_SHOW = get("visibility_show");
+    Icon VISIBILITY_HIDE = get("visibility_hide");
 
     static Icon get(String id) {
         return Icon.getIcon(FTBLibrary.MOD_ID + ":icons/" + id);
