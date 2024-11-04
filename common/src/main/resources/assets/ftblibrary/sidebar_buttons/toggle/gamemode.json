@@ -1,7 +1,6 @@
 {
   "icon": [
-    "ftblibrary:icons/blue_button",
-    "ftblibrary:textures/icons/toggle_gamemode.png"
+    "minecraft:item/diamond_sword"
   ],
   "sort_index": 100,
   "click": [
