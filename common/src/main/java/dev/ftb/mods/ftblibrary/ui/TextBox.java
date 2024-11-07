@@ -35,6 +35,7 @@ public class TextBox extends Widget implements IFocusableWidget {
     private Predicate<String> filter;
     private Component label;
     private Color4I labelColor = Color4I.WHITE;
+    private boolean strictValidity = false;
 
     public TextBox(Panel panel) {
         super(panel);
@@ -67,6 +68,10 @@ public class TextBox extends Widget implements IFocusableWidget {
                 getGui().setFocusedWidget(this);
             }
         }
+    }
+
+    public void setStrictValidity(boolean strictValidity) {
+        this.strictValidity = strictValidity;
     }
 
     public void setFilter(Predicate<String> filter) {
@@ -172,12 +177,15 @@ public class TextBox extends Widget implements IFocusableWidget {
             }
 
             String newText = (new StringBuilder(text)).replace(selStart, selEnd, filtered).toString();
+            boolean prevValid = validText;
             validText = isValid(newText);
-            if (!text.equals(newText)) {
+            if (!text.equals(newText) && (validText || !strictValidity)) {
                 text = newText;
                 setCursorPosition(selStart + nToInsert);
                 setSelectionPos(cursorPos);
                 onTextChanged();
+            } else {
+                validText = prevValid;
             }
         }
     }

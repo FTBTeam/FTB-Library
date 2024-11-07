@@ -1,22 +1,32 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
+import net.minecraft.util.Mth;
 
 import java.util.function.Predicate;
 
 public class IntTextBox extends TextBox {
+    // note: empty text and text with only '-' need to be allowed so numbers can be typed (treat as 0)
+    private static final Predicate<String> IS_NUMBER = s -> s.matches("^-?[0-9]*$");
 
-    private static final Predicate<String> IS_NUMBER = s -> s.matches("^-?[0-9]+$");
     private int min = Integer.MIN_VALUE;
     private int max = Integer.MAX_VALUE;
 
     public IntTextBox(Panel panel) {
         super(panel);
         setFilter(IS_NUMBER);
+        setStrictValidity(true);
     }
 
     public int getIntValue() {
-        return Integer.parseInt(getText());
+        String text = getText();
+        if (text.isEmpty() || text.equals("-")) {
+            return Mth.clamp(0, min, max);
+        }
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException ignored) {
+            return Mth.clamp(0, min, max);
+        }
     }
 
     public void setMin(int min) {
@@ -58,13 +68,5 @@ public class IntTextBox extends TextBox {
         } else if (amount > max) {
             setAmount(max);
         }
-    }
-
-    @Override
-    public boolean charTyped(char c, KeyModifiers modifiers) {
-        if (Character.isDigit(c)) {
-            return super.charTyped(c, modifiers);
-        }
-        return false;
     }
 }
