@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Overhauled and cleaned up many icon textures
 
+### Fixed
+* Fixed a client crash with certain inputs to IntTextBox (as used in FTB Chunks waypoint editing)
+
 ## [2101.1.4]
 
 ### Added
