@@ -27,7 +27,7 @@ public class KeyReferenceScreen extends BaseScreen {
 
         textPanel = new TextPanel(this);
 
-        closeButton = new SimpleTextButton(this, Component.translatable("gui.close"), Icons.CLOSE) {
+        closeButton = new SimpleTextButton(this, Component.translatable("gui.close"), Icons.CANCEL) {
             @Override
             public void onClicked(MouseButton button) {
                 onBack();

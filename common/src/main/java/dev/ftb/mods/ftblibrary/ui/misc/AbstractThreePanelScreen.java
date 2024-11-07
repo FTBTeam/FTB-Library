@@ -145,7 +145,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
             super(AbstractThreePanelScreen.this);
 
             closeButton = new SimpleButton(this, Component.translatable("gui.close"),
-                    Icons.CLOSE, (btn, mb) -> doCancel());
+                    Icons.CANCEL, (btn, mb) -> doCancel());
         }
 
         @Override
