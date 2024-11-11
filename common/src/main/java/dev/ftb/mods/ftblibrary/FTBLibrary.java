@@ -52,6 +52,9 @@ public class FTBLibrary {
     }
 
     private void playerJoined(ServerPlayer player) {
-        NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
+        if (KnownServerRegistries.server != null) {
+            // can be null, e.g. https://github.com/FTBTeam/FTB-Mods-Issues/issues/1387
+            NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
+        }
     }
 }
