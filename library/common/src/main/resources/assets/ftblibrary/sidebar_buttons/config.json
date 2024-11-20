@@ -1,0 +1,17 @@
+{
+  "icon": [
+    "ftblibrary:icons/settings"
+  ],
+  "sort_index": 2147483647,
+  "click": [
+    "command:/ftblibrary clientconfig"
+  ],
+  "required_mods": [
+    "ftblibrary"
+  ],
+  "tooltip": [
+    {
+      "translate": "sidebar_button.ftblibrary.config.enter_edit_mode"
+    }
+  ]
+}

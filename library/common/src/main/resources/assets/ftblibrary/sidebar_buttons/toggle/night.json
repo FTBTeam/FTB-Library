@@ -1,0 +1,13 @@
+{
+  "icon": [
+    "ftblibrary:textures/icons/toggle_night.png"
+  ],
+  "sort_index": 300,
+  "click": [
+    "command:/ftblibrary night"
+  ],
+  "required_mods": [
+    "ftblibrary"
+  ],
+  "requires_op": true
+}

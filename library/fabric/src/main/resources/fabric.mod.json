@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "ftblibrary",
+  "version": "${version}",
+  "name": "FTB Library",
+  "description": "FTB Library adds nothing.",
+  "authors": [
+    "FTB Team"
+  ],
+  "contact": {
+    "sources": "https://github.com/FTBTeam/FTB-Library",
+    "issues": "https://github.com/FTBTeam/FTB-Library/issues"
+  },
+  "license": "All Rights Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.ftb.mods.ftblibrary.fabric.FTBLibraryFabric"
+    ],
+    "rei_client": [
+      "dev.ftb.mods.ftblibrary.integration.REIIntegration"
+    ],
+    "emi": [
+      "dev.ftb.mods.ftblibrary.integration.EMIIntegration"
+    ],
+    "jei_mod_plugin": [
+      "dev.ftb.mods.ftblibrary.integration.JEIIntegration"
+    ]
+  },
+  "mixins": [
+    "ftblibrary-common.mixins.json",
+    "ftblibrary-fabric.mixins.json"
+  ],
+  "depends": {
+    "fabric": "${fabricapiversionrange}",
+    "minecraft": "~${mcversion}",
+    "architectury": ">=${archversion}"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "icon": [
+    "minecraft:item/diamond_sword"
+  ],
+  "sort_index": 100,
+  "click": [
+    "command:/ftblibrary gamemode"
+  ],
+  "requires_op": true
+}
