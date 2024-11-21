@@ -82,7 +82,7 @@ if (ENV.CURSEFORGE_KEY) {
 				optionalDependency 'jei'
 				optionalDependency 'roughly-enough-items'
 			}
-			changelog = ENV.CHANGELOG  // expected to exist if ENV.CURSEFORGE does
+			changelog =  createChangelog(project)
 			changelogType = 'markdown'
 		}
 	}
