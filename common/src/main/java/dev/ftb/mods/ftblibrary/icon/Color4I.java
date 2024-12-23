@@ -89,12 +89,19 @@ public class Color4I extends Icon {
 			return null;
 		}
 
+		@Override
 		public int hashCode() {
 			return 0;
 		}
 
+		@Override
 		public boolean equals(Object o) {
 			return o == this;
+		}
+
+		@Override
+		public String toString() {
+			return ""; // see Icon.isNone()
 		}
 	};
 
