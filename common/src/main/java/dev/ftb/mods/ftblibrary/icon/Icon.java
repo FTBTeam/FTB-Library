@@ -293,6 +293,16 @@ public abstract class Icon implements Drawable {
 		return null;
 	}
 
+	/**
+	 * The number of animation frames in a pixel-buffer icon. Note: not to be confused with {@link IconAnimation},
+	 * which is a collection of individual icons. This is for icons with animated textures.
+	 *
+	 * @return the number of frames
+	 */
+	public int getPixelBufferFrameCount() {
+		return 1;
+	}
+
 	@Nullable
 	public Object getIngredient() {
 		return null;
