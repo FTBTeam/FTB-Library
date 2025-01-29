@@ -93,6 +93,13 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
     }
 
     @Override
+    public int getPixelBufferFrameCount() {
+        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+
+        return sprite.contents().getFrameCount();
+    }
+
+    @Override
     public AtlasSpriteIcon copy() {
         return new AtlasSpriteIcon(id);
     }
