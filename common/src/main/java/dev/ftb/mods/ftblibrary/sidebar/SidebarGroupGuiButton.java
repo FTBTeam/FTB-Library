@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
@@ -438,7 +438,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
         }
 
         if (mouseOverSettingsIcon) {
-            FTBLibraryClient.editConfig(true);
+            ConfigManagerClient.editConfig(FTBLibraryClientConfig.KEY);
             return;
         }
 

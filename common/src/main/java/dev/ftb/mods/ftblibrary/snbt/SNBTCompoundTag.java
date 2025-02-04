@@ -164,4 +164,23 @@ public class SNBTCompoundTag extends CompoundTag {
 
         return list;
     }
+
+    public CompoundTag merge(CompoundTag other, boolean overwrite) {
+        for (String key : other.getAllKeys()) {
+            Tag tag = other.get(key);
+            if (tag != null && (overwrite || !this.contains(key))) {
+                if (tag.getId() == Tag.TAG_COMPOUND) {
+                    if (this.contains(key, Tag.TAG_COMPOUND)) {
+                        getCompound(key).merge((CompoundTag) tag, overwrite);
+                    } else {
+                        put(key, tag.copy());
+                    }
+                } else {
+                    put(key, tag.copy());
+                }
+            }
+        }
+
+        return this;
+    }
 }

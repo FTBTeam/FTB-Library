@@ -1,15 +1,16 @@
 package dev.ftb.mods.ftblibrary.config;
 
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.snbt.config.*;
 
 import java.util.HashMap;
 
 import static dev.ftb.mods.ftblibrary.FTBLibrary.MOD_ID;
-import static dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil.LOCAL_DIR;
-import static dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil.loadDefaulted;
 
 public interface FTBLibraryClientConfig {
-    SNBTConfig CONFIG = SNBTConfig.create(MOD_ID + "-client")
+    String KEY = MOD_ID + "-client";
+
+    SNBTConfig CONFIG = SNBTConfig.create(KEY)
             .comment("Client-specific configuration for FTB Library");
 
     SNBTConfig TOOLTIPS = CONFIG.addGroup("tooltips");
@@ -34,26 +35,14 @@ public interface FTBLibraryClientConfig {
 
     StringSidebarMapValue SIDEBAR_BUTTONS = SIDEBAR.add(new StringSidebarMapValue(SIDEBAR, "buttons", new HashMap<>()));
 
-    static void load() {
-        loadDefaulted(CONFIG, LOCAL_DIR, MOD_ID);
-    }
-
+    /**
+     * Just for convenience.
+     */
     static void save() {
-        CONFIG.save(LOCAL_DIR.resolve(MOD_ID + "-client.snbt"));
+        ConfigManager.getInstance().save(KEY);
     }
 
-    static ConfigGroup getConfigGroup() {
-        ConfigGroup group = new ConfigGroup(MOD_ID + ".client_settings", accepted -> {
-            if (accepted) {
-                save();
-            }
-        });
-        CONFIG.createClientConfig(group);
-
-        return group;
-    }
-
-    public enum SidebarPosition {
+    enum SidebarPosition {
         TOP_LEFT(false, false),
         TOP_RIGHT(false, true),
         BOTTOM_LEFT(true, false),
