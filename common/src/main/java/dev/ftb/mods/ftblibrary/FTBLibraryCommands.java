@@ -8,9 +8,12 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
+import dev.ftb.mods.ftblibrary.util.ModUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -116,12 +119,12 @@ public class FTBLibraryCommands {
                 .then(Commands.literal("clientconfig")
                         .requires(CommandSourceStack::isPlayer)
                         .executes(context -> {
-                            NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(true));
+                            NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryClientConfig.KEY));
                             return Command.SINGLE_SUCCESS;
                         })
                 );
 
-        if (Platform.isDevelopmentEnvironment()) {
+        if (ModUtils.isDevMode()) {
             command.then(Commands.literal("test_screen")
                     .executes(context -> {
                         if (context.getSource().getServer().isDedicatedServer()) {
@@ -129,6 +132,13 @@ public class FTBLibraryCommands {
                         } else {
                             UITesting.openTestScreen();
                         }
+                        return Command.SINGLE_SUCCESS;
+                    })
+            );
+            command.then(Commands.literal("serverconfig")
+                    .requires(cs -> cs.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                    .executes(context -> {
+                        NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryServerConfig.KEY));
                         return Command.SINGLE_SUCCESS;
                     })
             );

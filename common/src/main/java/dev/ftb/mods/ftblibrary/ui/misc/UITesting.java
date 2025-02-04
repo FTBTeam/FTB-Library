@@ -14,6 +14,7 @@ import dev.ftb.mods.ftblibrary.ui.ContextMenuItem;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
@@ -114,7 +115,7 @@ public class UITesting {
         private class TestTopPanel extends CustomTopPanel {
             @Override
             public boolean mousePressed(MouseButton mouseButton) {
-                if (Platform.isDevelopmentEnvironment() && mouseButton.isRight()) {
+                if (ModUtils.isDevMode() && mouseButton.isRight()) {
                     openTestContextMenu(this);
                 }
                 return super.mousePressed(mouseButton);

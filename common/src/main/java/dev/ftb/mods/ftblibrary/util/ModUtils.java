@@ -27,4 +27,8 @@ public class ModUtils {
     public static Optional<String> getModName(Fluid fluid) {
         return getModName(BuiltInRegistries.FLUID.getKey(fluid).getNamespace());
     }
+
+    public static boolean isDevMode() {
+        return Platform.isDevelopmentEnvironment() || System.getenv().containsKey("FTB_DEVMODE");
+    }
 }

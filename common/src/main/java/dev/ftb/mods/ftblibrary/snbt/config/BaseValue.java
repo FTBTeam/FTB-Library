@@ -15,7 +15,7 @@ import java.util.function.BooleanSupplier;
 public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     public final SNBTConfig parent;
     public final String key;
-    public final T defaultValue;
+    protected final T defaultValue;
     protected boolean excluded;
     protected BooleanSupplier enabled = SNBTUtils.ALWAYS_TRUE;
     protected int displayOrder = 0;
@@ -36,6 +36,10 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
         }
 
         return parent + "/" + key;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public T get() {
