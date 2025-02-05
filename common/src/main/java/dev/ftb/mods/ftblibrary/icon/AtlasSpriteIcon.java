@@ -78,15 +78,16 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
 		return true;
 	}
 
-	@Override
-	@Nullable
-	public PixelBuffer createPixelBuffer() {
-		try {
-			return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(id.getNamespace(), "textures/" + id.getPath() + ".png")).orElseThrow().open());
-		} catch (Exception ex) {
-			return null;
-		}
-	}
+    @Override
+    @Nullable
+    public PixelBuffer createPixelBuffer() {
+        try {
+            ResourceLocation loc = new ResourceLocation(id.getNamespace(), "textures/" + id.getPath() + ".png");
+            return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(loc).orElseThrow().open());
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 
 	@Override
 	public int getPixelBufferFrameCount() {
@@ -99,6 +100,13 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
 	public AtlasSpriteIcon copy() {
 		return new AtlasSpriteIcon(id);
 	}
+
+    @Override
+    public double aspectRatio() {
+        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+
+        return (double) sprite.contents().width() / (double) sprite.contents().height();
+    }
 
 	@Override
 	public AtlasSpriteIcon withColor(Color4I color) {
