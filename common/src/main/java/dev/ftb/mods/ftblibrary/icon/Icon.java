@@ -300,7 +300,7 @@ public abstract class Icon implements Drawable {
     }
 
     /**
-     * @return null if failed to load
+     * @return null if this icon does not have a pixel buffer, or if it failed to load
      */
     @Nullable
     public PixelBuffer createPixelBuffer() {
@@ -309,12 +309,24 @@ public abstract class Icon implements Drawable {
 
     /**
      * The number of animation frames in a pixel-buffer icon. Note: not to be confused with {@link IconAnimation},
-     * which is a collection of individual icons. This is for icons with animated textures.
+     * which is a collection of individual icons. This returns 1 for most icon types, but icons with animated
+     * textures (currently only atlas sprite icons) may have multiple frames.
      *
      * @return the number of frames
      */
     public int getPixelBufferFrameCount() {
         return 1;
+    }
+
+    /**
+     * Get the aspect ratio of the icon, which is the width divided by height. For most icon types this is always 1.0,
+     * since icons do not in general know what size they are (they're scaled when drawn). However, for atlas sprite
+     * and image icons, the underlying image's aspect ratio is returned.
+     *
+     * @return the aspect ratio of the icon
+     */
+    public double aspectRatio() {
+        return 1.0;
     }
 
     @Nullable
