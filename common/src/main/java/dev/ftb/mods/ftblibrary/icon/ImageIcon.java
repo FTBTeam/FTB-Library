@@ -162,6 +162,13 @@ public class ImageIcon extends Icon implements IResourceIcon {
     }
 
     @Override
+    public double aspectRatio() {
+        if (maxV == minV) return 1.0;
+
+        return (maxU - minU) / (maxV - minV);
+    }
+
+    @Override
     public ResourceLocation getResourceLocation() {
         return texture;
     }
