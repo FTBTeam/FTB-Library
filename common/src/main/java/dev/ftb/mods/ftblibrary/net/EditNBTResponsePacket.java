@@ -13,6 +13,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.UUID;
+
 public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implements CustomPacketPayload {
     public static final Type<EditNBTResponsePacket> TYPE = new Type<>(FTBLibrary.rl("edit_nbt_response"));
 
@@ -57,20 +59,24 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
                         }
                     }
                     case "player" -> {
-                        var player1 = player.getServer().getPlayerList().getPlayer(info.getUUID("id"));
-
-                        if (player1 != null) {
-                            var uUID = player1.getUUID();
-                            player1.load(tag);
-                            player1.setUUID(uUID);
-                            player1.moveTo(player1.getX(), player1.getY(), player1.getZ());
-                        }
+                        loadPlayerTag(player, info.getUUID("id"), tag);
                     }
                     case "item" -> ItemStack.parse(player.registryAccess(), tag)
                             .ifPresent(stack -> player.setItemInHand(InteractionHand.MAIN_HAND, stack));
                 }
             }
         });
+    }
+
+    public static void loadPlayerTag(ServerPlayer sourcePlayer, UUID playerUUID, CompoundTag tag) {
+        var player1 = sourcePlayer.getServer().getPlayerList().getPlayer(playerUUID);
+
+        if (player1 != null) {
+            var uUID = player1.getUUID();
+            player1.load(tag);
+            player1.setUUID(uUID);
+            player1.moveTo(player1.getX(), player1.getY(), player1.getZ());
+        }
     }
 
     @Override

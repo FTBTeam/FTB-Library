@@ -2,8 +2,10 @@ package dev.ftb.mods.ftblibrary;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
@@ -33,10 +35,25 @@ import net.minecraft.world.level.block.entity.TickingBlockEntity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 
 public class FTBLibraryCommands {
     public static final Map<UUID, CompoundTag> EDITING_NBT = new HashMap<>();
+
+    public static SuggestionProvider<CommandSourceStack> playersSuggestion;
+
+    public static SuggestionProvider<CommandSourceStack> getPlayersSuggestion() {
+        return playersSuggestion;
+    }
+
+    public static UUID getPlayersUUIDByName(String name) {
+        return UUID.fromString(name);
+    }
+
+    public static CompoundTag getPlayerNBTData(String name) {
+        return new CompoundTag();
+    }
 
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection type) {
         var command = Commands.literal("ftblibrary")
@@ -105,8 +122,19 @@ public class FTBLibraryCommands {
                                 )
                         )
                         .then(Commands.literal("player")
-                                .then(Commands.argument("player", EntityArgument.player())
-                                        .executes(context -> editNBT(context, (info, tag) -> editPlayerNBT(context, info, tag)))
+                                // MTechLab
+                                .then(Commands.argument("player", StringArgumentType.word())
+                                        .suggests(getPlayersSuggestion())
+                                        .executes(context -> {
+                                            CompletableFuture.runAsync(() -> {
+                                                try {
+                                                    editNBT(context, (info, tag) -> editPlayerNBT(context, info, tag));
+                                                } catch (CommandSyntaxException e) {
+                                                    throw new RuntimeException(e);
+                                                }
+                                            });
+                                            return 1;
+                                        })
                                 )
                         )
                         .then(Commands.literal("item")
@@ -160,20 +188,29 @@ public class FTBLibraryCommands {
     }
 
     private static void editPlayerNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
-        var player = EntityArgument.getPlayer(context, "player");
+        var playerName = StringArgumentType.getString(context, "player");
+        UUID playerUUID = getPlayersUUIDByName(playerName);
+
+        if(playerUUID == null) {
+            return;
+        }
 
         info.putString("type", "player");
-        info.putUUID("id", player.getUUID());
+        info.putUUID("id", playerUUID);
 
-        player.saveWithoutId(tag);
+        CompoundTag playerData = getPlayerNBTData(playerName);
+        if(playerData == null) {
+            return;
+        }
+        tag.merge(playerData);
         tag.remove("id");
 
         info.put("text", InfoBuilder.create(context)
-                .add(Component.literal("Name"), player.getName())
-                .add(Component.literal("Display Name"), player.getDisplayName())
-                .add(Component.literal("UUID"), Component.literal(player.getUUID().toString()))
+                .add(Component.literal("Name"), Component.literal(playerName))
+                .add(Component.literal("Display Name"), Component.literal(playerName))
+                .add(Component.literal("UUID"), Component.literal(playerUUID.toString()))
                 .build());
-        info.putString("title", Component.Serializer.toJson(player.getDisplayName(), player.level().registryAccess()));
+        info.putString("title", Component.Serializer.toJson(Component.literal(playerName), context.getSource().getLevel().registryAccess()));
     }
 
     private static void editEntityNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
