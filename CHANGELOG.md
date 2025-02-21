@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.10]
+
+### Added
+* Added a new config system implementation. **IMPORTANT CHANGE** for modpack developers and server admins!
+  * Existing system still works but is considered deprecated. So far, only FTB Library client config uses the new system
+    * Other FTB mods will be migrated to the new system soon and similar notes will be added to their changelogs
+  * Default configs are no longer loaded from `defaultconfigs/` - this folder is now **ignored** by FTB Library
+  * Configs should be distributed by modpacks in the `config/` folder
+  * Config overrides are also checked for in `local/` (client configs) and `<world>/serverconfig/` (server configs) and loaded from there in preference; server admins can use this to have custom local configuration if desired
+
+### Fixed
+* Fixed several atlas texture sizes which weren't 16x16
+
 ## [2101.1.9]
 
 * Added a `Icon#aspectRatio()` method, which the image width / height
