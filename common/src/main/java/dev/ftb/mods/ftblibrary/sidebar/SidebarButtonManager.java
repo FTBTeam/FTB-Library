@@ -9,6 +9,7 @@ import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue;
 import dev.ftb.mods.ftblibrary.util.MapUtils;

@@ -7,7 +7,9 @@ public class FTBLibraryNet {
         NetworkHelper.registerS2C(EditConfigPacket.TYPE, EditConfigPacket.STREAM_CODEC, EditConfigPacket::handle);
         NetworkHelper.registerS2C(EditNBTPacket.TYPE, EditNBTPacket.STREAM_CODEC, EditNBTPacket::handle);
         NetworkHelper.registerS2C(SyncKnownServerRegistriesPacket.TYPE, SyncKnownServerRegistriesPacket.STREAM_CODEC, SyncKnownServerRegistriesPacket::handle);
+        NetworkHelper.registerS2C(SyncConfigFromServerPacket.TYPE, SyncConfigFromServerPacket.STREAM_CODEC, SyncConfigFromServerPacket::handle);
 
         NetworkHelper.registerC2S(EditNBTResponsePacket.TYPE, EditNBTResponsePacket.STREAM_CODEC, EditNBTResponsePacket::handle);
+        NetworkHelper.registerC2S(SyncConfigToServerPacket.TYPE, SyncConfigToServerPacket.STREAM_CODEC, SyncConfigToServerPacket::handle);
     }
 }

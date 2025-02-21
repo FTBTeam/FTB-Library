@@ -6,10 +6,14 @@ import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.items.ModItems;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
+import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -24,6 +28,13 @@ public class FTBLibrary {
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
     public FTBLibrary() {
+        ConfigManager cfgMgr = ConfigManager.getInstance();
+        cfgMgr.init();
+        cfgMgr.registerClientConfig(FTBLibraryClientConfig.CONFIG, MOD_ID + ".client_settings");
+        if (ModUtils.isDevMode()) {
+            cfgMgr.registerServerConfig(FTBLibraryServerConfig.CONFIG, MOD_ID + ".server_settings", true, FTBLibraryServerConfig::onChanged);
+        }
+
         CommandRegistrationEvent.EVENT.register(FTBLibraryCommands::registerCommands);
         FTBLibraryNet.register();
         LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
