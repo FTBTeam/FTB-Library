@@ -5,7 +5,7 @@ import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
-import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.config.ui.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -25,12 +25,12 @@ public class FTBLibraryClient {
     public static CursorType lastCursorType = null;
 
     public static void init() {
-        FTBLibraryClientConfig.load();
-
         // Datagens hahayes
         if (Minecraft.getInstance() == null) {
             return;
         }
+
+        ConfigManagerClient.initClient();
 
         ClientGuiEvent.INIT_POST.register(FTBLibraryClient::guiInit);
         ClientTickEvent.CLIENT_POST.register(FTBLibraryClient::clientTick);
@@ -73,10 +73,5 @@ public class FTBLibraryClient {
         }
 
         return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.getButtons().isEmpty();
-    }
-
-    public static void editConfig(boolean isClientConfig) {
-        // NOTE: only client config supported right now
-        new EditConfigScreen(FTBLibraryClientConfig.getConfigGroup()).setAutoclose(true).openGui();
     }
 }

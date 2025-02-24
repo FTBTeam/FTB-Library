@@ -1,7 +1,11 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.architectury.fluid.FluidStack;
+import dev.architectury.networking.NetworkManager;
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.net.SyncConfigToServerPacket;
+import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -50,6 +54,28 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      */
     public ConfigGroup(String id, ConfigCallback savedCallback) {
         this(id, null, savedCallback, 0);
+    }
+
+    /**
+     * Convenience method to create a config group with default on-accepted behaviour of saving the edited config
+     * object.
+     *
+     * @param config       the config object to be edited
+     * @param groupName    unique name for the config group
+     * @param serverConfig if true, sync config to server; if false, save locally
+     * @return a new config group
+     */
+    public static ConfigGroup createEditable(SNBTConfig config, String groupName, boolean serverConfig) {
+        return new ConfigGroup(groupName, accepted -> {
+            if (accepted) {
+                if (serverConfig) {
+                    NetworkManager.sendToServer(SyncConfigToServerPacket.create(config));
+                } else {
+                    ConfigManager.getInstance().editedOnClient(config.getKey());
+                    ConfigManager.getInstance().save(config.getKey());
+                }
+            }
+        });
     }
 
     /**
