@@ -5,13 +5,14 @@ import dev.architectury.registry.registries.DeferredSupplier;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class ModItems {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(FTBLibrary.MOD_ID, Registries.ITEM);
-    private static final DeferredSupplier<Item> ICON_ITEM = ITEMS.register("icon_item", () -> new Item(new Item.Properties()));
+    private static final DeferredSupplier<Item> ICON_ITEM = ITEMS.register("icon_item", () -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, FTBLibrary.rl("icon_item")))));
 
     private static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(FTBLibrary.MOD_ID, Registries.CREATIVE_MODE_TAB);
     public static final DeferredSupplier<CreativeModeTab> FTB_LIBRARY_TAB = CREATIVE_MODE_TABS.register("ftb_library", () -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)

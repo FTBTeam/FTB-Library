@@ -53,7 +53,6 @@ public class GuiHelper {
     }
 
     public static void drawTexturedRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         addRectToBufferWithUV(graphics, buffer, x, y, w, h, col, u0, v0, u1, v1);
@@ -98,7 +97,6 @@ public class GuiHelper {
             return;
         }
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, col);
@@ -116,7 +114,6 @@ public class GuiHelper {
     }
 
     public static void drawRectWithShade(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, int intensity) {
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         addRectToBuffer(graphics, buffer, x, y, w - 1, 1, col);
         addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 1, col);
@@ -154,7 +151,6 @@ public class GuiHelper {
             return;
         }
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         var m = graphics.pose().last().pose();
         var buffer = t.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         buffer.addVertex(m, x, y, 0).setColor(red, green, blue, alpha);

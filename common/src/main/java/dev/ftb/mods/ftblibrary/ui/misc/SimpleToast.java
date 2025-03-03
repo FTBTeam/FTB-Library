@@ -4,9 +4,11 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
-import net.minecraft.client.gui.components.toasts.ToastComponent;
+import net.minecraft.client.gui.components.toasts.ToastManager;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -15,9 +17,10 @@ import net.minecraft.util.Mth;
 public class SimpleToast implements Toast {
     private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.parse("toast/advancement");
     private boolean hasPlayedSound = false;
+    private Visibility visibility;
 
     public static void info(Component title, Component subtitle) {
-        Minecraft.getInstance().getToasts().addToast(
+        Minecraft.getInstance().getToastManager().addToast(
                 new SimpleToast() {
                     @Override
                     public Component getTitle() {
@@ -32,7 +35,7 @@ public class SimpleToast implements Toast {
     }
 
     public static void error(Component title, Component subtitle) {
-        Minecraft.getInstance().getToasts().addToast(
+        Minecraft.getInstance().getToastManager().addToast(
                 new SimpleToast() {
                     @Override
                     public Component getTitle() {
@@ -52,18 +55,28 @@ public class SimpleToast implements Toast {
     }
 
     @Override
-    public Visibility render(GuiGraphics graphics, ToastComponent gui, long delta) {
-        GuiHelper.setupDrawing();
-        var mc = gui.getMinecraft();
+    public Visibility getWantedVisibility() {
+        return visibility;
+    }
 
-        graphics.blitSprite(BACKGROUND_SPRITE, 0, 0, 160, 32);
+    @Override
+    public void update(ToastManager toastManager, long delta) {
+        visibility = delta >= 5000L * toastManager.getNotificationDisplayTimeMultiplier() ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, Font font, long delta) {
+        GuiHelper.setupDrawing();
+        var mc = Minecraft.getInstance();
+
+        graphics.blitSprite(RenderType::guiTextured, BACKGROUND_SPRITE, 0, 0, 160, 32);
 
         var list = mc.font.split(getSubtitle(), 125);
         var i = isImportant() ? 0x00FF88FF : 0x00FFFF00;
 
         if (list.size() == 1) {
             graphics.drawString(mc.font, getTitle(), 30, 7, i | 0xFF000000, true);
-            graphics.drawString(mc.font, list.get(0), 30, 18, -1);
+            graphics.drawString(mc.font, list.getFirst(), 30, 18, -1);
         } else {
             if (delta < 1500L) {
                 var k = Mth.floor(Mth.clamp((float) (1500L - delta) / 300F, 0F, 1F) * 255F) << 24 | 67108864;
@@ -85,7 +98,6 @@ public class SimpleToast implements Toast {
         }
 
         getIcon().draw(graphics, 8, 8, 16, 16);
-        return delta >= 5000L * gui.getNotificationDisplayTimeMultiplier() ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }
 
     public Component getTitle() {

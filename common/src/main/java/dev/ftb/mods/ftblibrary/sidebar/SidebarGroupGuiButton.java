@@ -480,7 +480,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
     // Custom handling so our button click locations are where a buttons are not just a box
     @Override
     protected boolean isValidClickButton(int i) {
-        boolean inBounds = clicked(currentMouseX, currentMouseY);
+        boolean inBounds = isMouseOver(currentMouseX, currentMouseY);
         if (!inBounds && isEditMode) {
             isEditMode = false;
             return false;

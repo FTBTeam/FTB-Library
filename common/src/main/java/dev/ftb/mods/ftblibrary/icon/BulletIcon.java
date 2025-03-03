@@ -11,7 +11,6 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
 
 
 public class BulletIcon extends Icon {
@@ -91,7 +90,6 @@ public class BulletIcon extends Icon {
             cd = colorD;
         }
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 

@@ -1,20 +1,18 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
-import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue;
 import dev.ftb.mods.ftblibrary.util.MapUtils;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.util.*;
@@ -22,15 +20,14 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 
-public class SidebarButtonManager extends SimpleJsonResourceReloadListener {
+public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonElement> {
 
     public static final SidebarButtonManager INSTANCE = new SidebarButtonManager();
-//    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private final Map<ResourceLocation, RegisteredSidebarButton> buttons = new HashMap<>();
     private final List<SidebarGuiButton> buttonList = new ArrayList<>();
 
     public SidebarButtonManager() {
-        super(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), "sidebar_buttons");
+        super(ExtraCodecs.JSON, FileToIdConverter.json("sidebar_buttons"));
     }
 
     @Override
@@ -70,18 +67,25 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener {
 
     private <T> void loadResources(Map<ResourceLocation, JsonElement> objects, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer) {
         for (Map.Entry<ResourceLocation, JsonElement> resource : objects.entrySet()) {
-            JsonElement jsonElement = resource.getValue();
-            DataResult<T> parse = codec.parse(JsonOps.INSTANCE, jsonElement);
-
-            if (parse.error().isPresent()) {
-                FTBLibrary.LOGGER.error("Failed to parse json: {}", parse.error().get().message());
-            } else {
-                T result = parse.result().get();
+            codec.parse(JsonOps.INSTANCE, resource.getValue()).resultOrPartial(s ->
+                    FTBLibrary.LOGGER.error("Failed to parse json: {}", s)
+            ).ifPresent(result -> {
                 ResourceLocation key = resource.getKey();
-                String path1 = key.getPath();
                 ResourceLocation fixed = ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getPath());
                 consumer.accept(fixed, result);
-            }
+            });
+
+//            JsonElement jsonElement = resource.getValue();
+//            DataResult<T> parse = codec.parse(JsonOps.INSTANCE, jsonElement);
+//            if (parse.error().isPresent()) {
+//                FTBLibrary.LOGGER.error("Failed to parse json: {}", parse.error().get().message());
+//            } else {
+//                T result = parse.result().get();
+//                ResourceLocation key = resource.getKey();
+//                String path1 = key.getPath();
+//                ResourceLocation fixed = ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getPath());
+//                consumer.accept(fixed, result);
+//            }
         }
     }
 

@@ -134,9 +134,9 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
             });
         } else {
             graphics.pose().translate(0, 0, zLevel);
-            graphics.setColor(1f, 1f, 1f, 0.8f);
+//            graphics.setColor(1f, 1f, 1f, 0.8f);
             graphics.renderTooltip(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
-            graphics.setColor(1f, 1f, 1f, 1f);
+//            graphics.setColor(1f, 1f, 1f, 1f);
         }
         graphics.pose().popPose();
 
@@ -150,11 +150,10 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
         }
     }
 
-
     @Override
-    protected void renderBlurredBackground(float f) {
+    protected void renderBlurredBackground() {
         if (wrappedGui.shouldRenderBlur()) {
-            super.renderBlurredBackground(f);
+            super.renderBlurredBackground();
         }
     }
 

@@ -11,6 +11,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +36,7 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
     @Override
     @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+        var sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
 
         if (sprite == null) {
             return;
@@ -53,7 +54,6 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
         var maxU = sprite.getU1();
         var maxV = sprite.getV1();
 
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         RenderSystem.setShaderTexture(0, sprite.atlasLocation());
         var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);

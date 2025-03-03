@@ -35,8 +35,8 @@ public class FTBLibraryClient {
         ClientGuiEvent.INIT_POST.register(FTBLibraryClient::guiInit);
         ClientTickEvent.CLIENT_POST.register(FTBLibraryClient::clientTick);
 
-        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
-        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageResourceScreen.ResourceListener.INSTANCE);
+        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE, FTBLibrary.rl("sidebar"));
+        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageResourceScreen.ResourceListener.INSTANCE, FTBLibrary.rl("image_select"));
     }
 
     private static void guiInit(Screen screen, ScreenAccess access) {

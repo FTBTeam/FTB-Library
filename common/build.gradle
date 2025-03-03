@@ -11,9 +11,10 @@ dependencies {
         exclude group: "dev.architectury"
     }
 
-    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+//    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    modCompileOnly("mezz.jei:jei-1.21.1-common-api:${jei_version}")
 
-    modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.21:api"
+    modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.21.1:api"
 }
 
 test {

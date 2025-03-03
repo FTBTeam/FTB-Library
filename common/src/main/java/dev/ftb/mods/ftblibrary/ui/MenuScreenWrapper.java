@@ -156,9 +156,9 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
                     .orElse(Component.empty())
             );
             graphics.pose().translate(0, 0, zLevel);
-            graphics.setColor(1f, 1f, 1f, 0.8f);
+//            graphics.setColor(1f, 1f, 1f, 0.8f);
             graphics.renderTooltip(theme.getFont(), lines, DefaultTooltipPositioner.INSTANCE, mouseX, Math.max(mouseY, 18));
-            graphics.setColor(1f, 1f, 1f, 1f);
+//            graphics.setColor(1f, 1f, 1f, 1f);
         }
         graphics.pose().popPose();
 

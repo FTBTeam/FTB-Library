@@ -24,8 +24,8 @@ public class FaceIcon extends Icon {
         hat = Icon.empty();
 
         Minecraft.getInstance().getSkinManager().getOrLoad(profile).whenComplete((playerSkin, throwable) -> {
-            if (playerSkin != null) {
-                var texture = playerSkin.texture();
+            if (playerSkin.isEmpty()) {
+                var texture = playerSkin.get().texture();
                 skin = new ImageIcon(texture);
                 head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
                 hat = skin.withUV(40F, 8F, 8F, 8F, 64F, 64F);

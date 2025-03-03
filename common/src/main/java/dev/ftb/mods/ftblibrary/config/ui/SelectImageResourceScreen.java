@@ -16,6 +16,7 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -106,7 +107,7 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
                 cachedImages = images.stream().sorted().map(res -> {
                     // shorten <mod>:textures/A/B.png to <mod>:A/B
                     ResourceLocation res1 = ResourceLocation.fromNamespaceAndPath(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
+                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(res1);
                     SpriteContents contents = sprite.contents();
                     if (contents.name().equals(MissingTextureAtlasSprite.getLocation())) {
                         res1 = res;
