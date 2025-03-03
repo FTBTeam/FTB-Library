@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public enum ConfigManager {
@@ -29,7 +30,8 @@ public enum ConfigManager {
     final Map<String,TrackedConfig> pendingClient = new HashMap<>();
     final Map<String,TrackedConfig> pendingServer = new HashMap<>();
 
-    private final Map<String, TrackedConfig> trackedConfigs = new HashMap<>();
+    // concurrent because startup configs can be loaded in mod construction threads
+    private final Map<String, TrackedConfig> trackedConfigs = new ConcurrentHashMap<>();
     private boolean inited = false;
 
     public static ConfigManager getInstance() {
@@ -48,7 +50,8 @@ public enum ConfigManager {
     }
 
     /**
-     * Register a client config.
+     * Register a client config. Client configs are loaded on client setup, specifically when the
+     * Architectury {@code ClientLifecycleEvent.CLIENT_SETUP} event is fired.
      *
      * @param config the {@link SNBTConfig} object, typically created by {@code SNBTConfig.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
@@ -67,12 +70,13 @@ public enum ConfigManager {
      * @return the same config object
      */
     public SNBTConfig registerClientConfig(SNBTConfig config, String groupPrefix, BooleanConsumer onEdited) {
-        pendingClient.put(config.key, TrackedConfig.createForRegistration(groupPrefix, false, config, false, onEdited));
+        pendingClient.put(config.key, TrackedConfig.createForRegistration(groupPrefix, ConfigType.CLIENT, config, false, onEdited));
         return config;
     }
 
     /**
-     * Register a server config.
+     * Register a server config. Server configs are loaded on server startup, specifically when the
+     * Architectury {@code LifecycleEvent.SERVER_BEFORE_START} event is fired.
      *
      * @param config the {@link SNBTConfig} object, typically statically created by {@code SNBTConfig.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
@@ -94,7 +98,22 @@ public enum ConfigManager {
      * @return the same config object
      */
     public SNBTConfig registerServerConfig(SNBTConfig config, String groupPrefix, boolean sync, BooleanConsumer onEdited) {
-        pendingServer.put(config.key, TrackedConfig.createForRegistration(groupPrefix, true, config, sync, onEdited));
+        pendingServer.put(config.key, TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, sync, onEdited));
+        return config;
+    }
+
+    /**
+     * Register a startup config. Startup configs are loaded immediately, i.e. as soon as this method is called
+     * (typically from the mod constructor). Startup configs are loaded on both client and server, not
+     * synchronized, and not editable in-game. This should only be used for configuring the setup phase of mods,
+     * before the client or server are ready for use.
+     *
+     * @param config the {@link SNBTConfig} object, typically created by {@code SNBTConfig.create()}
+     * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
+     */
+    public SNBTConfig registerStartupConfig(SNBTConfig config, String groupPrefix) {
+        var tc = TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, false, TrackedConfig.NO_ACTION);
+        findAndLoad(config.key, tc, ConfigUtil.LOCAL_DIR::resolve);
         return config;
     }
 
@@ -219,12 +238,12 @@ public enum ConfigManager {
      * Create an editable ConfigGroup for this config, suitable for passing to EditConfigScreen.
      *
      * @param configName the config name, as previously registered
-     * @return a ConfigGroup object, or {@code Optional.empty()} if the config is not known
+     * @return a ConfigGroup object, or {@code Optional.empty()} if the config is not known or is a startup config
      */
     public Optional<ConfigGroup> createConfigGroup(String configName) {
         TrackedConfig tc = trackedConfigs.get(configName);
-        return tc != null ?
-                Optional.of(ConfigUtil.makeConfigEditGroup(tc.config, tc.groupPrefix, tc.isServerConfig)) :
+        return tc != null && tc.configType != ConfigType.STARTUP ?
+                Optional.of(ConfigUtil.makeConfigEditGroup(tc.config, tc.groupPrefix, tc.configType == ConfigType.SERVER)) :
                 Optional.empty();
     }
 
@@ -238,7 +257,7 @@ public enum ConfigManager {
      *                   receives true if server-side (i.e. config received from client after GUI editing),
      *                   false if client-side (i.e. config has just been edited via GUI)
      */
-    record TrackedConfig(Path loadedFrom, boolean isServerConfig, SNBTConfig config, boolean synced, BooleanConsumer onEdited, String groupPrefix) {
+    record TrackedConfig(Path loadedFrom, ConfigType configType, SNBTConfig config, boolean synced, BooleanConsumer onEdited, String groupPrefix) {
         static final BooleanConsumer NO_ACTION = isServer -> {};
 
         /**
@@ -248,7 +267,7 @@ public enum ConfigManager {
          * @return the client-side mirror of a server config
          */
         TrackedConfig clientMirrorOfServerConfig() {
-            return new TrackedConfig(null, true, config, false, onEdited, groupPrefix);
+            return new TrackedConfig(null, ConfigType.SERVER, config, false, onEdited, groupPrefix);
         }
 
         /**
@@ -258,8 +277,8 @@ public enum ConfigManager {
          * @param onChanged called when config is changed
          * @return a new proto-tracked-config object
          */
-        static TrackedConfig createForRegistration(String groupPrefix, boolean isServerConfig, SNBTConfig config, boolean sync, BooleanConsumer onChanged) {
-            return new TrackedConfig(null, isServerConfig, config, sync, onChanged, groupPrefix);
+        static TrackedConfig createForRegistration(String groupPrefix, ConfigType configType, SNBTConfig config, boolean sync, BooleanConsumer onChanged) {
+            return new TrackedConfig(null, configType, config, sync, onChanged, groupPrefix);
         }
 
         /**
@@ -269,7 +288,13 @@ public enum ConfigManager {
          * @return a new, full, tracked config
          */
         TrackedConfig promoteToFull(Path path) {
-            return new TrackedConfig(path, isServerConfig, config, synced, onEdited, groupPrefix);
+            return new TrackedConfig(path, configType, config, synced, onEdited, groupPrefix);
         }
+    }
+
+    enum ConfigType {
+        SERVER,
+        CLIENT,
+        STARTUP
     }
 }

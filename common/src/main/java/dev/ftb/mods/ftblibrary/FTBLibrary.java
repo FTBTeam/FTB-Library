@@ -8,6 +8,7 @@ import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryStartupConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.items.ModItems;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
@@ -32,6 +33,7 @@ public class FTBLibrary {
         cfgMgr.init();
         cfgMgr.registerClientConfig(FTBLibraryClientConfig.CONFIG, MOD_ID + ".client_settings");
         if (ModUtils.isDevMode()) {
+            cfgMgr.registerStartupConfig(FTBLibraryStartupConfig.CONFIG, MOD_ID + ".startup_settings");
             cfgMgr.registerServerConfig(FTBLibraryServerConfig.CONFIG, MOD_ID + ".server_settings", true, FTBLibraryServerConfig::onChanged);
         }
 
