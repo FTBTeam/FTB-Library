@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
+import dev.ftb.mods.ftblibrary.sidebar.SidebarGuiButton;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -48,5 +48,14 @@ public class StringSidebarMapValue extends BaseValue<Map<String, StringSidebarMa
 
 
     public record SideButtonInfo(boolean enabled, int xPos, int yPos) {
+        public static SideButtonInfo DISABLED = new SideButtonInfo(false, -1, -1);
+
+        public static SideButtonInfo at(int x, int y) {
+            return new SideButtonInfo(true, x, y);
+        }
+
+        public static SideButtonInfo ofButton(SidebarGuiButton button) {
+            return new SideButtonInfo(button.isEnabled(), button.getGridLocation().x(), button.getGridLocation().y());
+        }
     }
 }

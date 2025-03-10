@@ -305,13 +305,13 @@ public class SidebarGroupGuiButton extends AbstractButton {
         Map<Integer, List<SidebarGuiButton>> buttonMap = enabledButtonList
                 .stream()
                 .filter(SidebarGuiButton::isEnabled)
-                .collect(Collectors.groupingBy(button -> button.getGirdLocation().y(), TreeMap::new, Collectors.toCollection(LinkedList::new)));
+                .collect(Collectors.groupingBy(button -> button.getGridLocation().y(), TreeMap::new, Collectors.toCollection(LinkedList::new)));
 
         realLocationMap.clear();
 
         int y = 0;
         for (Map.Entry<Integer, List<SidebarGuiButton>> entry : buttonMap.entrySet()) {
-            entry.getValue().sort(Comparator.comparingInt(b -> b.getGirdLocation().x()));
+            entry.getValue().sort(Comparator.comparingInt(b -> b.getGridLocation().x()));
 
             int x = 0;
             for (SidebarGuiButton button : entry.getValue()) {
@@ -337,8 +337,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
         int girdAmountX = 1;
         int girdAmountY = 1;
         for (SidebarGuiButton b : SidebarButtonManager.INSTANCE.getEnabledButtonList(isEditMode)) {
-            girdAmountX = Math.max(girdAmountX, b.getGirdLocation().x() + 1);
-            girdAmountY = Math.max(girdAmountY, b.getGirdLocation().y() + 1);
+            girdAmountX = Math.max(girdAmountX, b.getGridLocation().x() + 1);
+            girdAmountY = Math.max(girdAmountY, b.getGridLocation().y() + 1);
         }
 
         if (isEditMode && addBoxOpen) {
@@ -469,7 +469,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
         selectedButton = mouseOver;
         GridLocation realGridLocation = realLocationMap.get(selectedButton);
-        selectedLocation = realGridLocation == null ? selectedButton.getGirdLocation() : realGridLocation;
+        selectedLocation = realGridLocation == null ? selectedButton.getGridLocation() : realGridLocation;
     }
 
     @Override
