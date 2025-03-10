@@ -1,16 +1,17 @@
 package dev.ftb.mods.ftblibrary.config.manager;
 
 import dev.architectury.event.events.client.ClientLifecycleEvent;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil;
 import net.minecraft.client.Minecraft;
 
 public class ConfigManagerClient {
     public static void initClient() {
-        ClientLifecycleEvent.CLIENT_SETUP.register(ConfigManagerClient::onClientSetup);
+        ClientLifecycleEvent.CLIENT_STARTED.register(ConfigManagerClient::onClientStarted);
     }
 
-    public static void onClientSetup(Minecraft ignoredMinecraft) {
+    private static void onClientStarted(Minecraft minecraft) {
         ConfigManager mgr = ConfigManager.getInstance();
 
         mgr.pendingClient.forEach((key, config) -> {
