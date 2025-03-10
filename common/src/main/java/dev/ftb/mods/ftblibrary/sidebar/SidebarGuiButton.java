@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
 public class SidebarGuiButton {
-
     private final RegisteredSidebarButton sidebarButton;
+
     public int x, y;
     private GridLocation gridLocation;
     private boolean enabled;
@@ -27,7 +27,7 @@ public class SidebarGuiButton {
         return sidebarButton;
     }
 
-    public GridLocation getGirdLocation() {
+    public GridLocation getGridLocation() {
         return gridLocation;
     }
 
@@ -37,5 +37,10 @@ public class SidebarGuiButton {
 
     public void setGridLocation(int x, int y) {
         this.gridLocation = new GridLocation(x, y);
+    }
+
+    @Override
+    public String toString() {
+        return sidebarButton.getId().toString();
     }
 }
