@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added the concept of startup configs to the new `ConfigManager` system
   * Startup configs are loaded at mod construction time, not sync'd and not intended for in-game editing
 
+### Fixed
+* Load client config a little earlier to avoid possible resource reloading accessing not-yet-loaded configs
+
 ## [2101.1.10]
 
 ### Added
