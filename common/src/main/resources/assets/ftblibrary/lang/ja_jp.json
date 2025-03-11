@@ -1,5 +1,5 @@
 {
-  "gui.accept": "承認",
+  "gui.accept": "承諾",
   "gui.add": "追加",
   "gui.added": "追加済み",
   "gui.remove": "削除",
@@ -20,7 +20,7 @@
   "gui.settings": "設定",
   "gui.rename": "名前を変更",
   "gui.search_box": "検索...",
-  "gui.move": "動く",
+  "gui.move": "動かす",
   "gui.copy": "コピー",
   "gui.paste": "貼り付け",
   "gui.cut": "切り取り",
