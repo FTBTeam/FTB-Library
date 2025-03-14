@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * Reduces the distracting of big tooltips popping up and down when the mouse moves over a config screen
 
 ### Changed
+* Added `ja_jp` translations (thanks @twister716)
 * Updated `ru_ru` translations (thanks @BazZziliuS)
 
 ## [2101.1.11]
