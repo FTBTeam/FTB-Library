@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.12]
+
+### Added
+* Config screens (including FTB Quests property editing) now have cleaner tooltip handling
+  * Instead of every line showing tooltip info, each line now has a "i" info button on the left to show the tooltip
+  * Reduces the distracting of big tooltips popping up and down when the mouse moves over a config screen
+
+### Changed
+* Added `ja_jp` translations (thanks @twister716)
+* Updated `ru_ru` translations (thanks @BazZziliuS)
+
 ## [2101.1.11]
 
 ### Added

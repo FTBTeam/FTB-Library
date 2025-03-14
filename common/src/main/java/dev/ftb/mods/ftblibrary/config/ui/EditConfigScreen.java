@@ -116,7 +116,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
         });
 
         setHeight(Mth.clamp(cfgHeight.intValue() + getTopPanelHeight() + BOTTOM_PANEL_H, 100, (int) (getScreen().getGuiScaledHeight() * .9f)));
-        setWidth(Mth.clamp(Math.max(widestKey + widestValue, widestGroup.intValue()) + 50, 176, (int) (getScreen().getGuiScaledWidth() * .9f)));
+        setWidth(Mth.clamp(Math.max(16 + widestKey + widestValue, widestGroup.intValue()) + 50, 176, (int) (getScreen().getGuiScaledWidth() * .9f)));
 
         return true;
     }
@@ -277,7 +277,10 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
         @Override
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            theme.drawString(graphics, keyText, x + 5, y + 2, Bits.setFlag(0, Theme.SHADOW, isMouseOver()));
+            Icons.COLOR_BLANK.withColor(Color4I.GRAY).draw(graphics, x, y + 1, 10, 10);
+            Icons.INFO.draw(graphics, x + 1, y + 2, 8, 8);
+
+            theme.drawString(graphics, keyText, x + 13, y + 2, Bits.setFlag(0, Theme.SHADOW, isMouseOver()));
 
             Component valueText = configValue.getStringForGUI(configValue.getValue());
 
@@ -294,9 +297,9 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
                 Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
             }
 
-            Color4I.GRAY.withAlpha(33).draw(graphics, x + widestKey + 10, y, 1, height);
+            Color4I.GRAY.withAlpha(33).draw(graphics, x + widestKey + 18, y, 1, height);
 
-            theme.drawString(graphics, valueText, x + widestKey + 15, y + 2, textCol, 0);
+            theme.drawString(graphics, valueText, x + widestKey + 23, y + 2, textCol, 0);
         }
 
         @Override
@@ -313,17 +316,20 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
         @Override
         public void addMouseOverText(TooltipList list) {
             if (getMouseY() > 18) {
-                list.add(keyText.copy().withStyle(ChatFormatting.UNDERLINE));
-                var tooltip = configValue.getTooltip();
+                int x = getMouseX() - getX();
+                if (x < 16) {
+                    list.add(keyText.copy().withStyle(ChatFormatting.UNDERLINE));
+                    var tooltip = configValue.getTooltip();
 
-                if (!tooltip.isEmpty()) {
-                    for (var s : tooltip.split("\n")) {
-                        list.styledString(s, Style.EMPTY.withItalic(true).withColor(TextColor.fromLegacyFormat(ChatFormatting.GRAY)));
+                    if (!tooltip.isEmpty()) {
+                        for (var s : tooltip.split("\n")) {
+                            list.styledString(s, Style.EMPTY.withItalic(true).withColor(TextColor.fromLegacyFormat(ChatFormatting.GRAY)));
+                        }
                     }
-                }
 
-                list.blankLine();
-                configValue.addInfo(list);
+                    list.blankLine();
+                    configValue.addInfo(list);
+                }
             }
         }
 
