@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.config;
 
+import com.mojang.brigadier.StringReader;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
@@ -34,7 +35,7 @@ public class NBTConfig extends ConfigFromString<CompoundTag> {
         }
 
         try {
-            return okValue(callback, TagParser.parseTag(string));
+            return okValue(callback, TagParser.parseCompoundAsArgument(new StringReader(string)));
         } catch (Exception ex) {
             return false;
         }

@@ -28,7 +28,7 @@ public class DoubleValue extends NumberValue<Double> {
 
     @Override
     public void read(SNBTCompoundTag tag) {
-        set(tag.getDouble(key));
+        set(tag.getDoubleOr(key, defaultValue));
     }
 
     @Override

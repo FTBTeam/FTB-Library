@@ -40,11 +40,12 @@ public class GuiHelper {
     private static final Stack<Scissor> SCISSOR = new Stack<>();
 
     public static void setupDrawing() {
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.blendFunc(770, 771);
+        // TODO: Validate
+//        RenderSystem.enableBlend();
+//        RenderSystem.defaultBlendFunc();
+//        RenderSystem.blendFunc(770, 771);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-        RenderSystem.enableDepthTest();
+//        RenderSystem.enableDepthTest();
         // Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
     }
 
@@ -59,7 +60,7 @@ public class GuiHelper {
         BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
-    public static void addRectToBuffer(GuiGraphics graphics, BufferBuilder buffer, int x, int y, int w, int h, Color4I col) {
+    public static void addRectToBuffer(GuiGraphics graphics, VertexConsumer buffer, int x, int y, int w, int h, Color4I col) {
         if (w <= 0 || h <= 0) {
             return;
         }
@@ -75,7 +76,7 @@ public class GuiHelper {
         buffer.addVertex(m, x, y, 0).setColor(r, g, b, a);
     }
 
-    public static void addRectToBufferWithUV(GuiGraphics graphics, BufferBuilder buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
+    public static void addRectToBufferWithUV(GuiGraphics graphics, VertexConsumer buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
         if (w <= 0 || h <= 0) {
             return;
         }
@@ -146,19 +147,19 @@ public class GuiHelper {
         graphics.pose().popPose();
     }
 
-    private static void draw(GuiGraphics graphics, Tesselator t, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-
-        var m = graphics.pose().last().pose();
-        var buffer = t.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        buffer.addVertex(m, x, y, 0).setColor(red, green, blue, alpha);
-        buffer.addVertex(m, x, y + height, 0).setColor(red, green, blue, alpha);
-        buffer.addVertex(m, x + width, y + height, 0).setColor(red, green, blue, alpha);
-        buffer.addVertex(m, x + width, y, 0).setColor(red, green, blue, alpha);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
-    }
+//    private static void draw(GuiGraphics graphics, Tesselator t, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+//        if (width <= 0 || height <= 0) {
+//            return;
+//        }
+//
+//        var m = graphics.pose().last().pose();
+//        var buffer = t.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+//        buffer.addVertex(m, x, y, 0).setColor(red, green, blue, alpha);
+//        buffer.addVertex(m, x, y + height, 0).setColor(red, green, blue, alpha);
+//        buffer.addVertex(m, x + width, y + height, 0).setColor(red, green, blue, alpha);
+//        buffer.addVertex(m, x + width, y, 0).setColor(red, green, blue, alpha);
+//        BufferUploader.drawWithShader(buffer.buildOrThrow());
+//    }
 
     public static void pushScissor(Window screen, int x, int y, int w, int h) {
         if (SCISSOR.isEmpty()) {
@@ -185,11 +186,12 @@ public class GuiHelper {
             return "";
         }
 
-        return switch (event.getAction()) {
-            case OPEN_URL, CHANGE_PAGE -> event.getValue();
-            case OPEN_FILE -> "file:" + event.getValue();
-            case RUN_COMMAND -> "command:" + event.getValue();
-            case SUGGEST_COMMAND -> "suggest_command:" + event.getValue();
+        return switch (event) {
+            case ClickEvent.OpenUrl openUrl -> openUrl.uri().toString();
+            case ClickEvent.ChangePage page -> String.valueOf(page.page());
+            case ClickEvent.OpenFile file -> "file:" + file.path();
+            case ClickEvent.RunCommand runCommand -> "command:" + runCommand.command();
+            case ClickEvent.SuggestCommand suggestCommand -> "suggest_command:" + suggestCommand.command();
             default -> "";
         };
     }

@@ -28,7 +28,7 @@ public class LongValue extends NumberValue<Long> {
 
     @Override
     public void read(SNBTCompoundTag tag) {
-        set(tag.getLong(key));
+        set(tag.getLongOr(key, defaultValue));
     }
 
     @Override

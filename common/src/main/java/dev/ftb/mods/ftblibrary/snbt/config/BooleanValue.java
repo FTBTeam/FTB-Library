@@ -27,7 +27,7 @@ public class BooleanValue extends BaseValue<Boolean> {
 
     @Override
     public void read(SNBTCompoundTag tag) {
-        set(tag.getBoolean(key));
+        set(tag.getBooleanOr(key, defaultValue));
     }
 
     @Override

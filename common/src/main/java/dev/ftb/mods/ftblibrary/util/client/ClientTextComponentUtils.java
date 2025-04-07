@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -49,12 +50,12 @@ public class ClientTextComponentUtils {
                 );
                 var output = MutableComponent.create(c);
                 if (map.containsKey("text")) {
-                    output.withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, parse(map.get("text")))));
+                    output.withStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(parse(map.get("text")))));
                 }
 
                 return output;
             } else if (map.containsKey("open_url")) {
-                return parse(map.get("text")).copy().withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, map.get("open_url"))));
+                return parse(map.get("text")).copy().withStyle(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(URI.create(map.get("open_url")))));
             }
         }
 

@@ -9,6 +9,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
+import java.lang.runtime.SwitchBootstraps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,11 +44,14 @@ public class StringListValue extends BaseValue<List<String>> {
     @Override
     public void read(SNBTCompoundTag tag) {
         var stag = tag.get(key);
-
         if (stag instanceof ListTag && (((ListTag) stag).isEmpty() || ((ListTag) stag).getElementType() == Tag.TAG_STRING)) {
             get().clear();
 
             for (var i = 0; i < ((ListTag) stag).size(); i++) {
+                if (!(stag instanceof StringTag)) {
+                    continue; // Skip if not a string
+                }
+
                 get().add(((ListTag) stag).getString(i));
             }
         }

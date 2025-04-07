@@ -40,7 +40,7 @@ public class StringValue extends BaseValue<String> {
 
     @Override
     public void read(SNBTCompoundTag tag) {
-        set(tag.getString(key));
+        set(tag.getStringOr(key, defaultValue));
     }
 
     @Override

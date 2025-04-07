@@ -43,7 +43,13 @@ public class EnumValue<T> extends BaseValue<T> {
 
     @Override
     public void read(SNBTCompoundTag tag) {
-        set(nameMap.get(tag.getString(key)));
+        var value = tag.getString(key);
+        if (value.isEmpty()) {
+            set(defaultValue);
+            return;
+        }
+
+        set(nameMap.get(value.get()));
     }
 
     @Override

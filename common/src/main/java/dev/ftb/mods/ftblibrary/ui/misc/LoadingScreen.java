@@ -1,9 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
@@ -11,6 +8,8 @@ import dev.ftb.mods.ftblibrary.ui.Theme;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 
 
@@ -50,7 +49,9 @@ public class LoadingScreen extends BaseScreen {
             var h1 = 16;
 
             var col = Color4I.WHITE;
-            var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+
+            MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
 
             GuiHelper.addRectToBuffer(graphics, buffer, x1, y1 + 1, 1, h1 - 2, col);
             GuiHelper.addRectToBuffer(graphics, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
@@ -78,8 +79,6 @@ public class LoadingScreen extends BaseScreen {
                     }
                 }
             }
-
-            BufferUploader.drawWithShader(buffer.buildOrThrow());
 
             var s = getText();
 

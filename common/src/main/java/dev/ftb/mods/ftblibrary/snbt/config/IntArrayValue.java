@@ -26,7 +26,7 @@ public class IntArrayValue extends BaseValue<int[]> {
 
     @Override
     public void read(SNBTCompoundTag tag) {
-        set(tag.getIntArray(key));
+        set(tag.getIntArray(key).orElse(defaultValue));
     }
 
     @Override

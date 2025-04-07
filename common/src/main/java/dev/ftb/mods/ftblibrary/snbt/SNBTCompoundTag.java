@@ -33,7 +33,7 @@ public class SNBTCompoundTag extends CompoundTag {
         } else if (tag instanceof CompoundTag) {
             var tag1 = new SNBTCompoundTag();
 
-            for (var s : ((CompoundTag) tag).getAllKeys()) {
+            for (var s : ((CompoundTag) tag).keySet()) {
                 tag1.put(s, ((CompoundTag) tag).get(s));
             }
 
@@ -108,7 +108,7 @@ public class SNBTCompoundTag extends CompoundTag {
     }
 
     @Override
-    public SNBTCompoundTag getCompound(String string) {
+    public Optional<SNBTCompoundTag> getCompound(String string) {
         return of(get(string));
     }
 
@@ -136,17 +136,11 @@ public class SNBTCompoundTag extends CompoundTag {
         put(key, EndTag.INSTANCE);
     }
 
-    @Nullable
-    public ListTag getNullableList(String key, byte type) {
-        var tag = get(key);
-        return tag instanceof ListTag && (((ListTag) tag).isEmpty() || type == 0 || ((ListTag) tag).getElementType() == type) ? (ListTag) tag : null;
-    }
-
     @SuppressWarnings("unchecked")
     public <T extends Tag> List<T> getList(String key, Class<T> type) {
         var tag = get(key);
 
-        if (!(tag instanceof CollectionTag<?> l)) {
+        if (!(tag instanceof CollectionTag l)) {
             return Collections.emptyList();
         }
 
@@ -166,11 +160,11 @@ public class SNBTCompoundTag extends CompoundTag {
     }
 
     public CompoundTag merge(CompoundTag other, boolean overwrite) {
-        for (String key : other.getAllKeys()) {
+        for (String key : other.keySet()) {
             Tag tag = other.get(key);
             if (tag != null && (overwrite || !this.contains(key))) {
                 if (tag.getId() == Tag.TAG_COMPOUND) {
-                    if (this.contains(key, Tag.TAG_COMPOUND)) {
+                    if (this.contains(key)) {
                         getCompound(key).merge((CompoundTag) tag, overwrite);
                     } else {
                         put(key, tag.copy());

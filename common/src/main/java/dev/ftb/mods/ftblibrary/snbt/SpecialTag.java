@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class SpecialTag implements Tag {
+public class SpecialTag {
     public static final SpecialTag TRUE = new SpecialTag(ByteTag.valueOf(true));
     public static final SpecialTag FALSE = new SpecialTag(ByteTag.valueOf(false));
     public static final SpecialTag NAN_D = new SpecialTag(DoubleTag.valueOf(Double.NaN));
@@ -30,44 +30,28 @@ public class SpecialTag implements Tag {
         return t;
     }
 
-    @Override
     public void write(DataOutput dataOutput) throws IOException {
         wrappedTag.write(dataOutput);
     }
 
-    @Override
     public byte getId() {
         return wrappedTag.getId();
     }
 
-    @Override
     public TagType<?> getType() {
         return wrappedTag.getType();
     }
 
-    @Override
-    public Tag copy() {
-        return this;
-    }
-
-    @Override
     public int sizeInBytes() {
         return 8 + wrappedTag.sizeInBytes();
     }
 
-    @Override
     public void accept(TagVisitor tagVisitor) {
         wrappedTag.accept(tagVisitor);
     }
 
-    @Override
     public StreamTagVisitor.ValueResult accept(StreamTagVisitor streamTagVisitor) {
         return wrappedTag.accept(streamTagVisitor);
-    }
-
-    @Override
-    public String getAsString() {
-        return wrappedTag.getAsString();
     }
 
     @Override

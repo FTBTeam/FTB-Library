@@ -11,14 +11,14 @@ public class SNBTNet {
 
     public static void write(FriendlyByteBuf buf, @Nullable Tag tag) {
         switch (tag) {
-            case ByteTag byteTag -> buf.writeByte(byteTag.getAsByte());
-            case ShortTag shortTag -> buf.writeShort(shortTag.getAsShort());
-            case IntTag intTag -> buf.writeInt(intTag.getAsInt());
-            case LongTag longTag -> buf.writeLong(longTag.getAsLong());
-            case FloatTag floatTag -> buf.writeFloat(floatTag.getAsFloat());
-            case DoubleTag doubleTag -> buf.writeDouble(doubleTag.getAsDouble());
+            case ByteTag byteTag -> buf.writeByte(byteTag.asByte().orElseThrow());
+            case ShortTag shortTag -> buf.writeShort(shortTag.asShort().orElseThrow());
+            case IntTag intTag -> buf.writeInt(intTag.asInt().orElseThrow());
+            case LongTag longTag -> buf.writeLong(longTag.asLong().orElseThrow());
+            case FloatTag floatTag -> buf.writeFloat(floatTag.asFloat().orElseThrow());
+            case DoubleTag doubleTag -> buf.writeDouble(doubleTag.asDouble().orElseThrow());
             case ByteArrayTag byteTags -> writeByteArray(buf, byteTags);
-            case StringTag stringTag -> buf.writeUtf(stringTag.getAsString(), Short.MAX_VALUE);
+            case StringTag stringTag -> buf.writeUtf(stringTag.asString().orElseThrow(), Short.MAX_VALUE);
             case ListTag tags -> writeList(buf, tags);
             case CompoundTag compoundTag -> writeCompound(buf, SNBTCompoundTag.of(compoundTag));
             case IntArrayTag intTags -> writeIntArray(buf, intTags);
@@ -34,9 +34,9 @@ public class SNBTNet {
             return;
         }
 
-        buf.writeVarInt(tag.getAllKeys().size());
+        buf.writeVarInt(tag.keySet().size());
 
-        for (var s : tag.getAllKeys()) {
+        for (var s : tag.keySet()) {
             buf.writeUtf(s, Short.MAX_VALUE);
             buf.writeByte(tag.get(s).getId());
             write(buf, tag.get(s));

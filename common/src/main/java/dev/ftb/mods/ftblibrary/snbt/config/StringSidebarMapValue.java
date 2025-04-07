@@ -33,13 +33,13 @@ public class StringSidebarMapValue extends BaseValue<Map<String, StringSidebarMa
     public void read(SNBTCompoundTag tag) {
         Map<String, SideButtonInfo> map = new HashMap<>();
 
-        SNBTCompoundTag compound = tag.getCompound(key);
-        for (String key : compound.getAllKeys()) {
-            SNBTCompoundTag buttonTag = compound.getCompound(key);
+        SNBTCompoundTag compound = tag.getCompound(key).orElseThrow();
+        for (String key : compound.keySet()) {
+            SNBTCompoundTag buttonTag = compound.getCompound(key).orElseThrow();
             map.put(key, new SideButtonInfo(
-                    buttonTag.getBoolean("enabled"),
-                    buttonTag.getInt("x"),
-                    buttonTag.getInt("y")
+                    buttonTag.getBooleanOr("enabled", false),
+                    buttonTag.getIntOr("x", 0),
+                    buttonTag.getIntOr("y", 0)
             ));
         }
 

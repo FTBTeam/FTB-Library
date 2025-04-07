@@ -111,7 +111,7 @@ public class SNBT {
 
             var index = 0;
 
-            Collection<String> keys = shouldSortKeysOnWrite ? compound.getAllKeys().stream().sorted().toList() : compound.getAllKeys();
+            Collection<String> keys = shouldSortKeysOnWrite ? compound.keySet().stream().sorted().toList() : compound.keySet();
             for (var key : keys) {
                 index++;
                 var properties = snbtCompoundTag == null ? SNBTTagProperties.DEFAULT : snbtCompoundTag.getProperties(key);
@@ -173,22 +173,22 @@ public class SNBT {
             }
         } else if (nbt instanceof CollectionTag) {
             if (nbt instanceof ByteArrayTag) {
-                appendCollection(builder, (CollectionTag<?>) nbt, "B;");
+                appendCollection(builder, (CollectionTag) nbt, "B;");
             } else if (nbt instanceof IntArrayTag) {
-                appendCollection(builder, (CollectionTag<?>) nbt, "I;");
+                appendCollection(builder, (CollectionTag) nbt, "I;");
             } else if (nbt instanceof LongArrayTag) {
-                appendCollection(builder, (CollectionTag<?>) nbt, "L;");
+                appendCollection(builder, (CollectionTag) nbt, "L;");
             } else {
-                appendCollection(builder, (CollectionTag<?>) nbt, "");
+                appendCollection(builder, (CollectionTag) nbt, "");
             }
-        } else if (nbt instanceof StringTag) {
-            builder.print(SNBTUtils.quoteAndEscape(nbt.getAsString()));
+        } else if (nbt instanceof StringTag stringTag) {
+            builder.print(SNBTUtils.quoteAndEscape(stringTag.asString().orElse("")));
         } else {
             builder.print(nbt.toString());
         }
     }
 
-    private static void appendCollection(SNBTBuilder builder, CollectionTag<? extends Tag> nbt, String opening) {
+    private static void appendCollection(SNBTBuilder builder, CollectionTag nbt, String opening) {
         if (nbt.isEmpty()) {
             builder.print("[");
             builder.print(opening);

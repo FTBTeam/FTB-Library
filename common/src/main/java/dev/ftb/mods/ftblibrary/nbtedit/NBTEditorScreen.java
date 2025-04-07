@@ -99,10 +99,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
     private String getInfoTitle(CompoundTag info) {
         if (info.contains("title")) {
-            MutableComponent title = Component.Serializer.fromJson(info.getString("title"), Minecraft.getInstance().level.registryAccess());
+            MutableComponent title = Component.Serializer.fromJson(info.getStringOr("title", ""), Minecraft.getInstance().level.registryAccess());
             if (title != null) return title.getString();
         } else if (info.contains("type")) {
-            return info.getString("type").toUpperCase();
+            return info.getStringOr("type", "").toUpperCase();
         }
         return "ROOT";
     }
@@ -294,7 +294,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                 case Tag.TAG_INT -> setIcon(NBT_INT);
                 case Tag.TAG_LONG -> setIcon(NBT_LONG);
                 case Tag.TAG_FLOAT -> setIcon(NBT_FLOAT);
-                case Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> setIcon(NBT_DOUBLE);
+                case Tag.TAG_DOUBLE -> setIcon(NBT_DOUBLE);
                 case Tag.TAG_STRING -> setIcon(NBT_STRING);
             }
 
@@ -305,10 +305,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         @Override
         public void updateTitle() {
             Object value = switch (nbt.getId()) {
-                case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT -> ((NumericTag) nbt).getAsInt();
-                case Tag.TAG_LONG -> ((NumericTag) nbt).getAsLong();
-                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> ((NumericTag) nbt).getAsDouble();
-                case Tag.TAG_STRING -> nbt.getAsString();
+                case Tag.TAG_BYTE -> nbt.asByte().orElse((byte) 0);
+                case Tag.TAG_SHORT -> nbt.asShort().orElse((short) 0);
+                case Tag.TAG_INT -> nbt.asInt().orElse(0);
+                case Tag.TAG_LONG -> nbt.asLong().orElse(0L);
+                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE -> nbt.asDouble().orElse(0D);
+                case Tag.TAG_STRING -> nbt.asString().orElse("");
                 default -> "";
             };
 
@@ -343,12 +345,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         public void edit() {
             switch (nbt.getId()) {
                 case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
-                        openEditOverlay(new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), ((NumericTag) nbt).getAsInt());
+                        openEditOverlay(new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), nbt.asInt().orElseThrow());
                 case Tag.TAG_LONG ->
-                        openEditOverlay(new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE), ((NumericTag) nbt).getAsLong());
-                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC ->
-                        openEditOverlay(new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), ((NumericTag) nbt).getAsDouble());
-                case Tag.TAG_STRING -> openEditOverlay(new StringConfig(), nbt.getAsString());
+                        openEditOverlay(new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE), nbt.asLong().orElseThrow());
+                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE ->
+                        openEditOverlay(new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), nbt.asDouble().orElseThrow());
+                case Tag.TAG_STRING -> openEditOverlay(new StringConfig(), nbt.asString().orElseThrow());
             }
         }
 
@@ -366,7 +368,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                     case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
                             nbt = IntTag.valueOf(((Number) value.getValue()).intValue());
                     case Tag.TAG_LONG -> nbt = LongTag.valueOf(((Number) value.getValue()).longValue());
-                    case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC ->
+                    case Tag.TAG_FLOAT, Tag.TAG_DOUBLE ->
                             nbt = DoubleTag.valueOf(((Number) value.getValue()).doubleValue());
                     case Tag.TAG_STRING -> nbt = StringTag.valueOf(value.getValue().toString());
                 }
@@ -469,7 +471,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         public void updateChildren(boolean first) {
             children.clear();
 
-            map.getAllKeys().stream().sorted(StringUtils.IGNORE_CASE_COMPARATOR).forEach(key -> {
+            map.keySet().stream().sorted(StringUtils.IGNORE_CASE_COMPARATOR).forEach(key -> {
                 var nbt = makeNBTButton(this, key);
                 children.put(key, nbt);
                 nbt.updateChildren(first);
@@ -485,7 +487,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         private void updateHoverIcon() {
             hoverIcon = Icon.empty();
 
-            if (map.contains("id", Tag.TAG_STRING) && map.contains("Count", Tag.TAG_ANY_NUMERIC)) {
+            if (map.contains("id") && map.contains("Count")) {
                 ItemStack.parse(Minecraft.getInstance().level.registryAccess(), map)
                         .ifPresent(stack -> hoverIcon = ItemIcon.getItemIcon(stack));
             }
@@ -496,13 +498,13 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         @Override
         public void addMouseOverText(TooltipList list) {
             if (this == buttonNBTRoot) {
-                var infoList = info.getList("text", Tag.TAG_STRING);
+                var infoList = info.getListOrEmpty("text");
 
                 if (!infoList.isEmpty()) {
                     list.add(Component.translatable("gui.info").append(":"));
 
                     for (var i = 0; i < infoList.size(); i++) {
-                        var component = Component.Serializer.fromJson(infoList.getString(i), Minecraft.getInstance().level.registryAccess());
+                        var component = Component.Serializer.fromJson(infoList.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess());
 
                         if (component != null) {
                             list.add(component);
@@ -557,11 +559,11 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             if (this == buttonNBTRoot) {
                 var infoList1 = new ListTag();
-                var infoList0 = info.getList("text", Tag.TAG_STRING);
+                var infoList0 = info.getListOrEmpty("text");
 
                 if (!infoList0.isEmpty()) {
                     for (var i = 0; i < infoList0.size(); i++) {
-                        var component = Component.Serializer.fromJson(infoList0.getString(i), Minecraft.getInstance().level.registryAccess());
+                        var component = Component.Serializer.fromJson(infoList0.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess());
 
                         if (component != null) {
                             infoList1.add(StringTag.valueOf(component.getString()));
@@ -665,10 +667,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             if (id == -1) {
                 if (base != null) {
-                    list.add(((NumericTag) base).getAsByte());
+                    list.add(base.asByte().orElse((byte) 0));
                 }
             } else if (base != null) {
-                list.set(id, ((NumericTag) base).getAsByte());
+                list.set(id, base.asByte().orElse((byte) 0));
             } else {
                 list.removeByte(id);
             }
@@ -719,10 +721,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             if (id == -1) {
                 if (base != null) {
-                    list.add(((NumericTag) base).getAsInt());
+                    list.add(base.asInt().orElse(0));
                 }
             } else if (base != null) {
-                list.set(id, ((NumericTag) base).getAsInt());
+                list.set(id, base.asInt().orElse(0));
             } else {
                 list.rem(id);
             }

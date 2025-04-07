@@ -4,6 +4,7 @@ import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -11,7 +12,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.UUID;
 
 public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implements CustomPacketPayload {
     public static final Type<EditNBTResponsePacket> TYPE = new Type<>(FTBLibrary.rl("edit_nbt_response"));
@@ -30,9 +35,9 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
             CompoundTag tag = packet.tag;
 
             if (info.equals(FTBLibraryCommands.EDITING_NBT.remove(player.getUUID()))) {
-                switch (info.getString("type")) {
+                switch (info.getStringOr("type", "")) {
                     case "block" -> {
-                        var pos = new BlockPos(info.getInt("x"), info.getInt("y"), info.getInt("z"));
+                        var pos = new BlockPos(info.getIntOr("x", 0), info.getIntOr("y", 0), info.getIntOr("z", 0));
                         if (player.level().isLoaded(pos)) {
                             var blockEntity = player.level().getBlockEntity(pos);
 
@@ -40,7 +45,7 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
                                 tag.putInt("x", pos.getX());
                                 tag.putInt("y", pos.getY());
                                 tag.putInt("z", pos.getZ());
-                                tag.putString("id", info.getString("id"));
+                                tag.putString("id", info.getString("id").orElseThrow());
                                 blockEntity.loadWithComponents(tag, player.level().registryAccess());
                                 blockEntity.setChanged();
                                 player.level().sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
@@ -48,7 +53,7 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
                         }
                     }
                     case "entity" -> {
-                        var entity = player.level().getEntity(info.getInt("id"));
+                        var entity = player.level().getEntity(info.getInt("id").orElseThrow());
 
                         if (entity != null) {
                             var uUID = entity.getUUID();
@@ -57,13 +62,13 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
                         }
                     }
                     case "player" -> {
-                        var player1 = player.getServer().getPlayerList().getPlayer(info.getUUID("id"));
+                        var player1 = player.getServer().getPlayerList().getPlayer(info.read("id", UUIDUtil.CODEC).orElse(null));
 
                         if (player1 != null) {
                             var uUID = player1.getUUID();
                             player1.load(tag);
                             player1.setUUID(uUID);
-                            player1.moveTo(player1.getX(), player1.getY(), player1.getZ());
+                            player1.move(MoverType.PLAYER, new Vec3(player1.getX(), player1.getY(), player1.getZ()));
                         }
                     }
                     case "item" -> ItemStack.parse(player.registryAccess(), tag)

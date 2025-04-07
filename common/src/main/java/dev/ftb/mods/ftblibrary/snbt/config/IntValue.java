@@ -28,7 +28,7 @@ public class IntValue extends NumberValue<Integer> {
 
     @Override
     public void read(SNBTCompoundTag tag) {
-        set(tag.getInt(key));
+        set(tag.getIntOr(key, defaultValue));
     }
 
     @Override

@@ -64,7 +64,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
 
             if (s.length >= 4 && !s[3].equals("null")) {
                 try {
-                    DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseTag(s[3]))
+                    DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseCompoundFully(s[3]))
                             .resultOrPartial(err -> FTBLibrary.LOGGER.error("can't parse data component map for {}: {}", s[3], err))
                             .ifPresent(stack::applyComponents);
                 } catch (CommandSyntaxException ex) {

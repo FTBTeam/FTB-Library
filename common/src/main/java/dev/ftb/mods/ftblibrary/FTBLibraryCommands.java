@@ -21,6 +21,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -173,7 +174,7 @@ public class FTBLibraryCommands {
         var player = EntityArgument.getPlayer(context, "player");
 
         info.putString("type", "player");
-        info.putUUID("id", player.getUUID());
+        info.store("id", UUIDUtil.CODEC, player.getUUID());
 
         player.saveWithoutId(tag);
         tag.remove("id");
@@ -223,7 +224,7 @@ public class FTBLibraryCommands {
         tag.remove("x");
         tag.remove("y");
         tag.remove("z");
-        info.putString("id", tag.getString("id"));
+        info.putString("id", tag.getString("id").orElseThrow());
         tag.remove("id");
 
         var key = RegistrarManager.getId(blockEntity.getType(), Registries.BLOCK_ENTITY_TYPE);

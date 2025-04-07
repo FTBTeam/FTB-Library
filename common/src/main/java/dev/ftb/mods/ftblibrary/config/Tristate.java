@@ -31,7 +31,7 @@ public enum Tristate {
     }
 
     public static Tristate read(CompoundTag nbt, String key) {
-        return nbt.contains(key) ? nbt.getBoolean(key) ? TRUE : FALSE : DEFAULT;
+        return nbt.contains(key) ? nbt.getBooleanOr(key, false) ? TRUE : FALSE : DEFAULT;
     }
 
     public static Tristate read(FriendlyByteBuf buffer) {

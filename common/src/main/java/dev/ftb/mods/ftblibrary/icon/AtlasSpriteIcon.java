@@ -1,19 +1,15 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 import org.jetbrains.annotations.Nullable;
 
 public class AtlasSpriteIcon extends Icon implements IResourceIcon {
@@ -54,9 +50,11 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
         var maxU = sprite.getU1();
         var maxV = sprite.getV1();
 
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-        RenderSystem.setShaderTexture(0, sprite.atlasLocation());
-        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        // TODO: Validate
+        RenderType renderType = RenderType.guiTextured(id);
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer buffer = bufferSource.getBuffer(renderType);
+
         buffer.addVertex(m, x, y, 0F)
                 .setUv(minU, minV)
                 .setColor(r, g, b, a);
@@ -69,7 +67,6 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
         buffer.addVertex(m, x + w, y, 0F)
                 .setUv(maxU, minV)
                 .setColor(r, g, b, a);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
     @Override

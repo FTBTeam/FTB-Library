@@ -94,16 +94,16 @@ class SNBTParser {
         var s = readWordString(first);
 
         return switch (s) {
-            case "true" -> SpecialTag.TRUE;
-            case "false" -> SpecialTag.FALSE;
+            case "true" -> SpecialTag.TRUE.wrappedTag;
+            case "false" -> SpecialTag.FALSE.wrappedTag;
             case "null", "end", "END" -> EndTag.INSTANCE;
             case "Infinity", "Infinityd", "+Infinity", "+Infinityd", "∞", "∞d", "+∞", "+∞d" ->
-                    SpecialTag.POS_INFINITY_D;
-            case "-Infinity", "-Infinityd", "-∞", "-∞d" -> SpecialTag.NEG_INFINITY_D;
-            case "NaN", "NaNd" -> SpecialTag.NAN_D;
-            case "Infinityf", "+Infinityf", "∞f", "+∞f" -> SpecialTag.POS_INFINITY_F;
-            case "-Infinityf", "-∞f" -> SpecialTag.NEG_INFINITY_F;
-            case "NaNf" -> SpecialTag.NAN_F;
+                    SpecialTag.POS_INFINITY_D.wrappedTag;
+            case "-Infinity", "-Infinityd", "-∞", "-∞d" -> SpecialTag.NEG_INFINITY_D.wrappedTag;
+            case "NaN", "NaNd" -> SpecialTag.NAN_D.wrappedTag;
+            case "Infinityf", "+Infinityf", "∞f", "+∞f" -> SpecialTag.POS_INFINITY_F.wrappedTag;
+            case "-Infinityf", "-∞f" -> SpecialTag.NEG_INFINITY_F.wrappedTag;
+            case "NaNf" -> SpecialTag.NAN_F.wrappedTag;
             default -> switch (SNBTUtils.getNumberType(s)) {
                 case Tag.TAG_BYTE -> ByteTag.valueOf(Byte.parseByte(s.substring(0, s.length() - 1)));
                 case Tag.TAG_SHORT -> ShortTag.valueOf(Short.parseShort(s.substring(0, s.length() - 1)));
@@ -158,7 +158,7 @@ class SNBTParser {
         }
     }
 
-    private CollectionTag<?> readCollection() {
+    private CollectionTag readCollection() {
         var prevPos = position;
         var next1 = nextNS();
         var next2 = nextNS();
@@ -194,7 +194,7 @@ class SNBTParser {
         }
     }
 
-    private CollectionTag<?> readArray(int pos, char type) {
+    private CollectionTag readArray(int pos, char type) {
         List<Integer> intList = new ArrayList<>();
         List<Long> longList = new ArrayList<>();
         List<Byte> byteList = new ArrayList<>();
@@ -206,9 +206,17 @@ class SNBTParser {
 
             if (c == ']') {
                 return switch (type) {
-                    case 'i' -> new IntArrayTag(intList);
-                    case 'l' -> new LongArrayTag(longList);
-                    case 'b' -> new ByteArrayTag(byteList);
+                    case 'i' -> new IntArrayTag(intList.stream().mapToInt(e -> e).toArray());
+                    case 'l' -> new LongArrayTag(longList.stream().mapToLong(e -> e).toArray());
+                    case 'b' -> {
+                        // Create a raw byte array
+                        byte[] bytes = new byte[byteList.size()];
+                        for (int i = 0; i < byteList.size(); i++) {
+                            bytes[i] = byteList.get(i);
+                        }
+
+                        yield new ByteArrayTag(bytes);
+                    }
                     default -> throw new SNBTSyntaxException("Unknown array type: " + type + " @ " + posString(pos));
                 };
             } else if (c == ',') {
@@ -218,9 +226,9 @@ class SNBTParser {
             var tag = SpecialTag.unwrap(readTag(c));
             if (tag instanceof NumericTag numericTag) {
                 switch (type) {
-                    case 'i' -> intList.add(numericTag.getAsInt());
-                    case 'l' -> longList.add(numericTag.getAsLong());
-                    case 'b' -> byteList.add(numericTag.getAsByte());
+                    case 'i' -> intList.add(numericTag.asInt().orElseThrow());
+                    case 'l' -> longList.add(numericTag.asLong().orElseThrow());
+                    case 'b' -> byteList.add(numericTag.asByte().orElseThrow());
                 }
             } else {
                 throw new SNBTSyntaxException("Unexpected tag '" + tag + "' in list @ " + posString() + " - expected a numeric tag!");

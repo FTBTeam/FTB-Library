@@ -28,7 +28,7 @@ public abstract class BaseContainer extends AbstractContainerMenu {
             }
         }
 
-        var i = ignoreCurrent ? playerInventory.selected : -1;
+        var i = ignoreCurrent ? playerInventory.getSelectedSlot() : -1;
 
         for (var x = 0; x < 9; x++) {
             if (x != i) {

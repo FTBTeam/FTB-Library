@@ -2,15 +2,14 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 
 
 public class BulletIcon extends Icon {
@@ -90,16 +89,15 @@ public class BulletIcon extends Icon {
             cd = colorD;
         }
 
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        // TODO: Validate
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
 
         GuiHelper.addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
         GuiHelper.addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);
         GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y, w - 2, 1, inverse ? cd : cb);
         GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd);
         GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + 1, w - 2, h - 2, c);
-
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
     @Override
