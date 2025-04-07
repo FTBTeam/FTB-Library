@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -11,6 +10,7 @@ import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue.SideButtonInfo;
 import dev.ftb.mods.ftblibrary.util.MapUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -20,7 +20,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-
 
 public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonElement> {
 

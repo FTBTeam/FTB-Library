@@ -91,14 +91,14 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
 
     @Override
     public int getPixelBufferFrameCount() {
-        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+        var sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
 
         return sprite.contents().getFrameCount();
     }
 
     @Override
     public double aspectRatio() {
-        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+        var sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
 
         return (double) sprite.contents().width() / (double) sprite.contents().height();
     }
