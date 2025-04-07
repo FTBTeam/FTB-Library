@@ -3,3 +3,4 @@ accessWidener v1 named
 accessible  class   net/minecraft/client/gui/components/MultilineTextField$StringView
 extendable  class   net/minecraft/nbt/CompoundTag
 accessible method net/minecraft/nbt/CompoundTag <init> (Ljava/util/Map;)V
+accessible  method  net/minecraft/client/renderer/texture/SpriteContents getFrameCount ()I

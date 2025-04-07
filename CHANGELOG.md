@@ -4,6 +4,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.12]
+
+### Added
+* Config screens (including FTB Quests property editing) now have cleaner tooltip handling
+  * Instead of every line showing tooltip info, each line now has a "i" info button on the left to show the tooltip
+  * Reduces the distracting of big tooltips popping up and down when the mouse moves over a config screen
+
+### Changed
+* Added `ja_jp` translations (thanks @twister716)
+* Updated `ru_ru` translations (thanks @BazZziliuS)
+
+## [2101.1.11]
+
+### Added
+* Added the concept of startup configs to the new `ConfigManager` system
+  * Startup configs are loaded at mod construction time, not sync'd and not intended for in-game editing
+
+### Fixed
+* Load client config a little earlier to avoid possible resource reloading accessing not-yet-loaded configs
+
+## [2101.1.10]
+
+### Added
+* Added a new config system implementation. **IMPORTANT CHANGE** for modpack developers and server admins!
+  * Existing system still works but is considered deprecated. So far, only FTB Library client config uses the new system
+    * Other FTB mods will be migrated to the new system soon and similar notes will be added to their changelogs
+  * Default configs are no longer loaded from `defaultconfigs/` - this folder is now **ignored** by FTB Library
+  * Configs should be distributed by modpacks in the `config/` folder
+  * Config overrides are also checked for in `local/` (client configs) and `<world>/serverconfig/` (server configs) and loaded from there in preference; server admins can use this to have custom local configuration if desired
+
+### Fixed
+* Fixed several atlas texture sizes which weren't 16x16
+
+## [2101.1.9]
+
+* Added a `Icon#aspectRatio()` method, which the image width / height
+  * Returns 1 for most icon types, but image and atlas sprite icons may have a different aspect ratio
+  * Logical image size is used, so animated textures will return the correct ratio
+
+## [2101.1.8]
+
+### Added
+* Added a `Icon#getPixelBufferFrameCount()` method
+  * Returns the number of animation frames in an atlas sprite icon, as controlled by .mcmeta file
+  * Always returns 1 for non-atlas-sprite icons (including `AnimationIcon`, which is just a list of `Icon` !)
+
+## [2101.1.7]
+
+## Fixed
+* Fixed some icons not rendering correctly 
+  * Specifically, "empty" icons were rendering as white squares instead of falling back to an appropriate default in FTB Quests
+
 ## [2101.1.6]
 
 ### Fixed

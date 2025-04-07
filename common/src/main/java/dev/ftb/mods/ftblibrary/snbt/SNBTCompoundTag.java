@@ -166,12 +166,12 @@ public class SNBTCompoundTag extends CompoundTag {
     }
 
     public CompoundTag merge(CompoundTag other, boolean overwrite) {
-        for (String key : other.keySet()) {
+        for (String key : other.getAllKeys()) {
             Tag tag = other.get(key);
             if (tag != null && (overwrite || !this.contains(key))) {
                 if (tag.getId() == Tag.TAG_COMPOUND) {
-                    if (this.contains(key)) {
-                        getCompound(key).orElseThrow().merge((CompoundTag) tag);// TODO: this used to support overriding?
+                    if (this.contains(key, Tag.TAG_COMPOUND)) {
+                        getCompound(key).merge((CompoundTag) tag, overwrite);
                     } else {
                         put(key, tag.copy());
                     }

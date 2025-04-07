@@ -25,8 +25,7 @@ public class FTBLibraryClient {
     public static CursorType lastCursorType = null;
 
     public static void init() {
-//        FTBLibraryClientConfig.load();
-
+        FTBLibraryClientConfig.load();
         // Datagens hahayes
         if (Minecraft.getInstance() == null) {
             return;

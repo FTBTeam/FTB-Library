@@ -82,10 +82,25 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
     @Nullable
     public PixelBuffer createPixelBuffer() {
         try {
-            return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/" + id.getPath() + ".png")).orElseThrow().open());
+            ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/" + id.getPath() + ".png");
+            return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(loc).orElseThrow().open());
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    @Override
+    public int getPixelBufferFrameCount() {
+        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+
+        return sprite.contents().getFrameCount();
+    }
+
+    @Override
+    public double aspectRatio() {
+        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+
+        return (double) sprite.contents().width() / (double) sprite.contents().height();
     }
 
     @Override

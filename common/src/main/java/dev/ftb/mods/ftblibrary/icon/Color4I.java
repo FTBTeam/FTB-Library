@@ -58,6 +58,11 @@ public class Color4I extends Icon {
         public boolean equals(Object o) {
             return o == this;
         }
+
+        @Override
+        public String toString() {
+            return "";  // see Icon.isNone()
+        }
     };
 
     private static final Color4I[] BLACK_A = Util.make(new Color4I[256], array -> {
