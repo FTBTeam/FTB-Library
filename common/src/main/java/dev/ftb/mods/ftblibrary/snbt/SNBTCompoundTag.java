@@ -108,7 +108,13 @@ public class SNBTCompoundTag extends CompoundTag {
     }
 
     @Override
-    public Optional<SNBTCompoundTag> getCompound(String string) {
+    public Optional<CompoundTag> getCompound(String string) {
+        // TODO: This is broken
+        return Optional.of(of(get(string)));
+//        return of(get(string));
+    }
+
+    public SNBTCompoundTag getAsSnbtComponent(String string) {
         return of(get(string));
     }
 
@@ -165,7 +171,7 @@ public class SNBTCompoundTag extends CompoundTag {
             if (tag != null && (overwrite || !this.contains(key))) {
                 if (tag.getId() == Tag.TAG_COMPOUND) {
                     if (this.contains(key)) {
-                        getCompound(key).merge((CompoundTag) tag, overwrite);
+                        getCompound(key).orElseThrow().merge((CompoundTag) tag);// TODO: this used to support overriding?
                     } else {
                         put(key, tag.copy());
                     }

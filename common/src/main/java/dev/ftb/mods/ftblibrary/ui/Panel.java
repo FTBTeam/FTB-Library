@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
@@ -194,9 +196,9 @@ public abstract class Panel extends Widget {
 
         drawBackground(graphics, theme, x, y, w, h);
 
-        if (renderInside) {
-            GuiHelper.pushScissor(getScreen(), x, y, w, h);
-        }
+//        if (renderInside) {
+//            GuiHelper.pushScissor(getScreen(), x, y, w, h);
+//        }
 
         setOffset(true);
 
@@ -212,9 +214,9 @@ public abstract class Panel extends Widget {
 
         setOffset(false);
 
-        if (renderInside) {
-            GuiHelper.popScissor(getScreen());
-        }
+//        if (renderInside) {
+//            GuiHelper.popScissor(getScreen());
+//        }
     }
 
     public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {

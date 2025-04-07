@@ -50,8 +50,7 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
         var maxU = sprite.getU1();
         var maxV = sprite.getV1();
 
-        // TODO: Validate
-        RenderType renderType = RenderType.guiTextured(id);
+        RenderType renderType = RenderType.guiTextured(sprite.atlasLocation());
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer buffer = bufferSource.getBuffer(renderType);
 

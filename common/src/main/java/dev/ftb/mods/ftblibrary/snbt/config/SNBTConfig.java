@@ -61,7 +61,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
             }
         } else {
             if (tag.contains(key)) {
-                var newTag = tag.getCompound(key).orElseThrow();
+                var newTag = tag.getAsSnbtComponent(key);
                 for (var value : defaultValue) {
                     if (newTag.contains(value.key)) {
                         value.read(newTag);

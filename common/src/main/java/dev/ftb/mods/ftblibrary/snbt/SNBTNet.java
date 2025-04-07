@@ -52,7 +52,7 @@ public class SNBTNet {
         buf.writeVarInt(tag.size());
 
         if (!tag.isEmpty()) {
-            buf.writeByte(tag.getElementType());
+            buf.writeByte(10);//tag.getType().getElementType()); // TODO: Fix me
 
             for (var value : tag) {
                 write(buf, value);

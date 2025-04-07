@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -9,6 +10,8 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -53,11 +56,9 @@ public class GuiHelper {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(event, pitch));
     }
 
-    public static void drawTexturedRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
+    public static void drawTexturedRect(GuiGraphics graphics, VertexConsumer buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         addRectToBufferWithUV(graphics, buffer, x, y, w, h, col, u0, v0, u1, v1);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
     public static void addRectToBuffer(GuiGraphics graphics, VertexConsumer buffer, int x, int y, int w, int h, Color4I col) {
@@ -98,7 +99,8 @@ public class GuiHelper {
             return;
         }
 
-        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
 
         addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, col);
         addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
@@ -110,12 +112,12 @@ public class GuiHelper {
             addRectToBuffer(graphics, buffer, x, y, w, 1, col);
             addRectToBuffer(graphics, buffer, x, y + h - 1, w, 1, col);
         }
-
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
     public static void drawRectWithShade(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, int intensity) {
-        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+
         addRectToBuffer(graphics, buffer, x, y, w - 1, 1, col);
         addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 1, col);
         col = col.mutable().addBrightness(-intensity);
@@ -124,7 +126,6 @@ public class GuiHelper {
         col = col.mutable().addBrightness(-intensity);
         addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
         addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 1, 1, col);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
     public static void drawGradientRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col1, Color4I col2) {
@@ -163,7 +164,7 @@ public class GuiHelper {
 
     public static void pushScissor(Window screen, int x, int y, int w, int h) {
         if (SCISSOR.isEmpty()) {
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GlStateManager._enableScissorTest();
         }
 
         var scissor = SCISSOR.isEmpty() ? new Scissor(x, y, w, h) : SCISSOR.lastElement().crop(x, y, w, h);
@@ -175,7 +176,7 @@ public class GuiHelper {
         SCISSOR.pop();
 
         if (SCISSOR.isEmpty()) {
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            GlStateManager._disableScissorTest();
         } else {
             SCISSOR.lastElement().scissor(screen);
         }
@@ -253,7 +254,7 @@ public class GuiHelper {
             var sy = (int) ((screen.getGuiScaledHeight() - (y + h)) * scale);
             var sw = (int) (w * scale);
             var sh = (int) (h * scale);
-            GL11.glScissor(sx, sy, sw, sh);
+            GlStateManager._scissorBox(sx, sy, sw, sh);
         }
     }
 }

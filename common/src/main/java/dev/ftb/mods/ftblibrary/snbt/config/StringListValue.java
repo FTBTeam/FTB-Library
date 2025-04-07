@@ -44,7 +44,7 @@ public class StringListValue extends BaseValue<List<String>> {
     @Override
     public void read(SNBTCompoundTag tag) {
         var stag = tag.get(key);
-        if (stag instanceof ListTag && (((ListTag) stag).isEmpty() || ((ListTag) stag).getElementType() == Tag.TAG_STRING)) {
+        if (stag instanceof ListTag && (((ListTag) stag).isEmpty())) { //|| ((ListTag) stag).getElementType() == Tag.TAG_STRING)) {// TODO: fix me
             get().clear();
 
             for (var i = 0; i < ((ListTag) stag).size(); i++) {
@@ -52,7 +52,7 @@ public class StringListValue extends BaseValue<List<String>> {
                     continue; // Skip if not a string
                 }
 
-                get().add(((ListTag) stag).getString(i));
+                get().add(((ListTag) stag).getString(i).orElseThrow());
             }
         }
     }

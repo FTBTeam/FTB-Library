@@ -78,7 +78,7 @@ public class ImageIcon extends Icon implements IResourceIcon {
 
         // TODO: Validate
         if (tileSize <= 0D) {
-            GuiHelper.drawTexturedRect(graphics, x, y, w, h, color, minU, minV, maxU, maxV);
+            GuiHelper.drawTexturedRect(graphics, buffer, x, y, w, h, color, minU, minV, maxU, maxV);
         } else {
             var r = color.redi();
             var g = color.greeni();
