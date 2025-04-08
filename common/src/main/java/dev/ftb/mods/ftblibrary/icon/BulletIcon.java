@@ -89,7 +89,6 @@ public class BulletIcon extends Icon {
             cd = colorD;
         }
 
-        // TODO: Validate
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
 

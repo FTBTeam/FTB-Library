@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.systems.RenderPass;
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
