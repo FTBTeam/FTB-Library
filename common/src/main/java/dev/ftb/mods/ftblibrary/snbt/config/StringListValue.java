@@ -7,9 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 
-import java.lang.runtime.SwitchBootstraps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,15 +42,11 @@ public class StringListValue extends BaseValue<List<String>> {
     @Override
     public void read(SNBTCompoundTag tag) {
         var stag = tag.get(key);
-        if (stag instanceof ListTag && (((ListTag) stag).isEmpty())) { //|| ((ListTag) stag).getElementType() == Tag.TAG_STRING)) {// TODO: fix me
+        if (stag instanceof ListTag l && (l.isEmpty() || l.getFirst() instanceof StringTag)) {
             get().clear();
 
-            for (var i = 0; i < ((ListTag) stag).size(); i++) {
-                if (!(stag instanceof StringTag)) {
-                    continue; // Skip if not a string
-                }
-
-                get().add(((ListTag) stag).getString(i).orElseThrow());
+            for (var i = 0; i < l.size(); i++) {
+                get().add(l.getStringOr(i, ""));
             }
         }
     }
@@ -61,7 +55,6 @@ public class StringListValue extends BaseValue<List<String>> {
     @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
         group.addList(key, get(), new StringConfig(null), "")
-                .setCanEdit(enabled.getAsBoolean())
-        ;
+                .setCanEdit(enabled.getAsBoolean());
     }
 }
