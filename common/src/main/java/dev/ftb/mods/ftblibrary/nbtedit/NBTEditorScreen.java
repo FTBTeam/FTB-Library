@@ -628,7 +628,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
         @Override
         public boolean canCreateNew(int id) {
-            return list.isEmpty(); //|| list.getElementType() == id; // TODO: fix this
+            return list.isEmpty() || list.getFirst().getId() == id;
         }
 
         @Override
