@@ -40,8 +40,6 @@ public class GuiHelper {
     private static final BiFunction<Color4I, Boolean, Color4I> BRIGHTEN = Util.memoize((col, outset) -> col.addBrightness(outset ? 0.15f : -0.1f));
     private static final BiFunction<Color4I, Boolean, Color4I> DARKEN = Util.memoize((col, outset) -> col.addBrightness(outset ? -0.1f : 0.15f));
 
-    private static final Stack<Scissor> SCISSOR = new Stack<>();
-
     public static void setupDrawing() {
         // TODO: Validate
 //        RenderSystem.enableBlend();
@@ -162,27 +160,6 @@ public class GuiHelper {
 //        BufferUploader.drawWithShader(buffer.buildOrThrow());
 //    }
 
-    public static void pushScissor(Window screen, GuiGraphics graphics, int x, int y, int w, int h) {
-        if (SCISSOR.isEmpty()) {
-//            GlStateManager._enableScissorTest();
-        }
-
-        var scissor = SCISSOR.isEmpty() ? new Scissor(x, y, w, h) : SCISSOR.lastElement().crop(x, y, w, h);
-        SCISSOR.push(scissor);
-        scissor.scissor(screen, graphics);
-    }
-
-    public static void popScissor(Window screen, GuiGraphics graphics) {
-        SCISSOR.pop();
-
-        if (SCISSOR.isEmpty()) {
-            graphics.disableScissor();
-//            GlStateManager._disableScissorTest();
-        } else {
-            SCISSOR.lastElement().scissor(screen, graphics);
-        }
-    }
-
     public static String clickEventToString(@Nullable ClickEvent event) {
         if (event == null) {
             return "";
@@ -229,34 +206,5 @@ public class GuiHelper {
         graphics.vLine(x, y + h, y + h, color.rgba());
         graphics.hLine(x + 1, x + w, y + h, lo.rgba());
         graphics.vLine(x + w, y, y + h, lo.rgba());
-    }
-
-    private static class Scissor {
-        private final int x, y, w, h;
-
-        private Scissor(int _x, int _y, int _w, int _h) {
-            x = _x;
-            y = _y;
-            w = Math.max(0, _w);
-            h = Math.max(0, _h);
-        }
-
-        public Scissor crop(int sx, int sy, int sw, int sh) {
-            var x0 = Math.max(x, sx);
-            var y0 = Math.max(y, sy);
-            var x1 = Math.min(x + w, sx + sw);
-            var y1 = Math.min(y + h, sy + sh);
-            return new Scissor(x0, y0, x1 - x0, y1 - y0);
-        }
-
-        public void scissor(Window screen, GuiGraphics graphics) {
-            var scale = screen.getGuiScale();
-//            var sx = (int) (x * scale);
-//            var sy = (int) ((screen.getGuiScaledHeight() - (y + h)) * scale);
-//            var sw = (int) (w * scale);
-//            var sh = (int) (h * scale);
-            graphics.enableScissor(this.x, this.y, this.x + this.w, this.y + this.h);
-//            GlStateManager._scissorBox(sx, sy, sw, sh);
-        }
     }
 }
