@@ -35,5 +35,6 @@
     "fabric": "${fabricapiversionrange}",
     "minecraft": "~${mcversion}",
     "architectury": ">=${archversion}"
-  }
+  },
+  "accessWidener" : "ftblibrary.accesswidener"
 }
