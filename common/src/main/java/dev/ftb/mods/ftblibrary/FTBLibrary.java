@@ -23,6 +23,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.function.Supplier;
+
 public class FTBLibrary {
     public static final String MOD_ID = "ftblibrary";
     public static final String MOD_NAME = "FTB Library";
@@ -45,7 +47,7 @@ public class FTBLibrary {
 
         ModItems.init();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::init);
+        EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::onModConstruct);
     }
 
     public static ResourceLocation rl(String path) {

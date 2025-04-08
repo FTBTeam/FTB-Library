@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary;
 
 import dev.architectury.event.events.client.ClientGuiEvent;
+import dev.architectury.event.events.client.ClientLifecycleEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.registry.ReloadListenerRegistry;
@@ -24,12 +25,12 @@ public class FTBLibraryClient {
 
     public static CursorType lastCursorType = null;
 
-    public static void init() {
-        // Datagens hahayes
-        if (Minecraft.getInstance() == null) {
-            return;
-        }
+    public static void onModConstruct() {
+        ClientLifecycleEvent.CLIENT_SETUP.register(FTBLibraryClient::init);
+    }
 
+    public static void init(Minecraft minecraft) {
+        // Datagens hahayes
         ConfigManagerClient.initClient();
 
         ClientGuiEvent.INIT_POST.register(FTBLibraryClient::guiInit);
