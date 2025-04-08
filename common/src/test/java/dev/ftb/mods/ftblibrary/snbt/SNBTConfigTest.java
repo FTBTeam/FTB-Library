@@ -15,14 +15,14 @@ public class SNBTConfigTest {
     void testConfig() {
         General.CONFIG.load(Paths.get("config/ftblibrary-config-test.snbt"));
 
-        assertEquals(General.TEST_2.get(), true);
-        assertEquals(General.TEST_3.get(), false);
-        assertEquals(General.SUB_TEST_BOOLEAN.get(), false);
-        assertEquals(General.SUB_TEST_INT.get(), 50);
-        assertEquals(General.SUB_TEST_DOUBLE.get(), 0.5D);
-        assertEquals(General.SUB_TEST_STRING.get(), "hello");
-        assertEquals(General.STRING_LIST.get().get(1), "b");
-        assertEquals(General.INT_ARRAY.get()[1], 59);
+        assertEquals(true, General.TEST_2.get());
+        assertEquals(false, General.TEST_3.get());
+        assertEquals(false, General.SUB_TEST_BOOLEAN.get());
+        assertEquals(50, General.SUB_TEST_INT.get());
+        assertEquals(0.5D, General.SUB_TEST_DOUBLE.get());
+        assertEquals("hello", General.SUB_TEST_STRING.get());
+        assertEquals("b", General.STRING_LIST.get().get(1));
+        assertEquals(59, General.INT_ARRAY.get()[1]);
 
         Util.shutdownExecutors();
     }
