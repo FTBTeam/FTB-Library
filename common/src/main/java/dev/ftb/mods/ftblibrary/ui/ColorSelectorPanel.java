@@ -333,14 +333,14 @@ public class ColorSelectorPanel extends ModalPanel {
 
             if (allowAlphaEdit) {
                 if (config.getValue().alphai() < 255) {
-                    GuiHelper.pushScissor(getScreen(), x, y, w, h);
+                    GuiHelper.pushScissor(getScreen(), graphics, x, y, w, h);
                     for (int i = 0; i < w; i += 10) {
                         for (int j = 0; j < h; j += 10) {
                             Color4I c = (i + j) / 10 % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
                             c.draw(graphics, x + i, y + j, 10, 10);
                         }
                     }
-                    GuiHelper.popScissor(getScreen());
+                    GuiHelper.popScissor(getScreen(), graphics);
                 }
                 config.getValue().draw(graphics, x, y, w, h);
 

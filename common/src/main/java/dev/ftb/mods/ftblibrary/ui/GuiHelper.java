@@ -162,23 +162,24 @@ public class GuiHelper {
 //        BufferUploader.drawWithShader(buffer.buildOrThrow());
 //    }
 
-    public static void pushScissor(Window screen, int x, int y, int w, int h) {
+    public static void pushScissor(Window screen, GuiGraphics graphics, int x, int y, int w, int h) {
         if (SCISSOR.isEmpty()) {
-            GlStateManager._enableScissorTest();
+//            GlStateManager._enableScissorTest();
         }
 
         var scissor = SCISSOR.isEmpty() ? new Scissor(x, y, w, h) : SCISSOR.lastElement().crop(x, y, w, h);
         SCISSOR.push(scissor);
-        scissor.scissor(screen);
+        scissor.scissor(screen, graphics);
     }
 
-    public static void popScissor(Window screen) {
+    public static void popScissor(Window screen, GuiGraphics graphics) {
         SCISSOR.pop();
 
         if (SCISSOR.isEmpty()) {
-            GlStateManager._disableScissorTest();
+            graphics.disableScissor();
+//            GlStateManager._disableScissorTest();
         } else {
-            SCISSOR.lastElement().scissor(screen);
+            SCISSOR.lastElement().scissor(screen, graphics);
         }
     }
 
@@ -248,13 +249,14 @@ public class GuiHelper {
             return new Scissor(x0, y0, x1 - x0, y1 - y0);
         }
 
-        public void scissor(Window screen) {
+        public void scissor(Window screen, GuiGraphics graphics) {
             var scale = screen.getGuiScale();
-            var sx = (int) (x * scale);
-            var sy = (int) ((screen.getGuiScaledHeight() - (y + h)) * scale);
-            var sw = (int) (w * scale);
-            var sh = (int) (h * scale);
-            GlStateManager._scissorBox(sx, sy, sw, sh);
+//            var sx = (int) (x * scale);
+//            var sy = (int) ((screen.getGuiScaledHeight() - (y + h)) * scale);
+//            var sw = (int) (w * scale);
+//            var sh = (int) (h * scale);
+            graphics.enableScissor(this.x, this.y, this.x + this.w, this.y + this.h);
+//            GlStateManager._scissorBox(sx, sy, sw, sh);
         }
     }
 }
