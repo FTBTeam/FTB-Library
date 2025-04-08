@@ -26,12 +26,7 @@ public class FTBLibraryClient {
     public static CursorType lastCursorType = null;
 
     public static void onModConstruct() {
-        ClientLifecycleEvent.CLIENT_SETUP.register(FTBLibraryClient::init);
-    }
-
-    public static void init(Minecraft minecraft) {
-        // Datagens hahayes
-        ConfigManagerClient.initClient();
+        ConfigManagerClient.registerEvents();
 
         ClientGuiEvent.INIT_POST.register(FTBLibraryClient::guiInit);
         ClientTickEvent.CLIENT_POST.register(FTBLibraryClient::clientTick);
