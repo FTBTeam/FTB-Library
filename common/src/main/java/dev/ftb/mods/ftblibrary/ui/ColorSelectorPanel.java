@@ -129,7 +129,7 @@ public class ColorSelectorPanel extends ModalPanel {
     public void alignWidgets() {
         bButton.setPosAndSize(5, 5, 16, 128);
         hsButton.setPosAndSize(26, 5, 96, 96);
-        aButton.setPosAndSize(26, 106, 100, 27);
+        aButton.setPosAndSize(26, 106, 11 * AlphaButton.GRID_SIZE, 3 * AlphaButton.GRID_SIZE);
         rgbBox.setPosAndSize(159, 5, 60, 16);
         presetBtn.setPosAndSize(130, 26, 90, 16);
         acceptBtn.setPosAndSize(177, 113, 20, 20);
@@ -322,6 +322,9 @@ public class ColorSelectorPanel extends ModalPanel {
     }
 
     private class AlphaButton extends SimpleButton {
+
+        public static final int GRID_SIZE = 9;
+
         public AlphaButton() {
             super(ColorSelectorPanel.this, Component.empty(), Color4I.empty(), (b, m) -> {
             });
@@ -333,14 +336,12 @@ public class ColorSelectorPanel extends ModalPanel {
 
             if (allowAlphaEdit) {
                 if (config.getValue().alphai() < 255) {
-                    GuiHelper.pushScissor(getScreen(), graphics, x, y, w, h);
-                    for (int i = 0; i < w; i += 10) {
-                        for (int j = 0; j < h; j += 10) {
-                            Color4I c = (i + j) / 10 % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
-                            c.draw(graphics, x + i, y + j, 10, 10);
+                    for (int i = 0; i < w; i += GRID_SIZE) {
+                        for (int j = 0; j < h; j += GRID_SIZE) {
+                            Color4I c = (i + j) / GRID_SIZE % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
+                            c.draw(graphics, x + i, y + j, GRID_SIZE, GRID_SIZE);
                         }
                     }
-                    GuiHelper.popScissor(getScreen(), graphics);
                 }
                 config.getValue().draw(graphics, x, y, w, h);
 
