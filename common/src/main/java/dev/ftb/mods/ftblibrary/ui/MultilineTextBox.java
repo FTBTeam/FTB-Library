@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.LogicOp;
 import dev.ftb.mods.ftblibrary.core.mixin.common.MultilineTextFieldAccess;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -263,12 +265,11 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
     }
 
     private void renderHighlight(GuiGraphics graphics, int x1, int y1, int x2, int y2) {
-        // TODO: This might need a custom render type
-//        RenderSystem.enableColorLogicOp();
-//        RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
+        GlStateManager._enableColorLogicOp();
+        GlStateManager._logicOp(LogicOp.OR_REVERSE.ordinal());
 
         Color4I.rgb(0x0000FF).draw(graphics, x1, y1, x2 - x1, y2 - y1);
-//        RenderSystem.disableColorLogicOp();
+        GlStateManager._disableColorLogicOp();
     }
 
     private boolean withinContentArea(int y1, int y2) {
