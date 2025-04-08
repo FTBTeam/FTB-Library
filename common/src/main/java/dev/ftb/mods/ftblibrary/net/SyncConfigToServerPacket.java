@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
 import net.minecraft.Util;
 import net.minecraft.commands.Commands;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,12 +15,12 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
-public record SyncConfigToServerPacket(String configName, SNBTCompoundTag config) implements CustomPacketPayload {
+public record SyncConfigToServerPacket(String configName, CompoundTag config) implements CustomPacketPayload {
     public static final Type<SyncConfigToServerPacket> TYPE = new Type<>(FTBLibrary.rl("sync_config_to_server_packet"));
 
     public static final StreamCodec<FriendlyByteBuf, SyncConfigToServerPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, SyncConfigToServerPacket::configName,
-            dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag.STREAM_CODEC, SyncConfigToServerPacket::config,
+            ByteBufCodecs.COMPOUND_TAG, SyncConfigToServerPacket::config,
             SyncConfigToServerPacket::new
     );
 

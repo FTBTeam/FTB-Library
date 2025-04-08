@@ -4,11 +4,8 @@ import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import dev.ftb.mods.ftblibrary.snbt.SNBTNet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,25 +78,6 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 
         var g = parent == null ? group : group.getOrCreateSubgroup(key, displayOrder);
         sorted.forEach(value -> value.createClientConfig(g));
-    }
-
-    /**
-     * Write this config to network. This can be used to sync configs between client and server
-     * @param buf the byte buffer
-     */
-    public void write(FriendlyByteBuf buf) {
-        var tag = new SNBTCompoundTag();
-        write(tag);
-        SNBTNet.write(buf, tag);
-    }
-
-    /**
-     * Read a config from network, written by {@link #write(FriendlyByteBuf)}. This can be used to sync configs
-     * between client and server
-     * @param buf the byte buffer
-     */
-    public void read(FriendlyByteBuf buf) {
-        read(SNBTNet.readCompound(buf));
     }
 
     public void load(Path path) {

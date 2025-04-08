@@ -12,6 +12,7 @@ import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
 import dev.ftb.mods.ftblibrary.util.BooleanConsumer;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import net.minecraft.Util;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -137,10 +138,10 @@ public enum ConfigManager {
      * @param serverConfigName name of the server config, expected to be registered on client
      * @param tag the config settings
      */
-    public void syncFromServer(String serverConfigName, SNBTCompoundTag tag) {
+    public void syncFromServer(String serverConfigName, CompoundTag tag) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(tag);
+            tc.config.read(SNBTCompoundTag.of(tag));
             tc.onEdited.accept(false);
             FTBLibrary.LOGGER.info("received server config settings for config: {}", serverConfigName);
         } else {
@@ -155,10 +156,10 @@ public enum ConfigManager {
      * @param tag the config settings
      * @param playerName player who made the changes
      */
-    public void syncFromClient(String serverConfigName, SNBTCompoundTag tag, String playerName) {
+    public void syncFromClient(String serverConfigName, CompoundTag tag, String playerName) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(tag);
+            tc.config.read(SNBTCompoundTag.of(tag));
             tc.onEdited.accept(true);
             save(serverConfigName);
             FTBLibrary.LOGGER.info("received client config settings from {} for config: {}", playerName, serverConfigName);

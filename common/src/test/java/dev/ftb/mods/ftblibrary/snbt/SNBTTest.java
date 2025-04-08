@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -31,9 +32,9 @@ public class SNBTTest {
         var tag = makeTestCompound();
 
         var byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-        SNBTNet.write(byteBuf, tag);
+        ByteBufCodecs.COMPOUND_TAG.encode(byteBuf, tag);
         byteBuf.setIndex(0, byteBuf.capacity());
-        var netTag = SNBTNet.readCompound(byteBuf);
+        var netTag = ByteBufCodecs.COMPOUND_TAG.decode(byteBuf);
 
         assertEquals(tag, netTag, "Network IO test");
     }
@@ -90,7 +91,9 @@ public class SNBTTest {
 
         tag.comment("test_int", "Just an integer");
         tag.putInt("test_int", 30);
-        tag.putNull("test_null");
+
+        // TODO: dropping support for this - just used by FTB Ranks as far as we can tell
+//        tag.putNull("test_null");
 
         ListTag list = new ListTag();
         list.add(DoubleTag.valueOf(0.0001d));

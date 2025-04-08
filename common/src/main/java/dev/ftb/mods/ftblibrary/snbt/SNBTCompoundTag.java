@@ -1,25 +1,15 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import net.minecraft.nbt.*;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.nbt.CollectionTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
+import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 
 public class SNBTCompoundTag extends CompoundTag {
-    public static final StreamCodec<FriendlyByteBuf, SNBTCompoundTag> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public SNBTCompoundTag decode(FriendlyByteBuf object) {
-            return SNBTNet.readCompound(object);
-        }
-
-        @Override
-        public void encode(FriendlyByteBuf object, SNBTCompoundTag object2) {
-            SNBTNet.write(object, object2);
-        }
-    };
     boolean singleLine;
     private HashMap<String, SNBTTagProperties> properties;
     public SNBTCompoundTag() {
@@ -30,11 +20,11 @@ public class SNBTCompoundTag extends CompoundTag {
     public static SNBTCompoundTag of(@Nullable Tag tag) {
         if (tag instanceof SNBTCompoundTag) {
             return (SNBTCompoundTag) tag;
-        } else if (tag instanceof CompoundTag) {
+        } else if (tag instanceof CompoundTag c) {
             var tag1 = new SNBTCompoundTag();
 
-            for (var s : ((CompoundTag) tag).keySet()) {
-                tag1.put(s, ((CompoundTag) tag).get(s));
+            for (var s : c.keySet()) {
+                tag1.put(s, c.get(s));
             }
 
             return tag1;
