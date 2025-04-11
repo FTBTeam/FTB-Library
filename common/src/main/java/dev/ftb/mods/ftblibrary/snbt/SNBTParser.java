@@ -145,9 +145,9 @@ class SNBTParser {
             if (n == ':' || n == '=') {
                 var t = readTag(nextNS());
 
-                if (t == SpecialTag.TRUE) {
+                if (t == SpecialTag.TRUE.wrappedTag) {
                     tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_TRUE;
-                } else if (t == SpecialTag.FALSE) {
+                } else if (t == SpecialTag.FALSE.wrappedTag) {
                     tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_FALSE;
                 }
 

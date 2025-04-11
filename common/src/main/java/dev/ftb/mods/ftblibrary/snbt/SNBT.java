@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.snbt;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.nbt.*;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -12,10 +11,15 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
-
 public class SNBT {
     private static boolean shouldSortKeysOnWrite = false;
 
+    /**
+     * Parse an SNBT compound from string data
+     *
+     * @param lines the lines of serialized SNBT data
+     * @return a
+     */
     public static SNBTCompoundTag readLines(List<String> lines) {
         return SNBTParser.read(lines);
     }
@@ -32,6 +36,14 @@ public class SNBT {
         Files.write(path, writeLines(tag));
     }
 
+    /**
+     * Read a SNBT compound from a file on disk
+     *
+     * @param path the file to read
+     * @return the SNBT structure, or null if there was an error
+     * @deprecated use {@link #tryRead(Path)}
+     */
+    @Deprecated
     @Nullable
     public static SNBTCompoundTag read(Path path) {
         if (Files.notExists(path) || Files.isDirectory(path) || !Files.isReadable(path)) {
@@ -40,12 +52,8 @@ public class SNBT {
 
         try {
             return readLines(Files.readAllLines(path, StandardCharsets.UTF_8));
-        } catch (SNBTSyntaxException ex) {
-            FTBLibrary.LOGGER.error("Failed to read " + path + ": " + ex.getMessage());
-            return null;
         } catch (Exception ex) {
-            FTBLibrary.LOGGER.error("Failed to read " + path + ": " + ex);
-            ex.printStackTrace();
+            FTBLibrary.LOGGER.error("Failed to read {}: {} / {}", path, ex.getClass(), ex.getMessage());
             return null;
         }
     }
@@ -84,107 +92,110 @@ public class SNBT {
     }
 
     private static void append(SNBTBuilder builder, @Nullable Tag nbt) {
-        if (nbt == null || nbt instanceof EndTag) {
-            builder.print("null");
-        } else if (nbt instanceof CompoundTag compound) {
-            var snbtCompoundTag = compound instanceof SNBTCompoundTag s ? s : null;
-
-            if (compound.isEmpty()) {
-                builder.print("{ }");
-                return;
-            }
-
-            if (snbtCompoundTag != null && snbtCompoundTag.singleLine) {
-                builder.singleLine++;
-            }
-
-            var singleLine = builder.singleLine > 0;
-
-            builder.print("{");
-
-            if (singleLine) {
-                builder.print(" ");
-            } else {
-                builder.println();
-                builder.push();
-            }
-
-            var index = 0;
-
-            Collection<String> keys = shouldSortKeysOnWrite ? compound.keySet().stream().sorted().toList() : compound.keySet();
-            for (var key : keys) {
-                index++;
-                var properties = snbtCompoundTag == null ? SNBTTagProperties.DEFAULT : snbtCompoundTag.getProperties(key);
-
-                if (!properties.comment.isEmpty()) {
-                    if (singleLine) {
-                        throw new IllegalStateException("Can't have singleLine enabled and a comment at the same time!");
-                    }
-
-                    if (index != 1) {
-                        builder.println();
-                    }
-
-                    for (var s : properties.comment.split("\n")) {
-                        builder.print("# ");
-                        builder.print(s);
-                        builder.println();
-                    }
+        switch (nbt) {
+            case null -> builder.print("null");
+            case EndTag ignoredEndTag -> builder.print("null");
+            case CompoundTag compound -> appendCompound(builder, compound);
+            case CollectionTag collectionTag -> {
+                switch (collectionTag) {
+                    case ByteArrayTag ignored -> appendCollection(builder, collectionTag, "B;");
+                    case IntArrayTag ignored -> appendCollection(builder, collectionTag, "I;");
+                    case LongArrayTag ignored -> appendCollection(builder, collectionTag, "L;");
+                    default -> appendCollection(builder, collectionTag,"");
                 }
+            }
+            case StringTag stringTag -> builder.print(SNBTUtils.quoteAndEscape(stringTag.asString().orElse("")));
+            default -> builder.print(nbt.toString());
+        }
+    }
 
-                builder.print(SNBTUtils.handleEscape(key));
-                builder.print(": ");
+    private static void appendCompound(SNBTBuilder builder, CompoundTag compound) {
+        var snbtCompoundTag = compound instanceof SNBTCompoundTag s ? s : null;
 
-                if (properties.valueType == SNBTTagProperties.TYPE_FALSE) {
-                    builder.print("false");
-                } else if (properties.valueType == SNBTTagProperties.TYPE_TRUE) {
-                    builder.print("true");
-                } else {
-                    if (properties.singleLine) {
-                        builder.singleLine++;
-                    }
+        if (compound.isEmpty()) {
+            builder.print("{ }");
+            return;
+        }
 
-                    append(builder, compound.get(key));
+        if (snbtCompoundTag != null && snbtCompoundTag.singleLine) {
+            builder.singleLine++;
+        }
 
-                    if (properties.singleLine) {
-                        builder.singleLine--;
-                    }
-                }
+        var singleLine = builder.singleLine > 0;
 
-                if (singleLine && index != compound.size()) {
-                    builder.print(",");
-                }
+        builder.print("{");
 
+        if (singleLine) {
+            builder.print(" ");
+        } else {
+            builder.println();
+            builder.push();
+        }
+
+        var index = 0;
+
+        Collection<String> keys = shouldSortKeysOnWrite ? compound.keySet().stream().sorted().toList() : compound.keySet();
+        for (var key : keys) {
+            index++;
+            var properties = snbtCompoundTag == null ? SNBTTagProperties.DEFAULT : snbtCompoundTag.getProperties(key);
+
+            if (!properties.comment.isEmpty()) {
                 if (singleLine) {
-                    builder.print(" ");
-                } else {
+                    throw new IllegalStateException("Can't have singleLine enabled and a comment at the same time!");
+                }
+
+                if (index != 1) {
+                    builder.println();
+                }
+
+                for (var s : properties.comment.split("\n")) {
+                    builder.print("# ");
+                    builder.print(s);
                     builder.println();
                 }
             }
 
-            if (!singleLine) {
-                builder.pop();
-            }
+            builder.print(SNBTUtils.handleEscape(key));
+            builder.print(": ");
 
-            builder.print("}");
-
-            if (snbtCompoundTag != null && snbtCompoundTag.singleLine) {
-                builder.singleLine--;
-            }
-        } else if (nbt instanceof CollectionTag) {
-            if (nbt instanceof ByteArrayTag) {
-                appendCollection(builder, (CollectionTag) nbt, "B;");
-            } else if (nbt instanceof IntArrayTag) {
-                appendCollection(builder, (CollectionTag) nbt, "I;");
-            } else if (nbt instanceof LongArrayTag) {
-                appendCollection(builder, (CollectionTag) nbt, "L;");
+            if (properties.valueType == SNBTTagProperties.TYPE_FALSE) {
+                builder.print("false");
+            } else if (properties.valueType == SNBTTagProperties.TYPE_TRUE) {
+                builder.print("true");
             } else {
-                appendCollection(builder, (CollectionTag) nbt, "");
+                if (properties.singleLine) {
+                    builder.singleLine++;
+                }
+
+                append(builder, compound.get(key));
+
+                if (properties.singleLine) {
+                    builder.singleLine--;
+                }
             }
-        } else if (nbt instanceof StringTag stringTag) {
-            builder.print(SNBTUtils.quoteAndEscape(stringTag.asString().orElse("")));
-        } else {
-            builder.print(nbt.toString());
+
+            if (singleLine && index != compound.size()) {
+                builder.print(",");
+            }
+
+            if (singleLine) {
+                builder.print(" ");
+            } else {
+                if (index < compound.size()) {
+                    builder.print(",");
+                }
+                builder.println();
+            }
+        }
+
+        if (!singleLine) {
+            builder.pop();
+        }
+
+        builder.print("}");
+
+        if (snbtCompoundTag != null && snbtCompoundTag.singleLine) {
+            builder.singleLine--;
         }
     }
 
@@ -227,6 +238,9 @@ public class SNBT {
             if (singleLine) {
                 builder.print(" ");
             } else {
+                if (index < nbt.size()) {
+                    builder.print(",");
+                }
                 builder.println();
             }
         }

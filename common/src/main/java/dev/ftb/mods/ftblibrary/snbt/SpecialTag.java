@@ -23,11 +23,7 @@ public class SpecialTag {
 
     @Nullable
     public static Tag unwrap(@Nullable Tag t) {
-        if (t instanceof SpecialTag) {
-            return ((SpecialTag) t).wrappedTag;
-        }
-
-        return t;
+        return t instanceof SpecialTag s ? s.wrappedTag : t;
     }
 
     public void write(DataOutput dataOutput) throws IOException {
