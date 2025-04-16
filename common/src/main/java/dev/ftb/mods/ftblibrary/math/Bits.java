@@ -2,9 +2,6 @@ package dev.ftb.mods.ftblibrary.math;
 
 import java.util.*;
 
-/**
- * Made by LatvianModder
- */
 public class Bits {
     private static final int MAX_BYTE = 0xFF;
     private static final int MAX_SHORT = 0xFFFF;

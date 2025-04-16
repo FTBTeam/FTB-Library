@@ -58,10 +58,16 @@ allprojects {
         }
 
         maven {
-            url "https://maven.saps.dev/minecraft"
+            url "https://maven.ftb.dev/releases"
+            content {
+                includeGroup "dev.ftb.mods"
+            }
+        }
+
+        maven {
+            url "https://maven.latvian.dev/releases"
             content {
                 includeGroup "dev.latvian.mods"
-                includeGroup "dev.ftb.mods"
             }
         }
 
