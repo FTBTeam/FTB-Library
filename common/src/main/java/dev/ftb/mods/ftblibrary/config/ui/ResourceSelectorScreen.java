@@ -18,6 +18,7 @@ import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.AbstractThreePanelScreen;
 import dev.ftb.mods.ftblibrary.ui.misc.SimpleToast;
+import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -202,8 +203,10 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         var items = getActiveSearchMode().get().getAllResources();
         List<Widget> widgets = new ArrayList<>(search.isEmpty() ? items.size() + 1 : 64);
 
+        SearchTerms searchTerms = SearchTerms.parse(search);
+
         ResourceButton emptyButton = makeResourceButton(mainPanel, null);
-        if (config.allowEmptyResource() && emptyButton.shouldAdd(search)) {
+        if (config.allowEmptyResource() && emptyButton.shouldAdd(searchTerms)) {
             emptyButton.setPos(1, 1);
             widgets.add(emptyButton);
         }
@@ -211,7 +214,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         for (SelectableResource<T> resource : items) {
             if (!resource.isEmpty()) {
                 ResourceButton button = makeResourceButton(mainPanel, resource);
-                if (button.shouldAdd(search)) {
+                if (button.shouldAdd(searchTerms)) {
                     widgets.add(button);
                     var idx = widgets.size() - 1;
                     button.setPos(1 + (idx % nCols) * 18, 1 + (idx / nCols) * 18);
@@ -401,7 +404,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             return resource.stack();
         }
 
-        public abstract boolean shouldAdd(String search);
+        public abstract boolean shouldAdd(SearchTerms search);
 
         @Override
         public Component getTitle() {
