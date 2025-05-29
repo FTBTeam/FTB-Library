@@ -9,6 +9,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
@@ -124,15 +125,8 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
         }
 
         @Override
-        public boolean shouldAdd(String search) {
-            search = search.toLowerCase();
-            if (search.isEmpty()) {
-                return true;
-            } else if (search.startsWith("@")) {
-                return getStack().getNamespace().contains(search.substring(1));
-            } else {
-                return getStack().getPath().contains(search);
-            }
+        public boolean shouldAdd(SearchTerms searchTerms) {
+            return searchTerms.match(getStack(), getStack().toString(), id -> false);
         }
 
         @Override
