@@ -6,13 +6,13 @@ import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.ItemStackConfig;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -49,19 +49,12 @@ public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
         }
 
         @Override
-        public boolean shouldAdd(String search) {
-            search = search.toLowerCase();
-            if (search.isEmpty()) {
-                return true;
-            } else if (search.startsWith("@")) {
-                return RegistrarManager.getId(getStack().getItem(), Registries.ITEM).getNamespace().contains(search.substring(1));
-            } else if (search.startsWith("#")) {
-                return ResourceLocation.read(search.substring(1)).result()
-                        .map(resloc -> getStack().is(TagKey.create(Registries.ITEM, resloc)))
-                        .orElse(false);
-            } else {
-                return getStack().getHoverName().getString().toLowerCase().contains(search);
-            }
+        public boolean shouldAdd(SearchTerms searchTerms) {
+            return searchTerms.match(
+                    RegistrarManager.getId(getStack().getItem(), Registries.ITEM),
+                    getStack().getHoverName().getString(),
+                    id -> getStack().is(TagKey.create(Registries.ITEM, id))
+            );
         }
 
         @Override
