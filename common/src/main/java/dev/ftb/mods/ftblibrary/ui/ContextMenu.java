@@ -98,8 +98,9 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         GuiHelper.setupDrawing();
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, 0, 900);
+        graphics.pose().pushMatrix();
+        // TODO: [1.21.6] This isn't a thing anymore
+//        graphics.pose().translate(0, 0, 900);
         Color4I.BLACK.withAlpha(45).draw(graphics, x + 3, y + 3, w, h);
         super.draw(graphics, theme, x, y, w, h);
         if (drawVerticalSeparators) {
@@ -108,7 +109,7 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
                 Color4I.WHITE.withAlpha(130).draw(graphics, x + columnWidth * i, y + MARGIN, 1, height - MARGIN * 2);
             }
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
     @Override

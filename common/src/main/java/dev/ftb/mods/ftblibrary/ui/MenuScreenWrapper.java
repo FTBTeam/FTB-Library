@@ -7,7 +7,6 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
@@ -128,8 +127,8 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(-leftPos, -topPos, 0);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(-leftPos, -topPos);
         GuiHelper.setupDrawing();
 
         var theme = wrappedGui.getTheme();
@@ -139,14 +138,16 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
         int zLevel = wrappedGui.getMaxZLevel() + 100;
 
-        graphics.pose().pushPose();
+        graphics.pose().pushMatrix();
         if (!tooltipList.shouldRender()) {
             wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
                 if (underMouse.tooltip()) {
                     var ingredient = underMouse.ingredient();
                     if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
-                        graphics.pose().translate(0, 0, zLevel);
-                        graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
+                        // TODO: [1.21.6] This isn't a thing anymore
+//                        graphics.pose().translate(0, 0, zLevel);
+                        // TODO: [1.21.6] This needs moving to the correct method call
+//                        graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
                     }
                 }
             });
@@ -155,16 +156,18 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
                     .reduce((c1, c2) -> c1.copy().append("\n").append(c2))
                     .orElse(Component.empty())
             );
-            graphics.pose().translate(0, 0, zLevel);
+            // TODO: [1.21.6] This isn't a thing anymore
+//            graphics.pose().translate(0, 0, zLevel);
 //            graphics.setColor(1f, 1f, 1f, 0.8f);
-            graphics.renderTooltip(theme.getFont(), lines, DefaultTooltipPositioner.INSTANCE, mouseX, Math.max(mouseY, 18));
+            // TODO: [1.21.6] This needs adding back with the correct method call
+//            graphics.renderTooltip(theme.getFont(), lines, DefaultTooltipPositioner.INSTANCE, mouseX, Math.max(mouseY, 18));
 //            graphics.setColor(1f, 1f, 1f, 1f);
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
 
         tooltipList.reset();
 
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
     @Override

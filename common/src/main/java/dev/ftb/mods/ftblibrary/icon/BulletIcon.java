@@ -2,14 +2,19 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.gui.render.state.GuiElementRenderState;
+import net.minecraft.client.renderer.RenderPipelines;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3x2f;
+
+import java.util.List;
 
 
 public class BulletIcon extends Icon {
@@ -77,26 +82,41 @@ public class BulletIcon extends Icon {
     @Override
     @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        Color4I c, cb, cd;
+        int c, cb, cd;
 
         if (color.isEmpty()) {
-            c = DEFAULT_COLOR;
-            cb = DEFAULT_COLOR_B;
-            cd = DEFAULT_COLOR_D;
+            c = DEFAULT_COLOR.rgba();
+            cb = DEFAULT_COLOR_B.rgba();
+            cd = DEFAULT_COLOR_D.rgba();
         } else {
-            c = color;
-            cb = colorB;
-            cd = colorD;
+            c = color.rgba();
+            cb = colorB.rgba();
+            cd = colorD.rgba();
         }
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+        graphics.guiRenderState.submitGuiElement(new ArbitraryVertexRenderState(
+                RenderPipelines.GUI,
+                TextureSetup.noTexture(),
+                graphics.pose(),
+                x, y, w, h,
+                List.of(
+                        new Vertex(x, y + 1, 1, h - 2, inverse ? cd : cb),
+                        new Vertex(x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd),
+                        new Vertex(x + 1, y, w - 2, 1, inverse ? cd : cb),
+                        new Vertex(x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd),
+                        new Vertex(x + 1, y + 1, w - 2, h - 2, c)
+                ),
+                graphics.scissorStack.peek()
+        ));
 
-        GuiHelper.addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
-        GuiHelper.addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);
-        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y, w - 2, 1, inverse ? cd : cb);
-        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd);
-        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + 1, w - 2, h - 2, c);
+//        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+//        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+//
+//        GuiHelper.addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
+//        GuiHelper.addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);
+//        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y, w - 2, 1, inverse ? cd : cb);
+//        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd);
+//        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + 1, w - 2, h - 2, c);
     }
 
     @Override
@@ -110,4 +130,44 @@ public class BulletIcon extends Icon {
 
         return o;
     }
+
+    public record ArbitraryVertexRenderState(
+            RenderPipeline pipeline,
+            TextureSetup textureSetup,
+            Matrix3x2f pose,
+            List<Vertex> vertices,
+            int x,
+            int y,
+            int width,
+            int height,
+            @Nullable ScreenRectangle scissorArea,
+            @Nullable ScreenRectangle bounds
+    ) implements GuiElementRenderState {
+        public ArbitraryVertexRenderState(RenderPipeline pipeline, TextureSetup textureSetup, Matrix3x2f pose, int x, int y, int width, int height, List<Vertex> vertices, @Nullable ScreenRectangle screenRectangle) {
+            this(pipeline, textureSetup, pose, vertices, x, y, width, height, screenRectangle, getBounds(x, y, width, height, pose, screenRectangle));
+        }
+
+        @Override
+        public void buildVertices(VertexConsumer vertexConsumer, float f) {
+            for (Vertex vertex : vertices) {
+                vertexConsumer.addVertexWith2DPose(pose, vertex.x(), vertex.y(), f)
+                        .setUv(vertex.u(), vertex.v())
+                        .setColor(vertex.color);
+            }
+        }
+
+        @Nullable
+        private static ScreenRectangle getBounds(int x, int y, int width, int height, Matrix3x2f pose, @Nullable ScreenRectangle screenRectangle) {
+            ScreenRectangle screenRectangle2 = (new ScreenRectangle(x, y, width - x, height - y)).transformMaxBounds(pose);
+            return screenRectangle != null ? screenRectangle.intersection(screenRectangle2) : screenRectangle2;
+        }
+    }
+
+    public record Vertex(
+            float x,
+            float y,
+            float u,
+            float v,
+            int color
+    ) {}
 }

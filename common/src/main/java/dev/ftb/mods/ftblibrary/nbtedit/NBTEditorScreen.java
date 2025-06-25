@@ -20,12 +20,9 @@ import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,8 +96,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
     private String getInfoTitle(CompoundTag info) {
         if (info.contains("title")) {
-            MutableComponent title = Component.Serializer.fromJson(info.getStringOr("title", ""), Minecraft.getInstance().level.registryAccess());
-            if (title != null) return title.getString();
+//            MutableComponent title = Component.Serializer.fromJson(info.getStringOr("title", ""), Minecraft.getInstance().level.registryAccess());
+//            if (title != null) return title.getString();
+            // TODO: [1.21.6] Add back
+            return "NOT IMPLEMENTED"; // TODO: Implement title parsing
         } else if (info.contains("type")) {
             return info.getStringOr("type", "").toUpperCase();
         }
@@ -488,8 +487,9 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             hoverIcon = Icon.empty();
 
             if (map.contains("id") && map.contains("Count")) {
-                ItemStack.parse(Minecraft.getInstance().level.registryAccess(), map)
-                        .ifPresent(stack -> hoverIcon = ItemIcon.getItemIcon(stack));
+                // TODO: [1.21.6] Add back
+//                ItemStack.parse(Minecraft.getInstance().level.registryAccess(), map)
+//                        .ifPresent(stack -> hoverIcon = ItemIcon.getItemIcon(stack));
             }
 
             setWidth(12 + getTheme().getStringWidth(getTitle()) + (hoverIcon.isEmpty() ? 0 : 10));
@@ -504,11 +504,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                     list.add(Component.translatable("gui.info").append(":"));
 
                     for (var i = 0; i < infoList.size(); i++) {
-                        var component = Component.Serializer.fromJson(infoList.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess());
-
-                        if (component != null) {
-                            list.add(component);
-                        }
+                        // TODO: [1.21.6] Add back
+//                        var component = Component.Serializer.fromJson(infoList.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess());
+//
+//                        if (component != null) {
+//                            list.add(component);
+//                        }
                     }
                 }
             }
@@ -563,11 +564,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
                 if (!infoList0.isEmpty()) {
                     for (var i = 0; i < infoList0.size(); i++) {
-                        var component = Component.Serializer.fromJson(infoList0.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess());
-
-                        if (component != null) {
-                            infoList1.add(StringTag.valueOf(component.getString()));
-                        }
+                        // TODO: [1.21.6] Add back
+//                        var component = Component.Serializer.fromJson(infoList0.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess());
+//
+//                        if (component != null) {
+//                            infoList1.add(StringTag.valueOf(component.getString()));
+//                        }
                     }
 
                     nbt.put("_", infoList1);

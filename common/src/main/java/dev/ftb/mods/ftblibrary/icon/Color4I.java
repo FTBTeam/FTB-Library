@@ -3,20 +3,15 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Mth;
@@ -529,15 +524,19 @@ public class Color4I extends Icon {
         }
 
         // TODO: Validate
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+        // TODO: [1.21.6] Add back
+//        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+//        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
 
         // TODO: this will likely need it's own render type
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+        // TODO: [1.21.6] This isn't a thing anymore
+//        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 //        RenderSystem.enableBlend();
 //        RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
 
-        GuiHelper.addRectToBuffer(graphics, buffer, x, y, w, h, this);
+//        GuiHelper.addRectToBuffer(graphics, buffer, x, y, w, h, this);
+
+        graphics.fill(RenderPipelines.GUI, x, y, x + w, y + h, rgba());
     }
 
     @Override

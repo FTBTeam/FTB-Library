@@ -129,15 +129,15 @@ public class TextField extends Widget {
                     theme.drawString(graphics, formattedText[i], tx, ty + i * textSpacing, col, textFlags);
                 }
             } else {
-                graphics.pose().pushPose();
-                graphics.pose().translate(tx, ty, 0.0D);
-                graphics.pose().scale(scale, scale, 1.0F);
+                graphics.pose().pushMatrix();
+                graphics.pose().translate(tx, ty);
+                graphics.pose().scale(scale, scale);
 
                 for (i = 0; i < getDisplayedText().length; ++i) {
                     theme.drawString(graphics, formattedText[i], 0, i * textSpacing, col, textFlags);
                 }
 
-                graphics.pose().popPose();
+                graphics.pose().popMatrix();
             }
         }
     }

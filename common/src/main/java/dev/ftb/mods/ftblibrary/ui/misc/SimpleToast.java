@@ -8,7 +8,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastManager;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -69,7 +69,7 @@ public class SimpleToast implements Toast {
         GuiHelper.setupDrawing();
         var mc = Minecraft.getInstance();
 
-        graphics.blitSprite(RenderType::guiTextured, BACKGROUND_SPRITE, 0, 0, 160, 32);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, 0, 0, 160, 32);
 
         var list = mc.font.split(getSubtitle(), 125);
         var i = isImportant() ? 0x00FF88FF : 0x00FFFF00;

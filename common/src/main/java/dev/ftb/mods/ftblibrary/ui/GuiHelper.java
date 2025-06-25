@@ -1,17 +1,12 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -20,10 +15,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
-import java.util.Stack;
 import java.util.function.BiFunction;
 
 
@@ -45,7 +38,8 @@ public class GuiHelper {
 //        RenderSystem.enableBlend();
 //        RenderSystem.defaultBlendFunc();
 //        RenderSystem.blendFunc(770, 771);
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+        // TODO: [1.21.6] This isn't a thing anymore
+//        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 //        RenderSystem.enableDepthTest();
         // Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
     }
@@ -55,7 +49,8 @@ public class GuiHelper {
     }
 
     public static void drawTexturedRect(GuiGraphics graphics, VertexConsumer buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+// TODO: [1.21.6] This isn't a thing anymore
+        //        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         addRectToBufferWithUV(graphics, buffer, x, y, w, h, col, u0, v0, u1, v1);
     }
 
@@ -64,15 +59,18 @@ public class GuiHelper {
             return;
         }
 
-        var m = graphics.pose().last().pose();
-        var r = col.redi();
-        var g = col.greeni();
-        var b = col.bluei();
-        var a = col.alphai();
-        buffer.addVertex(m, x, y + h, 0).setColor(r, g, b, a);
-        buffer.addVertex(m, x + w, y + h, 0).setColor(r, g, b, a);
-        buffer.addVertex(m, x + w, y, 0).setColor(r, g, b, a);
-        buffer.addVertex(m, x, y, 0).setColor(r, g, b, a);
+        // TODO: this is more right.
+        graphics.fill(RenderPipelines.GUI, x, y, x + w, y + h, col.rgba());
+        // TODO: [1.21.6] Add back but with the rect from graphics
+//        var m = graphics.pose().last().pose();
+//        var r = col.redi();
+//        var g = col.greeni();
+//        var b = col.bluei();
+//        var a = col.alphai();
+//        buffer.addVertex(m, x, y + h, 0).setColor(r, g, b, a);
+//        buffer.addVertex(m, x + w, y + h, 0).setColor(r, g, b, a);
+//        buffer.addVertex(m, x + w, y, 0).setColor(r, g, b, a);
+//        buffer.addVertex(m, x, y, 0).setColor(r, g, b, a);
     }
 
     public static void addRectToBufferWithUV(GuiGraphics graphics, VertexConsumer buffer, int x, int y, int w, int h, Color4I col, float u0, float v0, float u1, float v1) {
@@ -80,15 +78,18 @@ public class GuiHelper {
             return;
         }
 
-        var m = graphics.pose().last().pose();
-        var r = col.redi();
-        var g = col.greeni();
-        var b = col.bluei();
-        var a = col.alphai();
-        buffer.addVertex(m, x, y + h, 0).setUv(u0, v1).setColor(r, g, b, a);
-        buffer.addVertex(m, x + w, y + h, 0).setUv(u1, v1).setColor(r, g, b, a);
-        buffer.addVertex(m, x + w, y, 0).setUv(u1, v0).setColor(r, g, b, a);
-        buffer.addVertex(m, x, y, 0).setUv(u0, v0).setColor(r, g, b, a);
+        // TODO: This is not right
+        graphics.fill(RenderPipelines.GUI, x, y, x + w, y + h, col.rgba());
+        // TODO: [1.21.6] Add back but with the rect from graphics
+//        var m = graphics.pose().last().pose();
+//        var r = col.redi();
+//        var g = col.greeni();
+//        var b = col.bluei();
+//        var a = col.alphai();
+//        buffer.addVertex(m, x, y + h, 0).setUv(u0, v1).setColor(r, g, b, a);
+//        buffer.addVertex(m, x + w, y + h, 0).setUv(u1, v1).setColor(r, g, b, a);
+//        buffer.addVertex(m, x + w, y, 0).setUv(u1, v0).setColor(r, g, b, a);
+//        buffer.addVertex(m, x, y, 0).setUv(u0, v0).setColor(r, g, b, a);
     }
 
     public static void drawHollowRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, boolean roundEdges) {
@@ -97,33 +98,52 @@ public class GuiHelper {
             return;
         }
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+        // TODO: [1.21.6] This doesn't mimic the old behavior
+        graphics.renderOutline(x, y, w, h, col.rgba());
 
-        addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, col);
-        addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
+        // TODO: [1.21.6] This might but the locations are borked
+//        graphics.fill(x, y + 1, 1, h - 2, col.rgba());
+//        graphics.fill(x + w - 1, y + 1, 1, h - 2, col.rgba());
+//
+//        if (roundEdges) {
+//            graphics.fill(x + 1, y, w - 2, 1, col.rgba());
+//            graphics.fill(x + 1, y + h - 1, w - 2, 1, col.rgba());
+//        } else {
+//            graphics.fill(x, y, w, 1, col.rgba());
+//            graphics.fill(x, y + h - 1, w, 1, col.rgba());
+//        }
 
-        if (roundEdges) {
-            addRectToBuffer(graphics, buffer, x + 1, y, w - 2, 1, col);
-            addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 2, 1, col);
-        } else {
-            addRectToBuffer(graphics, buffer, x, y, w, 1, col);
-            addRectToBuffer(graphics, buffer, x, y + h - 1, w, 1, col);
-        }
+        // TODO: [1.21.6] Add back
+//        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+//        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+//
+//        addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, col);
+//        addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
+//
+//        if (roundEdges) {
+//            addRectToBuffer(graphics, buffer, x + 1, y, w - 2, 1, col);
+//            addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 2, 1, col);
+//        } else {
+//            addRectToBuffer(graphics, buffer, x, y, w, 1, col);
+//            addRectToBuffer(graphics, buffer, x, y + h - 1, w, 1, col);
+//        }
     }
 
     public static void drawRectWithShade(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, int intensity) {
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+        graphics.fill(x, y, x + w, y + h, col.rgba());
 
-        addRectToBuffer(graphics, buffer, x, y, w - 1, 1, col);
-        addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 1, col);
-        col = col.mutable().addBrightness(-intensity);
-        addRectToBuffer(graphics, buffer, x + w - 1, y, 1, 1, col);
-        addRectToBuffer(graphics, buffer, x, y + h - 1, 1, 1, col);
-        col = col.mutable().addBrightness(-intensity);
-        addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
-        addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 1, 1, col);
+        // TODO: [1.21.6] Add back
+//        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+//        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+//
+//        addRectToBuffer(graphics, buffer, x, y, w - 1, 1, col);
+//        addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 1, col);
+//        col = col.mutable().addBrightness(-intensity);
+//        addRectToBuffer(graphics, buffer, x + w - 1, y, 1, 1, col);
+//        addRectToBuffer(graphics, buffer, x, y + h - 1, 1, 1, col);
+//        col = col.mutable().addBrightness(-intensity);
+//        addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, col);
+//        addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 1, 1, col);
     }
 
     public static void drawGradientRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col1, Color4I col2) {
@@ -135,15 +155,16 @@ public class GuiHelper {
             return;
         }
 
+        // TODO: [1.21.6] Migrate to graphics.renderItem
         var mc = Minecraft.getInstance();
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(-8, -8, -8);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(-8, -8);
         graphics.renderItem(stack, 0, 0);
         if (renderOverlay) {
             graphics.renderItemDecorations(mc.font, stack, 0, 0, text);
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
 //    private static void draw(GuiGraphics graphics, Tesselator t, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
