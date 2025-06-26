@@ -36,6 +36,13 @@ public class RegisteredSidebarButton implements dev.ftb.mods.ftblibrary.api.side
         }
         data.requiredMods().ifPresent(mods -> addVisibilityCondition(() -> mods.stream().allMatch(Platform::isModLoaded)));
         extraRenderers = new ArrayList<>();
+        if (!data.envCondition().isEmpty()) {
+            if (data.envCondition().startsWith("!")) {
+                addVisibilityCondition(() -> !System.getenv().containsKey(data.envCondition().substring(1)));
+            } else {
+                addVisibilityCondition(() -> System.getenv().containsKey(data.envCondition()));
+            }
+        }
     }
 
 

@@ -21,7 +21,9 @@ public record SidebarButtonData(
         Optional<List<Component>> shiftTooltip,
         boolean requiresOp,
         Optional<List<String>> requiredMods,
-        int sortIndex) implements Comparable<SidebarButtonData> {
+        int sortIndex,
+        String envCondition)
+        implements Comparable<SidebarButtonData> {
 
     public static final Codec<SidebarButtonData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             Icon.CODEC.fieldOf("icon").forGetter(SidebarButtonData::icon),
@@ -33,7 +35,8 @@ public record SidebarButtonData(
             ComponentSerialization.CODEC.listOf().optionalFieldOf("shift_tooltip").forGetter(SidebarButtonData::shiftTooltip),
             Codec.BOOL.fieldOf("requires_op").orElse(false).forGetter(SidebarButtonData::requiresOp),
             Codec.STRING.listOf(1, Integer.MAX_VALUE).optionalFieldOf("required_mods").forGetter(SidebarButtonData::requiredMods),
-            Codec.INT.fieldOf("sort_index").orElse(0).forGetter(SidebarButtonData::sortIndex)
+            Codec.INT.fieldOf("sort_index").orElse(0).forGetter(SidebarButtonData::sortIndex),
+            Codec.STRING.optionalFieldOf("environment_condition", "").forGetter(SidebarButtonData::envCondition)
     ).apply(builder, SidebarButtonData::new));
 
     @Override
