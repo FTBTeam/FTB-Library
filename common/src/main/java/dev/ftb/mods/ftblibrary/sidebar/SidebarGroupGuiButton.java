@@ -483,6 +483,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
         boolean inBounds = clicked(currentMouseX, currentMouseY);
         if (!inBounds && isEditMode) {
             isEditMode = false;
+            ensureGridAlignment();
             return false;
         }
 
