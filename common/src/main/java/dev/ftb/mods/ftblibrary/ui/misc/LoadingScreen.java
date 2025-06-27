@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.BaseScreen;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
@@ -8,8 +7,6 @@ import dev.ftb.mods.ftblibrary.ui.Theme;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 
 
@@ -49,14 +46,14 @@ public class LoadingScreen extends BaseScreen {
             var h1 = 16;
 
             var col = Color4I.WHITE;
-
-            MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-            VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
-
-            GuiHelper.addRectToBuffer(graphics, buffer, x1, y1 + 1, 1, h1 - 2, col);
-            GuiHelper.addRectToBuffer(graphics, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
-            GuiHelper.addRectToBuffer(graphics, buffer, x1 + 1, y1, w1 - 2, 1, col);
-            GuiHelper.addRectToBuffer(graphics, buffer, x1 + 1, y1 + h1 - 1, w1 - 2, 1, col);
+// TODO: [1.21.6] Add back
+//            MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+//            VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
+//
+//            GuiHelper.addRectToBuffer(graphics, buffer, x1, y1 + 1, 1, h1 - 2, col);
+//            GuiHelper.addRectToBuffer(graphics, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
+//            GuiHelper.addRectToBuffer(graphics, buffer, x1 + 1, y1, w1 - 2, 1, col);
+//            GuiHelper.addRectToBuffer(graphics, buffer, x1 + 1, y1 + h1 - 1, w1 - 2, 1, col);
 
             x1 += 1;
             y1 += 1;
@@ -74,8 +71,8 @@ public class LoadingScreen extends BaseScreen {
 
                     if (index % (h1 * 2) < h1) {
                         col = Color4I.WHITE.withAlpha(200 - (index % h1) * 9);
-
-                        GuiHelper.addRectToBuffer(graphics, buffer, x1 + ox, y1 + oy, 1, 1, col);
+// TODO: [1.21.6] Add back
+//                        GuiHelper.addRectToBuffer(graphics, buffer, x1 + ox, y1 + oy, 1, 1, col);
                     }
                 }
             }

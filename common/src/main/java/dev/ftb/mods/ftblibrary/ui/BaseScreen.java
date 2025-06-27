@@ -288,22 +288,27 @@ public abstract class BaseScreen extends Panel {
             setOnlyRenderWidgetsInside(false);
             setOnlyInteractWithWidgetsInside(false);
 
-            graphics.pose().pushPose();
-            graphics.pose().translate(0f, 0f, 10f);
+            graphics.pose().pushMatrix();
+            // TODO: [1.21.6] This isn't a thing anymore
+//            graphics.pose().translate(0f, 0f, 10f);
             Iterator<ModalPanel> iter = modalPanels.descendingIterator(); // stack is drawn from bottom to top
             while (iter.hasNext()) {
                 ModalPanel p = iter.next();
                 if (!iter.hasNext()) {
                     // dim the rest of the gui so the top modal panel is effectively highlighted
-                    graphics.pose().translate(0.0, 0.0, -0.05);
+// TODO: [1.21.6] This isn't a thing anymore
+//                    graphics.pose().translate(0.0, 0.0, -0.05);
                     Color4I.rgba(0xA0202020).draw(graphics, 0, 0, getScreen().getGuiScaledWidth(), getScreen().getGuiScaledHeight());
-                    graphics.pose().translate(0.0, 0.0, 0.05);
+// TODO: [1.21.6] This isn't a thing anymore
+//                    graphics.pose().translate(0.0, 0.0, 0.05);
                 }
-                graphics.pose().translate(0f, 0f, p.getExtraZlevel());
+                // TODO: [1.21.6] This isn't a thing anymore
+//                graphics.pose().translate(0f, 0f, p.getExtraZlevel());
                 p.draw(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
-                graphics.pose().translate(0, 0, 1);
+                // TODO: [1.21.6] This isn't a thing anymore
+//                graphics.pose().translate(0, 0, 0);
             }
-            graphics.pose().popPose();
+            graphics.pose().popMatrix();
 
             setOnlyRenderWidgetsInside(r);
             setOnlyRenderWidgetsInside(i);

@@ -4,3 +4,7 @@ accessible  class   net/minecraft/client/gui/components/MultilineTextField$Strin
 extendable  class   net/minecraft/nbt/CompoundTag
 accessible method net/minecraft/nbt/CompoundTag <init> (Ljava/util/Map;)V
 accessible  method  net/minecraft/client/renderer/texture/SpriteContents getFrameCount ()I
+
+accessible field net/minecraft/client/gui/GuiGraphics guiRenderState Lnet/minecraft/client/gui/render/state/GuiRenderState;
+accessible field net/minecraft/client/gui/GuiGraphics scissorStack Lnet/minecraft/client/gui/GuiGraphics$ScissorStack;
+accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack

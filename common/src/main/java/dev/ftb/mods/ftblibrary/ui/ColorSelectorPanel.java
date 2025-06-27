@@ -280,13 +280,13 @@ public class ColorSelectorPanel extends ModalPanel {
             int dx = (int) (xc + xc * hsb[1] * Math.cos(rad));
             int dy = (int) (yc - yc * hsb[1] * Math.sin(rad));
 
-            graphics.pose().pushPose();
-            graphics.pose().translate(x, y, 0);
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(x, y);
             Color4I.BLACK.draw(graphics, dx - 1, dy - 5, 3, 11);
             Color4I.BLACK.draw(graphics, dx - 5, dy - 1, 11, 3);
             Color4I.GRAY.draw(graphics, dx, dy - 4, 1, 9);
             Color4I.GRAY.draw(graphics, dx - 4, dy, 9, 1);
-            graphics.pose().popPose();
+            graphics.pose().popMatrix();
         }
 
         @Override

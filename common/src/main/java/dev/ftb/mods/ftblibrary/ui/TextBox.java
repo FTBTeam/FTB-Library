@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -12,10 +10,11 @@ import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
+import org.joml.Matrix3x2fStack;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
@@ -483,23 +482,22 @@ public class TextBox extends Widget implements IFocusableWidget {
             endX = Math.min(endX, x + w);
             startX = Math.min(startX, x + w);
 
-            graphics.fill(RenderType.guiTextHighlight(), startX, startY, endX, endY, 0x80000080);
+            graphics.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, startX, startY, endX, endY, 0x80000080);
         }
 
 //        GuiHelper.popScissor(getScreen(), graphics);
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
     }
 
     public void drawTextBox(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawTextBox(graphics, x, y, w, h);
 
         if (label != null) {
-            PoseStack pose = graphics.pose();
-            pose.pushPose();
-            pose.translate(x + 1, y - 5, 0);
-            pose.scale(0.5F, 0.5F, 1);
+            Matrix3x2fStack pose = graphics.pose();
+            pose.pushMatrix();
+            pose.translate(x + 1, y - 5);
+            pose.scale(0.5F, 0.5F);
             theme.drawString(graphics, label, 0, 0, labelColor, Theme.SHADOW);
-            pose.popPose();
+            pose.popMatrix();
         }
     }
 

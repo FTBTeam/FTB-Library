@@ -25,10 +25,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
@@ -166,8 +163,9 @@ public class FTBLibraryCommands {
     private static void editItemNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
         var player = context.getSource().getPlayerOrException();
         info.putString("type", "item");
-        Tag res = player.getItemInHand(InteractionHand.MAIN_HAND).save(player.level().registryAccess(), tag);
-        if (res instanceof CompoundTag t) tag.merge(t);
+        // TODO: [1.21.6] Add back
+//        Tag res = player.getItemInHand(InteractionHand.MAIN_HAND).save(player.level().registryAccess(), tag);
+//        if (res instanceof CompoundTag t) tag.merge(t);
     }
 
     private static void editPlayerNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
@@ -176,7 +174,8 @@ public class FTBLibraryCommands {
         info.putString("type", "player");
         info.store("id", UUIDUtil.CODEC, player.getUUID());
 
-        player.saveWithoutId(tag);
+        // TODO: [1.21.6] Add back
+//        player.saveWithoutId(tag);
         tag.remove("id");
 
         info.put("text", InfoBuilder.create(context)
@@ -184,7 +183,8 @@ public class FTBLibraryCommands {
                 .add(Component.literal("Display Name"), player.getDisplayName())
                 .add(Component.literal("UUID"), Component.literal(player.getUUID().toString()))
                 .build());
-        info.putString("title", Component.Serializer.toJson(player.getDisplayName(), player.level().registryAccess()));
+        // TODO: [1.21.6] Add back
+//        info.putString("title", Component.Serializer.toJson(player.getDisplayName(), player.level().registryAccess()));
     }
 
     private static void editEntityNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
@@ -196,8 +196,8 @@ public class FTBLibraryCommands {
 
         info.putString("type", "entity");
         info.putInt("id", entity.getId());
-
-        entity.save(tag);
+// TODO: [1.21.6] Add back
+//        entity.save(tag);
 
         var key = RegistrarManager.getId(entity.getType(), Registries.ENTITY_TYPE);
         info.put("text", InfoBuilder.create(context)
@@ -205,7 +205,8 @@ public class FTBLibraryCommands {
                 .add(Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()))
                 .add(Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
                 .build());
-        info.putString("title", Component.Serializer.toJson(entity.getDisplayName(), entity.level().registryAccess()));
+        // TODO: [1.21.6] Add back
+//        info.putString("title", Component.Serializer.toJson(entity.getDisplayName(), entity.level().registryAccess()));
     }
 
     private static void editBlockNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
@@ -243,8 +244,8 @@ public class FTBLibraryCommands {
         if (title == null) {
             title = Component.literal(blockEntity.getClass().getSimpleName());
         }
-
-        info.putString("title", Component.Serializer.toJson(title, context.getSource().registryAccess()));
+// TODO: [1.21.6] Add back
+//        info.putString("title", Component.Serializer.toJson(title, context.getSource().registryAccess()));
     }
 
     private interface NBTEditCallback {
@@ -257,11 +258,12 @@ public class FTBLibraryCommands {
         }
 
         private InfoBuilder add(Component key, Component value) {
-            list.add(StringTag.valueOf(Component.Serializer.toJson(
-                            key.copy().withStyle(ChatFormatting.BLUE).append(": ").append(value.copy().withStyle(ChatFormatting.GOLD)),
-                            provider)
-                    )
-            );
+            // TODO: [1.21.6] Add back
+//            list.add(StringTag.valueOf(Component.Serializer.toJson(
+//                            key.copy().withStyle(ChatFormatting.BLUE).append(": ").append(value.copy().withStyle(ChatFormatting.GOLD)),
+//                            provider)
+//                    )
+//            );
             return this;
         }
 

@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -33,7 +32,8 @@ public class IconWithBorder extends IconWithParent {
     @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         parent.draw(graphics, x + 1, y + 1, w - 2, h - 2);
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+        // TODO: [1.21.6] This isn't a thing anymore
+//        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         GuiHelper.drawHollowRect(graphics, x, y, w, h, color, roundEdges);
     }
 

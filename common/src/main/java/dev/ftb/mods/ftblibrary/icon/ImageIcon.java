@@ -2,16 +2,12 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.common.base.Objects;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +61,7 @@ public class ImageIcon extends Icon implements IResourceIcon {
             manager.register(texture, tex);
         }
 
-//        RenderSystem.setShaderTexture(0, tex.getId());
+        RenderSystem.setShaderTexture(0, tex.getTextureView());
     }
 
     @Override
@@ -73,33 +69,35 @@ public class ImageIcon extends Icon implements IResourceIcon {
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         bindTexture();
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer buffer = bufferSource.getBuffer(RenderType.guiTextured(texture));
-
-        // TODO: Validate
-        if (tileSize <= 0D) {
-            GuiHelper.drawTexturedRect(graphics, buffer, x, y, w, h, color, minU, minV, maxU, maxV);
-        } else {
-            var r = color.redi();
-            var g = color.greeni();
-            var b = color.bluei();
-            var a = color.alphai();
-
-            var m = graphics.pose().last().pose();
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-            buffer.addVertex(m, x, y + h, 0)
-                    .setUv((float) (x / tileSize), (float) ((y + h) / tileSize))
-                    .setColor(r, g, b, a);
-            buffer.addVertex(m, x + w, y + h, 0)
-                    .setUv((float) ((x + w) / tileSize), (float) ((y + h) / tileSize))
-                    .setColor(r, g, b, a);
-            buffer.addVertex(m, x + w, y, 0)
-                    .setUv((float) ((x + w) / tileSize), (float) (y / tileSize))
-                    .setColor(r, g, b, a);
-            buffer.addVertex(m, x, y, 0)
-                    .setUv((float) (x / tileSize), (float) (y / tileSize))
-                    .setColor(r, g, b, a);
-        }
+// TODO: [1.21.6] Add back
+//        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+//        VertexConsumer buffer = bufferSource.getBuffer(RenderType.guiTextured(texture));
+//
+//        // TODO: Validate
+//        if (tileSize <= 0D) {
+//            GuiHelper.drawTexturedRect(graphics, buffer, x, y, w, h, color, minU, minV, maxU, maxV);
+//        } else {
+//            var r = color.redi();
+//            var g = color.greeni();
+//            var b = color.bluei();
+//            var a = color.alphai();
+//
+//            var m = graphics.pose().last().pose();
+//            // TODO: [1.21.6] This isn't a thing anymore
+////            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+//            buffer.addVertex(m, x, y + h, 0)
+//                    .setUv((float) (x / tileSize), (float) ((y + h) / tileSize))
+//                    .setColor(r, g, b, a);
+//            buffer.addVertex(m, x + w, y + h, 0)
+//                    .setUv((float) ((x + w) / tileSize), (float) ((y + h) / tileSize))
+//                    .setColor(r, g, b, a);
+//            buffer.addVertex(m, x + w, y, 0)
+//                    .setUv((float) ((x + w) / tileSize), (float) (y / tileSize))
+//                    .setColor(r, g, b, a);
+//            buffer.addVertex(m, x, y, 0)
+//                    .setUv((float) (x / tileSize), (float) (y / tileSize))
+//                    .setColor(r, g, b, a);
+//        }
     }
 
     @Override

@@ -90,7 +90,9 @@ public class ItemIcon extends Icon implements IResourceIcon {
     @Environment(EnvType.CLIENT)
     public static void drawItem3D(GuiGraphics graphics, ItemStack stack) {
         //FIXME: Draw flat 3D item
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, graphics.pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
+        // TODO: [1.21.6] We no longer have access to the posestack so maybe creating our own will be fine here?
+        var pose = new PoseStack();
+        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, pose, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
     }
 
     public ItemStack getStack() {
@@ -100,33 +102,33 @@ public class ItemIcon extends Icon implements IResourceIcon {
     @Override
     @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        PoseStack poseStack = graphics.pose();
-        poseStack.pushPose();
-        poseStack.translate(x + w / 2D, y + h / 2D, 0);
+        var poseStack = graphics.pose();
+        poseStack.pushMatrix();
+        poseStack.translate(x + w / 2F, y + h / 2F);
 
         if (w != 16 || h != 16) {
             float s = Math.min(w, h) / 16F;
-            poseStack.scale(s, s, s);
+            poseStack.scale(s, s);
         }
 
         GuiHelper.drawItem(graphics, getStack(), 0, true, null);
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
     @Override
     @Environment(EnvType.CLIENT)
     public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
-        PoseStack poseStack = graphics.pose();
-        poseStack.pushPose();
-        poseStack.translate(x + w / 2D, y + h / 2D, 0);
+        var poseStack = graphics.pose();
+        poseStack.pushMatrix();
+        poseStack.translate(x + w / 2F, y + h / 2F);
 
         if (w != 16 || h != 16) {
             float s = Math.min(w, h) / 16F;
-            poseStack.scale(s, s, s);
+            poseStack.scale(s, s);
         }
 
         GuiHelper.drawItem(graphics, getStack(), 0, false, null);
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
     @Override

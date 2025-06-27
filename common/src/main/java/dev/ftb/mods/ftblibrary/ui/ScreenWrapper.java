@@ -9,8 +9,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Optional;
-
 public class ScreenWrapper extends Screen implements IScreenWrapper {
     private final BaseScreen wrappedGui;
     private final TooltipList tooltipList = new TooltipList();
@@ -121,24 +119,28 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
         int zLevel = wrappedGui.getMaxZLevel() + 100;
 
-        graphics.pose().pushPose();
+        graphics.pose().pushMatrix();
         if (!tooltipList.shouldRender()) {
             wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
                 if (underMouse.tooltip()) {
                     var ingredient = underMouse.ingredient();
                     if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
-                        graphics.pose().translate(0, 0, zLevel);
-                        graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
+                        // TODO: [1.21.6] This isn't a thing anymore
+//                        graphics.pose().translate(0, 0, zLevel);
+                        // TODO: [1.21.6] Replace with the correct call method
+//                        graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
                     }
                 }
             });
         } else {
-            graphics.pose().translate(0, 0, zLevel);
+// TODO: [1.21.6] This isn't a thing anymore
+//            graphics.pose().translate(0, 0, zLevel);
 //            graphics.setColor(1f, 1f, 1f, 0.8f);
-            graphics.renderTooltip(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
+            // TODO: [1.21.6] Replace with the correct call method
+//            graphics.renderTooltip(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
 //            graphics.setColor(1f, 1f, 1f, 1f);
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
 
         tooltipList.reset();
     }
@@ -151,9 +153,10 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     }
 
     @Override
-    protected void renderBlurredBackground() {
+    protected void renderBlurredBackground(GuiGraphics guiGraphics) {
         if (wrappedGui.shouldRenderBlur()) {
-            super.renderBlurredBackground();
+            // TODO: [1.21.6] Add back (causing crash atm as something else is calling the blur effect)
+//            super.renderBlurredBackground(guiGraphics);
         }
     }
 

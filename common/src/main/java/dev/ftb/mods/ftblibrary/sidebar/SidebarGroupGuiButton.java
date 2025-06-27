@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import org.joml.Matrix3x2fStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -91,8 +92,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mx, int my, float partialTicks) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, 0, 5000);
+// TODO: [1.21.6] We can't do this with z-index anymore
+        //        graphics.pose().pushPose();
+//        graphics.pose().translate(0, 0, 5000);
 
         currentMouseX = mx;
         currentMouseY = my;
@@ -115,18 +117,21 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
         renderSidebarButtons(graphics, mx, my);
 
-        graphics.pose().popPose();
+//        graphics.pose().popPose();
     }
 
     private void renderSidebarButtons(GuiGraphics graphics, int mx, int my) {
         var font = Minecraft.getInstance().font;
 
-        graphics.pose().translate(0, 0, 50);
+        Matrix3x2fStack pose = graphics.pose();
+        // TODO: [1.21.6] We can't do this with z-index anymore
+//        pose.translate(0, 0, 50);
 
         //If there are no sidebar buttons enabled render "fake" button
         if (!isEditMode && SidebarButtonManager.INSTANCE.getEnabledButtonList(false).isEmpty()) {
             if (mx >= xRenderStart + 2 && my >= yRenderStart + 2 && mx < xRenderStart + 18 && my < yRenderStart + 18) {
-                graphics.renderTooltip(font, noButtonComponents, Optional.empty(), mx, my + 5);
+                // TODO: [1.21.6] Add back but with the correct method call
+//                graphics.renderTooltip(font, noButtonComponents, mx, my + 5, DefaultTooltipPositioner.INSTANCE, null);
                 Color4I.WHITE.withAlpha(33).draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
                 mouseOverSettingsIcon = true;
             }
@@ -134,11 +139,12 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
         } else {
             for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
-                graphics.pose().pushPose();
+                pose.pushMatrix();
                 GridLocation realGridLocation = realLocationMap.get(button);
                 if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
                     if (isEditMode && button == selectedButton) {
-                        graphics.pose().translate(0, 0, 1000);
+                        // TODO: [1.21.6] We can't do this with z-index anymore
+//                        pose.translate(0, 0, 1000);
                         button.x = mx - mouseOffsetX;
                         button.y = my - mouseOffsetY;
                     } else {
@@ -161,12 +167,12 @@ public class SidebarGroupGuiButton extends AbstractButton {
                             Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
                         }
                     } else {
-                        graphics.pose().pushPose();
-                        graphics.pose().translate(button.x, button.y, 0);
+                        pose.pushMatrix();
+                        pose.translate(button.x, button.y);
                         for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
                             buttonOverlayRender.render(graphics, font, 16);
                         }
-                        graphics.pose().popPose();
+                        pose.popMatrix();
                     }
 
                     if (button == mouseOver) {
@@ -175,9 +181,10 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
                 }
                 if (!isEditMode && mouseOver == button) {
-                    graphics.renderTooltip(font, button.getSidebarButton().getTooltip(Screen.hasShiftDown()), Optional.empty(), mx, Math.max(7, my - 9) + 10);
+                    // TODO: [1.21.6] Replace with correct call method
+//                    graphics.renderTooltip(font, button.getSidebarButton().getTooltip(Screen.hasShiftDown()), mx, Math.max(7, my - 9) + 10, DefaultTooltipPositioner.INSTANCE, null);
                 }
-                graphics.pose().popPose();
+                pose.popMatrix();
             }
         }
     }
@@ -208,8 +215,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
                 int gridY = gridStartBottom ? addIconY - disabledButtonList.size() * BUTTON_SPACING : BUTTON_SPACING;
                 int gridX = gridStartRight ? addIconX - maxWidth - 6 : (currentGirdWidth + 1) * BUTTON_SPACING;
 
-                graphics.pose().pushPose();
-                graphics.pose().translate(0, 0, 1000);
+                graphics.pose().pushMatrix();
+                // TODO: [1.21.6] This isn't a thing anymore
+//                graphics.pose().translate(0, 0, 1000);
 
                 if (gridStartRight) {
                     drawHoveredGrid(graphics, addIconX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight);
@@ -241,7 +249,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
                     int textXPos = gridStartRight ? addIconX - Minecraft.getInstance().font.width(langText) - 2 : gridX + BUTTON_SPACING + 3;
                     graphics.drawString(Minecraft.getInstance().font, langText, textXPos, buttonY + 5, 0xFFFFFFFF);
                 }
-                graphics.pose().popPose();
+                graphics.pose().popMatrix();
 
             }
         }

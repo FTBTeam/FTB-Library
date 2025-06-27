@@ -11,12 +11,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.UUID;
 
 public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implements CustomPacketPayload {
     public static final Type<EditNBTResponsePacket> TYPE = new Type<>(FTBLibrary.rl("edit_nbt_response"));
@@ -46,8 +42,9 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
                                 tag.putInt("y", pos.getY());
                                 tag.putInt("z", pos.getZ());
                                 tag.putString("id", info.getString("id").orElseThrow());
-                                blockEntity.loadWithComponents(tag, player.level().registryAccess());
-                                blockEntity.setChanged();
+                                // TODO: [1.21.6] Add back
+//                                blockEntity.loadWithComponents(tag, player.level().registryAccess());
+//                                blockEntity.setChanged();
                                 player.level().sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
                             }
                         }
@@ -57,7 +54,8 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
 
                         if (entity != null) {
                             var uUID = entity.getUUID();
-                            entity.load(tag);
+                            // TODO: [1.21.6] Add back
+//                            entity.load(tag);
                             entity.setUUID(uUID);
                         }
                     }
@@ -66,13 +64,15 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
 
                         if (player1 != null) {
                             var uUID = player1.getUUID();
-                            player1.load(tag);
+                            // TODO: [1.21.6] Add back
+//                            player1.load(tag);
                             player1.setUUID(uUID);
                             player1.move(MoverType.PLAYER, new Vec3(player1.getX(), player1.getY(), player1.getZ()));
                         }
                     }
-                    case "item" -> ItemStack.parse(player.registryAccess(), tag)
-                            .ifPresent(stack -> player.setItemInHand(InteractionHand.MAIN_HAND, stack));
+                    // TODO: [1.21.6] Add back
+//                    case "item" -> ItemStack.parse(player.registryAccess(), tag)
+//                            .ifPresent(stack -> player.setItemInHand(InteractionHand.MAIN_HAND, stack));
                 }
             }
         });

@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased (1.21.6)
+
+### Breaking Changes
+* RegisteredSidebarButton#getTolltip now returns TooltipComponent instead of Component 
+
 ## [2101.1.12]
 
 ### Added

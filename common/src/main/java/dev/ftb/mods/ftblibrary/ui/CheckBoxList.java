@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
@@ -76,7 +75,8 @@ public class CheckBoxList extends Button {
             drawCheckboxBackground(graphics, theme, x, ey, 10, 10);
             getCheckboxIcon(graphics, theme, x + 1, ey + 1, 8, 8, i, entry.index);
             theme.drawString(graphics, entry.name, x + 12, ey + 1);
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+            // TODO: [1.21.6] This isn't a thing anymore
+//            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         }
     }
 

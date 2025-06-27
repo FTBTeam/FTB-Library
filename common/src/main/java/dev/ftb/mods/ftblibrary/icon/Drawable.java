@@ -16,9 +16,9 @@ public interface Drawable {
 
     @Environment(EnvType.CLIENT)
     default void draw3D(GuiGraphics graphics) {
-        graphics.pose().pushPose();
-        graphics.pose().scale(1F / 16F, 1F / 16F, 1F);
+        graphics.pose().pushMatrix();
+        graphics.pose().scale(1F / 16F, 1F / 16F);
         draw(graphics, -8, -8, 16, 16);
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 }
