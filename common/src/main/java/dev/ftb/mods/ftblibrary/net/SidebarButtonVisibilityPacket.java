@@ -1,0 +1,29 @@
+package dev.ftb.mods.ftblibrary.net;
+
+import dev.architectury.networking.NetworkManager;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+
+public record SidebarButtonVisibilityPacket(ResourceLocation id, boolean visible) implements CustomPacketPayload {
+    public static final Type<SidebarButtonVisibilityPacket> TYPE = new Type<>(FTBLibrary.rl("sidebar_button_visibility"));
+
+    public static final StreamCodec<FriendlyByteBuf, SidebarButtonVisibilityPacket> STREAM_CODEC = StreamCodec.composite(
+            ResourceLocation.STREAM_CODEC, SidebarButtonVisibilityPacket::id,
+            ByteBufCodecs.BOOL, SidebarButtonVisibilityPacket::visible,
+            SidebarButtonVisibilityPacket::new
+    );
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    public static void handle(SidebarButtonVisibilityPacket packet, NetworkManager.PacketContext ignoredPacketContext) {
+        SidebarButtonManager.INSTANCE.getButton(packet.id).ifPresent(button -> button.setForceHidden(!packet.visible));
+    }
+}

@@ -150,4 +150,8 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener {
     public Collection<RegisteredSidebarButton> getButtons() {
         return buttons.values();
     }
+
+    public Optional<RegisteredSidebarButton> getButton(ResourceLocation id) {
+        return Optional.ofNullable(buttons.get(id));
+    }
 }
