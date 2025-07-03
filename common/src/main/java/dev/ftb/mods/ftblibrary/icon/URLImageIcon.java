@@ -38,39 +38,6 @@ public class URLImageIcon extends ImageIcon {
         return icon;
     }
 
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void bindTexture() {
-//        var manager = Minecraft.getInstance().getTextureManager();
-//        var img = manager.getTexture(texture);
-//
-//        if (img == null) {
-//            if (uri.getScheme().equals("http") || uri.getScheme().equals("https")) {
-//                img = new HttpTexture(null, url, MISSING_IMAGE, false, null);
-//            } else {
-//                File file = null;
-//
-//                if (uri.getScheme().equals("file")) {
-//                    try {
-//                        file = new File(uri.getPath());
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                }
-//
-//                if (file == null) {
-//                    file = new File(uri);
-//                }
-//
-//                img = new HttpTexture(file, url, MISSING_IMAGE, false, null);
-//            }
-//
-//            manager.register(texture, img);
-//        }
-//
-//        RenderSystem.bindTexture(img.getId());
-    }
-
     public String toString() {
         return url;
     }

@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -75,7 +76,8 @@ public interface SelectableResource<T> {
 
         @Override
         public CompoundTag getComponentsTag() {
-            Tag tag = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()
+            RegistryOps<Tag> ops = ClientUtils.registryAccess().createSerializationContext(NbtOps.INSTANCE);
+            Tag tag = DataComponentMap.CODEC.encodeStart(ops, stack.getComponents()).result()
                     .orElse(new CompoundTag());
             return tag instanceof CompoundTag t ? t : null;
         }
@@ -115,7 +117,8 @@ public interface SelectableResource<T> {
 
         @Override
         public CompoundTag getComponentsTag() {
-            Tag tag = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()
+            RegistryOps<Tag> ops = ClientUtils.registryAccess().createSerializationContext(NbtOps.INSTANCE);
+            Tag tag = DataComponentMap.CODEC.encodeStart(ops, stack.getComponents()).result()
                     .orElse(new CompoundTag());
             return tag instanceof CompoundTag t ? t : null;
         }

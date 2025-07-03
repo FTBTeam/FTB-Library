@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.nbt.*;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,28 +35,6 @@ public class SNBT {
         Files.write(path, writeLines(tag));
     }
 
-    /**
-     * Read a SNBT compound from a file on disk
-     *
-     * @param path the file to read
-     * @return the SNBT structure, or null if there was an error
-     * @deprecated use {@link #tryRead(Path)}
-     */
-    @Deprecated
-    @Nullable
-    public static SNBTCompoundTag read(Path path) {
-        if (Files.notExists(path) || Files.isDirectory(path) || !Files.isReadable(path)) {
-            return null;
-        }
-
-        try {
-            return readLines(Files.readAllLines(path, StandardCharsets.UTF_8));
-        } catch (Exception ex) {
-            FTBLibrary.LOGGER.error("Failed to read {}: {} / {}", path, ex.getClass(), ex.getMessage());
-            return null;
-        }
-    }
-
     public static List<String> writeLines(CompoundTag nbt) {
         var builder = new SNBTBuilder();
 
@@ -78,6 +55,14 @@ public class SNBT {
         return builder.lines;
     }
 
+    /**
+     * Don't use this anymore
+     * @param path path to write to
+     * @param nbt nbt compound to write
+     * @return true if config was written
+     * @deprecated use {@link #tryWrite(Path, CompoundTag)}
+     */
+    @Deprecated
     public static boolean write(Path path, CompoundTag nbt) {
         try {
             if (Files.notExists(path.getParent())) {

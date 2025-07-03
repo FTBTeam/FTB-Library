@@ -6,12 +6,17 @@ import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.phys.Vec3;
 
 public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implements CustomPacketPayload {
@@ -42,10 +47,9 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
                                 tag.putInt("y", pos.getY());
                                 tag.putInt("z", pos.getZ());
                                 tag.putString("id", info.getString("id").orElseThrow());
-                                // TODO: [1.21.6] Add back
-//                                blockEntity.loadWithComponents(tag, player.level().registryAccess());
-//                                blockEntity.setChanged();
-                                player.level().sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
+                                blockEntity.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, blockEntity.getLevel().registryAccess(), tag));
+                                blockEntity.setChanged();
+                                player.level().sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), Block.UPDATE_ALL);
                             }
                         }
                     }
@@ -53,26 +57,23 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
                         var entity = player.level().getEntity(info.getInt("id").orElseThrow());
 
                         if (entity != null) {
-                            var uUID = entity.getUUID();
-                            // TODO: [1.21.6] Add back
-//                            entity.load(tag);
-                            entity.setUUID(uUID);
+                            var uuid = entity.getUUID();
+                            entity.load(TagValueInput.create(ProblemReporter.DISCARDING, entity.registryAccess(), tag));
+                            entity.setUUID(uuid);
                         }
                     }
                     case "player" -> {
-                        var player1 = player.getServer().getPlayerList().getPlayer(info.read("id", UUIDUtil.CODEC).orElse(null));
+                        var targetPlayer = player.getServer().getPlayerList().getPlayer(info.read("id", UUIDUtil.CODEC).orElse(null));
 
-                        if (player1 != null) {
-                            var uUID = player1.getUUID();
-                            // TODO: [1.21.6] Add back
-//                            player1.load(tag);
-                            player1.setUUID(uUID);
-                            player1.move(MoverType.PLAYER, new Vec3(player1.getX(), player1.getY(), player1.getZ()));
+                        if (targetPlayer != null) {
+                            var uuid = targetPlayer.getUUID();
+                            targetPlayer.load(TagValueInput.create(ProblemReporter.DISCARDING, targetPlayer.registryAccess(), tag));
+                            targetPlayer.setUUID(uuid);
+                            targetPlayer.setPos(new Vec3(targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ()));
                         }
                     }
-                    // TODO: [1.21.6] Add back
-//                    case "item" -> ItemStack.parse(player.registryAccess(), tag)
-//                            .ifPresent(stack -> player.setItemInHand(InteractionHand.MAIN_HAND, stack));
+                    case "item" -> ItemStack.CODEC.parse(player.registryAccess().createSerializationContext(NbtOps.INSTANCE), tag)
+                            .ifSuccess(stack -> player.setItemInHand(InteractionHand.MAIN_HAND, stack));
                 }
             }
         });

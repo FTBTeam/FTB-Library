@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.serialization.JsonOps;
 import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.*;
@@ -13,16 +14,21 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.AbstractThreePanelScreen;
 import dev.ftb.mods.ftblibrary.ui.misc.SimpleToast;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
+import dev.ftb.mods.ftblibrary.util.SerializationUtil;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,10 +102,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
     private String getInfoTitle(CompoundTag info) {
         if (info.contains("title")) {
-//            MutableComponent title = Component.Serializer.fromJson(info.getStringOr("title", ""), Minecraft.getInstance().level.registryAccess());
-//            if (title != null) return title.getString();
-            // TODO: [1.21.6] Add back
-            return "NOT IMPLEMENTED"; // TODO: Implement title parsing
+            return info.getStringOr("title", "<?>");
         } else if (info.contains("type")) {
             return info.getStringOr("type", "").toUpperCase();
         }
@@ -487,9 +490,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             hoverIcon = Icon.empty();
 
             if (map.contains("id") && map.contains("Count")) {
-                // TODO: [1.21.6] Add back
-//                ItemStack.parse(Minecraft.getInstance().level.registryAccess(), map)
-//                        .ifPresent(stack -> hoverIcon = ItemIcon.getItemIcon(stack));
+                ItemStack.CODEC.parse(ClientUtils.registryAccess().createSerializationContext(NbtOps.INSTANCE), map)
+                        .ifSuccess(stack -> hoverIcon = ItemIcon.getItemIcon(stack));
             }
 
             setWidth(12 + getTheme().getStringWidth(getTitle()) + (hoverIcon.isEmpty() ? 0 : 10));
@@ -504,12 +506,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                     list.add(Component.translatable("gui.info").append(":"));
 
                     for (var i = 0; i < infoList.size(); i++) {
-                        // TODO: [1.21.6] Add back
-//                        var component = Component.Serializer.fromJson(infoList.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess());
-//
-//                        if (component != null) {
-//                            list.add(component);
-//                        }
+                        SerializationUtil.deserializeComponent(infoList.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess())
+                                .ifPresent(list::add);
                     }
                 }
             }
@@ -564,12 +562,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
                 if (!infoList0.isEmpty()) {
                     for (var i = 0; i < infoList0.size(); i++) {
-                        // TODO: [1.21.6] Add back
-//                        var component = Component.Serializer.fromJson(infoList0.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess());
-//
-//                        if (component != null) {
-//                            infoList1.add(StringTag.valueOf(component.getString()));
-//                        }
+                        SerializationUtil.deserializeComponent(infoList0.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess())
+                                .ifPresent(c -> infoList1.add(StringTag.valueOf(c.getString())));
                     }
 
                     nbt.put("_", infoList1);
@@ -669,10 +663,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             if (id == -1) {
                 if (base != null) {
-                    list.add(base.asByte().orElse((byte) 0));
+                    byte key1 = base.asByte().orElse((byte) 0);
+                    list.add(key1);
                 }
             } else if (base != null) {
-                list.set(id, base.asByte().orElse((byte) 0));
+                byte k = base.asByte().orElse((byte) 0);
+                list.set(id, k);
             } else {
                 list.removeByte(id);
             }

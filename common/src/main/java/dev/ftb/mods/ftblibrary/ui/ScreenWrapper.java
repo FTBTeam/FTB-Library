@@ -9,13 +9,17 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Optional;
+
 public class ScreenWrapper extends Screen implements IScreenWrapper {
     private final BaseScreen wrappedGui;
-    private final TooltipList tooltipList = new TooltipList();
+    private final TooltipList tooltipList;
 
-    public ScreenWrapper(BaseScreen g) {
-        super(g.getTitle());
-        wrappedGui = g;
+    public ScreenWrapper(BaseScreen wrappedGui) {
+        super(wrappedGui.getTitle());
+
+        this.wrappedGui = wrappedGui;
+        tooltipList = new TooltipList();
     }
 
     @Override
@@ -105,19 +109,16 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         wrappedGui.updateGui(mouseX, mouseY, partialTicks);
-        renderBackground(graphics, mouseX, mouseY, partialTicks);
         GuiHelper.setupDrawing();
         var x = wrappedGui.getX();
         var y = wrappedGui.getY();
         var w = wrappedGui.width;
         var h = wrappedGui.height;
         var theme = wrappedGui.getTheme();
+
         wrappedGui.draw(graphics, theme, x, y, w, h);
         wrappedGui.drawForeground(graphics, theme, x, y, w, h);
-
         wrappedGui.addMouseOverText(tooltipList);
-
-        int zLevel = wrappedGui.getMaxZLevel() + 100;
 
         graphics.pose().pushMatrix();
         if (!tooltipList.shouldRender()) {
@@ -125,20 +126,12 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
                 if (underMouse.tooltip()) {
                     var ingredient = underMouse.ingredient();
                     if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
-                        // TODO: [1.21.6] This isn't a thing anymore
-//                        graphics.pose().translate(0, 0, zLevel);
-                        // TODO: [1.21.6] Replace with the correct call method
-//                        graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
+                        graphics.setTooltipForNextFrame(theme.getFont(), stack, mouseX, mouseY);
                     }
                 }
             });
         } else {
-// TODO: [1.21.6] This isn't a thing anymore
-//            graphics.pose().translate(0, 0, zLevel);
-//            graphics.setColor(1f, 1f, 1f, 0.8f);
-            // TODO: [1.21.6] Replace with the correct call method
-//            graphics.renderTooltip(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
-//            graphics.setColor(1f, 1f, 1f, 1f);
+            graphics.setTooltipForNextFrame(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
         }
         graphics.pose().popMatrix();
 
@@ -155,8 +148,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     @Override
     protected void renderBlurredBackground(GuiGraphics guiGraphics) {
         if (wrappedGui.shouldRenderBlur()) {
-            // TODO: [1.21.6] Add back (causing crash atm as something else is calling the blur effect)
-//            super.renderBlurredBackground(guiGraphics);
+            super.renderBlurredBackground(guiGraphics);
         }
     }
 

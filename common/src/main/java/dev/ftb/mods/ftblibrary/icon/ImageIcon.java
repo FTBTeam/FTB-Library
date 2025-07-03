@@ -51,53 +51,10 @@ public class ImageIcon extends Icon implements IResourceIcon {
         tileSize = properties.getDouble("tile_size", tileSize);
     }
 
-    @Environment(EnvType.CLIENT)
-    public void bindTexture() {
-        var manager = Minecraft.getInstance().getTextureManager();
-        var tex = manager.getTexture(texture);
-
-        if (tex == null) {
-            tex = new SimpleTexture(texture);
-            manager.register(texture, tex);
-        }
-
-        RenderSystem.setShaderTexture(0, tex.getTextureView());
-    }
-
     @Override
     @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        bindTexture();
-
-// TODO: [1.21.6] Add back
-//        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-//        VertexConsumer buffer = bufferSource.getBuffer(RenderType.guiTextured(texture));
-//
-//        // TODO: Validate
-//        if (tileSize <= 0D) {
-//            GuiHelper.drawTexturedRect(graphics, buffer, x, y, w, h, color, minU, minV, maxU, maxV);
-//        } else {
-//            var r = color.redi();
-//            var g = color.greeni();
-//            var b = color.bluei();
-//            var a = color.alphai();
-//
-//            var m = graphics.pose().last().pose();
-//            // TODO: [1.21.6] This isn't a thing anymore
-////            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-//            buffer.addVertex(m, x, y + h, 0)
-//                    .setUv((float) (x / tileSize), (float) ((y + h) / tileSize))
-//                    .setColor(r, g, b, a);
-//            buffer.addVertex(m, x + w, y + h, 0)
-//                    .setUv((float) ((x + w) / tileSize), (float) ((y + h) / tileSize))
-//                    .setColor(r, g, b, a);
-//            buffer.addVertex(m, x + w, y, 0)
-//                    .setUv((float) ((x + w) / tileSize), (float) (y / tileSize))
-//                    .setColor(r, g, b, a);
-//            buffer.addVertex(m, x, y, 0)
-//                    .setUv((float) (x / tileSize), (float) (y / tileSize))
-//                    .setColor(r, g, b, a);
-//        }
+        graphics.blit(texture, x, y, x + w, y + h, minU, maxU, minV, maxV);
     }
 
     @Override

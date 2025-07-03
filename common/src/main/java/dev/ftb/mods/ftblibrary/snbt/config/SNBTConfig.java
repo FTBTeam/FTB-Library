@@ -1,11 +1,13 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.Util;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,13 +83,13 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
     }
 
     public void load(Path path) {
-        var tag = SNBT.read(path);
-
-        if (tag != null) {
+        try {
+            SNBTCompoundTag tag = SNBT.tryRead(path);
             read(tag);
+            save(path);
+        } catch (IOException e) {
+            FTBLibrary.LOGGER.error("can't read {}: {}, {}", path, e.getClass().getSimpleName(), e.getMessage());
         }
-
-        save(path);
     }
 
     public void save(Path path) {
@@ -99,9 +101,11 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
         if (parent != null) {
             parent.saveNow(path);
         } else {
-            var tag = new SNBTCompoundTag();
-            write(tag);
-            SNBT.write(path, tag);
+            try {
+                SNBT.tryWrite(path, Util.make(new SNBTCompoundTag(), this::write));
+            } catch (IOException e) {
+                FTBLibrary.LOGGER.error("can't write snbt to {} : {}/{}", path, e.getClass().getSimpleName(), e.getMessage());
+            }
         }
     }
 

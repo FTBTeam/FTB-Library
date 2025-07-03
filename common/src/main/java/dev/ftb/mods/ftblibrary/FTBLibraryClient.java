@@ -42,11 +42,10 @@ public class FTBLibraryClient {
     }
 
     private static void clientTick(Minecraft client) {
-        var t = client.screen instanceof IScreenWrapper ? ((IScreenWrapper) client.screen).getGui().getCursor() : null;
-
-        if (lastCursorType != t) {
-            lastCursorType = t;
-            CursorType.set(t);
+        var cursorType = client.screen instanceof IScreenWrapper w ? w.getGui().getCursor() : null;
+        if (lastCursorType != cursorType) {
+            lastCursorType = cursorType;
+            CursorType.set(cursorType);
         }
 
         if (!ClientUtils.RUN_LATER.isEmpty()) {
@@ -56,7 +55,6 @@ public class FTBLibraryClient {
 
             ClientUtils.RUN_LATER.clear();
         }
-
     }
 
     public static boolean areButtonsVisible(@Nullable Screen gui) {

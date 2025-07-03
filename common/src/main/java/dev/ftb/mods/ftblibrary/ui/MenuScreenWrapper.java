@@ -5,24 +5,24 @@ import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
+import java.util.Optional;
 
 public class MenuScreenWrapper<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements IScreenWrapper {
     private final BaseScreen wrappedGui;
-    private final TooltipList tooltipList = new TooltipList();
+    private final TooltipList tooltipList;
     private boolean drawSlots = true;
 
-    public MenuScreenWrapper(BaseScreen g, T menu, Inventory playerInventory, Component title) {
+    public MenuScreenWrapper(BaseScreen wrappedGui, T menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        wrappedGui = g;
+
+        this.wrappedGui = wrappedGui;
+        tooltipList = new TooltipList();
     }
 
     public MenuScreenWrapper<T> disableSlotDrawing() {
@@ -136,32 +136,18 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
         wrappedGui.addMouseOverText(tooltipList);
 
-        int zLevel = wrappedGui.getMaxZLevel() + 100;
-
         graphics.pose().pushMatrix();
         if (!tooltipList.shouldRender()) {
             wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> {
                 if (underMouse.tooltip()) {
                     var ingredient = underMouse.ingredient();
                     if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
-                        // TODO: [1.21.6] This isn't a thing anymore
-//                        graphics.pose().translate(0, 0, zLevel);
-                        // TODO: [1.21.6] This needs moving to the correct method call
-//                        graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
+                        graphics.setTooltipForNextFrame(theme.getFont(), stack, mouseX, mouseY);
                     }
                 }
             });
         } else {
-            List<FormattedCharSequence> lines = Tooltip.splitTooltip(minecraft, tooltipList.getLines().stream()
-                    .reduce((c1, c2) -> c1.copy().append("\n").append(c2))
-                    .orElse(Component.empty())
-            );
-            // TODO: [1.21.6] This isn't a thing anymore
-//            graphics.pose().translate(0, 0, zLevel);
-//            graphics.setColor(1f, 1f, 1f, 0.8f);
-            // TODO: [1.21.6] This needs adding back with the correct method call
-//            graphics.renderTooltip(theme.getFont(), lines, DefaultTooltipPositioner.INSTANCE, mouseX, Math.max(mouseY, 18));
-//            graphics.setColor(1f, 1f, 1f, 1f);
+            graphics.setTooltipForNextFrame(theme.getFont(), tooltipList.getLines(), Optional.empty(), mouseX, Math.max(mouseY, 18));
         }
         graphics.pose().popMatrix();
 

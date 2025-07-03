@@ -12,6 +12,7 @@ import java.util.*;
 public class SNBTCompoundTag extends CompoundTag {
     boolean singleLine;
     private HashMap<String, SNBTTagProperties> properties;
+
     public SNBTCompoundTag() {
         super(new LinkedHashMap<>());
         singleLine = false;
@@ -97,12 +98,11 @@ public class SNBTCompoundTag extends CompoundTag {
         return t == SNBTTagProperties.TYPE_TRUE || t == SNBTTagProperties.TYPE_FALSE;
     }
 
-    @Override
-    public Optional<CompoundTag> getCompound(String string) {
-        // TODO: This is broken
-        return Optional.of(of(get(string)));
-//        return of(get(string));
-    }
+    // TODO: verify this isn't needed
+//    @Override
+//    public Optional<CompoundTag> getCompound(String string) {
+//        return Optional.of(of(get(string)));
+//    }
 
     public SNBTCompoundTag getAsSnbtComponent(String string) {
         return of(get(string));
@@ -155,22 +155,29 @@ public class SNBTCompoundTag extends CompoundTag {
         return list;
     }
 
-    public CompoundTag merge(CompoundTag other, boolean overwrite) {
-        for (String key : other.keySet()) {
-            Tag tag = other.get(key);
-            if (tag != null && (overwrite || !this.contains(key))) {
-                if (tag.getId() == Tag.TAG_COMPOUND) {
-                    if (this.contains(key)) {
-                        getCompound(key).orElseThrow().merge((CompoundTag) tag);//overwrite); TODO: This used to support overwriting
+    /**
+     * Recursively merge another compound tag into this one.
+     * @param into the compound tag to merge into
+     * @param from the compound tag to merge from
+     * @param overwrite allow fields in the "from" compound tag to overwrite fields in the "into" compound tag
+     * @return the "into" tag, modified in-place
+     */
+    public static CompoundTag merge(CompoundTag into, CompoundTag from, boolean overwrite) {
+        for (String key : from.keySet()) {
+            Tag subTag = from.get(key);
+            if (subTag != null && (overwrite || !into.contains(key))) {
+                if (subTag.getId() == Tag.TAG_COMPOUND) {
+                    if (into.contains(key)) {
+                        merge(into.getCompound(key).orElseThrow(), from, overwrite);
                     } else {
-                        put(key, tag.copy());
+                        into.put(key, subTag.copy());
                     }
                 } else {
-                    put(key, tag.copy());
+                    into.put(key, subTag.copy());
                 }
             }
         }
 
-        return this;
+        return into;
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 class SNBTParser {
     private final char[] buffer;
     private int position;
+
     private SNBTParser(List<String> lines) {
         var bufferBuilder = new StringBuilder();
 

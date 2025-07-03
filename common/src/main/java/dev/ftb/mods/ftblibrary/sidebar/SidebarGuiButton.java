@@ -7,10 +7,10 @@ public class SidebarGuiButton {
     private GridLocation gridLocation;
     private boolean enabled;
 
-    public SidebarGuiButton(GridLocation girdLocation, boolean enabled, RegisteredSidebarButton sidebarButton) {
+    public SidebarGuiButton(GridLocation gridLocation, boolean enabled, RegisteredSidebarButton sidebarButton) {
         x = 0;
         y = 0;
-        this.gridLocation = girdLocation;
+        this.gridLocation = gridLocation;
         this.sidebarButton = sidebarButton;
         this.enabled = enabled;
     }

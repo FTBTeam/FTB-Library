@@ -19,7 +19,7 @@ public class SimpleButton extends Button {
     }
 
     public SimpleButton(Panel panel, List<Component> text, Icon icon, Callback c) {
-        super(panel, text.isEmpty() ? Component.empty() : text.get(0), icon);
+        super(panel, text.isEmpty() ? Component.empty() : text.getFirst(), icon);
         consumer = c;
         tooltip = text;
     }

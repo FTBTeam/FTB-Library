@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-
 public record SidebarButtonData(
         Icon icon,
         boolean defaultEnabled,

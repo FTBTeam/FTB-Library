@@ -14,6 +14,7 @@ import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.SerializationUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -25,16 +26,21 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.entity.TickingBlockEntity;
+import net.minecraft.world.level.storage.TagValueOutput;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 
 public class FTBLibraryCommands {
     public static final Map<UUID, CompoundTag> EDITING_NBT = new HashMap<>();
@@ -163,9 +169,10 @@ public class FTBLibraryCommands {
     private static void editItemNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
         var player = context.getSource().getPlayerOrException();
         info.putString("type", "item");
-        // TODO: [1.21.6] Add back
-//        Tag res = player.getItemInHand(InteractionHand.MAIN_HAND).save(player.level().registryAccess(), tag);
-//        if (res instanceof CompoundTag t) tag.merge(t);
+        ItemStack.CODEC.encodeStart(player.level().registryAccess().createSerializationContext(NbtOps.INSTANCE), player.getMainHandItem())
+                .ifSuccess(res -> {
+                    if (res instanceof CompoundTag t) tag.merge(t);
+                });
     }
 
     private static void editPlayerNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
@@ -174,8 +181,9 @@ public class FTBLibraryCommands {
         info.putString("type", "player");
         info.store("id", UUIDUtil.CODEC, player.getUUID());
 
-        // TODO: [1.21.6] Add back
-//        player.saveWithoutId(tag);
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, player.level().registryAccess());
+        player.saveWithoutId(output);
+        tag.merge(output.buildResult());
         tag.remove("id");
 
         info.put("text", InfoBuilder.create(context)
@@ -183,8 +191,7 @@ public class FTBLibraryCommands {
                 .add(Component.literal("Display Name"), player.getDisplayName())
                 .add(Component.literal("UUID"), Component.literal(player.getUUID().toString()))
                 .build());
-        // TODO: [1.21.6] Add back
-//        info.putString("title", Component.Serializer.toJson(player.getDisplayName(), player.level().registryAccess()));
+        info.putString("title", player.getGameProfile().getName());
     }
 
     private static void editEntityNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
@@ -196,8 +203,10 @@ public class FTBLibraryCommands {
 
         info.putString("type", "entity");
         info.putInt("id", entity.getId());
-// TODO: [1.21.6] Add back
-//        entity.save(tag);
+
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, entity.registryAccess());
+        entity.save(output);
+        tag.merge(output.buildResult());
 
         var key = RegistrarManager.getId(entity.getType(), Registries.ENTITY_TYPE);
         info.put("text", InfoBuilder.create(context)
@@ -205,8 +214,9 @@ public class FTBLibraryCommands {
                 .add(Component.literal("ID"), Component.literal(key == null ? "null" : key.toString()))
                 .add(Component.literal("Mod"), Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
                 .build());
-        // TODO: [1.21.6] Add back
-//        info.putString("title", Component.Serializer.toJson(entity.getDisplayName(), entity.level().registryAccess()));
+
+        String name = entity.getDisplayName() == null ? "?" : entity.getDisplayName().getString();
+        info.putString("title", name);
     }
 
     private static void editBlockNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
@@ -239,13 +249,11 @@ public class FTBLibraryCommands {
                 .add(Component.literal("Ticking"), Component.literal(blockEntity instanceof TickingBlockEntity ? "true" : "false"))
                 .build());
 
-        var title = blockEntity instanceof Nameable ? ((Nameable) blockEntity).getDisplayName() : null;
-
+        var title = blockEntity instanceof Nameable n ? n.getDisplayName() : null;
         if (title == null) {
             title = Component.literal(blockEntity.getClass().getSimpleName());
         }
-// TODO: [1.21.6] Add back
-//        info.putString("title", Component.Serializer.toJson(title, context.getSource().registryAccess()));
+        info.putString("title", title.getString());
     }
 
     private interface NBTEditCallback {
@@ -258,12 +266,8 @@ public class FTBLibraryCommands {
         }
 
         private InfoBuilder add(Component key, Component value) {
-            // TODO: [1.21.6] Add back
-//            list.add(StringTag.valueOf(Component.Serializer.toJson(
-//                            key.copy().withStyle(ChatFormatting.BLUE).append(": ").append(value.copy().withStyle(ChatFormatting.GOLD)),
-//                            provider)
-//                    )
-//            );
+            Component component = key.copy().withStyle(ChatFormatting.BLUE).append(": ").append(value.copy().withStyle(ChatFormatting.GOLD));
+            SerializationUtil.serializeComponent(component, provider).ifPresent(s -> list.add(StringTag.valueOf(s)));
             return this;
         }
 

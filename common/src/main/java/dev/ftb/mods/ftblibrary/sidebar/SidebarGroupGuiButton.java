@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -130,8 +131,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
         //If there are no sidebar buttons enabled render "fake" button
         if (!isEditMode && SidebarButtonManager.INSTANCE.getEnabledButtonList(false).isEmpty()) {
             if (mx >= xRenderStart + 2 && my >= yRenderStart + 2 && mx < xRenderStart + 18 && my < yRenderStart + 18) {
-                // TODO: [1.21.6] Add back but with the correct method call
-//                graphics.renderTooltip(font, noButtonComponents, mx, my + 5, DefaultTooltipPositioner.INSTANCE, null);
+                graphics.setTooltipForNextFrame(font, noButtonComponents, Optional.empty(), mx, my + 5);
                 Color4I.WHITE.withAlpha(33).draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
                 mouseOverSettingsIcon = true;
             }
@@ -181,8 +181,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
                 }
                 if (!isEditMode && mouseOver == button) {
-                    // TODO: [1.21.6] Replace with correct call method
-//                    graphics.renderTooltip(font, button.getSidebarButton().getTooltip(Screen.hasShiftDown()), mx, Math.max(7, my - 9) + 10, DefaultTooltipPositioner.INSTANCE, null);
+                    graphics.setTooltipForNextFrame(font, button.getSidebarButton().getTooltip(Screen.hasShiftDown()),
+                            Optional.empty(), mx, Math.max(7, my - 9) + 10);
                 }
                 pose.popMatrix();
             }
