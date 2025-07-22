@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2101.1.17]
 
+### Added
+* Added `pt_br` translation (thanks @Xlr11)
+
 ### Fixed
 * Fix a client crash triggered by certain empty textures
 
