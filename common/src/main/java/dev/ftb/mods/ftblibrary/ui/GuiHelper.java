@@ -57,7 +57,11 @@ public class GuiHelper {
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         addRectToBufferWithUV(graphics, buffer, x, y, w, h, col, u0, v0, u1, v1);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        try (var meshData = buffer.build()) {
+            if (meshData != null) {
+                BufferUploader.drawWithShader(meshData);
+            }
+        }
     }
 
     public static void addRectToBuffer(GuiGraphics graphics, BufferBuilder buffer, int x, int y, int w, int h, Color4I col) {
