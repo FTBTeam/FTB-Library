@@ -64,7 +64,6 @@ public abstract class BaseScreen extends Panel {
 
         if (onInit()) {
             super.refreshWidgets();
-            alignWidgets();
             onPostInit();
         }
     }
