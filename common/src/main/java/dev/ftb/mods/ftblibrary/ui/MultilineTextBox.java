@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.core.mixin.common.MultilineTextFieldAccess;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -185,7 +186,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
     public boolean keyPressed(Key key) {
         boolean res = textField.keyPressed(key.keyCode);
         recalculateHeight();
-        return res;
+        return (isFocused() && !key.esc()) || res;
     }
 
     @Override
