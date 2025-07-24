@@ -83,6 +83,14 @@ public class TextField extends Widget {
         return setText(Component.literal(txt));
     }
 
+    public TextField reflow() {
+        var theme = getGui().getTheme();
+
+        formattedText = theme.listFormattedStringToWidth(rawText, maxWidth).toArray(new FormattedText[0]);
+
+        return resize(theme);
+    }
+
     public TextField resize(Theme theme) {
         setWidth(0);
 
