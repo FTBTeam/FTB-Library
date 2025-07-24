@@ -61,8 +61,9 @@ public class Theme {
     private static final Icon SCROLL_BAR_BG_DISABLED = SCROLL_BAR_BG.withTint(Color4I.BLACK.withAlpha(100));
     private static final Icon TEXT_BOX = PartIcon.wholeTexture("textures/gui/sprites/container/enchanting_table/enchantment_slot_disabled.png",
             108, 19, 4);
-    private static final Icon TAB_H_UNSELECTED = TEXTURE_RECIPE_BOOK.withUV(150, 2, 35, 26, 256, 256);
-    private static final Icon TAB_H_SELECTED = TEXTURE_RECIPE_BOOK.withUV(188, 2, 35, 26, 256, 256);
+    private static final Icon TAB_H_UNSELECTED = PartIcon.wholeTexture("textures/gui/sprites/widget/tab.png", 130, 24, 2);
+    private static final Icon TAB_H_SELECTED = PartIcon.wholeTexture("textures/gui/sprites/widget/tab_selected.png", 130, 24, 2);
+
     public static boolean renderDebugBoxes = false;
     private final BooleanStack fontUnicode = new BooleanArrayList();
 

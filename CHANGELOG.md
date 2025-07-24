@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * Added `pt_br` translation (thanks @Xlr11)
+* Added `TextField#reflow` method (recalculate width/height/linecount after changing the text)
 
 ### Fixed
 * Fix a client crash triggered by certain empty textures
+* Fixed pressing the "E" (inventory) key in some popup textfields causing the current screen to close
+* The `Theme.drawHorizontalTab()` method now works again
 
 ## [2101.1.16]
 
