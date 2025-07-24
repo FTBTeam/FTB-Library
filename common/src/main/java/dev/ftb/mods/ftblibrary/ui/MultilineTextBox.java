@@ -185,7 +185,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
     public boolean keyPressed(Key key) {
         boolean res = textField.keyPressed(key.keyCode);
         recalculateHeight();
-        return res;
+        return (isFocused() && !key.esc()) || res;
     }
 
     @Override
