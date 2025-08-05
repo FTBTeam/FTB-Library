@@ -70,28 +70,20 @@ public class FTBLibraryCommands {
                 .then(Commands.literal("day")
                         .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .executes(context -> {
-                            var addDay = (24000L - (context.getSource().getLevel().getDayTime() % 24000L) + 6000L) % 24000L;
-
-                            if (addDay != 0L) {
-                                for (var world : context.getSource().getServer().getAllLevels()) {
-                                    world.setDayTime(world.getDayTime() + addDay);
-                                }
+                            for (var world : context.getSource().getServer().getAllLevels()) {
+                                world.setDayTime(6000L);
                             }
-
+                            context.getSource().getServer().forceTimeSynchronization();
                             return Command.SINGLE_SUCCESS;
                         })
                 )
                 .then(Commands.literal("night")
                         .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .executes(context -> {
-                            var addDay = (24000L - (context.getSource().getLevel().getDayTime() % 24000L) + 18000L) % 24000L;
-
-                            if (addDay != 0L) {
-                                for (var world : context.getSource().getServer().getAllLevels()) {
-                                    world.setDayTime(world.getDayTime() + addDay);
-                                }
+                            for (var world : context.getSource().getServer().getAllLevels()) {
+                                world.setDayTime(18000L);
                             }
-
+                            context.getSource().getServer().forceTimeSynchronization();
                             return Command.SINGLE_SUCCESS;
                         })
                 )
