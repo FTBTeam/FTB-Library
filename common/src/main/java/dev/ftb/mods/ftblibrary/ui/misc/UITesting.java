@@ -19,6 +19,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluids;
 
@@ -36,6 +37,8 @@ public class UITesting {
         }, ItemStack.EMPTY, false, true);
         group.addItemStack("item", ItemStack.EMPTY, v -> {
         }, ItemStack.EMPTY, 1).setAllowNBTEdit(false);
+        group.addItemStack("itemstack(blocks)", ItemStack.EMPTY, v -> {
+        }, ItemStack.EMPTY, 1).withFilter(s -> s.getItem() instanceof BlockItem).setAllowNBTEdit(false);
         group.addFluidStack("fluidstack", FluidStack.empty(), v -> {
         }, FluidStack.empty(), true);
         FluidStack water = FluidStack.create(Fluids.WATER, FluidStackHooks.bucketAmount());

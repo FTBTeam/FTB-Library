@@ -214,7 +214,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         for (SelectableResource<T> resource : items) {
             if (!resource.isEmpty()) {
                 ResourceButton button = makeResourceButton(mainPanel, resource);
-                if (button.shouldAdd(searchTerms)) {
+                if (config.allowResource(resource.stack()) && button.shouldAdd(searchTerms)) {
                     widgets.add(button);
                     var idx = widgets.size() - 1;
                     button.setPos(1 + (idx % nCols) * 18, 1 + (idx / nCols) * 18);

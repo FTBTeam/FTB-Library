@@ -3,9 +3,11 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
 
 import java.util.OptionalLong;
+import java.util.function.Predicate;
 
 public abstract class ResourceConfigValue<T> extends ConfigValue<T> {
     private boolean allowNBTEdit = true;
+    private Predicate<T> filter = s -> true;
 
     public abstract boolean allowEmptyResource();
 
@@ -24,5 +26,14 @@ public abstract class ResourceConfigValue<T> extends ConfigValue<T> {
     public ResourceConfigValue<T> setAllowNBTEdit(boolean allow) {
         allowNBTEdit = allow;
         return this;
+    }
+
+    public ResourceConfigValue<T> withFilter(Predicate<T> filter) {
+        this.filter = filter;
+        return this;
+    }
+
+    public boolean allowResource(T resource) {
+        return filter.test(resource);
     }
 }
