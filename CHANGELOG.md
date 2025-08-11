@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2101.1.18]
+## [2101.1.19]
 
 ### Added
 * Added filtering to `ResourceConfigValue`, allowing extra custom filtering in resource selection screens
@@ -14,16 +14,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Make the `/ftblibrary day` and `night` commands act more like their vanilla counterparts
   * Better cross-mod compat
 
+## [2101.1.18]
+
+### Added
+* Added `TextField#reflow` method (recalculate width/height/linecount after changing the text)
+
+### Fixed
+* Fixed pressing the "E" (inventory) key in some popup textfields causing the current screen to close
+* The `Theme.drawHorizontalTab()` method now works again
+
 ## [2101.1.17]
 
 ### Added
 * Added `pt_br` translation (thanks @Xlr11)
-* Added `TextField#reflow` method (recalculate width/height/linecount after changing the text)
 
 ### Fixed
 * Fix a client crash triggered by certain empty textures
-* Fixed pressing the "E" (inventory) key in some popup textfields causing the current screen to close
-* The `Theme.drawHorizontalTab()` method now works again
 
 ## [2101.1.16]
 
