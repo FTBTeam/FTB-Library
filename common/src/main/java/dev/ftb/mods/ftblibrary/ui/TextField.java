@@ -14,7 +14,6 @@ import java.util.Optional;
 
 
 public class TextField extends Widget {
-    public Component component = Component.empty();  // TODO remove this in MC 1.21
     public int textFlags = 0;
     public int minWidth = 0;
     public int maxWidth = 5000;

@@ -37,8 +37,6 @@ public class ContextButton extends Button {
 
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        GuiHelper.setupDrawing();
-
         if (hasIcons) {
             drawIcon(graphics, theme, x + 1, y + 2, 8, 8);
             theme.drawString(graphics, getTitle(), x + 11, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);

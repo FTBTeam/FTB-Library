@@ -111,14 +111,10 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     @Override
     protected void renderBg(GuiGraphics graphics, float f, int mx, int my) {
         var theme = wrappedGui.getTheme();
-        GuiHelper.setupDrawing();
         renderBackground(graphics, mx, my, f);
-        GuiHelper.setupDrawing();
         wrappedGui.draw(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
         if (drawSlots) {
-            GuiHelper.setupDrawing();
-
             for (var slot : menu.slots) {
                 theme.drawContainerSlot(graphics, leftPos + slot.x, topPos + slot.y, 16, 16);
             }
@@ -129,7 +125,6 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.pose().pushMatrix();
         graphics.pose().translate(-leftPos, -topPos);
-        GuiHelper.setupDrawing();
 
         var theme = wrappedGui.getTheme();
         wrappedGui.drawForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);

@@ -66,7 +66,6 @@ public class SimpleToast implements Toast {
 
     @Override
     public void render(GuiGraphics graphics, Font font, long delta) {
-        GuiHelper.setupDrawing();
         var mc = Minecraft.getInstance();
 
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, 0, 0, 160, 32);

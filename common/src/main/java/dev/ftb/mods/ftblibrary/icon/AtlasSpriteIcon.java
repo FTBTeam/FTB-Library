@@ -37,36 +37,6 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
         }
 
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, w, h, color.rgba());
-
-        // TODO: [1.21.6] Add back
-//        var m = graphics.pose().last().pose();
-//
-//        var r = color.redi();
-//        var g = color.greeni();
-//        var b = color.bluei();
-//        var a = color.alphai();
-//
-//        var minU = sprite.getU0();
-//        var minV = sprite.getV0();
-//        var maxU = sprite.getU1();
-//        var maxV = sprite.getV1();
-//
-//        RenderType renderType = RenderType.guiTextured(sprite.atlasLocation());
-//        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-//        VertexConsumer buffer = bufferSource.getBuffer(renderType);
-//
-//        buffer.addVertex(m, x, y, 0F)
-//                .setUv(minU, minV)
-//                .setColor(r, g, b, a);
-//        buffer.addVertex(m, x, y + h, 0F)
-//                .setUv(minU, maxV)
-//                .setColor(r, g, b, a);
-//        buffer.addVertex(m, x + w, y + h, 0F)
-//                .setUv(maxU, maxV)
-//                .setColor(r, g, b, a);
-//        buffer.addVertex(m, x + w, y, 0F)
-//                .setUv(maxU, minV)
-//                .setColor(r, g, b, a);
     }
 
     @Override

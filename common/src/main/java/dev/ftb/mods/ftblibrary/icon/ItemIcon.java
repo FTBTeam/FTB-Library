@@ -111,7 +111,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
             poseStack.scale(s, s);
         }
 
-        GuiHelper.drawItem(graphics, getStack(), 0, true, null);
+        GuiHelper.drawItem(graphics, getStack(), true, null);
         poseStack.popMatrix();
     }
 
@@ -127,7 +127,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
             poseStack.scale(s, s);
         }
 
-        GuiHelper.drawItem(graphics, getStack(), 0, false, null);
+        GuiHelper.drawItem(graphics, getStack(), false, null);
         poseStack.popMatrix();
     }
 

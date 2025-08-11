@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.ui.Theme;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 
 
@@ -46,14 +47,10 @@ public class LoadingScreen extends BaseScreen {
             var h1 = 16;
 
             var col = Color4I.WHITE;
-// TODO: [1.21.6] Add back
-//            MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-//            VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
-//
-//            GuiHelper.addRectToBuffer(graphics, buffer, x1, y1 + 1, 1, h1 - 2, col);
-//            GuiHelper.addRectToBuffer(graphics, buffer, x1 + w1 - 1, y1 + 1, 1, h1 - 2, col);
-//            GuiHelper.addRectToBuffer(graphics, buffer, x1 + 1, y1, w1 - 2, 1, col);
-//            GuiHelper.addRectToBuffer(graphics, buffer, x1 + 1, y1 + h1 - 1, w1 - 2, 1, col);
+            graphics.fill(RenderPipelines.GUI, x1, y1 + 1, x1 + 1, y1 + h1 - 1, col.rgba());
+            graphics.fill(RenderPipelines.GUI, x1 + w1 - 1, y1 + 1, x1 + w1, y1 + h1 - 1, col.rgba());
+            graphics.fill(RenderPipelines.GUI, x1 + 1, y1, x1 + w1 - 2, y1 + 1, col.rgba());
+            graphics.fill(RenderPipelines.GUI, x1 + 1, y1 + h1 - 1, x1 + w1 - 2, y1 + h1, col.rgba());
 
             x1 += 1;
             y1 += 1;
@@ -71,8 +68,7 @@ public class LoadingScreen extends BaseScreen {
 
                     if (index % (h1 * 2) < h1) {
                         col = Color4I.WHITE.withAlpha(200 - (index % h1) * 9);
-// TODO: [1.21.6] Add back
-//                        GuiHelper.addRectToBuffer(graphics, buffer, x1 + ox, y1 + oy, 1, 1, col);
+                        graphics.fill(RenderPipelines.GUI, x1 + ox, y1 + oy, x1 + ox + 1, y1 + oy + 1, col.rgba());
                     }
                 }
             }

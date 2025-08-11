@@ -179,20 +179,15 @@ public class Theme {
                 if (Bits.getFlag(flags, CENTERED)) {
                     x -= getStringWidth(fcs) / 2;
                 }
-                // TODO: [1.21.6] Look into what this used to do and why we needed the int.
-//                int i =
-                graphics.drawString(getFont(), (FormattedCharSequence) text, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
-                GuiHelper.setupDrawing();
-                return 0; //i;
+                graphics.drawString(getFont(), fcs, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
+                return x + getStringWidth(fcs);
             }
             case Component comp -> {
                 if (Bits.getFlag(flags, CENTERED)) {
                     x -= getStringWidth(comp) / 2;
                 }
-//                int i =
                 graphics.drawString(getFont(), comp, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
-                GuiHelper.setupDrawing();
-                return 0; //i;
+                return x + getStringWidth(comp);
             }
             case FormattedText formattedText -> {
                 return drawString(graphics, Language.getInstance().getVisualOrder(formattedText), x, y, color, flags);
@@ -202,10 +197,8 @@ public class Theme {
                 if (Bits.getFlag(flags, CENTERED)) {
                     x -= getStringWidth(s) / 2;
                 }
-//                int i =
                 graphics.drawString(getFont(), s, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
-                GuiHelper.setupDrawing();
-                return 0; //i;
+                return x + getStringWidth(s);
             }
         }
     }

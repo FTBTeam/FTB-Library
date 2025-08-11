@@ -132,7 +132,7 @@ public class ScrollBar extends Widget {
     }
 
     public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        theme.drawScrollBarBackground(graphics, x, y, w, h, getWidgetType());
+        theme.drawScrollBarBackground(graphics, x, y, w, h - 1, getWidgetType());
     }
 
     public void drawScrollBar(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {

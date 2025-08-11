@@ -2,17 +2,17 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
-//
-//    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
-//        exclude group: "dev.architectury"
-//    }
-//
-//    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
-//        exclude group: "dev.architectury"
-//    }
 
-//    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-//    modCompileOnly("mezz.jei:jei-1.21.1-common-api:${jei_version}")
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
+        exclude group: "dev.architectury"
+    }
+
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
+        exclude group: "dev.architectury"
+    }
+
+    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    modCompileOnly("mezz.jei:jei-1.21.8-common-api:${jei_version}")
 
 //    modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.21.1:api"
 }

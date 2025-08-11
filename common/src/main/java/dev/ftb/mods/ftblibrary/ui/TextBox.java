@@ -431,7 +431,6 @@ public class TextBox extends Widget implements IFocusableWidget {
         drawTextBox(graphics, theme, x, y, w, h);
         var drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
         var textToDraw = getFormattedText();
-//        GuiHelper.pushScissor(getScreen(), graphics, x, y, w, h);
 
         var col = validText ? (textColor.isEmpty() ? theme.getContentColor(WidgetType.NORMAL) : textColor).withAlpha(drawGhostText ? 120 : 255) : Color4I.RED;
         var j = cursorPos - displayPos;
@@ -484,8 +483,6 @@ public class TextBox extends Widget implements IFocusableWidget {
 
             graphics.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, startX, startY, endX, endY, 0x80000080);
         }
-
-//        GuiHelper.popScissor(getScreen(), graphics);
     }
 
     public void drawTextBox(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {

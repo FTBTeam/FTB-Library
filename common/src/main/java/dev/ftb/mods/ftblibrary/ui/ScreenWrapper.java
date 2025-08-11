@@ -109,7 +109,6 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         wrappedGui.updateGui(mouseX, mouseY, partialTicks);
-        GuiHelper.setupDrawing();
         var x = wrappedGui.getX();
         var y = wrappedGui.getY();
         var w = wrappedGui.width;

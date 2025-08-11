@@ -78,10 +78,7 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
 
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        GuiHelper.setupDrawing();
         graphics.pose().pushMatrix();
-        // TODO: [1.21.6] This isn't a thing anymore
-//        graphics.pose().translate(0, 0, 900);
         Color4I.BLACK.withAlpha(45).draw(graphics, x + 3, y + 3, w, h);
         super.draw(graphics, theme, x, y, w, h);
         graphics.pose().popMatrix();

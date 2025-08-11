@@ -32,8 +32,6 @@ public class IconWithBorder extends IconWithParent {
     @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         parent.draw(graphics, x + 1, y + 1, w - 2, h - 2);
-        // TODO: [1.21.6] This isn't a thing anymore
-//        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         GuiHelper.drawHollowRect(graphics, x, y, w, h, color, roundEdges);
     }
 

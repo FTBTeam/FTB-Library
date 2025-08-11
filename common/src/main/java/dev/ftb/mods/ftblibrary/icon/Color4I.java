@@ -523,19 +523,6 @@ public class Color4I extends Icon {
             return;
         }
 
-        // TODO: Validate
-        // TODO: [1.21.6] Add back
-//        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-//        VertexConsumer buffer = bufferSource.getBuffer(RenderType.gui());
-
-        // TODO: this will likely need it's own render type
-        // TODO: [1.21.6] This isn't a thing anymore
-//        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-//        RenderSystem.enableBlend();
-//        RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
-
-//        GuiHelper.addRectToBuffer(graphics, buffer, x, y, w, h, this);
-
         graphics.fill(RenderPipelines.GUI, x, y, x + w, y + h, rgba());
     }
 

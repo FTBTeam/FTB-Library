@@ -206,8 +206,6 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends Abstract
             if (mouseOver) {
                 theme.drawString(graphics, DEL_BUTTON_TXT, x + w - 16, y + 2, Color4I.WHITE, 0);
             }
-// TODO: [1.21.6] This isn't a thing anymore
-//            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         }
 
         @Override

@@ -15,8 +15,6 @@ public interface ButtonOverlayRender {
                 var nw = font.width(text);
                 Color4I.LIGHT_RED.draw(graphics, buttonSize - nw, -1, nw + 1, 9);
                 graphics.drawString(font, text, buttonSize - nw + 1, 0, 0xFFFFFFFF);
-                // TODO: [1.21.6] This is no longer a thing from what I can tell
-//                RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
             }
         };
     }

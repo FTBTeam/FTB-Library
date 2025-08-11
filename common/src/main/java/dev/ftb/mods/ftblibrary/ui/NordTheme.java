@@ -27,22 +27,18 @@ public class NordTheme extends Theme {
 
     @Override
     public void drawScrollBarBackground(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-        NordColors.POLAR_NIGHT_1.draw(graphics, x, y, w, h);
-        GuiHelper.drawRectWithShade(graphics, x, y, w, h, NordColors.POLAR_NIGHT_2, -16);
+        GuiHelper.drawBorderedPanel(graphics, x, y, w, h, NordColors.POLAR_NIGHT_1, false);
     }
 
     @Override
     public void drawScrollBar(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean vertical) {
-        NordColors.FROST_3.withAlpha(128).draw(graphics, x + 2, y + 1, w - 4, h - 2);
-        GuiHelper.drawRectWithShade(graphics, x + 2, y + 1, w - 4, h - 2, NordColors.FROST_3, 16);
+        GuiHelper.drawBorderedPanel(graphics, x + 2, y + 1, w - 4, h - 3, NordColors.POLAR_NIGHT_3, true);
     }
 
     @Override
     public void drawGui(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-//        NordColors.POLAR_NIGHT_1.draw(graphics, x, y, w, h);
         GuiHelper.drawBorderedPanel(graphics, x - 1, y - 1, w + 2, h + 2, NordColors.POLAR_NIGHT_1, true);
         GuiHelper.drawHollowRect(graphics, x - 2, y - 2, w + 4, h + 4, Color4I.rgb(0x101010), true);
-//        GuiHelper.drawHollowRect(graphics, x - 1, y - 1, w + 2, h + 2, Color4I.rgb(0x101010), true);
     }
 
     @Override

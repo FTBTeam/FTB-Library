@@ -92,9 +92,6 @@ public class SNBTTest {
         tag.comment("test_int", "Just an integer");
         tag.putInt("test_int", 30);
 
-        // TODO: dropping support for this - just used by FTB Ranks as far as we can tell
-//        tag.putNull("test_null");
-
         ListTag list = new ListTag();
         list.add(DoubleTag.valueOf(0.0001d));
         list.add(DoubleTag.valueOf(5.3d));

@@ -54,7 +54,6 @@ public abstract class Button extends Widget {
 
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        GuiHelper.setupDrawing();
         drawBackground(graphics, theme, x, y, w, h);
         if (forceButtonSize) {
             var s = h >= 16 ? 16 : 8;

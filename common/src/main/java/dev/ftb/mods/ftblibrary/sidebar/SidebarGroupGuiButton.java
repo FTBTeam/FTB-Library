@@ -93,10 +93,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mx, int my, float partialTicks) {
-// TODO: [1.21.6] We can't do this with z-index anymore
-        //        graphics.pose().pushPose();
-//        graphics.pose().translate(0, 0, 5000);
-
         currentMouseX = mx;
         currentMouseY = my;
         mouseOver = null;
@@ -125,8 +121,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
         var font = Minecraft.getInstance().font;
 
         Matrix3x2fStack pose = graphics.pose();
-        // TODO: [1.21.6] We can't do this with z-index anymore
-//        pose.translate(0, 0, 50);
 
         //If there are no sidebar buttons enabled render "fake" button
         if (!isEditMode && SidebarButtonManager.INSTANCE.getEnabledButtonList(false).isEmpty()) {
@@ -143,8 +137,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
                 GridLocation realGridLocation = realLocationMap.get(button);
                 if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
                     if (isEditMode && button == selectedButton) {
-                        // TODO: [1.21.6] We can't do this with z-index anymore
-//                        pose.translate(0, 0, 1000);
                         button.x = mx - mouseOffsetX;
                         button.y = my - mouseOffsetY;
                     } else {
@@ -157,7 +149,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
                         button.x = adjustedX + 1;
                         button.y = adjustedY + 1;
                     }
-                    GuiHelper.setupDrawing();
                     button.getSidebarButton().getData().icon().draw(graphics, button.x, button.y, 16, 16);
 
                     if (isEditMode) {
@@ -216,8 +207,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
                 int gridX = gridStartRight ? addIconX - maxWidth - 6 : (currentGirdWidth + 1) * BUTTON_SPACING;
 
                 graphics.pose().pushMatrix();
-                // TODO: [1.21.6] This isn't a thing anymore
-//                graphics.pose().translate(0, 0, 1000);
 
                 if (gridStartRight) {
                     drawHoveredGrid(graphics, addIconX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight);
@@ -236,7 +225,6 @@ public class SidebarGroupGuiButton extends AbstractButton {
                     int buttonY = gridY + BUTTON_SPACING * i;
                     button.x = gridStartRight ? addIconX : gridX;
                     button.y = buttonY;
-                    GuiHelper.setupDrawing();
 
                     if (mx >= button.x && my >= button.y && mx < button.x + 16 && my < button.y + 16) {
                         Color4I.WHITE.withAlpha(137).draw(graphics, button.x + 1, button.y + 1, 16, 16);
