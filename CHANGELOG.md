@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.18]
+
+### Added
+* Added filtering to `ResourceConfigValue`, allowing extra custom filtering in resource selection screens
+  * E.g. have the itemstack selection screen only allow blocks to be selected
+
+### Fixed
+* Make the `/ftblibrary day` and `night` commands act more like their vanilla counterparts
+  * Better cross-mod compat
+
 ## [2101.1.17]
 
 ### Added
