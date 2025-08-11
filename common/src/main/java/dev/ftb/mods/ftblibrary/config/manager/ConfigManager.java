@@ -51,8 +51,8 @@ public enum ConfigManager {
     }
 
     /**
-     * Register a client config. Client configs are loaded on client setup, specifically when the
-     * Architectury {@code ClientLifecycleEvent.CLIENT_SETUP} event is fired.
+     * Register a client config.
+     * @see #registerClientConfig(SNBTConfig, String, BooleanConsumer)
      *
      * @param config the {@link SNBTConfig} object, typically created by {@code SNBTConfig.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
@@ -63,7 +63,9 @@ public enum ConfigManager {
     }
 
     /**
-     * Register a client config.
+     * Register a client config. Client configs are loaded on client setup, specifically when the
+     * Architectury {@code ClientLifecycleEvent.CLIENT_SETUP} event is fired. This method does not need to be called
+     * on the server, though it does not hurt to do so.
      *
      * @param config the {@link SNBTConfig} object, typically statically created by {@code SNBTConfig.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
@@ -76,8 +78,7 @@ public enum ConfigManager {
     }
 
     /**
-     * Register a server config. Server configs are loaded on server startup, specifically when the
-     * Architectury {@code LifecycleEvent.SERVER_BEFORE_START} event is fired.
+     * @see #registerServerConfig(SNBTConfig, String, boolean, BooleanConsumer)
      *
      * @param config the {@link SNBTConfig} object, typically statically created by {@code SNBTConfig.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
@@ -89,7 +90,8 @@ public enum ConfigManager {
     }
 
     /**
-     * Register a server config.
+     * Register a server config. Server configs are loaded on server startup, specifically when the
+     * Architectury {@code LifecycleEvent.SERVER_BEFORE_START} event is fired.
      *
      * @param config the {@link SNBTConfig} object, typically created by {@code SNBTConfig.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
