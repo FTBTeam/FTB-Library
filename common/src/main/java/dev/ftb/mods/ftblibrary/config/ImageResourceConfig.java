@@ -1,8 +1,9 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.config.ui.SelectImageResourceScreen;
-import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectImageResourceScreen;
+import dev.ftb.mods.ftblibrary.config.ui.resource.ImageResource;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectableResource;
 import dev.ftb.mods.ftblibrary.icon.IResourceIcon;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.Widget;
@@ -17,8 +18,6 @@ import java.util.OptionalLong;
 public class ImageResourceConfig extends ResourceConfigValue<ResourceLocation> {
     public static final ResourceLocation NONE = FTBLibrary.rl("none");
 
-    private boolean allowEmpty = true;
-
     public ImageResourceConfig() {
         value = NONE;
     }
@@ -32,23 +31,9 @@ public class ImageResourceConfig extends ResourceConfigValue<ResourceLocation> {
         new SelectImageResourceScreen(this, callback).withGridSize(8, 12).openGui();
     }
 
-    public void setAllowEmpty(boolean allowEmpty) {
-        this.allowEmpty = allowEmpty;
-    }
-
-    @Override
-    public boolean allowEmptyResource() {
-        return allowEmpty;
-    }
-
-    @Override
-    public boolean canHaveNBT() {
-        return false;
-    }
-
     @Override
     public OptionalLong fixedResourceSize() {
-        return OptionalLong.of(1);
+        return OptionalLong.of(1L);
     }
 
     @Override
@@ -58,12 +43,12 @@ public class ImageResourceConfig extends ResourceConfigValue<ResourceLocation> {
 
     @Override
     public SelectableResource<ResourceLocation> getResource() {
-        return new SelectableResource.ImageResource(getValue());
+        return new ImageResource(getValue());
     }
 
     @Override
-    public boolean setResource(SelectableResource<ResourceLocation> selectedStack) {
-        return setCurrentValue(selectedStack.stack());
+    public boolean setResource(SelectableResource<ResourceLocation> selectable) {
+        return setCurrentValue(selectable.resource());
     }
 
     @Override

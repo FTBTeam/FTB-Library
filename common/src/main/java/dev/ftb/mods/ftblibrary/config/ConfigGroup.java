@@ -9,6 +9,7 @@ import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -420,6 +421,20 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      */
     public ImageResourceConfig addImage(String id, ResourceLocation value, Consumer<ResourceLocation> setter, ResourceLocation def) {
         return add(id, new ImageResourceConfig(), value, setter, def);
+    }
+
+    /**
+     * Add a new entity face config item to this group (note: this is in effect an EntityType referring to a
+     * registered entity)
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @return the {@link EntityFaceConfig} just added
+     */
+    public EntityFaceConfig addEntityFace(String id, EntityType<?> value, Consumer<EntityType<?>> setter, EntityType<?> def) {
+        return add(id, new EntityFaceConfig(), value, setter, def);
     }
 
     /**

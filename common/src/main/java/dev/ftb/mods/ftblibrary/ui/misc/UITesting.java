@@ -2,10 +2,9 @@ package dev.ftb.mods.ftblibrary.ui.misc;
 
 import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.fluid.FluidStackHooks;
-import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
-import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectItemStackScreen;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
@@ -44,6 +43,7 @@ public class UITesting {
         FluidStack water = FluidStack.create(Fluids.WATER, FluidStackHooks.bucketAmount());
         group.addFluidStack("fluid", water, v -> {
         }, water, water.getAmount()).showAmount(false).setAllowNBTEdit(false);
+        group.addEntityFace("face", EntityFaceConfig.NONE, v -> {}, EntityFaceConfig.NONE);
 
         ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
         grp1.addInt("integer", 1, v -> {

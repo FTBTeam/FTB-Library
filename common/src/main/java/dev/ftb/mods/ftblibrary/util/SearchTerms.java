@@ -1,10 +1,8 @@
 package dev.ftb.mods.ftblibrary.util;
 
-
-import com.google.common.collect.ImmutableList;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -12,13 +10,11 @@ public record SearchTerms(List<Term> terms) {
     public static SearchTerms parse(String str) {
         if (str.isEmpty()) return new SearchTerms(List.of());
 
-        List<Term> terms = new ArrayList<>();
+        List<Term> terms = Arrays.stream(str.toLowerCase().split(" +"))
+                .map(Term::of)
+                .toList();
 
-        for (String s : str.toLowerCase().split(" +")) {
-            terms.add(Term.of(s));
-        }
-
-        return new SearchTerms(ImmutableList.copyOf(terms));
+        return new SearchTerms(terms);
     }
 
     public boolean match(ResourceLocation id, String displayName, Predicate<ResourceLocation> tagMatcher) {
@@ -26,7 +22,7 @@ public record SearchTerms(List<Term> terms) {
            if (term.value.isEmpty()) return true;
            return switch (term.type) {
                case MOD -> id.getNamespace().contains(term.value);
-               case TAG -> tagMatcher.test(id);
+               case TAG -> tagMatcher.test(ResourceLocation.parse(term.value));
                case SIMPLE -> displayName.toLowerCase().contains(term.value);
            };
         });

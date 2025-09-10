@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
-import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
-import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectableResource;
 import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
@@ -83,7 +83,7 @@ public class ItemStackConfig extends ResourceConfigValue<ItemStack> {
     }
 
     @Override
-    public boolean setResource(SelectableResource<ItemStack> selectedStack) {
-        return setCurrentValue(selectedStack.stack());
+    public boolean setResource(SelectableResource<ItemStack> selectable) {
+        return setCurrentValue(selectable.resource());
     }
 }

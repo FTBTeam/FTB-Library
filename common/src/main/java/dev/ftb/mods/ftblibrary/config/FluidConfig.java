@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.architectury.fluid.FluidStack;
-import dev.ftb.mods.ftblibrary.config.ui.SelectFluidScreen;
-import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectFluidScreen;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectableResource;
 import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
@@ -72,7 +72,7 @@ public class FluidConfig extends ResourceConfigValue<FluidStack> {
     }
 
     @Override
-    public boolean setResource(SelectableResource<FluidStack> selectedStack) {
-        return setCurrentValue(selectedStack.stack());
+    public boolean setResource(SelectableResource<FluidStack> selectable) {
+        return setCurrentValue(selectable.resource());
     }
 }
