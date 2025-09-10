@@ -6,7 +6,8 @@ import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
-import dev.ftb.mods.ftblibrary.config.ui.SelectImageResourceScreen;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectImageResourceScreen;
+import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
@@ -37,6 +38,7 @@ public class FTBLibraryClient {
 
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageResourceScreen.ResourceListener.INSTANCE);
+        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new EntityIconLoader());
     }
 
     private static void guiInit(Screen screen, ScreenAccess access) {

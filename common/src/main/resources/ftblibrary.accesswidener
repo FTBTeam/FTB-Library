@@ -2,3 +2,5 @@ accessWidener v1 named
 
 accessible  class   net/minecraft/client/gui/components/MultilineTextField$StringView
 accessible  method  net/minecraft/client/renderer/texture/SpriteContents getFrameCount ()I
+
+accessible class net/minecraft/client/renderer/texture/SimpleTexture$TextureImage

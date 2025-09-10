@@ -22,6 +22,8 @@ public interface FTBLibraryClientConfig {
             .comment("Add the name of the mod that fluids belong to in the fluid selection GUI.");
     BooleanValue IMAGE_MODNAME = TOOLTIPS.addBoolean("image_modname", true)
             .comment("Add the name of the mod that images belong to in the image selection GUI.");
+    BooleanValue ENTITY_MODNAME = TOOLTIPS.addBoolean("entity_modname", true)
+            .comment("Add the name of the mod that entities belong to in the entity face selection GUI.");
 
     SNBTConfig COLOR = CONFIG.addGroup("colorselector");
     IntArrayValue RECENT = COLOR.addIntArray("recents", new int[0])
