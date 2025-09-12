@@ -12,6 +12,10 @@ import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -20,9 +24,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
 import org.slf4j.Logger;
 
@@ -114,10 +116,16 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         return null;
     }
 
-    private static Optional<Icon> getIconCache(Entity entity) {
-        return getSettings(entity.getType()).map(settings -> settings.useMobTexture ?
-                getOrCreateIcon(entity.getType(), Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity).getTextureLocation(entity), settings) :
-                settings.texture.map(resourceLocation -> getOrCreateIcon(entity.getType(), resourceLocation, settings)).orElse(null));
+    private static <T extends Entity> Optional<Icon> getIconCache(T entity) {
+        EntityRenderer<? super T, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
+        EntityRenderState state = renderer.createRenderState(entity, 0f);
+        if (renderer instanceof LivingEntityRenderer/*<?,?,?>*/ entityRenderer && state instanceof LivingEntityRenderState ls) {
+            return getSettings(entity.getType()).map(settings -> settings.useMobTexture ?
+                    getOrCreateIcon(entity.getType(), entityRenderer.getTextureLocation(ls), settings) :
+                    settings.texture.map(resourceLocation -> getOrCreateIcon(entity.getType(), resourceLocation, settings)).orElse(null));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static Optional<EntityIconSettings> getSettings(EntityType<?> entityType) {
@@ -135,7 +143,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
     }
 
     public static Icon getIcon(EntityType<?> entityType) {
-        Entity entity = entityType.create(Minecraft.getInstance().level);
+        Entity entity = entityType.create(Minecraft.getInstance().level, EntitySpawnReason.LOAD);
         return entity == null ? EntityIconLoader.NORMAL : getIcon(entity);
     }
 

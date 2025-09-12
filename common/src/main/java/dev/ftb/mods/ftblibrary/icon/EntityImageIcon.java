@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureContents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,9 +32,9 @@ public class EntityImageIcon extends Icon {
 
     @Override
     public void draw(GuiGraphics graphics, int x, int y, int width, int height) {
-        PoseStack pose = graphics.pose();
-        pose.pushPose();
-        pose.translate(x, y, 0);
+        var pose = graphics.pose();
+        pose.pushMatrix();
+        pose.translate(x, y);
 
         float drawWidth = mainSlice == null ? width : mainSlice.width;
         float drawHeight = mainSlice == null ? height : mainSlice.height;
@@ -42,7 +42,7 @@ public class EntityImageIcon extends Icon {
         float scaleX = width / drawWidth;
         float scaleY = height / drawHeight;
 
-        pose.scale(scaleX, scaleY, 1);
+        pose.scale(scaleX, scaleY);
 
         mainIcon.draw(graphics, 0, 0, (int) drawWidth, (int) drawHeight);
 
@@ -50,13 +50,13 @@ public class EntityImageIcon extends Icon {
             ChildIconData child = children.get(i);
             Icon icon = childIcons.get(i);
 
-            pose.pushPose();
-            child.offset.ifPresent(offset -> pose.translate(offset.x, offset.y, 0));
+            pose.pushMatrix();
+            child.offset.ifPresent(offset -> pose.translate(offset.x, offset.y));
             icon.draw(graphics, 0, 0, child.slice.width, child.slice.height);
-            pose.popPose();
+            pose.popMatrix();
         }
 
-        pose.popPose();
+        pose.popMatrix();
     }
 
     public record Offset(int x, int y) {
@@ -84,14 +84,12 @@ public class EntityImageIcon extends Icon {
     }
 
     private Icon createIcon(ResourceLocation texture, @Nullable Slice slice) {
-        SimpleTexture.TextureImage load = SimpleTexture.TextureImage.load(Minecraft.getInstance().getResourceManager(), texture);
-
         try {
+            TextureContents load = new SimpleTexture(texture).loadContents(Minecraft.getInstance().getResourceManager());
             ImageIcon imageIcon = new ImageIcon(texture);
             if (slice != null) {
-
-                int textureWidth = load.getImage().getWidth();
-                int textureHeight = load.getImage().getHeight();
+                int textureWidth = load.image().getWidth();
+                int textureHeight = load.image().getHeight();
                 if (defaultImageSize != null) {
                     int defaultTextureWidth = defaultImageSize.width();
                     int defaultTextureHeight = defaultImageSize.height();
@@ -102,8 +100,6 @@ public class EntityImageIcon extends Icon {
                 } else {
                     return imageIcon.withUV(slice.x, slice.y, slice.width, slice.height, textureWidth, textureHeight);
                 }
-
-
             }
             return imageIcon;
         } catch (Exception e) {

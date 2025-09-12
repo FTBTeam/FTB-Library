@@ -1,5 +1,5 @@
-//package dev.ftb.mods.ftblibrary.integration;
-//
+package dev.ftb.mods.ftblibrary.integration;
+
 //import dev.emi.emi.api.*;
 //import dev.emi.emi.api.widget.Bounds;
 //import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
@@ -13,7 +13,7 @@
 //import net.minecraft.world.item.ItemStack;
 //
 //import java.util.Collection;
-//
+////
 //@EmiEntrypoint
 //public class EMIIntegration implements EmiPlugin {
 //    private static final ResourceSearchMode<ItemStack> EMI_ITEMS = new ResourceSearchMode<>() {

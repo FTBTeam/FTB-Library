@@ -11,12 +11,14 @@ import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -87,7 +89,7 @@ public interface ResourceSearchMode<T> {
             if (allTypesCache == null) {
                 List<SelectableResource<EntityType<?>>> types = new ArrayList<>();
                 BuiltInRegistries.ENTITY_TYPE.forEach(entityType -> {
-                    if (entityType.create(Minecraft.getInstance().level) instanceof LivingEntity) {
+                    if (entityType.create(Minecraft.getInstance().level, EntitySpawnReason.LOAD) instanceof LivingEntity) {
                         types.add(new EntityFaceResource(entityType));
                     }
                 });
@@ -128,7 +130,7 @@ public interface ResourceSearchMode<T> {
                 cachedImages = images.stream().sorted().map(res -> {
                     // shorten <mod>:textures/A/B.png to <mod>:A/B
                     ResourceLocation res1 = ResourceLocation.fromNamespaceAndPath(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
+                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(res1);
                     SpriteContents contents = sprite.contents();
                     if (contents.name().equals(MissingTextureAtlasSprite.getLocation())) {
                         res1 = res;
