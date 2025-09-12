@@ -84,8 +84,8 @@ public class EntityImageIcon extends Icon {
     }
 
     private Icon createIcon(ResourceLocation texture, @Nullable Slice slice) {
-        try {
-            TextureContents load = new SimpleTexture(texture).loadContents(Minecraft.getInstance().getResourceManager());
+        try (SimpleTexture tex = new SimpleTexture(texture)) {
+            TextureContents load = tex.loadContents(Minecraft.getInstance().getResourceManager());
             ImageIcon imageIcon = new ImageIcon(texture);
             if (slice != null) {
                 int textureWidth = load.image().getWidth();
