@@ -6,8 +6,6 @@ import com.google.gson.JsonPrimitive;
 import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,12 +24,10 @@ public class Color4I extends Icon {
         }
 
         @Override
-        @Environment(EnvType.CLIENT)
         public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         }
 
         @Override
-        @Environment(EnvType.CLIENT)
         public void draw3D(GuiGraphics graphics) {
         }
 
@@ -517,7 +513,6 @@ public class Color4I extends Icon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         if (w <= 0 || h <= 0) {
             return;

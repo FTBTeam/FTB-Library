@@ -3,8 +3,6 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.StringConfig;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 
@@ -52,7 +50,6 @@ public class StringListValue extends BaseValue<List<String>> {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
         group.addList(key, get(), new StringConfig(null), "")
                 .setCanEdit(enabled.getAsBoolean());

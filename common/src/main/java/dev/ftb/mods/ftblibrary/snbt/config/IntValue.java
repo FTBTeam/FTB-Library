@@ -2,8 +2,6 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.util.Mth;
 
 public class IntValue extends NumberValue<Integer> {
@@ -32,7 +30,6 @@ public class IntValue extends NumberValue<Integer> {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
         group.addInt(key, get(), this::set, defaultValue, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue)
                 .fader(fader)

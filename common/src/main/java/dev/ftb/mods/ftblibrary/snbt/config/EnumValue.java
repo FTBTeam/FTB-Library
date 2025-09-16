@@ -3,8 +3,6 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.nbt.StringTag;
 
 import java.util.ArrayList;
@@ -53,7 +51,6 @@ public class EnumValue<T> extends BaseValue<T> {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
         group.addEnum(key, get(), this::set, nameMap)
                 .setCanEdit(enabled.getAsBoolean())

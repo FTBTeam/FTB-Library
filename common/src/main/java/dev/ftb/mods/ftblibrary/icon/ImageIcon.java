@@ -1,14 +1,10 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.common.base.Objects;
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +48,6 @@ public class ImageIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         graphics.blit(texture, x, y, x + w, y + h, minU, maxU, minV, maxV);
     }

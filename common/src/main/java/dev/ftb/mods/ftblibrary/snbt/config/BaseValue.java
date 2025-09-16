@@ -3,8 +3,6 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.SNBTUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -87,7 +85,6 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
         return i == 0 ? key.compareToIgnoreCase(o.key) : i;
     }
 
-    @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
     }
 }

@@ -5,8 +5,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -87,7 +85,6 @@ public class ItemIcon extends Icon implements IResourceIcon {
         };
     }
 
-    @Environment(EnvType.CLIENT)
     public static void drawItem3D(GuiGraphics graphics, ItemStack stack) {
         //FIXME: Draw flat 3D item
         // TODO: [1.21.6] We no longer have access to the posestack so maybe creating our own will be fine here?
@@ -100,7 +97,6 @@ public class ItemIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         var poseStack = graphics.pose();
         poseStack.pushMatrix();
@@ -116,7 +112,6 @@ public class ItemIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
         var poseStack = graphics.pose();
         poseStack.pushMatrix();
@@ -132,7 +127,6 @@ public class ItemIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void draw3D(GuiGraphics graphics) {
         drawItem3D(graphics, getStack());
     }

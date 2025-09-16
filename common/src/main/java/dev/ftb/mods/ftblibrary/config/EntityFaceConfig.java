@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
-import dev.ftb.mods.ftblibrary.config.ui.resource.SelectEntityFaceScreen;
 import dev.ftb.mods.ftblibrary.config.ui.resource.EntityFaceResource;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectEntityFaceScreen;
 import dev.ftb.mods.ftblibrary.config.ui.resource.SelectableResource;
 import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;

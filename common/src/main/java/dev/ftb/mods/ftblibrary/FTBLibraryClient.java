@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary;
 
 import dev.architectury.event.events.client.ClientGuiEvent;
-import dev.architectury.event.events.client.ClientLifecycleEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.registry.ReloadListenerRegistry;

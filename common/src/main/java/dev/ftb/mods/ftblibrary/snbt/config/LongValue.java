@@ -3,8 +3,6 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 public class LongValue extends NumberValue<Long> {
     LongValue(SNBTConfig c, String n, long def) {
@@ -32,7 +30,6 @@ public class LongValue extends NumberValue<Long> {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
         group.addLong(key, get(), this::set, defaultValue, minValue == null ? Long.MIN_VALUE : minValue, maxValue == null ? Long.MAX_VALUE : maxValue)
                 .fader(fader)

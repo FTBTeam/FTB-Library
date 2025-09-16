@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.config.ui.resource;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 

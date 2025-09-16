@@ -21,12 +21,6 @@ public interface Icons {
     Icon SETTINGS_RED = get("settings_red");
     Icon CANCEL = get("cancel");
     Icon BACK = get("back");
-
-    /**
-     * @deprecated Use {@link #CANCEL} instead
-     */
-    @Deprecated(forRemoval = true)
-    Icon CLOSE = CANCEL;
     Icon REFRESH = get("refresh");
     Icon PLAYER = get("player");
     Icon PLAYER_GRAY = get("player_gray");
@@ -37,11 +31,6 @@ public interface Icons {
     Icon JACKET = get("jacket");
     Icon BED = Icon.getIcon("minecraft:item/bed");
     Icon FRIENDS_GROUP = get("friends_group");
-    /**
-     * @deprecated Use {@link #FRIENDS_GROUP} instead
-     */
-    @Deprecated(forRemoval = true)
-    Icon BELL = FRIENDS_GROUP;
     Icon COMPASS = Icon.getIcon("minecraft:item/compass_19");
     Icon MAP = get("map");
     Icon SHIELD = Icon.getIcon("minecraft:item/diamond_sword");

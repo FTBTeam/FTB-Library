@@ -29,7 +29,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;

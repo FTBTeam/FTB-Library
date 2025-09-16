@@ -2,8 +2,6 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +29,6 @@ public class BooleanValue extends BaseValue<Boolean> {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
         group.addBool(key, get(), this::set, defaultValue)
                 .setCanEdit(enabled.getAsBoolean())

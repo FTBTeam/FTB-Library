@@ -3,8 +3,6 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 
 
@@ -39,7 +37,6 @@ public class HollowRectangleIcon extends Icon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         GuiHelper.drawHollowRect(graphics, x, y, w, h, color, roundEdges);
     }

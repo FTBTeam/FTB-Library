@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -22,7 +20,6 @@ public enum CursorType {
         shape = c;
     }
 
-    @Environment(EnvType.CLIENT)
     public static void set(@Nullable CursorType type) {
         var window = Minecraft.getInstance().getWindow().getWindow();
 

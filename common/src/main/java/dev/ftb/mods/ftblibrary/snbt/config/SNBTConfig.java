@@ -5,8 +5,6 @@ import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 
 import java.io.IOException;
@@ -71,7 +69,6 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
         List<BaseValue<?>> sorted = defaultValue.stream()
                 .filter(v -> !v.excluded)

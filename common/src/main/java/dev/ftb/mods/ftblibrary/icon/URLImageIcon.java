@@ -2,8 +2,6 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.util.UndashedUuid;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 

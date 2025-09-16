@@ -3,8 +3,6 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +47,6 @@ public class IconAnimation extends Icon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         if (!list.isEmpty()) {
             list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw(graphics, x, y, w, h);
@@ -57,7 +54,6 @@ public class IconAnimation extends Icon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
         if (!list.isEmpty()) {
             list.get(0).drawStatic(graphics, x, y, w, h);
@@ -65,7 +61,6 @@ public class IconAnimation extends Icon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void draw3D(GuiGraphics graphics) {
         if (!list.isEmpty()) {
             list.get((int) ((System.currentTimeMillis() / 1000L) % list.size())).draw3D(graphics);

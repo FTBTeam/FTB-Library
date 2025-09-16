@@ -1,8 +1,6 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -28,7 +26,6 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
         var sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
 

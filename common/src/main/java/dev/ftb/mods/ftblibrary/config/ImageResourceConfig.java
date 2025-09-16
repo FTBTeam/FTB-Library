@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.config.ui.resource.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.config.ui.resource.ImageResource;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.config.ui.resource.SelectableResource;
 import dev.ftb.mods.ftblibrary.icon.IResourceIcon;
 import dev.ftb.mods.ftblibrary.icon.Icon;
