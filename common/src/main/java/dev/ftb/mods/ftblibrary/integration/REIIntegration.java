@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.integration;
 
-import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
-import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
-import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
+import dev.ftb.mods.ftblibrary.config.ui.resource.ResourceSearchMode;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.config.ui.resource.SelectableResource;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
