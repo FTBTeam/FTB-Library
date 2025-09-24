@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.21]
+
+### Added
+* Moved some entity face loading code from FTB Chunks into FTB Library
+  * Allows it to be also used by FTB Quests
+  * This release will _not_ work with FTB Quests earlier than 2101.1.16, or FTB Chunks earlier than 2101.1.11!
+
 ## [2101.1.20]
 
 ### Added
