@@ -10,6 +10,7 @@ public class FTBLibraryNet {
         NetworkHelper.registerS2C(SyncKnownServerRegistriesPacket.TYPE, SyncKnownServerRegistriesPacket.STREAM_CODEC, SyncKnownServerRegistriesPacket::handle);
         NetworkHelper.registerS2C(SyncConfigFromServerPacket.TYPE, SyncConfigFromServerPacket.STREAM_CODEC, SyncConfigFromServerPacket::handle);
         NetworkHelper.registerS2C(SidebarButtonVisibilityPacket.TYPE, SidebarButtonVisibilityPacket.STREAM_CODEC, SidebarButtonVisibilityPacket::handle);
+        NetworkHelper.registerS2C(SyncGameStagesMessage.TYPE, SyncGameStagesMessage.STREAM_CODEC, SyncGameStagesMessage::handle);
 
         NetworkHelper.registerC2S(EditNBTResponsePacket.TYPE, EditNBTResponsePacket.STREAM_CODEC, EditNBTResponsePacket::handle);
         NetworkHelper.registerC2S(SyncConfigToServerPacket.TYPE, SyncConfigToServerPacket.STREAM_CODEC, SyncConfigToServerPacket::handle);
