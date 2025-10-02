@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added 9-arg variant of `NetworkHelper#composite` for stream codec purposes
 * Added client sync'ing for builtin gamestage provider (`EntityTagStageProvider`)
   * Can be used to sync vanilla entity tags to players
+* Minor issue causing the context menu to sometimes not show all options based on row + column calculations due to rounding errors
 
 ## [2101.1.21]
 
