@@ -30,7 +30,6 @@ public class FTBLibraryClientApi {
     }
 
     public boolean isSidebarScreenBlacklisted(@Nullable Screen screen) {
-        System.out.printf("Checking sidebar blacklist for screen: %s%n", screen == null ? "null" : screen.getClass().getName());
         return screen != null && screenSidebarBlacklist.contains(screen.getClass().getName());
     }
 
