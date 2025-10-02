@@ -65,9 +65,9 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
         // if there are too many menu items to fit vertically on-screen, use a multi-column layout
         nColumns = parent.getScreen().getGuiScaledHeight() > 0 ? (totalHeight / parent.getScreen().getGuiScaledHeight()) + 1 : 1;
         if (maxRows > 0) {
-            nColumns = Math.max(nColumns, widgets.size() / maxRows);
+            nColumns = Math.max(nColumns, (int) Math.ceil((double) widgets.size() / maxRows));
         }
-        int nRows = nColumns == 1 ? widgets.size() : (widgets.size() / (nColumns + 1)) + 1;
+        int nRows = (int) Math.ceil((double) widgets.size() / nColumns);
 
         columnWidth = maxWidth + MARGIN * 2;
         setWidth(columnWidth * nColumns);
