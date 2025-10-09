@@ -11,7 +11,9 @@ import java.util.function.Supplier;
  */
 public class Lazy<T> implements Supplier<T> {
     private final Supplier<T> valueSupplier;
-    private T value;
+
+    private transient T value;
+    private transient volatile boolean initialized;
 
     private Lazy(Supplier<@NotNull T> valueSupplier) {
         this.valueSupplier = valueSupplier;
@@ -26,8 +28,13 @@ public class Lazy<T> implements Supplier<T> {
      */
     @Override
     public T get() {
-        if (value == null) {
-            value = valueSupplier.get();
+        if (!initialized) {
+            synchronized (this) {
+                if (!initialized) {
+                    value = valueSupplier.get();
+                    initialized = true;
+                }
+            }
         }
 
         return value;
@@ -36,7 +43,13 @@ public class Lazy<T> implements Supplier<T> {
     /**
      * Clears the cached value, causing it to be recomputed on the next call to {@link #get()}
      */
-    public void clear() {
+    public synchronized void invalidate() {
+        initialized = false;
         value = null;
+    }
+
+    @Override
+    public String toString() {
+        return "Lazy(" + (initialized ? value : "uninitialized") + ")";
     }
 }
