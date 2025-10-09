@@ -14,7 +14,8 @@ import java.util.function.Function;
 import static net.minecraft.network.chat.CommonComponents.ELLIPSIS;
 
 public class ClientTextComponentUtils {
-    private static final List<CustomComponentParser> CUSTOM_COMPONENT_PARSERS = new ArrayList<>();    private static final Function<String, Component> DEFAULT_STRING_TO_COMPONENT = ClientTextComponentUtils::defaultStringToComponent;
+    private static final List<CustomComponentParser> CUSTOM_COMPONENT_PARSERS = new ArrayList<>();
+    private static final Function<String, Component> DEFAULT_STRING_TO_COMPONENT = ClientTextComponentUtils::defaultStringToComponent;
 
     public static void addCustomParser(CustomComponentParser function) {
         CUSTOM_COMPONENT_PARSERS.add(function);
