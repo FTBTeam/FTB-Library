@@ -8,3 +8,10 @@ accessible  method  net/minecraft/client/renderer/texture/SpriteContents getFram
 accessible field net/minecraft/client/gui/GuiGraphics guiRenderState Lnet/minecraft/client/gui/render/state/GuiRenderState;
 accessible field net/minecraft/client/gui/GuiGraphics scissorStack Lnet/minecraft/client/gui/GuiGraphics$ScissorStack;
 accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
+accessible class net/minecraft/client/renderer/texture/SimpleTexture$TextureImage
+
+extendable class net/minecraft/network/chat/TextColor
+accessible method net/minecraft/network/chat/TextColor <init> (ILjava/lang/String;)V
+accessible field net/minecraft/client/Minecraft clientTickCount J
+mutable field net/minecraft/network/chat/TextColor NAMED_COLORS Ljava/util/Map;
+accessible field net/minecraft/network/chat/TextColor NAMED_COLORS Ljava/util/Map;
