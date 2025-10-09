@@ -36,4 +36,8 @@ public class RainbowTextColor extends CustomTextColor {
         // As the game ticks, the color cycles through the rainbow colors
         return RAINBOW_COLORS.get()[ticks % RAINBOW_COLORS.get().length];
     }
+
+    public static Lazy<Integer[]> getRainbowColors() {
+        return RAINBOW_COLORS;
+    }
 }
