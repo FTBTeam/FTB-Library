@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
+import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
@@ -86,7 +87,9 @@ public class FTBLibrary {
     }
 
     private void playerJoined(ServerPlayer player) {
-        player.sendSystemMessage(Component.literal("Hello from FTB Library!").withStyle(Style.EMPTY.withColor(RainbowTextColor.INSTANCE)));
+        if (Platform.isDevelopmentEnvironment()) {
+            player.sendSystemMessage(Component.literal("Hello from FTB Library!").withStyle(Style.EMPTY.withColor(RainbowTextColor.INSTANCE)));
+        }
         if (KnownServerRegistries.server != null) {
             // can be null, e.g. https://github.com/FTBTeam/FTB-Mods-Issues/issues/1387
             NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
