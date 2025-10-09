@@ -2,11 +2,11 @@ package dev.ftb.mods.ftblibrary.util.text;
 
 import net.minecraft.network.chat.TextColor;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ExtendableTextColor {
-    private static final Map<String, TextColor> additionalColors = new HashMap<>();
+    private static final Map<String, TextColor> additionalColors = new ConcurrentHashMap<>();
 
     public static Map<String, TextColor> getCustomColors() {
         return additionalColors;
