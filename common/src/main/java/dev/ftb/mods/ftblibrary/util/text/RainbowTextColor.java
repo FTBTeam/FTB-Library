@@ -33,8 +33,7 @@ public class RainbowTextColor extends CustomTextColor {
 
         int ticks = (int) Minecraft.getInstance().clientTickCount;
 
-        // As the game ticks, the color cycles through the rainbow colors
-        return RAINBOW_COLORS.get()[ticks % RAINBOW_COLORS.get().length];
+        return RAINBOW_COLORS.get()[(ticks * 2) % RAINBOW_COLORS.get().length];
     }
 
     public static Lazy<Integer[]> getRainbowColors() {

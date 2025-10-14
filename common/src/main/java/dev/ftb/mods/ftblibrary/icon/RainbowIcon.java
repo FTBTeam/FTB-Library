@@ -12,6 +12,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 
 public class RainbowIcon extends Icon {
+    public static RainbowIcon RAINBOW = new RainbowIcon();
+
     @Override
     public void draw(GuiGraphics graphics, int x, int y, int width, int height) {
         if (width <= 0 || height <= 0) {
