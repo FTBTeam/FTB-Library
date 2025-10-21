@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.22]
+
+### Added
+* Added 9-arg variant of `NetworkHelper#composite` for stream codec purposes
+* Added client sync'ing for builtin gamestage provider (`EntityTagStageProvider`)
+  * Can be used to sync vanilla entity tags to players
+* Minor issue causing the context menu to sometimes not show all options based on row + column calculations due to rounding errors
+* Added `ftb:rainbow` as a valid color to the component's color system
+  * Causes text to cycle through colors like a rainbow
+  * Also added a custom event `RegisterCustomColorEvent` to allow other mods to add new colors
+
+### Fixed
+* Registry Ops not being passed to the item stack on stack parsing
+* A minor rounding issue on context menu row/column calculations causing some options to not show
+
 ## [2101.1.21]
 
 ### Added

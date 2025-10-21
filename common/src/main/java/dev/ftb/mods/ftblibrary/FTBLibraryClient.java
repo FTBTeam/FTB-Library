@@ -4,6 +4,7 @@ import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.hooks.client.screen.ScreenAccess;
 import dev.architectury.registry.ReloadListenerRegistry;
+import dev.ftb.mods.ftblibrary.api.client.FTBLibraryClientApi;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.config.ui.resource.SelectImageResourceScreen;
@@ -22,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 public class FTBLibraryClient {
-
     public static CursorType lastCursorType = null;
 
     public static void init() {
@@ -74,6 +74,8 @@ public class FTBLibraryClient {
             return false;
         }
 
-        return gui instanceof AbstractContainerScreen && !SidebarButtonManager.INSTANCE.getButtons().isEmpty();
+        return gui instanceof AbstractContainerScreen &&
+                !SidebarButtonManager.INSTANCE.getButtons().isEmpty()
+                && !FTBLibraryClientApi.get().isSidebarScreenBlacklisted(gui);
     }
 }

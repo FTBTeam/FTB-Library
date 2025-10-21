@@ -5,7 +5,8 @@
   "mixins": [
     "CompoundContainerMixin",
     "ItemMixin",
-    "ResourceLocationMixin"
+    "ResourceLocationMixin",
+    "TextColorMixin"
   ],
   "client": [
     "MultilineTextFieldAccess"

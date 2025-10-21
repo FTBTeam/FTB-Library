@@ -1,5 +1,8 @@
 package dev.ftb.mods.ftblibrary.integration.stages;
 
+import dev.architectury.networking.NetworkManager;
+import dev.ftb.mods.ftblibrary.net.SyncGameStagesMessage;
+import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -12,11 +15,18 @@ public class EntityTagStageProvider implements StageProvider {
     @Override
     public void add(ServerPlayer player, String stage) {
         player.addTag(stage);
+        NetworkHelper.sendTo(player, SyncGameStagesMessage.add(stage));
     }
 
     @Override
     public void remove(ServerPlayer player, String stage) {
         player.removeTag(stage);
+        NetworkHelper.sendTo(player, SyncGameStagesMessage.remove(stage));
+    }
+
+    @Override
+    public void sync(ServerPlayer player) {
+        NetworkManager.sendToPlayer(player, SyncGameStagesMessage.fullSync(player));
     }
 
     @Override
