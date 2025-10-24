@@ -16,8 +16,19 @@ configurations {
     dev
 }
 
+def generatedResources = file("src/generated/resources")
+def accessWidenerFile = project(":common").file("src/main/resources/ftblibrary.accesswidener")
+
 loom {
-    accessWidenerPath = project(":common").file("src/main/resources/ftblibrary.accesswidener")
+    accessWidenerPath = accessWidenerFile
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir generatedResources
+        }
+    }
 }
 
 artifacts {
@@ -41,7 +52,13 @@ dependencies {
 
 apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
 
+tasks.register('copyAccessWidener', Copy) {
+    from accessWidenerFile
+    into generatedResources
+}
+
 processResources {
+    dependsOn(copyAccessWidener)
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
@@ -50,6 +67,10 @@ processResources {
                 "fabricapiversionrange": project.fabric_api_version_range,
                 "mcversion": project.minecraft_version
     }
+}
+
+sourcesJar {
+    dependsOn copyAccessWidener
 }
 
 shadowJar {
