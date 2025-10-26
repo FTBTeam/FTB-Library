@@ -27,7 +27,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.*;
 
 public abstract class BaseScreen extends Panel {
-    private final Screen prevScreen;
+    private Screen prevScreen;
     private final Deque<ModalPanel> modalPanels;
     private int mouseX, mouseY;
     private float partialTicks;
@@ -44,6 +44,15 @@ public abstract class BaseScreen extends Panel {
         setOnlyInteractWithWidgetsInside(false);
         prevScreen = Minecraft.getInstance().screen;
         modalPanels = new ArrayDeque<>();
+    }
+
+    /**
+     * Sets the previous screen that will be opened when this screen is closed.
+     *
+     * @param prevScreen the previous screen, or null to just close the GUI
+     */
+    public void setPreviousScreen(@Nullable Screen prevScreen) {
+        this.prevScreen = prevScreen;
     }
 
     @Override
