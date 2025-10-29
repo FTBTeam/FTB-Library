@@ -871,10 +871,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         public void addWidgets() {
             add(new SimpleButton(this, List.of(Component.translatable("gui.copy"), hotkeyTooltip("Ctrl + C")), ItemIcon.getItemIcon(Items.PAPER), (widget, button) -> copyToClipboard()));
 
-            add(new SimpleButton(this, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.DOWN,
+            add(new SimpleButton(this, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.COLLAPSE,
                     (widget, button) -> collapseAll(true)));
 
-            add(new SimpleButton(this, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.UP,
+            add(new SimpleButton(this, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.EXPAND,
                     (widget, button) -> collapseAll(false)));
         }
 
