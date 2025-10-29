@@ -251,7 +251,7 @@ public class FTBLibraryCommands {
     }
 
     public record InfoBuilder(ListTag list, HolderLookup.Provider provider) {
-        static InfoBuilder create(CommandContext<CommandSourceStack> context) {
+        public static InfoBuilder create(CommandContext<CommandSourceStack> context) {
             return new InfoBuilder(new ListTag(), context.getSource().registryAccess());
         }
 
