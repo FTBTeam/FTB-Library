@@ -32,7 +32,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.TickingBlockEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -158,6 +157,9 @@ public class FTBLibraryCommands {
 
     private static void editItemNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
         var player = context.getSource().getPlayerOrException();
+        if (player.getMainHandItem().isEmpty()) {
+            return;
+        }
         info.putString("type", NBTEditResponseHandlers.ITEM);
         ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
         var key = RegistrarManager.getId(stack.getItem(), Registries.ITEM);
