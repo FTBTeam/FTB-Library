@@ -235,7 +235,7 @@ public class FTBLibraryCommands {
         }
 
         info.putString("type", NBTEditResponseHandlers.BLOCK);
-        BlockPos.CODEC.encodeStart(JsonOps.INSTANCE, pos).ifSuccess(json -> info.putString("pos", json.toString()));
+        BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, pos).ifSuccess(nbt -> info.put("pos", nbt));
         tag.merge(blockEntity.saveWithFullMetadata(context.getSource().getLevel().registryAccess()));
         tag.remove("x");
         tag.remove("y");
