@@ -166,8 +166,11 @@ public class FTBLibraryCommands {
     private static void editItemNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
         var player = context.getSource().getPlayerOrException();
 
-        info.putString("type", "item");
         ItemStack stack = player.getMainHandItem();
+        if (stack.isEmpty()) {
+            return;
+        }
+        info.putString("type", "item");
         ItemStack.CODEC.encodeStart(player.level().registryAccess().createSerializationContext(NbtOps.INSTANCE), stack)
                 .ifSuccess(res -> {
                     if (res instanceof CompoundTag t) tag.merge(t);
