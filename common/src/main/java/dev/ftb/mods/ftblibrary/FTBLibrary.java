@@ -13,6 +13,7 @@ import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryStartupConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.items.ModItems;
+import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
@@ -80,6 +81,8 @@ public class FTBLibrary {
 
     private void serverStarted(MinecraftServer server) {
         KnownServerRegistries.server = KnownServerRegistries.create(server);
+
+        NBTEditResponseHandlers.registerBuiltinHandlers();
     }
 
     private void serverStopped(MinecraftServer server) {
