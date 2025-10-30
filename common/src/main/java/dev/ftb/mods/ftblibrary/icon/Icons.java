@@ -92,6 +92,8 @@ public interface Icons {
     Icon DROPDOWN_IN = get("dropdown_in");
     Icon VISIBILITY_SHOW = get("visibility_show");
     Icon VISIBILITY_HIDE = get("visibility_hide");
+    Icon COLLAPSE = get("collapse");
+    Icon EXPAND = get("expand");
 
     static Icon get(String id) {
         return Icon.getIcon(FTBLibrary.MOD_ID + ":icons/" + id);

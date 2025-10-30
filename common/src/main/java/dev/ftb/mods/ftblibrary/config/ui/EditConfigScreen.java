@@ -71,9 +71,9 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             }
         }
 
-        buttonExpandAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.UP,
+        buttonExpandAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.EXPAND,
                 (widget, button) -> toggleAll(false));
-        buttonCollapseAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.DOWN,
+        buttonCollapseAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.COLLAPSE,
                 (widget, button) -> toggleAll(true));
     }
 
@@ -89,10 +89,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
     }
 
     private void collectAllConfigValues(ConfigGroup group, List<ConfigValue<?>> list) {
-        list.addAll(group.getValues().stream()
-                .sorted(Comparator.comparing(ConfigValue::getName))
-                .toList()
-        );
+        list.addAll(group.getValues().stream().sorted().toList());
 
         for (var subgroup : group.getSubgroups()) {
             collectAllConfigValues(subgroup, list);
