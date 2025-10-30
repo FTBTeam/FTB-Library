@@ -52,7 +52,6 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
         this.value = value == null ? null : copy(value);
         this.setter = setter;
         this.defaultValue = defaultValue;
-        this.order = group.getValues().size();
         return this;
     }
 
@@ -177,8 +176,11 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
 
     @Override
     public int compareTo(ConfigValue<T> o) {
-        var i = group.compareTo(o.group);
-        return i == 0 ? Integer.compare(order, o.order) : i;
+        // sort by group, then ordering, then display name
+        var cg = group.compareTo(o.group);
+        if (cg != 0) return cg;
+        int co = Integer.compare(order, o.order);
+        return co != 0 ? co : getName().compareTo(o.getName());
     }
 
     public void applyValue() {
