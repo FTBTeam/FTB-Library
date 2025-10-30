@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Better extensibility for the NBT editing GUI system
   * Added a handler registration system for NBT edit response packets: `NBTEditResponseHandlers`
-  * Made FTBLibraryCommands.InfoBuilder public 
+  * Made `FTBLibraryCommands.InfoBuilder` utility class public 
   * Allows other mods (e.g. FTB Teams) to register their own NBT editor handlers for their objects
+
+### Fixed
+* Fixed config edit screens not properly honouring explicit order for entries (set via `ConfigValue#setOrder`)
 
 ## [2101.1.24]
 
