@@ -89,10 +89,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
     }
 
     private void collectAllConfigValues(ConfigGroup group, List<ConfigValue<?>> list) {
-        list.addAll(group.getValues().stream()
-                .sorted(Comparator.comparing(ConfigValue::getName))
-                .toList()
-        );
+        list.addAll(group.getValues().stream().sorted().toList());
 
         for (var subgroup : group.getSubgroups()) {
             collectAllConfigValues(subgroup, list);
