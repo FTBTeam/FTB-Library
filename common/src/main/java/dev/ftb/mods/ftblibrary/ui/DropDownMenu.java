@@ -131,7 +131,7 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
             }
             setWidth(Math.max(maxWidth + 12, 128));
 
-            int wantedHeight = (int) Math.min(totalHeight, parent.parent.getScreen().getGuiScaledHeight() * (maxHeightPercent));
+            int wantedHeight = (int) Math.min(totalHeight, this.getWindow().getGuiScaledHeight() * (maxHeightPercent));
 
             setHeight(Math.max(wantedHeight, 32));
 

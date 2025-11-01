@@ -53,8 +53,8 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends Abstract
 
     @Override
     public boolean onInit() {
-        int maxH = (int) (getScreen().getGuiScaledHeight() * .8f);
-        int maxW = (int) (getScreen().getGuiScaledWidth() * .9f);
+        int maxH = (int) (getWindow().getGuiScaledHeight() * .8f);
+        int maxW = (int) (getWindow().getGuiScaledWidth() * .9f);
 
         setHeight(Mth.clamp(localValues.size() * 12 + getTopPanelHeight() + bottomPanel.height, 176, maxH));
         setWidth(Mth.clamp(widestElement + 20, 176, maxW));

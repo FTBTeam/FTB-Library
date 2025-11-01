@@ -70,8 +70,8 @@ public class ColorSelectorPanel extends ModalPanel {
     public static ColorSelectorPanel popupAtMouse(BaseScreen gui, ColorConfig config, ConfigCallback callback) {
         ColorSelectorPanel selector = new ColorSelectorPanel(gui, config, callback);
         selector.setAllowAlphaEdit(config.isAllowAlphaEdit());
-        int absX = Math.min(gui.getMouseX(), gui.getScreen().getGuiScaledWidth() - selector.width - 10);
-        int absY = Math.min(gui.getMouseY(), gui.getScreen().getGuiScaledHeight() - selector.height - 10);
+        int absX = Math.min(gui.getMouseX(), gui.getWindow().getGuiScaledWidth() - selector.width - 10);
+        int absY = Math.min(gui.getMouseY(), gui.getWindow().getGuiScaledHeight() - selector.height - 10);
         selector.setPos(absX - selector.getParent().getX(), absY - selector.getParent().getY());
 
         gui.pushModalPanel(selector);
