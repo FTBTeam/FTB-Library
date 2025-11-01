@@ -195,7 +195,7 @@ public abstract class Panel extends Widget {
         drawBackground(graphics, theme, x, y, w, h);
 
         if (renderInside) {
-            GuiHelper.pushScissor(getScreen(), x, y, w, h);
+            GuiHelper.pushScissor(getWindow(), x, y, w, h);
         }
 
         setOffset(true);
@@ -213,7 +213,7 @@ public abstract class Panel extends Widget {
         setOffset(false);
 
         if (renderInside) {
-            GuiHelper.popScissor(getScreen());
+            GuiHelper.popScissor(getWindow());
         }
     }
 

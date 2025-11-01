@@ -211,8 +211,16 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
         return false;
     }
 
+    /**
+     * @deprecated use {@link #getWindow()}
+     */
+    @Deprecated
     public Window getScreen() {
-        return parent.getScreen();
+        return parent.getWindow();
+    }
+
+    public Window getWindow() {
+        return parent.getWindow();
     }
 
     public int getMouseX() {

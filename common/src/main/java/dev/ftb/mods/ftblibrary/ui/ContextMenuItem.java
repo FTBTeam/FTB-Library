@@ -43,11 +43,11 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
             button.getGui().openContextMenu(subMenu);
             int xPos = button.getPosX() + button.width;
             int yPos = button.getPosY();
-            if (button.getX() + button.width + subMenu.width >= button.getScreen().getGuiScaledWidth()) {
+            if (button.getX() + button.width + subMenu.width >= button.getWindow().getGuiScaledWidth()) {
                 xPos = button.getPosX() - subMenu.width;
             }
-            if (button.getY() + subMenu.height >= button.getScreen().getGuiScaledHeight()) {
-                yPos -= subMenu.height - button.getScreen().getGuiScaledHeight();
+            if (button.getY() + subMenu.height >= button.getWindow().getGuiScaledHeight()) {
+                yPos -= subMenu.height - button.getWindow().getGuiScaledHeight();
             }
             subMenu.setPos(xPos, yPos);
         }).setCloseMenu(false);

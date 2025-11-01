@@ -70,8 +70,8 @@ public class ColorSelectorPanel extends ModalPanel {
     public static ColorSelectorPanel popupAtMouse(BaseScreen gui, ColorConfig config, ConfigCallback callback) {
         ColorSelectorPanel selector = new ColorSelectorPanel(gui, config, callback);
         selector.setAllowAlphaEdit(config.isAllowAlphaEdit());
-        int absX = Math.min(gui.getMouseX(), gui.getScreen().getGuiScaledWidth() - selector.width - 10);
-        int absY = Math.min(gui.getMouseY(), gui.getScreen().getGuiScaledHeight() - selector.height - 10);
+        int absX = Math.min(gui.getMouseX(), gui.getWindow().getGuiScaledWidth() - selector.width - 10);
+        int absY = Math.min(gui.getMouseY(), gui.getWindow().getGuiScaledHeight() - selector.height - 10);
         selector.setPos(absX - selector.getParent().getX(), absY - selector.getParent().getY());
 
         gui.pushModalPanel(selector);
@@ -333,14 +333,14 @@ public class ColorSelectorPanel extends ModalPanel {
 
             if (allowAlphaEdit) {
                 if (config.getValue().alphai() < 255) {
-                    GuiHelper.pushScissor(getScreen(), x, y, w, h);
+                    GuiHelper.pushScissor(getWindow(), x, y, w, h);
                     for (int i = 0; i < w; i += 10) {
                         for (int j = 0; j < h; j += 10) {
                             Color4I c = (i + j) / 10 % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
                             c.draw(graphics, x + i, y + j, 10, 10);
                         }
                     }
-                    GuiHelper.popScissor(getScreen());
+                    GuiHelper.popScissor(getWindow());
                 }
                 config.getValue().draw(graphics, x, y, w, h);
 

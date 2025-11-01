@@ -328,7 +328,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
                 }
             });
             panel.setExtraZlevel(300);  // ensure it renders over any rendered items
-            int w = getScreen().getGuiScaledWidth() - 10 - getX();
+            int w = getWindow().getGuiScaledWidth() - 10 - getX();
             panel.setPosAndSize(getPosX(), getPosY() + getHeight(), w, 50);
             return panel;
         }
