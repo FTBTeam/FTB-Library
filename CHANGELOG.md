@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * Fixed NBT tags with an empty key being saved to invalid SNBT strings
+* Resolved a couple of minor issues with the back button behaviour in GUI's
 
 ## [2101.1.25]
 
