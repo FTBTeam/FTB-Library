@@ -38,9 +38,9 @@ public class ChooseConfigScreen extends BaseScreen {
     public void alignWidgets() {
         int ySize = BTN_HEIGHT * 3 + 10;
         int xSize = 50 + widgets.stream().map(w -> getTheme().getStringWidth(w.getTitle())).max(Integer::compare).orElse(100);
-        int yPos = (getScreen().getGuiScaledHeight() - ySize) / 2;
+        int yPos = (getWindow().getGuiScaledHeight() - ySize) / 2;
         for (Widget w : widgets) {
-            w.setPosAndSize((getScreen().getGuiScaledWidth() - xSize) / 2, yPos, xSize, BTN_HEIGHT);
+            w.setPosAndSize((getWindow().getGuiScaledWidth() - xSize) / 2, yPos, xSize, BTN_HEIGHT);
             yPos += BTN_HEIGHT + 5;
         }
     }

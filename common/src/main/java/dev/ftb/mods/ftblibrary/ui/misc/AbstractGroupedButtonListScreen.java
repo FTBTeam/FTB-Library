@@ -79,7 +79,7 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
     @Override
     public boolean onInit() {
         setWidth(220);
-        setHeight(getScreen().getGuiScaledHeight() * 4 / 5);
+        setHeight(getWindow().getGuiScaledHeight() * 4 / 5);
         return true;
     }
 

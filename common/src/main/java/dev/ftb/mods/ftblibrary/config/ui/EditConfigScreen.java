@@ -23,7 +23,6 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
@@ -112,8 +111,8 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             cfgHeight.add(w.height + 2);
         });
 
-        setHeight(Mth.clamp(cfgHeight.intValue() + getTopPanelHeight() + BOTTOM_PANEL_H, 100, (int) (getScreen().getGuiScaledHeight() * .9f)));
-        setWidth(Mth.clamp(Math.max(16 + widestKey + widestValue, widestGroup.intValue()) + 50, 176, (int) (getScreen().getGuiScaledWidth() * .9f)));
+        setHeight(Mth.clamp(cfgHeight.intValue() + getTopPanelHeight() + BOTTOM_PANEL_H, 100, (int) (getWindow().getGuiScaledHeight() * .9f)));
+        setWidth(Mth.clamp(Math.max(16 + widestKey + widestValue, widestGroup.intValue()) + 50, 176, (int) (getWindow().getGuiScaledWidth() * .9f)));
 
         return true;
     }

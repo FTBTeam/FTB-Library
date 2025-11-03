@@ -50,8 +50,8 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
     }
 
     public EditStringConfigOverlay<T> atMousePosition() {
-        int absX = Math.min(getMouseX(), getScreen().getGuiScaledWidth() - width);
-        int absY = Math.min(getMouseY(), getScreen().getGuiScaledHeight() - height);
+        int absX = Math.min(getMouseX(), getWindow().getGuiScaledWidth() - width);
+        int absY = Math.min(getMouseY(), getWindow().getGuiScaledHeight() - height);
         return atPosition(absX - parent.getX(), absY - parent.getY() - (int) parent.getScrollY());
     }
 

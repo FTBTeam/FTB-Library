@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.26]
+
+### Fixed
+* Fixed NBT tags with an empty key being saved to invalid SNBT strings
+* Resolved a couple of minor issues with the back button behaviour in GUI's
+
 ## [2101.1.25]
 
 ### Added
