@@ -132,7 +132,7 @@ public class SNBT {
                     }
                 }
 
-                builder.print(SNBTUtils.handleEscape(key));
+                builder.print(key.isEmpty() ? "\"\"" : SNBTUtils.handleEscape(key));
                 builder.print(": ");
 
                 if (properties.valueType == SNBTTagProperties.TYPE_FALSE) {

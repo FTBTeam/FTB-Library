@@ -105,6 +105,8 @@ public class SNBTTest {
         subTag.putBoolean("bool_field", true);
         tag.put("compound", subTag);
 
+        tag.putString("", "test of empty key");
+
         return tag;
     }
 }
