@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2101.1.27]
 
+### Added
+* Added `pt_br` translation (thanks @PrincessStelllar)
+
 ### Fixed
 * Fixed NBT Editor screen (`/ftblibrary nbtedit`) sending data to the server twice when changes applied
 
