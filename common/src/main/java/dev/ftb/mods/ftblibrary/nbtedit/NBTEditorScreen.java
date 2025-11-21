@@ -156,8 +156,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     }
 
     @Override
-    public void onClosed() {
-        super.onClosed();
+    public void closeGui() {
+        super.closeGui();
 
         callback.handle(accepted, buttonNBTRoot.map);
     }
