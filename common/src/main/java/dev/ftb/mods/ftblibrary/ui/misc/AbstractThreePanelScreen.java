@@ -134,6 +134,10 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         showCloseButton = show;
     }
 
+    public boolean shouldShowCloseButton() {
+        return showCloseButton;
+    }
+
     public void showScrollBar(boolean show) {
         showScrollBar = show;
     }
@@ -144,8 +148,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         public TopPanel() {
             super(AbstractThreePanelScreen.this);
 
-            closeButton = new SimpleButton(this, Component.translatable("gui.close"),
-                    Icons.CANCEL, (btn, mb) -> doCancel());
+            closeButton = new SimpleButton(this, Component.translatable("gui.close"), Icons.CANCEL, (btn, mb) -> doCancel());
         }
 
         @Override
@@ -158,7 +161,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         @Override
         public void alignWidgets() {
             if (showCloseButton) {
-                closeButton.setPosAndSize(width - 16, 1, 14, 14);
+                closeButton.setPosAndSize(width - 16, (height - 14) / 2, 14, 14);
             }
         }
 
