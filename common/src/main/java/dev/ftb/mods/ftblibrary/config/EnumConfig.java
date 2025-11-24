@@ -7,7 +7,7 @@ import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.ui.misc.ButtonListBaseScreen;
+import dev.ftb.mods.ftblibrary.ui.misc.AbstractButtonListScreen;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -59,28 +59,14 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
     @Override
     public void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback) {
         if (nameMap.values.size() > 16 || BaseScreen.isCtrlKeyDown()) {
-            var gui = new ButtonListBaseScreen() {
-                @Override
-                public void addButtons(Panel panel) {
-                    for (var v : nameMap) {
-                        panel.add(new SimpleTextButton(panel, nameMap.getDisplayName(v), nameMap.getIcon(v)) {
-                            @Override
-                            public void onClicked(MouseButton button) {
-                                playClickSound();
-                                boolean changed = setCurrentValue(v);
-                                callback.save(changed);
-                            }
-                        });
-                    }
-                }
-            };
-
-            gui.setHasSearchBox(true);
-            gui.openGui();
-            return;
+            var screen = new EnumSelectScreen(clickedWidget.getParent());
+            screen.setHasSearchBox(true);
+            screen.showBottomPanel(false);
+            screen.showCloseButton(true);
+            screen.openGui();
+        } else {
+            super.onClicked(clickedWidget, button, callback);
         }
-
-        super.onClicked(clickedWidget, button, callback);
     }
 
     @Override
@@ -99,5 +85,37 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
         }
 
         return super.getIcon(v);
+    }
+
+    private class EnumSelectScreen extends AbstractButtonListScreen {
+        private final Panel parent;
+
+        public EnumSelectScreen(Panel parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void addButtons(Panel panel) {
+            for (var v : nameMap) {
+                panel.add(new SimpleTextButton(panel, nameMap.getDisplayName(v), nameMap.getIcon(v)) {
+                    @Override
+                    public void onClicked(MouseButton button) {
+                        playClickSound();
+                        setCurrentValue(v);
+                        doAccept();
+                    }
+                });
+            }
+        }
+
+        @Override
+        protected void doCancel() {
+            parent.run();
+        }
+
+        @Override
+        protected void doAccept() {
+            parent.run();
+        }
     }
 }
