@@ -144,8 +144,10 @@ public abstract class AbstractButtonListScreen extends AbstractThreePanelScreen<
             titleField.setPosAndSize(GUTTER_SIZE, GUTTER_SIZE, parent.width - GUTTER_SIZE * 2, titleField.getHeight());
 
             if (hasSearchBox) {
-                searchBox.setPosAndSize(GUTTER_SIZE, titleField.getPosY() + titleField.getHeight() + GUTTER_SIZE,
-                        parent.width - GUTTER_SIZE * 2, getTheme().getFontHeight() + 6);
+                int textFieldWidth = shouldShowCloseButton() ? parent.width - GUTTER_SIZE * 2 - 16 : parent.width - GUTTER_SIZE * 2;
+                int textFieldHeight = getTheme().getFontHeight() + 6;
+                int textFieldY = titleField.getHeight() == 0 ? (height - textFieldHeight) / 2 : titleField.getPosY() + titleField.getHeight() + GUTTER_SIZE;
+                searchBox.setPosAndSize(GUTTER_SIZE, textFieldY, textFieldWidth, textFieldHeight);
             }
         }
     }
