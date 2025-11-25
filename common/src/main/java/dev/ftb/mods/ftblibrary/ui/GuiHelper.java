@@ -25,15 +25,12 @@ import java.util.function.BiFunction;
 
 
 public class GuiHelper {
-    public static final BaseScreen BLANK_GUI = new BaseScreen() {
+    public static final BaseScreen BLANK_GUI = new BaseScreen(null) {
         @Override
         public void addWidgets() {
         }
-
-        @Override
-        public void alignWidgets() {
-        }
     };
+
     private static final BiFunction<Color4I, Boolean, Color4I> BRIGHTEN = Util.memoize((col, outset) -> col.addBrightness(outset ? 0.15f : -0.1f));
     private static final BiFunction<Color4I, Boolean, Color4I> DARKEN = Util.memoize((col, outset) -> col.addBrightness(outset ? -0.1f : 0.15f));
 
