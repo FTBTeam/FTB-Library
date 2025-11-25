@@ -27,7 +27,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.*;
 
 public abstract class BaseScreen extends Panel {
-    private Screen prevScreen;
+    @Nullable private Screen prevScreen;
     private final Deque<ModalPanel> modalPanels;
     private int mouseX, mouseY;
     private float partialTicks;
@@ -36,7 +36,7 @@ public abstract class BaseScreen extends Panel {
     private Widget focusedWidget = null;
     private boolean renderBlur = true;
 
-    public BaseScreen(Screen previousScreen) {
+    public BaseScreen(@Nullable Screen previousScreen) {
         super(null);
         setSize(176, 166);
         setOnlyRenderWidgetsInside(false);
@@ -421,7 +421,8 @@ public abstract class BaseScreen extends Panel {
                 popModalPanel();
                 return true;
             }
-            return modalPanels.peekFirst().keyPressed(key);
+            //noinspection DataFlowIssue
+            return modalPanels.peekFirst().keyPressed(key);  // we already checked it's not empty
         } else if (super.keyPressed(key)) {
             return true;
         } else if (InputConstants.isKeyDown(getWindow().getWindow(), GLFW.GLFW_KEY_F3) && key.is(GLFW.GLFW_KEY_B)) {
