@@ -31,19 +31,22 @@ public abstract class BaseScreen extends Panel {
 	private int mouseX, mouseY;
 	private float partialTicks;
 	private boolean refreshWidgets;
-	private Window screen;
 	private long lastClickTime = 0L;
 	private final Deque<ModalPanel> modalPanels;
 	private Widget focusedWidget = null;
 
-	public BaseScreen() {
+	public BaseScreen(Screen previousScreen) {
 		super(null);
 		setSize(176, 166);
 		setOnlyRenderWidgetsInside(false);
 		setOnlyInteractWithWidgetsInside(false);
-		prevScreen = Minecraft.getInstance().screen;
+		prevScreen = previousScreen;
 		modalPanels = new ArrayDeque<>();
 	}
+
+    public BaseScreen() {
+        this(Minecraft.getInstance().screen);
+    }
 
 	@Override
 	public final BaseScreen getGui() {
@@ -55,13 +58,7 @@ public abstract class BaseScreen extends Panel {
 	}
 
 	public final void initGui() {
-		if (parent instanceof BaseScreen) {
-			screen = parent.getScreen();
-		} else {
-			screen = Minecraft.getInstance().getWindow();
-		}
-
-		if (onInit()) {
+        if (onInit()) {
 			super.refreshWidgets();
 			onPostInit();
 		}
@@ -120,13 +117,9 @@ public abstract class BaseScreen extends Panel {
 	protected boolean setSizeProportional(float w, float h) {
 		Validate.isTrue(w > 0f && w <= 1f && h > 0f && h <= 1f, "width and height must be > 0 and <= 1");
 
-		if (screen == null) {
-			return false;
-		} else {
-			setWidth((int) (screen.getGuiScaledWidth() * w));
-			setHeight((int) (screen.getGuiScaledHeight() * h));
-			return true;
-		}
+        setWidth((int) (getScreen().getGuiScaledWidth() * w));
+        setHeight((int) (getScreen().getGuiScaledHeight() * h));
+        return true;
 	}
 
 	public void onPostInit() {
@@ -191,12 +184,17 @@ public abstract class BaseScreen extends Panel {
 		return prevScreen;
 	}
 
+    /**
+     * Close the GUI and optionally open the previous screen.
+     *
+     * @param openPrevScreen if true, will open the previous screen if the {@link #usePreviousScreenOnBack()} method returns true
+     */
 	@Override
 	public final void closeGui(boolean openPrevScreen) {
-		var mx = Minecraft.getInstance().mouseHandler.xpos();
-		var my = Minecraft.getInstance().mouseHandler.ypos();
+        Minecraft mc = Minecraft.getInstance();
 
-		var mc = Minecraft.getInstance();
+        var mx = mc.mouseHandler.xpos();
+		var my = mc.mouseHandler.ypos();
 
 		if (mc.player != null) {
 			mc.player.closeContainer();
@@ -206,10 +204,12 @@ public abstract class BaseScreen extends Panel {
 			}
 		}
 
-		if (openPrevScreen && getPrevScreen() != null) {
-			mc.setScreen(getPrevScreen());
-			GLFW.glfwSetCursorPos(getScreen().getWindow(), mx, my);
-		}
+        if (usePreviousScreenOnBack()) {
+            if (openPrevScreen && getPrevScreen() != null) {
+                mc.setScreen(getPrevScreen());
+                GLFW.glfwSetCursorPos(getScreen().getWindow(), mx, my);
+            }
+        }
 
 		modalPanels.clear();
 
@@ -309,8 +309,8 @@ public abstract class BaseScreen extends Panel {
 		// default positioning where the mouse was clicked. caller is free to reposition if needed
 		var x = getX();
 		var y = getY();
-		int px = Math.min((getMouseX() - x), screen.getGuiScaledWidth() - newContextMenu.width - x) - 3;
-		int py = Math.min((getMouseY() - y), screen.getGuiScaledHeight() - newContextMenu.height - y) - 3;
+		int px = Math.min((getMouseX() - x), getScreen().getGuiScaledWidth() - newContextMenu.width - x) - 3;
+		int py = Math.min((getMouseY() - y), getScreen().getGuiScaledHeight() - newContextMenu.height - y) - 3;
 		newContextMenu.setPos(px, py);
 	}
 
@@ -385,7 +385,7 @@ public abstract class BaseScreen extends Panel {
 			return modalPanels.peekFirst().keyPressed(key);
 		} else if (super.keyPressed(key)) {
 			return true;
-		} else if (InputConstants.isKeyDown(getGui().screen.getWindow(), GLFW.GLFW_KEY_F3) && key.is(GLFW.GLFW_KEY_B)) {
+		} else if (InputConstants.isKeyDown(getGui().getScreen().getWindow(), GLFW.GLFW_KEY_F3) && key.is(GLFW.GLFW_KEY_B)) {
 			Theme.renderDebugBoxes = !Theme.renderDebugBoxes;
 			return true;
 		}
@@ -459,11 +459,7 @@ public abstract class BaseScreen extends Panel {
 
 	@Override
 	public final Window getScreen() {
-		if (screen == null) {
-			return parent.getScreen();
-		}
-
-		return screen;
+		return Minecraft.getInstance().getWindow();
 	}
 
 	@Override
@@ -527,6 +523,16 @@ public abstract class BaseScreen extends Panel {
 		}
 		focusedWidget = widget;
 	}
+
+    /**
+     * Override this method to completely disable going back to the previous screen on various
+     * back actions (e.g. pressing esc, calling back, etc).
+     *
+     * @return true to use the previous screen on back actions, false to just close the GUI
+     */
+    public boolean usePreviousScreenOnBack() {
+        return true;
+    }
 
 	public static class PositionedTextData {
 		public final int posX, posY;
