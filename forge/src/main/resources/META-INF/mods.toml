@@ -15,7 +15,7 @@ Foundational library for FTB mods.
 [[dependencies.ftblibrary]]
 modId = "forge"
 mandatory = true
-versionRange = "[${forgeversion},)"
+versionRange = "[47.3,)"
 ordering = "NONE"
 side = "BOTH"
 
