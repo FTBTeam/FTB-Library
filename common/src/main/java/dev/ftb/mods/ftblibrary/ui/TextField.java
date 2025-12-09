@@ -86,7 +86,7 @@ public class TextField extends Widget {
     public TextField reflow() {
         var theme = getGui().getTheme();
 
-        formattedText = theme.listFormattedStringToWidth(rawText, maxWidth).toArray(new FormattedText[0]);
+        formattedText = theme.listFormattedStringToWidth(rawText, (int) (maxWidth / scale)).toArray(new FormattedText[0]);
 
         return resize(theme);
     }
