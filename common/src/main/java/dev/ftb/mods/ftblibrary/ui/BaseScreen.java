@@ -197,6 +197,13 @@ public abstract class BaseScreen extends Panel {
         return !modalPanels.isEmpty();
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+
+        modalPanels.forEach(Panel::tick);
+    }
+
     @Nullable
     public Screen getPrevScreen() {
         if (prevScreen instanceof ScreenWrapper sw && sw.getGui() instanceof LoadingScreen) {
