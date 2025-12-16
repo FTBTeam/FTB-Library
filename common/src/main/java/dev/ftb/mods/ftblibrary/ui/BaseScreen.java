@@ -317,7 +317,7 @@ public abstract class BaseScreen extends Panel {
             graphics.pose().popMatrix();
 
             setOnlyRenderWidgetsInside(r);
-            setOnlyRenderWidgetsInside(i);
+            setOnlyInteractWithWidgetsInside(i);
         }
     }
 
