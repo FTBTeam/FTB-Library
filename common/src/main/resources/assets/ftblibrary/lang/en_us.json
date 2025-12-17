@@ -68,6 +68,7 @@
   "item.ftblibrary.fluid_container.use": "Right-click on a tank to empty the container",
   "ftblibrary.mb": "%d mB of %s",
   "ftblibrary.empty": "Empty",
+  "ftblibrary.read_only": "read-only",
   "ftblibrary.gui.listSize1": "1 item",
   "ftblibrary.gui.listSize": "%d items",
   "ftblibrary.gui.error": "Error!",

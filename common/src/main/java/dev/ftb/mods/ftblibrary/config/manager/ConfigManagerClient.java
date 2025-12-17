@@ -26,7 +26,11 @@ public class ConfigManagerClient {
     }
 
     public static void editConfig(String configName) {
+        editConfig(configName, false);
+    }
+
+    public static void editConfig(String configName, boolean isReadOnly) {
         ConfigManager.getInstance().createConfigGroup(configName)
-                .ifPresent(group -> new EditConfigScreen(group).setAutoclose(true).openGui());
+                .ifPresent(group -> new EditConfigScreen(group, isReadOnly).setAutoclose(true).openGui());
     }
 }
