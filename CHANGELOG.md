@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2101.1.30]
 
+### Added
+* Added support for read-only config viewing in `EditConfigScreen`
+  * Can be used to allow regular non-admin players to see server configs but not edit them
+
 ### Fixed
 * Modal Panel gui elements didn't have their tick() method called via `BaseScreen`
 
