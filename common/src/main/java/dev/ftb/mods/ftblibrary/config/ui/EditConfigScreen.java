@@ -39,12 +39,19 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
     private int widestValue = 0;
     private boolean changed = false;
     private boolean openPrevScreenOnClose = true;
+    private final boolean readOnly;
 
     public EditConfigScreen(ConfigGroup configGroup) {
+        this(configGroup, false);
+    }
+
+    public EditConfigScreen(ConfigGroup configGroup, boolean readOnly) {
         super();
 
+        this.readOnly = readOnly;
         group = configGroup;
-        title = configGroup.getName().copy().withStyle(ChatFormatting.BOLD);
+        MutableComponent baseTitle = configGroup.getName().copy().withStyle(ChatFormatting.BOLD);
+        title = readOnly ? baseTitle.append(" (").append(Component.translatable("ftblibrary.read_only")).append(")") : baseTitle;
         allConfigButtons = new ArrayList<>();
 
         List<ConfigValue<?>> list = new ArrayList<>();
@@ -148,7 +155,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
     @Override
     protected void doAccept() {
-        group.save(true);
+        if (!readOnly) group.save(true);
         if (autoclose) closeGui(openPrevScreenOnClose);
     }
 
@@ -300,7 +307,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
         @Override
         public void onClicked(MouseButton button) {
-            if (getMouseY() >= 20) {
+            if (!readOnly && getMouseY() >= 20) {
                 playClickSound();
                 configValue.onClicked(this, button, accepted -> {
                     if (accepted) changed = true;
