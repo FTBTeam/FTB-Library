@@ -4,7 +4,7 @@ import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.nbt.Tag;
 
 import java.util.function.BooleanSupplier;

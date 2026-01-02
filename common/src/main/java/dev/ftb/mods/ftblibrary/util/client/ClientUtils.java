@@ -7,13 +7,14 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
-import net.minecraft.ResourceLocationException;
-import net.minecraft.Util;
+import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
@@ -24,7 +25,8 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
-    public static final BooleanSupplier IS_CLIENT_OP = () -> Minecraft.getInstance().player != null && Minecraft.getInstance().player.hasPermissions(1);
+    // TODO: @since 21.x? Is moderator really what we define as OP?
+    public static final BooleanSupplier IS_CLIENT_OP = () -> Minecraft.getInstance().player != null && Minecraft.getInstance().player.permissions().hasPermission(Permissions.COMMANDS_MODERATOR);
     public static final List<Runnable> RUN_LATER = new ArrayList<>();
     private static final MethodType EMPTY_METHOD_TYPE = MethodType.methodType(void.class);
     private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
@@ -134,9 +136,9 @@ public class ClientUtils {
 
     private static boolean trySendCustomClickEvent(String name) {
         try {
-            ResourceLocation rl = ResourceLocation.parse(name);
+            Identifier rl = Identifier.parse(name);
             return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent();
-        } catch (ResourceLocationException ex) {
+        } catch (IdentifierException ex) {
             logHandleClickFailure("custom", name, ex);
             return false;
         }
@@ -151,7 +153,7 @@ public class ClientUtils {
     }
 
     @ExpectPlatform
-    public static ResourceLocation getStillTexture(FluidStack stack) {
+    public static Identifier getStillTexture(FluidStack stack) {
         throw new AssertionError();
     }
 

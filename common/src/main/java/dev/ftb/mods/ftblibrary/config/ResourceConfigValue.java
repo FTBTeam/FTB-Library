@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ui.resource.SelectableResource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.OptionalLong;
 import java.util.function.Predicate;
@@ -48,7 +48,7 @@ public abstract class ResourceConfigValue<T> extends ConfigValue<T> {
     }
 
     public static abstract class Image<T> extends ResourceConfigValue<T> {
-        public static final ResourceLocation NONE = FTBLibrary.rl("none");
+        public static final Identifier NONE = FTBLibrary.rl("none");
 
         @Override
         public boolean canHaveNBT() {

@@ -11,7 +11,7 @@ import dev.ftb.mods.ftblibrary.util.MapUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.ExtraCodecs;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonElement> {
 
     public static final SidebarButtonManager INSTANCE = new SidebarButtonManager();
-    private final Map<ResourceLocation, RegisteredSidebarButton> buttons = new HashMap<>();
+    private final Map<Identifier, RegisteredSidebarButton> buttons = new HashMap<>();
     private final List<SidebarGuiButton> buttonList = new ArrayList<>();
 
     public SidebarButtonManager() {
@@ -32,7 +32,7 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonE
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected void apply(Map<Identifier, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         buttons.clear();
 
         // Read the button and group json files and register them to their 'registry' map
@@ -70,13 +70,13 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonE
         }
     }
 
-    private <T> void loadResources(Map<ResourceLocation, JsonElement> objects, Codec<T> codec, BiConsumer<ResourceLocation, T> consumer) {
-        for (Map.Entry<ResourceLocation, JsonElement> resource : objects.entrySet()) {
+    private <T> void loadResources(Map<Identifier, JsonElement> objects, Codec<T> codec, BiConsumer<Identifier, T> consumer) {
+        for (Map.Entry<Identifier, JsonElement> resource : objects.entrySet()) {
             codec.parse(JsonOps.INSTANCE, resource.getValue())
                     .resultOrPartial(err -> FTBLibrary.LOGGER.error("Failed to parse json: {}", err))
                     .ifPresent(result -> {
-                        ResourceLocation key = resource.getKey();
-                        ResourceLocation fixed = ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getPath());
+                        Identifier key = resource.getKey();
+                        Identifier fixed = Identifier.fromNamespaceAndPath(key.getNamespace(), key.getPath());
                         consumer.accept(fixed, result);
                     });
         }
@@ -151,7 +151,7 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonE
         return buttons.values();
     }
 
-    public Optional<RegisteredSidebarButton> getButton(ResourceLocation id) {
+    public Optional<RegisteredSidebarButton> getButton(Identifier id) {
         return Optional.ofNullable(buttons.get(id));
     }
 }

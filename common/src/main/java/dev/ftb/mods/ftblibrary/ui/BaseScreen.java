@@ -239,7 +239,7 @@ public abstract class BaseScreen extends Panel {
         if (usePreviousScreenOnBack()) {
             if (openPrevScreen && getPrevScreen() != null) {
                 mc.setScreen(getPrevScreen());
-                GLFW.glfwSetCursorPos(getWindow().getWindow(), mx, my);
+                GLFW.glfwSetCursorPos(getWindow().handle(), mx, my);
             }
         }
 
@@ -432,7 +432,7 @@ public abstract class BaseScreen extends Panel {
             return modalPanels.peekFirst().keyPressed(key);  // we already checked it's not empty
         } else if (super.keyPressed(key)) {
             return true;
-        } else if (InputConstants.isKeyDown(getWindow().getWindow(), GLFW.GLFW_KEY_F3) && key.is(GLFW.GLFW_KEY_B)) {
+        } else if (InputConstants.isKeyDown(getWindow(), GLFW.GLFW_KEY_F3) && key.is(GLFW.GLFW_KEY_B)) {
             Theme.renderDebugBoxes = !Theme.renderDebugBoxes;
             return true;
         }

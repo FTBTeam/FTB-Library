@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ public class EntityFaceResource implements SelectableResource<EntityType<?>>, Co
     public static final EntityFaceResource NONE = new EntityFaceResource(EntityFaceConfig.NONE);
 
     private final EntityType<?> type;
-    private final ResourceLocation location;
+    private final Identifier location;
     private final Component name;
     private final Icon icon;
 
@@ -28,7 +28,7 @@ public class EntityFaceResource implements SelectableResource<EntityType<?>>, Co
         icon = type == EntityFaceConfig.NONE ? Icon.empty() : EntityIconLoader.getIcon(type);
     }
 
-    public ResourceLocation getLocation() {
+    public Identifier getLocation() {
         return location;
     }
 

@@ -25,7 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +78,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
     @Override
     @NotNull
-    public ResourceLocation getPluginUid() {
+    public Identifier getPluginUid() {
         return FTBLibrary.rl("jei");
     }
 

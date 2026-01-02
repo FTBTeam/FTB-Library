@@ -23,7 +23,7 @@ import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
@@ -70,8 +70,8 @@ public class FTBLibrary {
         customColors.forEach(ExtendableTextColor::addCustomColor);
     }
 
-    public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier rl(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static DeferredSupplier<CreativeModeTab> getCreativeModeTab() {

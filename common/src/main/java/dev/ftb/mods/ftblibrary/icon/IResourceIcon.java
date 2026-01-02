@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface IResourceIcon {
-    ResourceLocation getResourceLocation();
+    Identifier getIdentifier();
 }

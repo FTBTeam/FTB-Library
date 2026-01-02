@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.snbt;
 
 import dev.ftb.mods.ftblibrary.config.Tristate;
 import dev.ftb.mods.ftblibrary.snbt.config.*;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;

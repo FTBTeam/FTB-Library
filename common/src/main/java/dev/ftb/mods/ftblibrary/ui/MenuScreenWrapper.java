@@ -6,6 +6,9 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -46,22 +49,22 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     }
 
     @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        wrappedGui.updateMouseOver((int) x, (int) y);
+    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
+        wrappedGui.updateMouseOver((int) event.x(), (int) event.x());
 
-        if (button == MouseButton.BACK.id) {
+        if (event.button() == MouseButton.BACK.id) {
             wrappedGui.onBack();
             return true;
         } else {
-            return wrappedGui.mousePressed(MouseButton.get(button)) || super.mouseClicked(x, y, button);
+            return wrappedGui.mousePressed(MouseButton.get(event.button())) || super.mouseClicked(event, flag);
         }
     }
 
     @Override
-    public boolean mouseReleased(double x, double y, int button) {
-        wrappedGui.updateMouseOver((int) x, (int) y);
-        wrappedGui.mouseReleased(MouseButton.get(button));
-        return super.mouseReleased(x, y, button);
+    public boolean mouseReleased(MouseButtonEvent event) {
+        wrappedGui.updateMouseOver((int) event.x(), (int) event.y());
+        wrappedGui.mouseReleased(MouseButton.get(event.button()));
+        return super.mouseReleased(event);
     }
 
     @Override
@@ -70,8 +73,8 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        var key = new Key(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        var key = new Key(event.key(), event.scancode(), event.modifiers(), event);
 
         if (wrappedGui.keyPressed(key)) {
             return true;
@@ -88,24 +91,25 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
                 return true;
             }
 
-            return super.keyPressed(keyCode, scanCode, modifiers);
+            return super.keyPressed(event);
         }
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        var key = new Key(keyCode, scanCode, modifiers);
+    public boolean keyReleased(KeyEvent event) {
+        var key = new Key(event.key(), event.scancode(), event.modifiers(), event);
         wrappedGui.keyReleased(key);
-        return super.keyReleased(keyCode, scanCode, modifiers);
+        return super.keyReleased(event);
     }
 
     @Override
-    public boolean charTyped(char keyChar, int modifiers) {
-        if (wrappedGui.charTyped(keyChar, new KeyModifiers(modifiers))) {
+    public boolean charTyped(CharacterEvent event) {
+        // TODO: @since 21.11: verify that this is correct
+        if (wrappedGui.charTyped(Character.forDigit(event.codepoint(), Character.MAX_RADIX), new KeyModifiers(event.modifiers()))) {
             return true;
         }
 
-        return super.charTyped(keyChar, keyChar);
+        return super.charTyped(event);
     }
 
     @Override

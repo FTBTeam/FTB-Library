@@ -1,13 +1,10 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,9 +12,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +46,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
 
         return new LazyIcon(() -> {
             var s = lazyStackString.split(" ", 4);
-            var stack = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(s[0])).get());
+            var stack = new ItemStack(BuiltInRegistries.ITEM.get(Identifier.parse(s[0])).get());
 
             if (s.length >= 2 && !s[1].equals("1")) {
                 stack.setCount(Integer.parseInt(s[1]));
@@ -86,10 +82,14 @@ public class ItemIcon extends Icon implements IResourceIcon {
     }
 
     public static void drawItem3D(GuiGraphics graphics, ItemStack stack) {
+        graphics.renderItem(stack, 0, 0);
+
+        // TODO: [1.21.11] Validate the above
+
         //FIXME: Draw flat 3D item
         // TODO: [1.21.6] We no longer have access to the posestack so maybe creating our own will be fine here?
-        var pose = new PoseStack();
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, pose, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
+//        var pose = new PoseStack();
+//        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, pose, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
     }
 
     public ItemStack getStack() {
@@ -173,7 +173,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    public ResourceLocation getResourceLocation() {
+    public Identifier getIdentifier() {
         return BuiltInRegistries.ITEM.getKey(stack.getItem());
     }
 }

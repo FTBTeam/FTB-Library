@@ -50,7 +50,7 @@ public record ChunkDimPos(ResourceKey<Level> dimension, ChunkPos chunkPos) imple
 
     @Override
     public int compareTo(ChunkDimPos o) {
-        var i = dimension.location().compareTo(o.dimension.location());
+        var i = dimension.identifier().compareTo(o.dimension.identifier());
         return i == 0 ? Long.compare(chunkPos.toLong(), o.chunkPos.toLong()) : i;
     }
 

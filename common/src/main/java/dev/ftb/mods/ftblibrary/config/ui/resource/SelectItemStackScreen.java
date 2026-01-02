@@ -9,7 +9,7 @@ import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;

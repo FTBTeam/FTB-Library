@@ -7,6 +7,9 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
@@ -35,22 +38,22 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     }
 
     @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        wrappedGui.updateMouseOver((int) x, (int) y);
+    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
+        wrappedGui.updateMouseOver((int) event.x(), (int) event.y());
 
-        if (button == MouseButton.BACK.id) {
+        if (event.button() == MouseButton.BACK.id) {
             wrappedGui.onBack();
             return true;
         } else {
-            return wrappedGui.mousePressed(MouseButton.get(button)) || super.mouseClicked(x, y, button);
+            return wrappedGui.mousePressed(MouseButton.get(event.button())) || super.mouseClicked(event, flag);
         }
     }
 
     @Override
-    public boolean mouseReleased(double x, double y, int button) {
-        wrappedGui.updateMouseOver((int) x, (int) y);
-        wrappedGui.mouseReleased(MouseButton.get(button));
-        return super.mouseReleased(x, y, button);
+    public boolean mouseReleased(MouseButtonEvent event) {
+        wrappedGui.updateMouseOver((int) event.x(), (int) event.y());
+        wrappedGui.mouseReleased(MouseButton.get(event.button()));
+        return super.mouseReleased(event);
     }
 
     @Override
@@ -59,13 +62,13 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     }
 
     @Override
-    public boolean mouseDragged(double x, double y, int button, double dragX, double dragY) {
-        return wrappedGui.mouseDragged(button, dragX, dragY) || super.mouseDragged(x, y, button, dragX, dragY);
+    public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double dragX, double dragY) {
+        return wrappedGui.mouseDragged(mouseButtonEvent.button(), dragX, dragY) || super.mouseDragged(mouseButtonEvent, dragX, dragY);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        var key = new Key(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        var key = new Key(event.key(), event.scancode(), event.modifiers(), event);
 
         if (wrappedGui.keyPressed(key)) {
             return true;
@@ -82,24 +85,24 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
                 wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> handleIngredientKey(key, underMouse.ingredient()));
             }
 
-            return super.keyPressed(keyCode, scanCode, modifiers);
+            return super.keyPressed(event);
         }
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        var key = new Key(keyCode, scanCode, modifiers);
+    public boolean keyReleased(KeyEvent event) {
+        var key = new Key(event.key(), event.scancode(), event.modifiers(), event);
         wrappedGui.keyReleased(key);
-        return super.keyReleased(keyCode, scanCode, modifiers);
+        return super.keyReleased(event);
     }
 
     @Override
-    public boolean charTyped(char keyChar, int modifiers) {
-        if (wrappedGui.charTyped(keyChar, new KeyModifiers(modifiers))) {
+    public boolean charTyped(CharacterEvent event) {
+        if (wrappedGui.charTyped(Character.forDigit(event.codepoint(), Character.MAX_RADIX), new KeyModifiers(event.modifiers()))) {
             return true;
         }
 
-        return super.charTyped(keyChar, keyChar);
+        return super.charTyped(event);
     }
 
     private void handleIngredientKey(Key key, Object object) {

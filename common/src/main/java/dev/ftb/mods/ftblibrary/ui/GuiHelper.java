@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;

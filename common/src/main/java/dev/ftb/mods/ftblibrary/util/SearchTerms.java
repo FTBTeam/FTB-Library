@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,12 +17,12 @@ public record SearchTerms(List<Term> terms) {
         return new SearchTerms(terms);
     }
 
-    public boolean match(ResourceLocation id, String displayName, Predicate<ResourceLocation> tagMatcher) {
+    public boolean match(Identifier id, String displayName, Predicate<Identifier> tagMatcher) {
         return terms.stream().allMatch(term -> {
            if (term.value.isEmpty()) return true;
            return switch (term.type) {
                case MOD -> id.getNamespace().contains(term.value);
-               case TAG -> tagMatcher.test(ResourceLocation.parse(term.value));
+               case TAG -> tagMatcher.test(Identifier.parse(term.value));
                case SIMPLE -> displayName.toLowerCase().contains(term.value);
            };
         });

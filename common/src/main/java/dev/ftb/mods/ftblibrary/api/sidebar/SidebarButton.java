@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.api.sidebar;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -12,7 +12,7 @@ public interface SidebarButton {
     /**
      * @return the id of the button used for saving config data created from the location button in resource path
      */
-    ResourceLocation getId();
+    Identifier getId();
 
     /**
      * Register a condition that must be met for the button to be visible

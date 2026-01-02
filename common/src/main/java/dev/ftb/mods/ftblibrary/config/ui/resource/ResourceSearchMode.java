@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
@@ -96,7 +96,7 @@ public interface ResourceSearchMode<T> {
             return allTypesCache;
         }
     };
-    ResourceSearchMode<ResourceLocation> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), Icons.ART) {
+    ResourceSearchMode<Identifier> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), Icons.ART) {
         private List<ImageResource> cachedImages = null;
 
         @Override
@@ -105,12 +105,12 @@ public interface ResourceSearchMode<T> {
         }
 
         @Override
-        public Collection<? extends SelectableResource<ResourceLocation>> getAllResources() {
+        public Collection<? extends SelectableResource<Identifier>> getAllResources() {
             if (cachedImages == null) {
-                List<ResourceLocation> images = new ArrayList<>();
+                List<Identifier> images = new ArrayList<>();
 
-                StringUtils.ignoreResourceLocationErrors = true;
-                Map<ResourceLocation, Resource> textures = Collections.emptyMap();
+                StringUtils.ignoreIdentifierErrors = true;
+                Map<Identifier, Resource> textures = Collections.emptyMap();
 
                 try {
                     textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.getPath().endsWith(".png"));
@@ -118,17 +118,17 @@ public interface ResourceSearchMode<T> {
                     FTBLibrary.LOGGER.error("A mod has a broken resource preventing this list from loading: {}", String.valueOf(ex));
                 }
 
-                StringUtils.ignoreResourceLocationErrors = false;
+                StringUtils.ignoreIdentifierErrors = false;
 
-                textures.keySet().forEach(rl -> ResourceLocation.read(rl.toString()).result().ifPresentOrElse(
+                textures.keySet().forEach(rl -> Identifier.read(rl.toString()).result().ifPresentOrElse(
                         images::add,
                         () -> FTBLibrary.LOGGER.warn("Image {} has invalid path! Report this to author of '{}'!", rl, rl.getNamespace())
                 ));
 
                 cachedImages = images.stream().sorted().map(res -> {
                     // shorten <mod>:textures/A/B.png to <mod>:A/B
-                    ResourceLocation res1 = ResourceLocation.fromNamespaceAndPath(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(res1);
+                    Identifier res1 = Identifier.fromNamespaceAndPath(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
+                    TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(res1);
                     SpriteContents contents = sprite.contents();
                     if (contents.name().equals(MissingTextureAtlasSprite.getLocation())) {
                         res1 = res;

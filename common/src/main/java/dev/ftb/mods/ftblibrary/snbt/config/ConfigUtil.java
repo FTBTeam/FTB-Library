@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.nio.file.Path;

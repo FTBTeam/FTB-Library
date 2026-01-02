@@ -145,9 +145,9 @@ public class BulletIcon extends Icon {
         }
 
         @Override
-        public void buildVertices(VertexConsumer vertexConsumer, float f) {
+        public void buildVertices(VertexConsumer vertexConsumer) {
             for (Vertex vertex : vertices) {
-                vertexConsumer.addVertexWith2DPose(pose, vertex.x(), vertex.y(), f)
+                vertexConsumer.addVertexWith2DPose(pose, vertex.x(), vertex.y())
                         .setUv(vertex.u(), vertex.v())
                         .setColor(vertex.color);
             }

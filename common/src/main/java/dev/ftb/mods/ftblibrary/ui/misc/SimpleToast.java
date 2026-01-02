@@ -10,11 +10,11 @@ import net.minecraft.client.gui.components.toasts.ToastManager;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public class SimpleToast implements Toast {
-    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.parse("toast/advancement");
+    private static final Identifier BACKGROUND_SPRITE = Identifier.parse("toast/advancement");
     private boolean hasPlayedSound = false;
     private Visibility visibility;
 

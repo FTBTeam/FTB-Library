@@ -50,8 +50,8 @@ public enum NBTEditResponseHandlers {
         });
 
         INSTANCE.registerHandler(PLAYER, (player, info, data) -> {
-            if (player.getServer() != null) {
-                var targetPlayer = player.getServer().getPlayerList().getPlayer(info.read("id", UUIDUtil.CODEC).orElse(null));
+            if (player.level().getServer() != null) {
+                var targetPlayer = player.level().getServer().getPlayerList().getPlayer(info.read("id", UUIDUtil.CODEC).orElse(null));
                 if (targetPlayer != null) {
                     UUID uuid = targetPlayer.getUUID();
                     targetPlayer.load(TagValueInput.create(ProblemReporter.DISCARDING, targetPlayer.registryAccess(), data));

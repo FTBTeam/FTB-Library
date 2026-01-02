@@ -11,19 +11,19 @@ import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.OptionalLong;
 
-public class ImageResourceConfig extends ResourceConfigValue<ResourceLocation> {
-    public static final ResourceLocation NONE = FTBLibrary.rl("none");
+public class ImageResourceConfig extends ResourceConfigValue<Identifier> {
+    public static final Identifier NONE = FTBLibrary.rl("none");
 
     public ImageResourceConfig() {
         value = NONE;
     }
 
-    public static ResourceLocation getResourceLocation(Icon icon) {
-        return icon instanceof IResourceIcon i ? i.getResourceLocation() : NONE;
+    public static Identifier getIdentifier(Icon icon) {
+        return icon instanceof IResourceIcon i ? i.getIdentifier() : NONE;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class ImageResourceConfig extends ResourceConfigValue<ResourceLocation> {
     }
 
     @Override
-    public SelectableResource<ResourceLocation> getResource() {
+    public SelectableResource<Identifier> getResource() {
         return new ImageResource(getValue());
     }
 
     @Override
-    public boolean setResource(SelectableResource<ResourceLocation> selectable) {
+    public boolean setResource(SelectableResource<Identifier> selectable) {
         return setCurrentValue(selectable.resource());
     }
 

@@ -8,7 +8,7 @@ import dev.ftb.mods.ftblibrary.config.ImageResourceConfig;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.Nullable;
 
@@ -123,7 +123,7 @@ public abstract class Icon implements Drawable {
         return icon == null ? getIcon(s) : icon;
     }
 
-    public static Icon getIcon(ResourceLocation id) {
+    public static Icon getIcon(Identifier id) {
         return id == null ? empty() : getIcon(id.toString());
     }
 
@@ -222,7 +222,7 @@ public abstract class Icon implements Drawable {
             }
         }
 
-        return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(ResourceLocation.parse(id)) : new AtlasSpriteIcon(ResourceLocation.parse(id));
+        return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(Identifier.parse(id)) : new AtlasSpriteIcon(Identifier.parse(id));
     }
 
     private static boolean isNone(String id) {

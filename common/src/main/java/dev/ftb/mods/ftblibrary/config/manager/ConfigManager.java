@@ -11,7 +11,7 @@ import dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil;
 import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
 import dev.ftb.mods.ftblibrary.util.BooleanConsumer;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;

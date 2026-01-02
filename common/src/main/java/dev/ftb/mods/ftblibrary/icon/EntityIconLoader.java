@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -42,7 +42,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static final Map<EntityType<?>, Map<ResourceLocation, Icon>> ICON_CACHE = new HashMap<>();
+    private static final Map<EntityType<?>, Map<Identifier, Icon>> ICON_CACHE = new HashMap<>();
     private static final Map<EntityType<?>, EntityIconSettings> ENTITY_SETTINGS = new HashMap<>();
     private static final Set<EntityType<?>> DYNAMIC_JSON_TEXTURES = new HashSet<>();
 
@@ -52,12 +52,12 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
 
         DYNAMIC_JSON_TEXTURES.clear();
         for (Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : RegistrarManager.get(FTBLibrary.MOD_ID).get(Registries.ENTITY_TYPE).entrySet()) {
-            ResourceLocation id = entry.getKey().location();
+            Identifier id = entry.getKey().identifier();
             EntityType<?> entityType = entry.getValue();
 
             String basePath = getBasePath(id);
 
-            ResourceLocation invisible = FTBLibrary.rl(basePath + ".invisible");
+            Identifier invisible = FTBLibrary.rl(basePath + ".invisible");
 
             EntityIconSettings entityIconSettings = null;
 
@@ -71,7 +71,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
                 entityIconSettings = loadEntitySetting(id, resource.get());
                 DYNAMIC_JSON_TEXTURES.add(entityType);
             } else {
-                ResourceLocation imgLoc = FTBLibrary.rl(basePath + ".png");
+                Identifier imgLoc = FTBLibrary.rl(basePath + ".png");
                 if (resourceManager.getResource(imgLoc).isPresent()) {
                     entityIconSettings = EntityIconSettings.forImage(imgLoc);
                 }
@@ -102,11 +102,11 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         return DYNAMIC_JSON_TEXTURES.contains(type);
     }
 
-    private static String getBasePath(ResourceLocation id) {
+    private static String getBasePath(Identifier id) {
         return "textures/faces/" + id.getNamespace() + "/" + id.getPath();
     }
 
-    private EntityIconSettings loadEntitySetting(ResourceLocation id, Resource resource) {
+    private EntityIconSettings loadEntitySetting(Identifier id, Resource resource) {
         try {
             JsonElement jsonElement = GsonHelper.fromJson(GSON, resource.openAsReader(), JsonElement.class);
             DataResult<EntityIconSettings> settings = EntityIconSettings.CODEC.parse(JsonOps.INSTANCE, jsonElement);
@@ -125,7 +125,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         if (renderer instanceof LivingEntityRenderer/*<?,?,?>*/ entityRenderer && state instanceof LivingEntityRenderState ls) {
             return getSettings(entity.getType()).map(settings -> settings.useMobTexture ?
                     getOrCreateIcon(entity.getType(), entityRenderer.getTextureLocation(ls), settings) :
-                    settings.texture.map(resourceLocation -> getOrCreateIcon(entity.getType(), resourceLocation, settings)).orElse(null));
+                    settings.texture.map(Identifier -> getOrCreateIcon(entity.getType(), Identifier, settings)).orElse(null));
         } else {
             return Optional.empty();
         }
@@ -135,7 +135,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         return Optional.ofNullable(ENTITY_SETTINGS.get(entityType));
     }
 
-    private static Icon getOrCreateIcon(EntityType<?> entityType, ResourceLocation texture, EntityIconSettings settings) {
+    private static Icon getOrCreateIcon(EntityType<?> entityType, Identifier texture, EntityIconSettings settings) {
         return ICON_CACHE
                 .computeIfAbsent(entityType, i -> new HashMap<>())
                 .computeIfAbsent(texture, t -> new EntityImageIcon(t, settings.mainSlice.orElse(null), settings.children, settings.defaultImageSize.orElse(null)));
@@ -152,7 +152,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
 
     public record EntityIconSettings(
             boolean useMobTexture,
-            Optional<ResourceLocation> texture,
+            Optional<Identifier> texture,
             Optional<EntityImageIcon.Slice> mainSlice,
             List<EntityImageIcon.ChildIconData> children,
             WidthHeight widthHeight,
@@ -167,7 +167,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
 
         public static final Codec<EntityIconSettings> CODEC = RecordCodecBuilder.<EntityIconSettings>create(builder -> builder.group(
                         Codec.BOOL.optionalFieldOf("use_mob_texture", false).forGetter(s -> s.useMobTexture),
-                        ResourceLocation.CODEC.optionalFieldOf("texture").forGetter(s -> s.texture),
+                        Identifier.CODEC.optionalFieldOf("texture").forGetter(s -> s.texture),
                         EntityImageIcon.Slice.CODEC.optionalFieldOf("slice").forGetter(entityIconData -> entityIconData.mainSlice),
                         EntityImageIcon.ChildIconData.CODEC.listOf().optionalFieldOf("children", List.of()).forGetter(entityIconData -> entityIconData.children),
                         WidthHeight.CODEC.optionalFieldOf("size", WidthHeight.DEFAULT).forGetter(s -> s.widthHeight),
@@ -180,7 +180,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
                 DataResult.success(settings)
         );
 
-        public static EntityIconSettings forImage(ResourceLocation imgLoc) {
+        public static EntityIconSettings forImage(Identifier imgLoc) {
             return new EntityIconSettings(false, Optional.of(imgLoc), Optional.empty(),
                     List.of(), WidthHeight.DEFAULT, Optional.empty(), 1D, true);
         }

@@ -8,7 +8,6 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.sounds.SoundEvents;
@@ -30,11 +29,11 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
     }
 
     public static boolean isMouseButtonDown(MouseButton button) {
-        return GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getWindow(), button.id) == GLFW.GLFW_PRESS;
+        return GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().handle(), button.id) == GLFW.GLFW_PRESS;
     }
 
     public static boolean isKeyDown(int key) {
-        return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), key) == GLFW.GLFW_PRESS;
+        return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().handle(), key) == GLFW.GLFW_PRESS;
     }
 
     public static String getClipboardString() {
@@ -46,11 +45,11 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
     }
 
     public static boolean isShiftKeyDown() {
-        return Screen.hasShiftDown();
+        return Minecraft.getInstance().hasShiftDown();
     }
 
     public static boolean isCtrlKeyDown() {
-        return Screen.hasControlDown();
+        return Minecraft.getInstance().hasControlDown();
     }
 
     public Panel getParent() {

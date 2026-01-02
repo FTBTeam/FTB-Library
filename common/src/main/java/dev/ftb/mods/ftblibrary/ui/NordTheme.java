@@ -5,16 +5,16 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.PartIcon;
 import dev.ftb.mods.ftblibrary.ui.misc.NordColors;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static dev.ftb.mods.ftblibrary.FTBLibrary.rl;
 
 public class NordTheme extends Theme {
     public static final Theme THEME = new NordTheme();
 
-    private static final ResourceLocation BUTTON_TEX = rl("textures/gui/nord_button.png");
-    private static final ResourceLocation BUTTON_TEX_MOUSE_OVER = rl("textures/gui/nord_button_hovered.png");
-    private static final ResourceLocation BUTTON_TEX_DISABLED = rl("textures/gui/nord_button_disabled.png");
+    private static final Identifier BUTTON_TEX = rl("textures/gui/nord_button.png");
+    private static final Identifier BUTTON_TEX_MOUSE_OVER = rl("textures/gui/nord_button_hovered.png");
+    private static final Identifier BUTTON_TEX_DISABLED = rl("textures/gui/nord_button_disabled.png");
 
     private static final Icon BUTTON = PartIcon.wholeTexture(BUTTON_TEX.toString(), 200, 20, 4);
     private static final Icon BUTTON_MOUSE_OVER = PartIcon.wholeTexture(BUTTON_TEX_MOUSE_OVER.toString(), 200, 20, 4);

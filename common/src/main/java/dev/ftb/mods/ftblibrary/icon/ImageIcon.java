@@ -5,18 +5,18 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class ImageIcon extends Icon implements IResourceIcon {
-    public static final ResourceLocation MISSING_IMAGE = FTBLibrary.rl("textures/gui/missing_image.png");
+    public static final Identifier MISSING_IMAGE = FTBLibrary.rl("textures/gui/missing_image.png");
 
-    public final ResourceLocation texture;
+    public final Identifier texture;
     public float minU, minV, maxU, maxV;
     public double tileSize;
     public Color4I color;
 
-    public ImageIcon(ResourceLocation tex) {
+    public ImageIcon(Identifier tex) {
         texture = tex;
         minU = 0;
         minV = 0;
@@ -117,7 +117,7 @@ public class ImageIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    public ResourceLocation getResourceLocation() {
+    public Identifier getIdentifier() {
         return texture;
     }
 }

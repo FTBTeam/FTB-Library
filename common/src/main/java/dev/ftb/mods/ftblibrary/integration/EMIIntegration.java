@@ -9,7 +9,7 @@ package dev.ftb.mods.ftblibrary.integration;
 //import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 //import net.minecraft.network.chat.Component;
 //import net.minecraft.network.chat.MutableComponent;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.world.item.ItemStack;
 //
 //import java.util.Collection;
@@ -21,7 +21,7 @@ package dev.ftb.mods.ftblibrary.integration;
 //        @Override
 //        public Icon getIcon() {
 //            // https://github.com/emilyploszaj/emi/blob/1.20.4/xplat/src/main/resources/assets/emi/textures/gui/widgets.png (the grid towards the bottom)
-//            return Icon.getIcon(ResourceLocation.fromNamespaceAndPath("emi", "textures/gui/widgets.png"))
+//            return Icon.getIcon(Identifier.fromNamespaceAndPath("emi", "textures/gui/widgets.png"))
 //                    .withUV(17, 147, 14, 14, 256, 256);
 //        }
 //

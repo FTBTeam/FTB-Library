@@ -5,13 +5,13 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.config.ui.ChooseConfigScreen;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.permissions.Permissions;
 
 public record EditConfigChoicePacket(ConfigType configType, String clientConfig, String serverConfig, Component title) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<EditConfigChoicePacket> TYPE = new CustomPacketPayload.Type<>(FTBLibrary.rl("edit_config_choice_packet"));
@@ -45,12 +45,12 @@ public record EditConfigChoicePacket(ConfigType configType, String clientConfig,
         switch (message.configType) {
             case CLIENT -> ConfigManagerClient.editConfig(message.clientConfig);
             case SERVER -> {
-                if (context.getPlayer().hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
+                if (context.getPlayer().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                     ConfigManagerClient.editConfig(message.serverConfig());
                 }
             }
             case CHOOSE -> {
-                if (context.getPlayer().hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
+                if (context.getPlayer().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                     ChooseConfigScreen.open(message);
                 } else {
                     ConfigManagerClient.editConfig(message.clientConfig());

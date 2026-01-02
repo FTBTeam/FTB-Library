@@ -11,7 +11,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultilineTextField;
 import net.minecraft.client.gui.components.Whence;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
@@ -142,7 +141,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
             if (button.isLeft()) {
                 setFocused(true);
 
-                textField.setSelecting(Screen.hasShiftDown());
+                textField.setSelecting(isShiftKeyDown());
                 setCursorPos(getMouseX(), (int) (getMouseY() - parent.getScrollY()));
             }
             return true;
@@ -174,7 +173,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
         } else if (isMouseOver()) {
             textField.setSelecting(true);
             setCursorPos(getMouseX(), (int) (getMouseY() - parent.getScrollY()));
-            textField.setSelecting(Screen.hasShiftDown());
+            textField.setSelecting(isShiftKeyDown());
             return true;
         } else {
             return false;
@@ -183,7 +182,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
 
     @Override
     public boolean keyPressed(Key key) {
-        boolean res = textField.keyPressed(key.keyCode);
+        boolean res = textField.keyPressed(key.originalEvent());
         recalculateHeight();
         return (isFocused() && !key.esc()) || res;
     }

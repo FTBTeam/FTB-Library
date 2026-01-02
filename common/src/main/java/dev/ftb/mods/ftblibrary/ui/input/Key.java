@@ -4,17 +4,16 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
-
-public class Key {
-    public final int keyCode, scanCode;
-    public final KeyModifiers modifiers;
-    public Key(int k, int s, int m) {
-        keyCode = k;
-        scanCode = s;
-        modifiers = new KeyModifiers(m);
+/**
+ * TODO: @since 1.21.11
+ *       This should really be removed / reduced as most of this data is now part of minecrafts KeyEvent
+ */
+public record Key(int keyCode, int scanCode, KeyModifiers modifiers, KeyEvent originalEvent) {
+    public Key(int keyCode, int scanCode, int modifiers, KeyEvent originalEvent) {
+        this(keyCode, scanCode, new KeyModifiers(modifiers), originalEvent);
     }
 
     @ExpectPlatform
@@ -27,7 +26,7 @@ public class Key {
     }
 
     public InputConstants.Key getInputMapping() {
-        return InputConstants.getKey(keyCode, scanCode);
+        return InputConstants.getKey(originalEvent);
     }
 
     public boolean esc() {
@@ -47,22 +46,22 @@ public class Key {
     }
 
     public boolean cut() {
-        return Screen.isCut(keyCode);
+        return originalEvent.isCut();
     }
 
     public boolean paste() {
-        return Screen.isPaste(keyCode);
+        return originalEvent.isPaste();
     }
 
     public boolean copy() {
-        return Screen.isCopy(keyCode);
+        return originalEvent.isCopy();
     }
 
     public boolean selectAll() {
-        return Screen.isSelectAll(keyCode);
+        return originalEvent.isSelectAll();
     }
 
     public boolean deselectAll() {
-        return keyCode == GLFW.GLFW_KEY_D && Screen.hasControlDown() && !Screen.hasShiftDown() && !Screen.hasAltDown();
+        return keyCode == GLFW.GLFW_KEY_D && originalEvent.hasControlDown() && !originalEvent.hasShiftDown() && !originalEvent.hasAltDown();
     }
 }

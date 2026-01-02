@@ -14,3 +14,5 @@ accessible method net/minecraft/network/chat/TextColor <init> (ILjava/lang/Strin
 accessible field net/minecraft/client/Minecraft clientTickCount J
 mutable field net/minecraft/network/chat/TextColor NAMED_COLORS Ljava/util/Map;
 accessible field net/minecraft/network/chat/TextColor NAMED_COLORS Ljava/util/Map;
+
+extendable class net/minecraft/client/StringSplitter$WidthLimitedCharSink

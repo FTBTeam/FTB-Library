@@ -18,8 +18,6 @@ public class ImageComponent implements ComponentContents {
             Codec.BOOL.optionalFieldOf("fit", false).forGetter(ImageComponent::isFit)
     ).apply(instance, ImageComponent::create));
 
-    private static final ComponentContents.Type<ImageComponent> TYPE = new ComponentContents.Type<>(CODEC, "image");
-
     private Icon image = Icon.empty();
     private int width = 100;
     private int height = 100;
@@ -102,8 +100,8 @@ public class ImageComponent implements ComponentContents {
     }
 
     @Override
-    public Type<?> type() {
-        return TYPE;
+    public MapCodec<? extends ComponentContents> codec() {
+        return CODEC;
     }
 
     public enum ImageAlign implements StringRepresentable {

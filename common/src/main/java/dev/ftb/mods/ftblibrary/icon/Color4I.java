@@ -7,12 +7,12 @@ import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 

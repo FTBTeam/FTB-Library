@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.util;
 
 import dev.ftb.mods.ftblibrary.math.Bits;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +37,7 @@ public class StringUtils {
     private static final Pattern REPEATING_UNDERSCORE_PATTERN = Pattern.compile("_{2,}");
     private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)[\\&\u00a7]([0-9A-FK-OR])");
 
-    public static boolean ignoreResourceLocationErrors = false;
+    public static boolean ignoreIdentifierErrors = false;
 
     public static String unformatted(String string) {
         return string.isEmpty() ? string : FORMATTING_CODE_PATTERN.matcher(string).replaceAll("");

@@ -6,14 +6,13 @@ import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
+import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -249,7 +248,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 
     private void deleteText(int count) {
         String prevText = text;
-        if (Screen.hasControlDown()) {
+        if (isCtrlKeyDown()) {
             deleteWords(count);
         } else {
             deleteChars(count);
@@ -343,7 +342,7 @@ public class TextBox extends Widget implements IFocusableWidget {
             insertText("");
             return true;
         } else {
-            switch (key.keyCode) {
+            switch (key.keyCode()) {
                 case GLFW.GLFW_KEY_ESCAPE -> {
                     setFocused(false);
                     return true;
@@ -353,27 +352,27 @@ public class TextBox extends Widget implements IFocusableWidget {
                     return true;
                 }
                 case GLFW.GLFW_KEY_HOME -> {
-                    moveCursorToStart(Screen.hasShiftDown());
+                    moveCursorToStart(isShiftKeyDown());
                     return true;
                 }
                 case GLFW.GLFW_KEY_LEFT -> {
-                    if (Screen.hasControlDown()) {
-                        moveCursorTo(getWordPosition(-1), Screen.hasShiftDown());
+                    if (isCtrlKeyDown()) {
+                        moveCursorTo(getWordPosition(-1), isShiftKeyDown());
                     } else {
-                        moveCursor(-1, Screen.hasShiftDown());
+                        moveCursor(-1, isShiftKeyDown());
                     }
                     return true;
                 }
                 case GLFW.GLFW_KEY_RIGHT -> {
-                    if (Screen.hasControlDown()) {
-                        moveCursorTo(getWordPosition(1), Screen.hasShiftDown());
+                    if (isCtrlKeyDown()) {
+                        moveCursorTo(getWordPosition(1), isShiftKeyDown());
                     } else {
-                        moveCursor(1, Screen.hasShiftDown());
+                        moveCursor(1, isShiftKeyDown());
                     }
                     return true;
                 }
                 case GLFW.GLFW_KEY_END -> {
-                    moveCursorToEnd(Screen.hasShiftDown());
+                    moveCursorToEnd(isShiftKeyDown());
                     return true;
                 }
                 case GLFW.GLFW_KEY_DELETE -> {

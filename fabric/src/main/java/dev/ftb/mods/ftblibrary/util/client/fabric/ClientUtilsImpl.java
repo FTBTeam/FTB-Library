@@ -4,10 +4,10 @@ import dev.architectury.fluid.FluidStack;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ClientUtilsImpl {
-    public static ResourceLocation getStillTexture(FluidStack stack) {
+    public static Identifier getStillTexture(FluidStack stack) {
         var fluid = stack.getFluid();
         var handler = FluidRenderHandlerRegistry.INSTANCE.get(fluid);
 

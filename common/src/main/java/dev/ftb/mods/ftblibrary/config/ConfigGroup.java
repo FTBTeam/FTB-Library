@@ -8,7 +8,7 @@ import dev.ftb.mods.ftblibrary.net.SyncConfigToServerPacket;
 import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -410,7 +410,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
     }
 
     /**
-     * Add a new image config item to this group (note: this is in effect a ResourceLocation referring to an image known
+     * Add a new image config item to this group (note: this is in effect a Identifier referring to an image known
      * to the client's resource manager).
      *
      * @param id a unique id for this config item
@@ -419,7 +419,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      * @param def the default value
      * @return the {@link ImageResourceConfig} just added
      */
-    public ImageResourceConfig addImage(String id, ResourceLocation value, Consumer<ResourceLocation> setter, ResourceLocation def) {
+    public ImageResourceConfig addImage(String id, Identifier value, Consumer<Identifier> setter, Identifier def) {
         return add(id, new ImageResourceConfig(), value, setter, def);
     }
 

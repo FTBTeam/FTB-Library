@@ -9,10 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
 
 import java.util.*;
@@ -90,7 +93,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mx, int my, float partialTicks) {
+    public void renderContents(GuiGraphics graphics, int mx, int my, float partialTicks) {
         currentMouseX = mx;
         currentMouseY = my;
         mouseOver = null;
@@ -170,7 +173,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
                 }
                 if (!isEditMode && mouseOver == button) {
-                    graphics.setTooltipForNextFrame(font, button.getSidebarButton().getTooltip(Screen.hasShiftDown()),
+                    graphics.setTooltipForNextFrame(font, button.getSidebarButton().getTooltip(Minecraft.getInstance().hasShiftDown()),
                             Optional.empty(), mx, Math.max(7, my - 9) + 10);
                 }
                 pose.popMatrix();
@@ -242,14 +245,14 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     @Override
-    public void onRelease(double d, double e) {
+    public void onRelease(MouseButtonEvent mouseButtonEvent) {
         if (lastMouseClickButton == 1) {
             return;
         }
-        super.onRelease(d, e);
+        super.onRelease(mouseButtonEvent);
         //Normal click action
         if (!isEditMode && mouseOver != null) {
-            mouseOver.getSidebarButton().clickButton(Screen.hasShiftDown());
+            mouseOver.getSidebarButton().clickButton(mouseButtonEvent.hasShiftDown());
         } else if (selectedButton != null) {
             GridLocation gLocation = getGridLocation();
 
@@ -424,7 +427,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(@NotNull InputWithModifiers inputWithModifiers) {
         if (lastMouseClickButton == 1) {
             isEditMode = !isEditMode;
             ensureGridAlignment();
@@ -473,7 +476,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
     // Custom handling so our button click locations are where a buttons are not just a box
     @Override
-    protected boolean isValidClickButton(int i) {
+    protected boolean isValidClickButton(MouseButtonInfo mouseButtonInfo) {
         boolean inBounds = isMouseOver(currentMouseX, currentMouseY);
         if (!inBounds && isEditMode) {
             isEditMode = false;
@@ -481,12 +484,12 @@ public class SidebarGroupGuiButton extends AbstractButton {
             return false;
         }
 
-        lastMouseClickButton = i;
-        if (i == 1) {
+        lastMouseClickButton = mouseButtonInfo.button();
+        if (mouseButtonInfo.button() == 1) {
             return inBounds;
         }
 
-        if (super.isValidClickButton(i)) {
+        if (super.isValidClickButton(mouseButtonInfo)) {
             if (isEditMode) {
                 return isMouseOverAdd || selectedButton != null || mouseOver != null;
             } else {

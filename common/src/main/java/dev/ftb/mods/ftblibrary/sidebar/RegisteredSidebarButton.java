@@ -7,9 +7,9 @@ import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 public class RegisteredSidebarButton implements SidebarButton {
     private final SidebarButtonData data;
-    private final ResourceLocation id;
+    private final Identifier id;
     private final String langKey;
     private final Component tooltip;
     private final List<ButtonOverlayRender> extraRenderers;
@@ -27,7 +27,7 @@ public class RegisteredSidebarButton implements SidebarButton {
     private ChainedBooleanSupplier visible = ChainedBooleanSupplier.TRUE;
     private boolean forceHidden = false;
 
-    public RegisteredSidebarButton(ResourceLocation id, SidebarButtonData data) {
+    public RegisteredSidebarButton(Identifier id, SidebarButtonData data) {
         this.id = id;
         this.data = data;
         this.langKey = Util.makeDescriptionId("sidebar_button", id);
@@ -51,7 +51,7 @@ public class RegisteredSidebarButton implements SidebarButton {
     }
 
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return id;
     }
 

@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.mojang.util.UndashedUuid;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.imageio.ImageIO;
 import java.net.URI;
@@ -15,14 +15,14 @@ public class URLImageIcon extends ImageIcon {
     public final URI uri;
     private final String url;
 
-    public URLImageIcon(ResourceLocation tex, URI _uri) {
+    public URLImageIcon(Identifier tex, URI _uri) {
         super(tex);
         uri = _uri;
         url = uri.toString();
     }
 
     public URLImageIcon(URI uri) {
-        this(ResourceLocation.parse("remote_image:" + UndashedUuid.toString(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
+        this(Identifier.parse("remote_image:" + UndashedUuid.toString(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
     }
 
     @Override

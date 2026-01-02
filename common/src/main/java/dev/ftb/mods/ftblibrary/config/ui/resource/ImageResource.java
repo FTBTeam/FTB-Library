@@ -3,14 +3,14 @@ package dev.ftb.mods.ftblibrary.config.ui.resource;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-public class ImageResource implements SelectableResource<ResourceLocation> {
-    private final ResourceLocation location;
+public class ImageResource implements SelectableResource<Identifier> {
+    private final Identifier location;
     private final Component name;
     private final Icon icon;
 
-    public ImageResource(ResourceLocation location) {
+    public ImageResource(Identifier location) {
         this.location = location;
 
         name = location == null ? Component.translatable("gui.none").withStyle(ChatFormatting.GRAY) :
@@ -20,7 +20,7 @@ public class ImageResource implements SelectableResource<ResourceLocation> {
     }
 
     @Override
-    public ResourceLocation resource() {
+    public Identifier resource() {
         return location;
     }
 
@@ -44,7 +44,7 @@ public class ImageResource implements SelectableResource<ResourceLocation> {
     }
 
     @Override
-    public SelectableResource<ResourceLocation> copyWithCount(long count) {
+    public SelectableResource<Identifier> copyWithCount(long count) {
         return this;
     }
 }

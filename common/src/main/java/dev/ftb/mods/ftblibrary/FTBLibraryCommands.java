@@ -32,6 +32,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
@@ -53,7 +54,7 @@ public class FTBLibraryCommands {
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext ignoredCtx, Commands.CommandSelection ignoredType) {
         var command = literal(FTBLibrary.MOD_ID)
                 .then(literal("gamemode")
-                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                         .executes(context -> {
                             if (!context.getSource().getPlayerOrException().isCreative()) {
                                 context.getSource().getPlayerOrException().setGameMode(GameType.CREATIVE);
@@ -65,7 +66,7 @@ public class FTBLibraryCommands {
                         })
                 )
                 .then(literal("rain")
-                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                         .executes(context -> {
                             //Use overworld as that controls the weather for the whole server
                             if (context.getSource().getServer().overworld().isRaining()) {
@@ -77,7 +78,7 @@ public class FTBLibraryCommands {
                         })
                 )
                 .then(literal("day")
-                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                         .executes(context -> {
                             for (var world : context.getSource().getServer().getAllLevels()) {
                                 world.setDayTime(6000L);
@@ -87,7 +88,7 @@ public class FTBLibraryCommands {
                         })
                 )
                 .then(literal("night")
-                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                         .executes(context -> {
                             for (var world : context.getSource().getServer().getAllLevels()) {
                                 world.setDayTime(18000L);
@@ -97,7 +98,7 @@ public class FTBLibraryCommands {
                         })
                 )
                 .then(literal("nbtedit")
-                        .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                         .then(literal("block")
                                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
                                         .executes(context -> editNBT(context, (info, tag) -> editBlockNBT(context, info, tag)))
@@ -137,7 +138,7 @@ public class FTBLibraryCommands {
                     })
             );
             command.then(literal("serverconfig")
-                    .requires(cs -> cs.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                    .requires(cs -> cs.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                     .executes(context -> {
                         NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryServerConfig.KEY));
                         return Command.SINGLE_SUCCESS;
@@ -199,7 +200,7 @@ public class FTBLibraryCommands {
                 .add("Display Name", player.getDisplayName())
                 .add("UUID", Component.literal(player.getUUID().toString()))
                 .build());
-        info.putString("title", player.getGameProfile().getName());
+        info.putString("title", player.getGameProfile().name());
     }
 
     private static void editEntityNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {

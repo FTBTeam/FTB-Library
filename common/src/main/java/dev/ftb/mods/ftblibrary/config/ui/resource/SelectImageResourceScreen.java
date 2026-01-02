@@ -9,33 +9,33 @@ import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLocation> {
-    private static final SelectableResource<ResourceLocation> NO_IMAGE = new ImageResource(ImageResourceConfig.NONE);
+public class SelectImageResourceScreen extends ResourceSelectorScreen<Identifier> {
+    private static final SelectableResource<Identifier> NO_IMAGE = new ImageResource(ImageResourceConfig.NONE);
 
-    private static final SearchModeIndex<ResourceSearchMode<ResourceLocation>> KNOWN_MODES = Util.make(
+    private static final SearchModeIndex<ResourceSearchMode<Identifier>> KNOWN_MODES = Util.make(
             new SearchModeIndex<>(), idx -> idx.appendMode(ResourceSearchMode.IMAGES)
     );
 
-    public SelectImageResourceScreen(ResourceConfigValue<ResourceLocation> config, ConfigCallback callback) {
+    public SelectImageResourceScreen(ResourceConfigValue<Identifier> config, ConfigCallback callback) {
         super(config, callback);
     }
 
     @Override
-    protected ResourceSelectorScreen<ResourceLocation>.ResourceButton makeResourceButton(Panel panel, @Nullable SelectableResource<ResourceLocation> resource) {
+    protected ResourceSelectorScreen<Identifier>.ResourceButton makeResourceButton(Panel panel, @Nullable SelectableResource<Identifier> resource) {
         return new ImageButton(panel, Objects.requireNonNullElse(resource, NO_IMAGE));
     }
 
     @Override
-    protected SearchModeIndex<ResourceSearchMode<ResourceLocation>> getSearchModeIndex() {
+    protected SearchModeIndex<ResourceSearchMode<Identifier>> getSearchModeIndex() {
         return KNOWN_MODES;
     }
 
@@ -49,7 +49,7 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<ResourceLo
     }
 
     private class ImageButton extends ResourceButton {
-        protected ImageButton(Panel panel, SelectableResource<ResourceLocation> resource) {
+        protected ImageButton(Panel panel, SelectableResource<Identifier> resource) {
             super(panel, resource);
         }
 

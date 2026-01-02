@@ -19,30 +19,30 @@ public class FaceIcon extends Icon {
     public Icon hat;
     private FaceIcon(GameProfile p) {
         profile = p;
-        skin = new ImageIcon(DefaultPlayerSkin.get(profile.getId()).texture());
+        skin = new ImageIcon(DefaultPlayerSkin.get(profile.id()).body().texturePath());
         head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
         hat = Icon.empty();
 
-        Minecraft.getInstance().getSkinManager().getOrLoad(profile).whenComplete((playerSkin, throwable) -> {
-            if (playerSkin.isEmpty()) {
-                var texture = playerSkin.get().texture();
+        Minecraft.getInstance().getSkinManager().get(profile).whenComplete((playerSkin, throwable) -> {
+            if (playerSkin.isPresent()) {
+                var texture = playerSkin.get().body().texturePath();
                 skin = new ImageIcon(texture);
                 head = skin.withUV(8F, 8F, 8F, 8F, 64F, 64F);
                 hat = skin.withUV(40F, 8F, 8F, 8F, 64F, 64F);
             } else if (throwable != null) {
-                LOGGER.warn("Failed to load skin for {}: {} ", profile.getName(), throwable.getMessage());
+                LOGGER.warn("Failed to load skin for {}: {} ", profile.name(), throwable.getMessage());
             } else {
-                LOGGER.warn("Failed to load skin for {} ?", profile.getName());
+                LOGGER.warn("Failed to load skin for {} ?", profile.name());
             }
         });
     }
 
     public static FaceIcon getFace(GameProfile profile) {
-        var icon = CACHE.get(profile.getId());
+        var icon = CACHE.get(profile.id());
 
         if (icon == null) {
             icon = new FaceIcon(profile);
-            CACHE.put(profile.getId(), icon);
+            CACHE.put(profile.id(), icon);
         }
 
         return icon;

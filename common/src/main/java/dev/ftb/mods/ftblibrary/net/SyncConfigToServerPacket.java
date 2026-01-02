@@ -5,8 +5,6 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
-import net.minecraft.Util;
-import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -14,6 +12,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.util.Util;
 
 public record SyncConfigToServerPacket(String configName, CompoundTag config) implements CustomPacketPayload {
     public static final Type<SyncConfigToServerPacket> TYPE = new Type<>(FTBLibrary.rl("sync_config_to_server_packet"));
@@ -34,11 +34,11 @@ public record SyncConfigToServerPacket(String configName, CompoundTag config) im
     }
 
     public static void handle(SyncConfigToServerPacket message, NetworkManager.PacketContext context) {
-        if (context.getPlayer() instanceof ServerPlayer sp && sp.hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
+        if (context.getPlayer() instanceof ServerPlayer sp && sp.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
             context.queue(() -> {
-                MinecraftServer server = sp.getServer();
+                MinecraftServer server = sp.level().getServer();
 
-                ConfigManager.getInstance().syncFromClient(message.configName, message.config, sp.getGameProfile().getName());
+                ConfigManager.getInstance().syncFromClient(message.configName, message.config, sp.getGameProfile().name());
 
                 // send the updated config to all other players
                 for (ServerPlayer player : server.getPlayerList().getPlayers()) {

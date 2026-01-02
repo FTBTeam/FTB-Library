@@ -21,7 +21,7 @@ import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.*;
@@ -175,7 +175,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             collapseAll(false);
         } else if (key.is(InputConstants.KEY_MINUS) || key.is(GLFW.GLFW_KEY_KP_SUBTRACT)) {
             collapseAll(true);
-        } else if (key.is(InputConstants.KEY_C) && key.modifiers.control()) {
+        } else if (key.is(InputConstants.KEY_C) && key.modifiers().control()) {
             copyToClipboard();
         }
         return false;

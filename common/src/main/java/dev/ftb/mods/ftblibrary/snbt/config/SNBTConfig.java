@@ -5,7 +5,7 @@ import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 import java.io.IOException;
 import java.nio.file.Files;

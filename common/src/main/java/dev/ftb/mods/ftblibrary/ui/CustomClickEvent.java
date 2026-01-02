@@ -3,9 +3,9 @@ package dev.ftb.mods.ftblibrary.ui;
 import dev.architectury.event.Event;
 import dev.architectury.event.EventActor;
 import dev.architectury.event.EventFactory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 
-public record CustomClickEvent(ResourceLocation id) {
+public record CustomClickEvent(Identifier id) {
     public static final Event<EventActor<CustomClickEvent>> EVENT = EventFactory.createEventActorLoop(CustomClickEvent.class);
 }

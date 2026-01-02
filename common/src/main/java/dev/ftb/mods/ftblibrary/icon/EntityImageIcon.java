@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class EntityImageIcon extends Icon {
     @Nullable
     private final EntityIconLoader.WidthHeight defaultImageSize;
 
-    public EntityImageIcon(ResourceLocation mainTexture, @Nullable Slice mainSlice, List<ChildIconData> children, @Nullable EntityIconLoader.WidthHeight defaultImageSize) {
+    public EntityImageIcon(Identifier mainTexture, @Nullable Slice mainSlice, List<ChildIconData> children, @Nullable EntityIconLoader.WidthHeight defaultImageSize) {
         this.mainSlice = mainSlice;
         this.children = children;
         this.defaultImageSize = defaultImageSize;
@@ -75,15 +75,15 @@ public class EntityImageIcon extends Icon {
         ).apply(builder, Slice::new));
     }
 
-    public record ChildIconData(Optional<ResourceLocation> texture, Slice slice, Optional<Offset> offset) {
+    public record ChildIconData(Optional<Identifier> texture, Slice slice, Optional<Offset> offset) {
         public static final Codec<ChildIconData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                ResourceLocation.CODEC.optionalFieldOf("texture").forGetter(entityImageIcon -> entityImageIcon.texture),
+                Identifier.CODEC.optionalFieldOf("texture").forGetter(entityImageIcon -> entityImageIcon.texture),
                 Slice.CODEC.fieldOf("slice").forGetter(ChildIconData::slice),
                 Offset.CODEC.optionalFieldOf("offset").forGetter(ChildIconData::offset)
         ).apply(instance, ChildIconData::new));
     }
 
-    private Icon createIcon(ResourceLocation texture, @Nullable Slice slice) {
+    private Icon createIcon(Identifier texture, @Nullable Slice slice) {
         try (SimpleTexture tex = new SimpleTexture(texture)) {
             TextureContents load = tex.loadContents(Minecraft.getInstance().getResourceManager());
             ImageIcon imageIcon = new ImageIcon(texture);

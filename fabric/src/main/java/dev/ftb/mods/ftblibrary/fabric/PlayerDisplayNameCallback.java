@@ -4,12 +4,12 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 public interface PlayerDisplayNameCallback {
-    ResourceLocation EARLY = FTBLibrary.rl("early");
-    ResourceLocation LATE = FTBLibrary.rl("late");
+    Identifier EARLY = FTBLibrary.rl("early");
+    Identifier LATE = FTBLibrary.rl("late");
 
     Event<PlayerDisplayNameCallback> EVENT = EventFactory.createWithPhases(PlayerDisplayNameCallback.class,
             (listeners) -> ((player, originalName) -> {

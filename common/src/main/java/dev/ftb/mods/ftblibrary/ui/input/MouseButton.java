@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui.input;
 
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 public class MouseButton {
     private static final MouseButton[] BUTTONS = Util.make(new MouseButton[16], array -> {
