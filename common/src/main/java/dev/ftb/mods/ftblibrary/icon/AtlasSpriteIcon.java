@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,12 +28,9 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
 
     @Override
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        var sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
-
-        if (sprite == null) {
-            return;
-        }
-
+        // TODO: @since 21.11: This isn't ideal. We should really be looking this up or something?
+        var isItem = id.getPath().startsWith("item/");
+        var sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(isItem ? AtlasIds.ITEMS : AtlasIds.BLOCKS).getSprite(id);
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, w, h, color.rgba());
     }
 
