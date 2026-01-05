@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Supplier;
 
@@ -15,11 +15,11 @@ public class Lazy<T> implements Supplier<T> {
     private transient T value;
     private transient volatile boolean initialized;
 
-    private Lazy(Supplier<@NotNull T> valueSupplier) {
+    private Lazy(Supplier<@NonNull T> valueSupplier) {
         this.valueSupplier = valueSupplier;
     }
 
-    public static <T> Lazy<T> of(Supplier<@NotNull T> valueSupplier) {
+    public static <T> Lazy<T> of(Supplier<@NonNull T> valueSupplier) {
         return new Lazy<>(valueSupplier);
     }
 

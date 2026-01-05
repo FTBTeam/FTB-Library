@@ -8,7 +8,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
 
 public class EntityFaceResource implements SelectableResource<EntityType<?>>, Comparable<EntityFaceResource> {
     public static final EntityFaceResource NONE = new EntityFaceResource(EntityFaceConfig.NONE);
@@ -67,7 +66,7 @@ public class EntityFaceResource implements SelectableResource<EntityType<?>>, Co
     }
 
     @Override
-    public int compareTo(@NotNull EntityFaceResource o) {
+    public int compareTo(@NonNull EntityFaceResource o) {
         return location.compareTo(o.location);
     }
 }

@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class NumberConfig<T extends Number> extends ConfigFromString<T> {
     public static final Color4I COLOR = Color4I.rgb(0xAA5AE8);

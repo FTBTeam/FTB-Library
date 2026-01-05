@@ -11,8 +11,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -478,7 +478,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
     }
 
     @Override
-    public int compareTo(@NotNull ConfigGroup o) {
+    public int compareTo(@NonNull ConfigGroup o) {
         int i = Integer.compare(displayOrder, o.displayOrder);
         return i == 0 ? getPath().compareToIgnoreCase(o.getPath()) : i;
     }

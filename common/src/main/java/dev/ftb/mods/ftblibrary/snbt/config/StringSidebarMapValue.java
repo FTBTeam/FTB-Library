@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGuiButton;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;

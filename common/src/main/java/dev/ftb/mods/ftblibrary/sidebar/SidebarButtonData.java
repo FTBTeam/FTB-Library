@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public record SidebarButtonData(
     ).apply(builder, SidebarButtonData::new));
 
     @Override
-    public int compareTo(@NotNull SidebarButtonData o) {
+    public int compareTo(@NonNull SidebarButtonData o) {
         return Integer.compare(sortIndex, o.sortIndex);
     }
 }

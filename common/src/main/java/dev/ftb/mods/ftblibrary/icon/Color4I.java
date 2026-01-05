@@ -14,7 +14,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class Color4I extends Icon {
     static final Color4I EMPTY_ICON = new Color4I(255, 255, 255, 255) {

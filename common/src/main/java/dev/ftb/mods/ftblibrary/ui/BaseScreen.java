@@ -20,8 +20,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -345,7 +345,7 @@ public abstract class BaseScreen extends Panel {
         openPopupMenu(newContextMenu);
     }
 
-    public ContextMenu openContextMenu(@NotNull List<ContextMenuItem> menuItems) {
+    public ContextMenu openContextMenu(@NonNull List<ContextMenuItem> menuItems) {
         var contextMenu = new ContextMenu(this, menuItems);
         openContextMenu(contextMenu);
         return contextMenu;
@@ -355,7 +355,7 @@ public abstract class BaseScreen extends Panel {
         openPopupMenu(dropDownMenu);
     }
 
-    public DropDownMenu openDropdownMenu(@NotNull List<ContextMenuItem> menuItems) {
+    public DropDownMenu openDropdownMenu(@NonNull List<ContextMenuItem> menuItems) {
         var contextMenu = new DropDownMenu(this, menuItems);
         openDropdownMenu(contextMenu);
         return contextMenu;

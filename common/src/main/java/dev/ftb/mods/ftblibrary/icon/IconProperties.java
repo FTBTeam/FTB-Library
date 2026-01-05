@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

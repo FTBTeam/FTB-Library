@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ImageIcon extends Icon implements IResourceIcon {
     public static final Identifier MISSING_IMAGE = FTBLibrary.rl("textures/gui/missing_image.png");

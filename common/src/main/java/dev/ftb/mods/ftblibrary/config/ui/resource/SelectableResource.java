@@ -5,7 +5,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Wraps a resource which can be searched for in a search GUI, e.g. items, fluids, images, entity faces...

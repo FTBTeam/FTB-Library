@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -20,7 +20,7 @@ public interface WidgetLayout {
      *
      * @return any horizontal and vertical padding that might be needed
      */
-    @NotNull
+    @NonNull
     default Padding getLayoutPadding() {
         return NO_PADDING;
     }
@@ -65,7 +65,7 @@ public interface WidgetLayout {
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Padding getLayoutPadding() {
             return new Padding(padding, 0);
         }
@@ -77,7 +77,7 @@ public interface WidgetLayout {
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Padding getLayoutPadding() {
             return new Padding(0, padding);
         }

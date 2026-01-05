@@ -21,15 +21,15 @@ import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.ChatFormatting;
-import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -143,7 +143,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         return new CustomTopPanel();
     }
 
-    private void setSelected(@NotNull ButtonNBT newSelected) {
+    private void setSelected(@NonNull ButtonNBT newSelected) {
         ButtonNBT prevSelected = selected;
         selected = newSelected;
         if (prevSelected != null) prevSelected.updateTitle();
@@ -789,7 +789,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             }
         }
 
-        @NotNull
+        @NonNull
         private List<Widget> buildAddButtons() {
             List<Widget> addBtns = new ArrayList<>();
             if (selected.canCreateNew(Tag.TAG_COMPOUND)) {
@@ -828,7 +828,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             return addBtns;
         }
 
-        @NotNull
+        @NonNull
         private EditStringConfigOverlay<String> makeRenameOverlay(SimpleButton button) {
             var value = new StringConfig();
 //			int overlayWidth = 100;

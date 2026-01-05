@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 import java.util.function.BooleanSupplier;

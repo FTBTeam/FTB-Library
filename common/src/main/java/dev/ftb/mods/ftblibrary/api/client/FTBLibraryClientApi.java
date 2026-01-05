@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.api.client;
 
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.gui.screens.Screen;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashSet;

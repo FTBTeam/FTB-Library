@@ -11,8 +11,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.sounds.SoundEvents;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Optional;
@@ -307,7 +307,7 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
      * @return see {@link Comparable}
      */
     @Override
-    public int compareTo(@NotNull Widget widget) {
+    public int compareTo(@NonNull Widget widget) {
         // default: don't care. override this in subclasses which do care about relative draw order
         return 0;
     }

@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.ui.ColorSelectorPanel;
 import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ColorConfig extends ConfigValue<Color4I> {
     private boolean allowAlphaEdit = false;

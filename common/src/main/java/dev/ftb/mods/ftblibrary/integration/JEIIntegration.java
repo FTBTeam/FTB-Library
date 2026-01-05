@@ -28,7 +28,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -77,7 +76,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     }
 
     @Override
-    @NotNull
+    @NonNull
     public Identifier getPluginUid() {
         return FTBLibrary.rl("jei");
     }
@@ -91,7 +90,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     }
 
     @Override
-    @NotNull
+    @NonNull
     public Collection<Rect2i> getGuiExtraAreas() {
         var currentScreen = Minecraft.getInstance().screen;
 

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
 import net.minecraft.nbt.*;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.DataOutput;
 import java.io.IOException;

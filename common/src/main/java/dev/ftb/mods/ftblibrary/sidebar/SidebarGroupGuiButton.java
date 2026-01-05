@@ -15,8 +15,8 @@ import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -427,7 +427,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     @Override
-    public void onPress(@NotNull InputWithModifiers inputWithModifiers) {
+    public void onPress(@NonNull InputWithModifiers inputWithModifiers) {
         if (lastMouseClickButton == 1) {
             isEditMode = !isEditMode;
             ensureGridAlignment();
