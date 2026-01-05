@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.30]
+
+### Added
+* Added support for read-only config viewing in `EditConfigScreen`
+  * Can be used to allow regular non-admin players to see server configs but not edit them
+* Select screen for enum-based config values now has better width and height (based on number of entries and max entry name length)
+
+### Fixed
+* Modal Panel gui elements didn't have their tick() method called via `BaseScreen`
+
 ## [2101.1.29]
 
 ### Fixed
