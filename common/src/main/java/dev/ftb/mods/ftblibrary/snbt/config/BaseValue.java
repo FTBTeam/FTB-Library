@@ -20,11 +20,11 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     protected List<String> comment = new ArrayList<>(0);
     private T value;
 
-    protected BaseValue(@Nullable SNBTConfig c, String n, T def) {
-        parent = c;
-        key = n;
-        defaultValue = def;
-        value = defaultValue;
+    protected BaseValue(@Nullable SNBTConfig config, String key, T defaultValue) {
+        parent = config;
+        this.key = key;
+        this.defaultValue = defaultValue;
+        value = this.defaultValue;
     }
 
     @Override
@@ -49,8 +49,8 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     }
 
     @SuppressWarnings("unchecked")
-    public <E extends BaseValue<T>> E comment(String... s) {
-        comment.addAll(Arrays.asList(s));
+    public <E extends BaseValue<T>> E comment(String... comment) {
+        this.comment.addAll(Arrays.asList(comment));
         return (E) this;
     }
 
@@ -61,8 +61,8 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     }
 
     @SuppressWarnings("unchecked")
-    public <E extends BaseValue<T>> E enabled(BooleanSupplier e) {
-        enabled = e;
+    public <E extends BaseValue<T>> E enabled(BooleanSupplier enabled) {
+        this.enabled = enabled;
         return (E) this;
     }
 
@@ -80,9 +80,9 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     }
 
     @Override
-    public int compareTo(BaseValue<T> o) {
-        var i = Integer.compare(getOrder(), o.getOrder());
-        return i == 0 ? key.compareToIgnoreCase(o.key) : i;
+    public int compareTo(BaseValue<T> other) {
+        var i = Integer.compare(getOrder(), other.getOrder());
+        return i == 0 ? key.compareToIgnoreCase(other.key) : i;
     }
 
     public void createClientConfig(ConfigGroup group) {

@@ -12,19 +12,19 @@ import java.util.stream.Collectors;
 public class EnumValue<T> extends BaseValue<T> {
     private final NameMap<T> nameMap;
 
-    EnumValue(SNBTConfig c, String key, NameMap<T> nameMap) {
-        this(c, key, nameMap, nameMap.defaultValue);
+    EnumValue(SNBTConfig config, String key, NameMap<T> nameMap) {
+        this(config, key, nameMap, nameMap.defaultValue);
     }
 
-    EnumValue(SNBTConfig c, String key, NameMap<T> nameMap, T def) {
-        super(c, key, def);
+    EnumValue(SNBTConfig config, String key, NameMap<T> nameMap, T defaultValue) {
+        super(config, key, defaultValue);
         this.nameMap = nameMap;
     }
 
     @Override
-    public void set(T v) {
-        if (nameMap.values.contains(v)) {
-            super.set(v);
+    public void set(T value) {
+        if (nameMap.values.contains(value)) {
+            super.set(value);
         } else {
             super.set(defaultValue);
         }

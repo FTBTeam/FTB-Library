@@ -5,8 +5,8 @@ import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 
 public class LongValue extends NumberValue<Long> {
-    LongValue(SNBTConfig c, String n, long def) {
-        super(c, n, def);
+    LongValue(SNBTConfig config, String key, long defaultValue) {
+        super(config, key, defaultValue);
     }
 
     public NumberValue<Long> range(long max) {

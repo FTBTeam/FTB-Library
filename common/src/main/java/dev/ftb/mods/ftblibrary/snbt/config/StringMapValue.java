@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StringMapValue extends BaseValue<Map<String, String>> {
-    public StringMapValue(@Nullable SNBTConfig c, String n, Map<String, String> def) {
-        super(c, n, def);
-        super.set(new HashMap<>(def));
+    public StringMapValue(@Nullable SNBTConfig config, String key, Map<String, String> defaultValue) {
+        super(config, key, defaultValue);
+        super.set(new HashMap<>(defaultValue));
     }
 
     @Override

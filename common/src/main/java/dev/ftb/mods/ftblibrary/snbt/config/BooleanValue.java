@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BooleanValue extends BaseValue<Boolean> {
-    BooleanValue(SNBTConfig c, String n, boolean def) {
-        super(c, n, def);
+    BooleanValue(SNBTConfig config, String key, boolean defaultValue) {
+        super(config, key, defaultValue);
     }
 
     public void toggle() {

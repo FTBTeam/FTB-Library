@@ -9,9 +9,9 @@ import java.util.List;
 
 public class IntArrayValue extends BaseValue<int[]> {
 
-    IntArrayValue(SNBTConfig c, String n, int[] def) {
-        super(c, n, def);
-        set(Arrays.copyOf(def, def.length));
+    IntArrayValue(SNBTConfig config, String key, int[] defaultValue) {
+        super(config, key, defaultValue);
+        set(Arrays.copyOf(defaultValue, defaultValue.length));
     }
 
     @Override

@@ -143,51 +143,51 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
         return add(value);
     }
 
-    public BooleanValue addBoolean(String key, boolean def) {
-        return add(new BooleanValue(this, key, def));
+    public BooleanValue addBoolean(String key, boolean defaultValue) {
+        return add(new BooleanValue(this, key, defaultValue));
     }
 
-    public IntValue addInt(String key, int def) {
-        return add(new IntValue(this, key, def));
+    public IntValue addInt(String key, int defaultValue) {
+        return add(new IntValue(this, key, defaultValue));
     }
 
-    public IntValue addInt(String key, int def, int min, int max) {
-        return addInt(key, def).range(min, max);
+    public IntValue addInt(String key, int defaultValue, int min, int max) {
+        return addInt(key, defaultValue).range(min, max);
     }
 
-    public LongValue addLong(String key, long def) {
-        return add(new LongValue(this, key, def));
+    public LongValue addLong(String key, long defaultValue) {
+        return add(new LongValue(this, key, defaultValue));
     }
 
-    public LongValue addLong(String key, long def, long min, long max) {
-        return addLong(key, def).range(min, max);
+    public LongValue addLong(String key, long defaultValue, long min, long max) {
+        return addLong(key, defaultValue).range(min, max);
     }
 
-    public DoubleValue addDouble(String key, double def) {
-        return add(new DoubleValue(this, key, def));
+    public DoubleValue addDouble(String key, double defaultValue) {
+        return add(new DoubleValue(this, key, defaultValue));
     }
 
     public DoubleValue addDouble(String key, double def, double min, double max) {
         return addDouble(key, def).range(min, max);
     }
 
-    public StringValue addString(String key, String def) {
-        return add(new StringValue(this, key, def));
+    public StringValue addString(String key, String defaultValue) {
+        return add(new StringValue(this, key, defaultValue));
     }
 
-    public StringListValue addStringList(String key, List<String> def) {
-        return add(new StringListValue(this, key, def));
+    public StringListValue addStringList(String key, List<String> defaultValue) {
+        return add(new StringListValue(this, key, defaultValue));
     }
 
     public <T> EnumValue<T> addEnum(String key, NameMap<T> nameMap) {
         return add(new EnumValue<>(this, key, nameMap));
     }
 
-    public <T> EnumValue<T> addEnum(String key, NameMap<T> nameMap, T def) {
-        return add(new EnumValue<>(this, key, nameMap, def));
+    public <T> EnumValue<T> addEnum(String key, NameMap<T> nameMap, T defaultValue) {
+        return add(new EnumValue<>(this, key, nameMap, defaultValue));
     }
 
-    public IntArrayValue addIntArray(String key, int[] def) {
-        return add(new IntArrayValue(this, key, def));
+    public IntArrayValue addIntArray(String key, int[] defaultValue) {
+        return add(new IntArrayValue(this, key, defaultValue));
     }
 }

@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 public class StringValue extends BaseValue<String> {
     protected Pattern pattern;
 
-    protected StringValue(SNBTConfig c, String n, String def) {
-        super(c, n, def);
+    protected StringValue(SNBTConfig config, String key, String defaultValue) {
+        super(config, key, defaultValue);
     }
 
     public StringValue pattern(Pattern p) {
@@ -20,8 +20,8 @@ public class StringValue extends BaseValue<String> {
     }
 
     @Override
-    public void set(String v) {
-        super.set(v);
+    public void set(String value) {
+        super.set(value);
 
         if (pattern != null && !pattern.matcher(get()).find()) {
             super.set(defaultValue);

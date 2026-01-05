@@ -24,8 +24,8 @@ public class SNBTCompoundTag extends CompoundTag {
         } else if (tag instanceof CompoundTag c) {
             var tag1 = new SNBTCompoundTag();
 
-            for (var s : c.keySet()) {
-                tag1.put(s, c.get(s));
+            for (var key : c.keySet()) {
+                tag1.put(key, c.get(key));
             }
 
             return tag1;

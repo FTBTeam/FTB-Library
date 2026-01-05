@@ -5,8 +5,8 @@ import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import net.minecraft.util.Mth;
 
 public class DoubleValue extends NumberValue<Double> {
-    DoubleValue(SNBTConfig c, String n, double def) {
-        super(c, n, def);
+    DoubleValue(SNBTConfig config, String key, double defaultValue) {
+        super(config, key, defaultValue);
     }
 
     public NumberValue<Double> range(double max) {

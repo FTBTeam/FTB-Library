@@ -5,8 +5,8 @@ import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import net.minecraft.util.Mth;
 
 public class IntValue extends NumberValue<Integer> {
-    IntValue(SNBTConfig c, String n, int def) {
-        super(c, n, def);
+    IntValue(SNBTConfig config, String key, int defaultValue) {
+        super(config, key, defaultValue);
     }
 
     public NumberValue<Integer> range(int max) {
@@ -14,8 +14,8 @@ public class IntValue extends NumberValue<Integer> {
     }
 
     @Override
-    public void set(Integer v) {
-        super.set(Mth.clamp(v, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue));
+    public void set(Integer value) {
+        super.set(Mth.clamp(value, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue));
     }
 
     @Override

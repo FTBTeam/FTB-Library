@@ -10,8 +10,8 @@ public abstract class NumberValue<T extends Number> extends BaseValue<T> {
     protected T maxValue = null;
     protected boolean fader;
 
-    NumberValue(SNBTConfig c, String n, T def) {
-        super(c, n, def);
+    NumberValue(SNBTConfig config, String key, T defaultValue) {
+        super(config, key, defaultValue);
     }
 
     @SuppressWarnings("unchecked")

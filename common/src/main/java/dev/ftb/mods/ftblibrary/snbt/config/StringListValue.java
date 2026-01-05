@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StringListValue extends BaseValue<List<String>> {
-    StringListValue(SNBTConfig c, String n, List<String> def) {
-        super(c, n, def);
-        super.set(new ArrayList<>(def));
+    StringListValue(SNBTConfig config, String key, List<String> defaultValue) {
+        super(config, key, defaultValue);
+        super.set(new ArrayList<>(defaultValue));
     }
 
     @Override
-    public void set(List<String> v) {
+    public void set(List<String> value) {
         get().clear();
-        get().addAll(v);
+        get().addAll(value);
     }
 
     @Override

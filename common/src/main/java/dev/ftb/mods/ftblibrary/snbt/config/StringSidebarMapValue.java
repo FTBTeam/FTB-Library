@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StringSidebarMapValue extends BaseValue<Map<String, StringSidebarMapValue.SideButtonInfo>> {
-    public StringSidebarMapValue(@Nullable SNBTConfig c, String n, Map<String, SideButtonInfo> def) {
-        super(c, n, def);
-        super.set(new HashMap<>(def));
+    public StringSidebarMapValue(@Nullable SNBTConfig config, String key, Map<String, SideButtonInfo> defaultValue) {
+        super(config, key, defaultValue);
+        super.set(new HashMap<>(defaultValue));
     }
 
     @Override
