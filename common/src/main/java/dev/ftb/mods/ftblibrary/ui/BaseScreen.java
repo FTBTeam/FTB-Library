@@ -504,17 +504,6 @@ public abstract class BaseScreen extends Panel {
         getMinecraft().setScreen(new ScreenWrapper(this));
     }
 
-    /**
-     * This is poorly named, so let's move over to getWindow()
-     *
-     * @deprecated use {@link #getWindow()} instead
-     */
-    @Deprecated
-    @Override
-    public final Window getScreen() {
-        return getMinecraft().getWindow();
-    }
-
     @Override
     public Window getWindow() {
         return getMinecraft().getWindow();

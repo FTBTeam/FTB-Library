@@ -17,18 +17,15 @@ import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
     public static final BooleanSupplier IS_CLIENT_OP = () -> Minecraft.getInstance().player != null && Minecraft.getInstance().player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
     public static final List<Runnable> RUN_LATER = new ArrayList<>();
-    private static final MethodType EMPTY_METHOD_TYPE = MethodType.methodType(void.class);
-    private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
 
     public static void execClientCommand(String command, boolean printChat) {
         if (!command.isEmpty() && Minecraft.getInstance().player != null) {
@@ -102,27 +99,6 @@ public class ClientUtils {
             case "command" -> {
                 execClientCommand(path, false);
                 return true;
-            }
-            case "static_method" -> {
-                return staticMethodCache.computeIfAbsent(path, k -> {
-                    var s = path.split(":", 2);
-                    try {
-                        Class<?> cls = Class.forName(s[0]);
-                        return Optional.ofNullable(MethodHandles.publicLookup().findStatic(cls, s[1], EMPTY_METHOD_TYPE));
-                    } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-                             ArrayIndexOutOfBoundsException ex) {
-                        logHandleClickFailure(scheme, path, ex);
-                        return Optional.empty();
-                    }
-                }).map(handle -> {
-                    try {
-                        handle.invoke();
-                        return true;
-                    } catch (Throwable ex) {
-                        logHandleClickFailure(scheme, path, ex);
-                        return false;
-                    }
-                }).orElse(false);
             }
             case "custom" -> {
                 return trySendCustomClickEvent(path);
