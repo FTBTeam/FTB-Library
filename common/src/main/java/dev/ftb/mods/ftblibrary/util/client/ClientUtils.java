@@ -25,7 +25,6 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
-    // TODO: @since 21.x? Is moderator really what we define as OP?
     public static final BooleanSupplier IS_CLIENT_OP = () -> Minecraft.getInstance().player != null && Minecraft.getInstance().player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
     public static final List<Runnable> RUN_LATER = new ArrayList<>();
     private static final MethodType EMPTY_METHOD_TYPE = MethodType.methodType(void.class);
