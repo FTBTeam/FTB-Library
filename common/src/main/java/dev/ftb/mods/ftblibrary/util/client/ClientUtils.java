@@ -24,7 +24,9 @@ import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
-    public static final BooleanSupplier IS_CLIENT_OP = () -> Minecraft.getInstance().player != null && Minecraft.getInstance().player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+    public static final BooleanSupplier IS_CLIENT_OP = () ->
+            Minecraft.getInstance().player != null && Minecraft.getInstance().player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+
     public static final List<Runnable> RUN_LATER = new ArrayList<>();
 
     public static void execClientCommand(String command, boolean printChat) {

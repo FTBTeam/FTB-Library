@@ -23,7 +23,7 @@ public class RegisteredSidebarButton implements SidebarButton {
     private final Component tooltip;
     private final List<ButtonOverlayRender> extraRenderers;
     private Supplier<List<Component>> tooltipOverride;
-    private boolean visible = true;
+    private BooleanSupplier visible = () -> true;
     private boolean forceHidden = false;
 
     public RegisteredSidebarButton(Identifier id, SidebarButtonData data) {
@@ -75,7 +75,7 @@ public class RegisteredSidebarButton implements SidebarButton {
 
     public void clickButton(boolean shift) {
         if (data.loadingScreen()) {
-            new LoadingScreen(Component.translatable(getLangKey())).openGui();
+            new LoadingScreen(Component. translatable(getLangKey())).openGui();
         }
 
         boolean canShift = shift && data.shiftClickEvent().isPresent();
@@ -86,7 +86,7 @@ public class RegisteredSidebarButton implements SidebarButton {
     }
 
     public boolean canSee() {
-        return !forceHidden && visible;
+        return !forceHidden && visible.getAsBoolean();
     }
 
     public void setForceHidden(boolean forceHidden) {
@@ -95,7 +95,8 @@ public class RegisteredSidebarButton implements SidebarButton {
 
     @Override
     public void addVisibilityCondition(BooleanSupplier condition) {
-        visible = visible && condition.getAsBoolean();
+        BooleanSupplier previous = visible;
+        visible = () -> previous.getAsBoolean() && condition.getAsBoolean();
     }
 
     @Override
@@ -112,4 +113,3 @@ public class RegisteredSidebarButton implements SidebarButton {
         return extraRenderers;
     }
 }
-
