@@ -3,7 +3,6 @@
   "package": "dev.ftb.mods.ftblibrary.core.mixin.common",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "CompoundContainerMixin",
     "ItemMixin",
     "ResourceLocationMixin",
     "TextColorMixin"

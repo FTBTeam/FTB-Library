@@ -6,9 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-/**
- * Made by LatvianModder
- */
 public class MathUtils {
     public static final Random RAND = new Random();
 
