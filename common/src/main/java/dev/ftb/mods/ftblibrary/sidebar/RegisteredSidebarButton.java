@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton;
 import dev.ftb.mods.ftblibrary.ui.GuiHelper;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
-import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.util.Util;
 import net.minecraft.network.chat.Component;
@@ -24,7 +23,7 @@ public class RegisteredSidebarButton implements SidebarButton {
     private final Component tooltip;
     private final List<ButtonOverlayRender> extraRenderers;
     private Supplier<List<Component>> tooltipOverride;
-    private ChainedBooleanSupplier visible = ChainedBooleanSupplier.TRUE;
+    private boolean visible = true;
     private boolean forceHidden = false;
 
     public RegisteredSidebarButton(Identifier id, SidebarButtonData data) {
@@ -87,7 +86,7 @@ public class RegisteredSidebarButton implements SidebarButton {
     }
 
     public boolean canSee() {
-        return !forceHidden && visible.getAsBoolean();
+        return !forceHidden && visible;
     }
 
     public void setForceHidden(boolean forceHidden) {
@@ -96,7 +95,7 @@ public class RegisteredSidebarButton implements SidebarButton {
 
     @Override
     public void addVisibilityCondition(BooleanSupplier condition) {
-        visible = visible.and(condition);
+        visible = visible && condition.getAsBoolean();
     }
 
     @Override
