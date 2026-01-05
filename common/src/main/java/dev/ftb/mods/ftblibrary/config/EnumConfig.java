@@ -11,6 +11,7 @@ import dev.ftb.mods.ftblibrary.ui.misc.AbstractButtonListScreen;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 public class EnumConfig<E> extends ConfigWithVariants<E> {
@@ -89,9 +90,13 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 
     private class EnumSelectScreen extends AbstractButtonListScreen {
         private final Panel parent;
+        private int maxWidth = 176;
 
         public EnumSelectScreen(Panel parent) {
             this.parent = parent;
+            for (var v : nameMap) {
+                maxWidth = Math.max(maxWidth, getTheme().getStringWidth(nameMap.getDisplayName(v)));
+            }
         }
 
         @Override
@@ -106,6 +111,15 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
                     }
                 });
             }
+        }
+
+        @Override
+        public boolean onInit() {
+            setSize(
+                    Mth.clamp(maxWidth + 35, 176, getWindow().getGuiScaledWidth() * 3 / 4),
+                    Mth.clamp(nameMap.size() * 20 + 50, 166, getWindow().getGuiScaledHeight() * 4 / 5)
+            );
+            return super.onInit();
         }
 
         @Override
