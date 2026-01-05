@@ -60,7 +60,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
     @Override
     public void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback) {
         if (nameMap.values.size() > 16 || BaseScreen.isCtrlKeyDown()) {
-            var screen = new EnumSelectScreen(clickedWidget.getParent());
+            var screen = new EnumSelectScreen(clickedWidget.getParent(), callback);
             screen.setHasSearchBox(true);
             screen.showBottomPanel(false);
             screen.showCloseButton(true);
@@ -90,10 +90,12 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
 
     private class EnumSelectScreen extends AbstractButtonListScreen {
         private final Panel parent;
+        private final ConfigCallback callback;
         private int maxWidth = 176;
 
-        public EnumSelectScreen(Panel parent) {
+        public EnumSelectScreen(Panel parent, ConfigCallback callback) {
             this.parent = parent;
+            this.callback = callback;
             for (var v : nameMap) {
                 maxWidth = Math.max(maxWidth, getTheme().getStringWidth(nameMap.getDisplayName(v)));
             }
@@ -125,11 +127,13 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
         @Override
         protected void doCancel() {
             parent.run();
+            callback.save(false);
         }
 
         @Override
         protected void doAccept() {
             parent.run();
+            callback.save(true);
         }
     }
 }
