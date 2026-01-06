@@ -14,6 +14,7 @@ import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
+import dev.ftb.mods.ftblibrary.net.OpenTestScreenPacket;
 import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import net.minecraft.ChatFormatting;
@@ -129,11 +130,7 @@ public class FTBLibraryCommands {
         if (ModUtils.isDevMode()) {
             command.then(literal("test_screen")
                     .executes(context -> {
-                        if (context.getSource().getServer().isDedicatedServer()) {
-                            context.getSource().sendFailure(Component.literal("Can't do this on dedicated server!").withStyle(ChatFormatting.RED));
-                        } else {
-                            UITesting.openTestScreen();
-                        }
+                        NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), OpenTestScreenPacket.INSTANCE);
                         return Command.SINGLE_SUCCESS;
                     })
             );
