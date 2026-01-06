@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class SNBT {
     private static boolean shouldSortKeysOnWrite = false;
@@ -23,8 +24,26 @@ public class SNBT {
         return SNBTParser.read(lines);
     }
 
+    /**
+     * Attempt to read an SNBT compound from a file
+     * @param path the path to the SNBT file
+     * @return the SNBT compound tag
+     */
     public static SNBTCompoundTag tryRead(Path path) throws IOException {
         return readLines(Files.readAllLines(path, StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Same as {@link #tryRead(Path)} but returns an empty optional on failure instead of throwing an exception
+     * @param file the file to read
+     * @return an optional SNBT compound tag
+     */
+    public static Optional<SNBTCompoundTag> tryReadOptional(Path file) {
+        try {
+            return Optional.of(tryRead(file));
+        } catch (IOException ex) {
+            return Optional.empty();
+        }
     }
 
     public static void tryWrite(Path path, CompoundTag tag) throws IOException {
@@ -53,27 +72,6 @@ public class SNBT {
         append(builder, nbt);
         builder.println();
         return builder.lines;
-    }
-
-    /**
-     * Don't use this anymore
-     * @param path path to write to
-     * @param nbt nbt compound to write
-     * @return true if config was written
-     * @deprecated use {@link #tryWrite(Path, CompoundTag)}
-     */
-    @Deprecated
-    public static boolean write(Path path, CompoundTag nbt) {
-        try {
-            if (Files.notExists(path.getParent())) {
-                Files.createDirectories(path.getParent());
-            }
-
-            Files.write(path, writeLines(nbt));
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
     }
 
     private static void append(SNBTBuilder builder, @Nullable Tag nbt) {

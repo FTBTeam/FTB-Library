@@ -9,6 +9,7 @@ import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class RegisteredSidebarButton implements SidebarButton {
     private final String langKey;
     private final Component tooltip;
     private final List<ButtonOverlayRender> extraRenderers;
-    private Supplier<List<Component>> tooltipOverride;
+    private @Nullable Supplier<List<Component>> tooltipOverride;
     private BooleanSupplier visible = () -> true;
     private boolean forceHidden = false;
 
