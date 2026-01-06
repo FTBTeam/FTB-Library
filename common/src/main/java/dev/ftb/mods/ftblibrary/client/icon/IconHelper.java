@@ -26,4 +26,13 @@ public class IconHelper {
     public static <T extends Icon<T>> PixelBuffer createPixelBuffer(@Nullable Icon<T> icon) {
         return icon != null ? icon.getRenderer().createPixelBuffer(icon.self()) : null;
     }
+
+    public static <T extends Icon<T>> double aspectRatio(@Nullable Icon<T> icon) {
+        return icon != null ? icon.getRenderer().aspectRatio(icon.self()) : 1;
+    }
+
+    public static <T extends Icon<T>> int getPixelBufferFrameCount(@Nullable Icon<T> icon) {
+        return icon != null ? icon.getRenderer().getPixelBufferFrameCount(icon.self()) : 1;
+    }
+
 }

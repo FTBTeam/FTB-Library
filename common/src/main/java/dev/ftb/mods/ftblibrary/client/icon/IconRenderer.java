@@ -59,7 +59,7 @@ public interface IconRenderer<T extends Icon<T>> {
      *
      * @return the number of frames
      */
-    default int getPixelBufferFrameCount() {
+    default int getPixelBufferFrameCount(T icon) {
         return 1;
     }
 
