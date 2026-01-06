@@ -119,7 +119,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         return null;
     }
 
-    private static <T extends Entity> Optional<Icon> getIconCache(T entity) {
+    private static <T extends Entity> Optional<Icon<?>> getIconCache(T entity) {
         EntityRenderer<? super T, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
         EntityRenderState state = renderer.createRenderState(entity, 0f);
         if (renderer instanceof LivingEntityRenderer/*<?,?,?>*/ entityRenderer && state instanceof LivingEntityRenderState ls) {

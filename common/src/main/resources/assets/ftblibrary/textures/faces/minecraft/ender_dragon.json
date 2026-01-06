@@ -1,0 +1,13 @@
+{
+  "use_mob_texture": true,
+  "slice": {
+    "x": 128,
+    "y": 46,
+    "width": 16,
+    "height": 16
+  },
+  "default_image_size": {
+    "width": 256,
+    "height": 256
+  }
+}
