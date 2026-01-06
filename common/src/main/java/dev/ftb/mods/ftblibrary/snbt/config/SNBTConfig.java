@@ -81,9 +81,12 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 
     public void load(Path path) {
         try {
+            if (!Files.exists(path)) {
+                FTBLibrary.LOGGER.info("creating new default config file at {}", path);
+                save(path);
+            }
             SNBTCompoundTag tag = SNBT.tryRead(path);
             read(tag);
-            save(path);
         } catch (IOException e) {
             FTBLibrary.LOGGER.error("can't read {}: {}, {}", path, e.getClass().getSimpleName(), e.getMessage());
         }
