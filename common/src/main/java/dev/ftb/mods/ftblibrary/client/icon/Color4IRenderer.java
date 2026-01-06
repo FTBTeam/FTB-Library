@@ -12,7 +12,7 @@ public enum Color4IRenderer implements IconRenderer<Color4I> {
 
     @Override
     public void render(Color4I icon, GuiGraphics graphics, int x, int y, int w, int h) {
-        if (w > 0 && h > 0) {
+        if (w > 0 && h > 0 && !icon.isEmpty()) {
             graphics.fill(RenderPipelines.GUI, x, y, x + w, y + h, icon.rgba());
         }
     }
