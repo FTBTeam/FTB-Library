@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.misc.NordColors;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -8,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 
 public abstract class NordButton extends SimpleTextButton {
-    public NordButton(Panel panel, Component txt, Icon icon) {
+    public NordButton(Panel panel, Component txt, Icon<?> icon) {
         super(panel, txt, icon);
         setHeight(16);
     }
@@ -19,7 +20,7 @@ public abstract class NordButton extends SimpleTextButton {
 
     @Override
     public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        (isMouseOver() ? NordColors.POLAR_NIGHT_4 : NordColors.POLAR_NIGHT_2).draw(graphics, x, y, w, h);
+        IconHelper.renderIcon((isMouseOver() ? NordColors.POLAR_NIGHT_4 : NordColors.POLAR_NIGHT_2), graphics, x, y, w, h);
     }
 
     @Override

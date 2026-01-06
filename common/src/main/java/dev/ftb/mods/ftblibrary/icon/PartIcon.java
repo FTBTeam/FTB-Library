@@ -2,17 +2,19 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.gui.GuiGraphics;
+import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
+import dev.ftb.mods.ftblibrary.client.icon.PartIconRenderer;
+import org.jspecify.annotations.Nullable;
 
 
-public class PartIcon extends IconWithParent {
-    public final Icon parent;
+public class PartIcon extends IconWithParent<PartIcon> {
+    public final Icon<?> parent;
     public int textureWidth, textureHeight;
     public int textureU, textureV, corner, subWidth, subHeight;
 
-    private Icon all, middleU, middleD, middleL, middleR, cornerNN, cornerPN, cornerNP, cornerPP, center;
+    public @Nullable Icon<?> all, middleU, middleD, middleL, middleR, cornerNN, cornerPN, cornerNP, cornerPP, center;
 
-    public PartIcon(Icon icon, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {
+    public PartIcon(Icon<?> icon, int textureU, int textureV, int subWidth, int subHeight, int corner, int textureWidth, int textureHeight) {
         super(icon);
         parent = icon;
         this.textureWidth = textureWidth;
@@ -25,7 +27,7 @@ public class PartIcon extends IconWithParent {
         updateParts();
     }
 
-    public PartIcon(Icon icon, int x, int y, int w, int h, int c) {
+    public PartIcon(Icon<?> icon, int x, int y, int w, int h, int c) {
         this(icon, x, y, w, h, c, 256, 256);
     }
 
@@ -33,7 +35,7 @@ public class PartIcon extends IconWithParent {
         this(Icon.getIcon(iconId), textureU, textureV, subWidth, subHeight, corner, textureWidth, textureHeight);
     }
 
-    public PartIcon(Icon icon) {
+    public PartIcon(Icon<?> icon) {
         this(icon, 0, 0, 256, 256, 6);
     }
 
@@ -47,7 +49,7 @@ public class PartIcon extends IconWithParent {
         return this;
     }
 
-    private Icon get(int x, int y, int w, int h) {
+    private Icon<?> get(int x, int y, int w, int h) {
         return parent.withUV(textureU + x, textureV + y, w, h, textureWidth, textureHeight);
     }
 
@@ -107,27 +109,8 @@ public class PartIcon extends IconWithParent {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        if (w == subWidth && h == subHeight) {
-            all.draw(graphics, x, y, w, h);
-            return;
-        }
-
-        var c = corner;
-        var mw = w - c * 2;
-        var mh = h - c * 2;
-
-        middleU.draw(graphics, x + c, y, mw, c);
-        middleR.draw(graphics, x + w - c, y + c, c, mh);
-        middleD.draw(graphics, x + c, y + h - c, mw, c);
-        middleL.draw(graphics, x, y + c, c, mh);
-
-        cornerNN.draw(graphics, x, y, c, c);
-        cornerNP.draw(graphics, x, y + h - c, c, c);
-        cornerPN.draw(graphics, x + w - c, y, c, c);
-        cornerPP.draw(graphics, x + w - c, y + h - c, c, c);
-
-        center.draw(graphics, x + c, y + c, mw, mh);
+    public IconRenderer<PartIcon> getRenderer() {
+        return PartIconRenderer.INSTANCE;
     }
 
     @Override

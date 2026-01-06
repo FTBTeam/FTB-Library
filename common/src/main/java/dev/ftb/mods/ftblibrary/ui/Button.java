@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
@@ -10,10 +11,10 @@ import java.util.Optional;
 
 public abstract class Button extends Widget {
     protected Component title;
-    protected Icon icon;
+    protected Icon<?> icon;
     private boolean forceButtonSize;
 
-    public Button(Panel panel, Component t, Icon i) {
+    public Button(Panel panel, Component t, Icon<?> i) {
         super(panel);
         setSize(16, 16);
         icon = i;
@@ -34,7 +35,7 @@ public abstract class Button extends Widget {
         return this;
     }
 
-    public Button setIcon(Icon i) {
+    public Button setIcon(Icon<?> i) {
         icon = i;
         return this;
     }
@@ -49,7 +50,7 @@ public abstract class Button extends Widget {
     }
 
     public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        icon.draw(graphics, x, y, w, h);
+        IconHelper.renderIcon(icon, graphics, x, y, w, h);
     }
 
     @Override

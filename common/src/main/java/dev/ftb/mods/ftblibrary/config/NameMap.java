@@ -126,7 +126,7 @@ public final class NameMap<E> implements Iterable<E> {
         return get(data.readVarInt());
     }
 
-    public Icon getIcon(E v) {
+    public Icon<?> getIcon(E v) {
         return builder.iconProvider.apply(v);
     }
 

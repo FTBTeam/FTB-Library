@@ -15,13 +15,13 @@ import java.util.function.Consumer;
 
 
 public abstract class SimpleTextButton extends Button {
-    public SimpleTextButton(Panel panel, Component txt, Icon icon) {
+    public SimpleTextButton(Panel panel, Component txt, Icon<?> icon) {
         super(panel, txt, icon);
         setWidth(panel.getGui().getTheme().getStringWidth(txt) + (hasIcon() ? 28 : 8));
         setHeight(20);
     }
 
-    public static SimpleTextButton create(Panel panel, Component txt, Icon icon, Consumer<MouseButton> callback, Component... tooltip) {
+    public static SimpleTextButton create(Panel panel, Component txt, Icon<?> icon, Consumer<MouseButton> callback, Component... tooltip) {
         return new SimpleTextButton(panel, txt, icon) {
             @Override
             public void onClicked(MouseButton button) {

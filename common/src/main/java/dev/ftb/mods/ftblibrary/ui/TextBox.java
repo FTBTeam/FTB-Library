@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -461,9 +462,9 @@ public class TextBox extends Widget implements IFocusableWidget {
         // render the cursor
         if (j >= 0 && j <= s.length() && isFocused() && System.currentTimeMillis() % 1000L > 500L) {
             if (drawCursor) {
-                col.draw(graphics, cursorX, textY - 1, 1, theme.getFontHeight() + 2);
+                IconHelper.renderIcon(col, graphics, cursorX, textY - 1, 1, theme.getFontHeight() + 2);
             } else {
-                col.draw(graphics, cursorX, textY + theme.getFontHeight() - 2, 5, 1);
+                IconHelper.renderIcon(col, graphics, cursorX, textY + theme.getFontHeight() - 2, 5, 1);
             }
         }
 

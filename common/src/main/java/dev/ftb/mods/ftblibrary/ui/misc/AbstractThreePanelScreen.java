@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.ui.misc;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.datafixers.util.Pair;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.*;
@@ -168,7 +169,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         @Override
         public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawPanelBackground(graphics, x, y, w, h);
-            Color4I.BLACK.withAlpha(80).draw(graphics, x, y + h - 1, w, 1);
+            IconHelper.renderIcon(Color4I.BLACK.withAlpha(80), graphics, x, y + h - 1, w, 1);
         }
     }
 
@@ -197,7 +198,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         @Override
         public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawPanelBackground(graphics, x, y, w, h);
-            Color4I.GRAY.withAlpha(64).draw(graphics, x, y, w, 1);
+            IconHelper.renderIcon(Color4I.GRAY.withAlpha(64), graphics, x, y, w, 1);
         }
     }
 }

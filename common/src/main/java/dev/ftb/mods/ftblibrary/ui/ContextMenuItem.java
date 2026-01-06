@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -20,14 +21,14 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
     };
 
     private final Component title;
-    private final Icon icon;
+    private final Icon<?> icon;
     private final Consumer<Button> callback;
 
     private boolean enabled = true;
     private Component yesNoText = Component.literal("");
     private boolean closeMenu = true;
 
-    public ContextMenuItem(Component title, Icon icon, @Nullable Consumer<Button> callback) {
+    public ContextMenuItem(Component title, Icon<?> icon, @Nullable Consumer<Button> callback) {
         this.title = title;
         this.icon = icon;
         this.callback = callback;
@@ -37,7 +38,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
         return new ContextMenuItem(title, Icon.empty(), null).setCloseMenu(false);
     }
 
-    public static ContextMenuItem subMenu(Component title, Icon icon, List<ContextMenuItem> subItems) {
+    public static ContextMenuItem subMenu(Component title, Icon<?> icon, List<ContextMenuItem> subItems) {
         return new ContextMenuItem(title, icon, button -> {
             ContextMenu subMenu = new ContextMenu(button.getParent(), subItems);
             button.getGui().openContextMenu(subMenu);
@@ -61,7 +62,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
     }
 
     public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        getIcon().draw(graphics, x, y, w, h);
+        IconHelper.renderIcon(getIcon(), graphics, x, y, w, h);
     }
 
     public boolean isEnabled() {
@@ -77,7 +78,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
         return title;
     }
 
-    public Icon getIcon() {
+    public Icon<?> getIcon() {
         return icon;
     }
 

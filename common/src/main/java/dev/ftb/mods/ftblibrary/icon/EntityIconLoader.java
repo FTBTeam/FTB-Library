@@ -17,8 +17,8 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -34,11 +34,11 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.util.*;
 
-// Handles loading of Entity Icon Json or Image files
+// Handles loading of Entity Icon<?> Json or Image files
 // Loads all entity types except for MISC, which only show on the map if a json / image exists
 public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityType<?>, EntityIconLoader.EntityIconSettings>> {
-    public static final Icon NORMAL = Icon.getIcon("ftblibrary:textures/faces/normal.png");
-    public static final Icon HOSTILE = Icon.getIcon("ftblibrary:textures/faces/hostile.png");
+    public static final Icon<?> NORMAL = Icon.getIcon("ftblibrary:textures/faces/normal.png");
+    public static final Icon<?> HOSTILE = Icon.getIcon("ftblibrary:textures/faces/hostile.png");
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -135,17 +135,17 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         return Optional.ofNullable(ENTITY_SETTINGS.get(entityType));
     }
 
-    private static Icon getOrCreateIcon(EntityType<?> entityType, Identifier texture, EntityIconSettings settings) {
+    private static Icon<?> getOrCreateIcon(EntityType<?> entityType, Identifier texture, EntityIconSettings settings) {
         return ICON_CACHE
                 .computeIfAbsent(entityType, i -> new HashMap<>())
                 .computeIfAbsent(texture, t -> new EntityImageIcon(t, settings.mainSlice.orElse(null), settings.children, settings.defaultImageSize.orElse(null)));
     }
 
-    public static Icon getIcon(Entity entity) {
+    public static Icon<?> getIcon(Entity entity) {
         return getIconCache(entity).orElseGet(() -> entity instanceof Enemy ? EntityIconLoader.HOSTILE : EntityIconLoader.NORMAL);
     }
 
-    public static Icon getIcon(EntityType<?> entityType) {
+    public static Icon<?> getIcon(EntityType<?> entityType) {
         Entity entity = entityType.create(Minecraft.getInstance().level, EntitySpawnReason.LOAD);
         return entity == null ? EntityIconLoader.NORMAL : getIcon(entity);
     }

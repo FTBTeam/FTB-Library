@@ -1,0 +1,49 @@
+package dev.ftb.mods.ftblibrary.client.icon;
+
+import dev.ftb.mods.ftblibrary.icon.ImageIcon;
+import dev.ftb.mods.ftblibrary.math.PixelBuffer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import org.jspecify.annotations.Nullable;
+
+import javax.imageio.ImageIO;
+
+public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
+    INSTANCE;
+
+    @Override
+    public void render(ImageIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+        graphics.blit(icon.texture, x, y, x + w, y + h, icon.minU, icon.maxU, icon.minV, icon.maxV);
+    }
+
+    @Override
+    public boolean hasPixelBuffer(ImageIcon icon) {
+        return true;
+    }
+
+    @Override
+    public @Nullable PixelBuffer createPixelBuffer(ImageIcon icon) {
+        if (icon.uri == null) {
+            try {
+                return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(icon.texture).orElseThrow().open());
+            } catch (Exception ex) {
+                return null;
+            }
+        } else {
+            try (var stream = icon.uri.toURL().openConnection(Minecraft.getInstance().getProxy()).getInputStream()) {
+                return PixelBuffer.from(ImageIO.read(stream));
+            } catch (Exception ex) {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public double aspectRatio(ImageIcon icon) {
+        if (icon.maxV == icon.minV) return 1.0;
+
+        return (icon.maxU - icon.minU) / (icon.maxV - icon.minV);
+    }
+
+
+}

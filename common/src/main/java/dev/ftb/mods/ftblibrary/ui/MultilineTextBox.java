@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.LogicOp;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.core.mixin.common.MultilineTextFieldAccess;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
@@ -219,7 +220,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
             if (drawCursor && cursorInRange && cursorPos >= stringview.beginIndex() && cursorPos <= stringview.endIndex()) {
                 if (shouldDrawLine) {
                     xPos = theme.drawString(graphics, s.substring(stringview.beginIndex(), cursorPos), getX() + innerPadding(), yPos, Color4I.rgb(0xE0E0E0), 0);
-                    Color4I.rgb(0xA0A0A0).draw(graphics, xPos - 1, yPos, 1, font.lineHeight);
+                    IconHelper.renderIcon(Color4I.rgb(0xA0A0A0), graphics, xPos - 1, yPos, 1, font.lineHeight);
                     theme.drawString(graphics, s.substring(cursorPos, stringview.endIndex()), xPos, yPos, Color4I.rgb(0xE0E0E0), 0);
                 }
             } else {
@@ -267,7 +268,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
         GlStateManager._enableColorLogicOp();
         GlStateManager._logicOp(LogicOp.OR_REVERSE.ordinal());
 
-        Color4I.rgb(0x0000FF).draw(graphics, x1, y1, x2 - x1, y2 - y1);
+        IconHelper.renderIcon(Color4I.rgb(0x0000FF), graphics, x1, y1, x2 - x1, y2 - y1);
         GlStateManager._disableColorLogicOp();
     }
 

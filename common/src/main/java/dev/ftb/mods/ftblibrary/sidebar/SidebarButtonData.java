@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record SidebarButtonData(
-        Icon icon,
+        Icon<?> icon,
         boolean defaultEnabled,
         List<String> clickEvents,
         Optional<List<String>> shiftClickEvent,

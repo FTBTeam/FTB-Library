@@ -1,62 +1,62 @@
 package dev.ftb.mods.ftblibrary.icon;
 
+import com.google.common.collect.Streams;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.ftb.mods.ftblibrary.client.icon.EntityImageIconRenderer;
+import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureContents;
 import net.minecraft.resources.Identifier;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class EntityImageIcon extends Icon {
+public class EntityImageIcon extends Icon<EntityImageIcon> {
     @Nullable
     private final Slice mainSlice;
     private final List<ChildIconData> children;
-    private final Icon mainIcon;
-    private final List<Icon> childIcons;
-    @Nullable
-    private final EntityIconLoader.WidthHeight defaultImageSize;
+    private final Icon<?> mainIcon;
+    private final List<Icon<?>> childIcons;
+    private final EntityIconLoader.@Nullable WidthHeight defaultImageSize;
 
-    public EntityImageIcon(Identifier mainTexture, @Nullable Slice mainSlice, List<ChildIconData> children, @Nullable EntityIconLoader.WidthHeight defaultImageSize) {
+    public EntityImageIcon(Identifier mainTexture, @Nullable Slice mainSlice, List<ChildIconData> children, EntityIconLoader.@Nullable WidthHeight defaultImageSize) {
         this.mainSlice = mainSlice;
         this.children = children;
         this.defaultImageSize = defaultImageSize;
 
         mainIcon = createIcon(mainTexture, mainSlice);
-        childIcons = children.stream().map(childIconData -> createIcon(childIconData.texture.orElse(mainTexture), childIconData.slice)).toList();
+        childIcons = children.stream().map(c -> createIcon(c.texture.orElse(mainTexture), c.slice)).collect(Collectors.toList());
+    }
+
+    public int getDrawWidth(int defWidth) {
+        return mainSlice == null ? defWidth : mainSlice.width;
+    }
+
+    public int getDrawHeight(int defHeight) {
+        return mainSlice == null ? defHeight : mainSlice.height;
+    }
+
+    public Icon<?> getMainIcon() {
+        return mainIcon;
+    }
+
+    public List<Icon<?>> getChildIcons() {
+        return childIcons;
+    }
+
+    public Stream<Pair<Icon<?>, ChildIconData>> children() {
+        return Streams.zip(childIcons.stream(), children.stream(), Pair::of);
     }
 
     @Override
-    public void draw(GuiGraphics graphics, int x, int y, int width, int height) {
-        var pose = graphics.pose();
-        pose.pushMatrix();
-        pose.translate(x, y);
-
-        float drawWidth = mainSlice == null ? width : mainSlice.width;
-        float drawHeight = mainSlice == null ? height : mainSlice.height;
-
-        float scaleX = width / drawWidth;
-        float scaleY = height / drawHeight;
-
-        pose.scale(scaleX, scaleY);
-
-        mainIcon.draw(graphics, 0, 0, (int) drawWidth, (int) drawHeight);
-
-        for (int i = 0; i < children.size(); i++) {
-            ChildIconData child = children.get(i);
-            Icon icon = childIcons.get(i);
-
-            pose.pushMatrix();
-            child.offset.ifPresent(offset -> pose.translate(offset.x, offset.y));
-            icon.draw(graphics, 0, 0, child.slice.width, child.slice.height);
-            pose.popMatrix();
-        }
-
-        pose.popMatrix();
+    public IconRenderer<EntityImageIcon> getRenderer() {
+        return EntityImageIconRenderer.INSTANCE;
     }
 
     public record Offset(int x, int y) {
@@ -83,7 +83,7 @@ public class EntityImageIcon extends Icon {
         ).apply(instance, ChildIconData::new));
     }
 
-    private Icon createIcon(Identifier texture, @Nullable Slice slice) {
+    private Icon<?> createIcon(Identifier texture, @Nullable Slice slice) {
         try (SimpleTexture tex = new SimpleTexture(texture)) {
             TextureContents load = tex.loadContents(Minecraft.getInstance().getResourceManager());
             ImageIcon imageIcon = new ImageIcon(texture);

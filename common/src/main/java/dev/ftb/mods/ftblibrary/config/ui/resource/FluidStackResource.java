@@ -27,7 +27,7 @@ public record FluidStackResource(FluidStack resource) implements SelectableResou
     }
 
     @Override
-    public Icon getIcon() {
+    public Icon<?> getIcon() {
         return Icon.getIcon(ClientUtils.getStillTexture(resource)).withTint(Color4I.rgb(ClientUtils.getFluidColor(resource)));
     }
 

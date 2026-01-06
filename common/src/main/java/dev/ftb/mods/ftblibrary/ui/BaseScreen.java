@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
@@ -310,7 +311,7 @@ public abstract class BaseScreen extends Panel {
                 ModalPanel p = iter.next();
                 if (!iter.hasNext()) {
                     // dim the rest of the gui so the top modal panel is effectively highlighted
-                    Color4I.rgba(0xA0202020).draw(graphics, 0, 0, getWindow().getGuiScaledWidth(), getWindow().getGuiScaledHeight());
+                    IconHelper.renderIcon(Color4I.rgba(0xA0202020), graphics, 0, 0, getWindow().getGuiScaledWidth(), getWindow().getGuiScaledHeight());
                 }
                 p.draw(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
             }

@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.client.Minecraft;
@@ -47,7 +48,7 @@ public class SimpleToast implements Toast {
                     }
 
                     @Override
-                    public Icon getIcon() {
+                    public Icon<?> getIcon() {
                         return Icons.BARRIER;
                     }
                 });
@@ -95,7 +96,7 @@ public class SimpleToast implements Toast {
             playSound(mc.getSoundManager());
         }
 
-        getIcon().draw(graphics, 8, 8, 16, 16);
+        IconHelper.renderIcon(getIcon(), graphics, 8, 8, 16, 16);
     }
 
     public Component getTitle() {
@@ -110,7 +111,7 @@ public class SimpleToast implements Toast {
         return false;
     }
 
-    public Icon getIcon() {
+    public Icon<?> getIcon() {
         return Icons.INFO;
     }
 

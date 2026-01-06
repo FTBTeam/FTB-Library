@@ -26,8 +26,8 @@ public record ItemStackResource(ItemStack resource) implements SelectableResourc
     }
 
     @Override
-    public Icon getIcon() {
-        return ItemIcon.getItemIcon(resource);
+    public Icon<?> getIcon() {
+        return ItemIcon.ofItemStack(resource);
     }
 
     @Override

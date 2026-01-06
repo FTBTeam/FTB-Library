@@ -61,7 +61,7 @@ public class ChooseConfigScreen extends BaseScreen {
 
         private final Callback callback;
 
-        public TextButton(Panel panel, Component txt, Icon icon, Callback callback) {
+        public TextButton(Panel panel, Component txt, Icon<?> icon, Callback callback) {
             super(panel, txt, icon);
             this.callback = callback;
         }

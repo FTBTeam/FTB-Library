@@ -43,7 +43,7 @@ public interface ResourceSearchMode<T> {
             return allItemsCache;
         }
     };
-    ResourceSearchMode<ItemStack> INVENTORY = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.inv"), ItemIcon.getItemIcon(Items.CHEST)) {
+    ResourceSearchMode<ItemStack> INVENTORY = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.inv"), ItemIcon.ofItem(Items.CHEST)) {
         @Override
         public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
             Player player = Minecraft.getInstance().player;
@@ -62,7 +62,7 @@ public interface ResourceSearchMode<T> {
             return items;
         }
     };
-    ResourceSearchMode<FluidStack> ALL_FLUIDS = new SearchMode<>(Component.translatable("ftblibrary.select_fluid.list_mode.all"), ItemIcon.getItemIcon(Items.COMPASS)) {
+    ResourceSearchMode<FluidStack> ALL_FLUIDS = new SearchMode<>(Component.translatable("ftblibrary.select_fluid.list_mode.all"), ItemIcon.ofItem(Items.COMPASS)) {
         private List<SelectableResource<FluidStack>> allFluidsCache = null;
 
         @Override
@@ -142,9 +142,9 @@ public interface ResourceSearchMode<T> {
 
     abstract class SearchMode<T> implements ResourceSearchMode<T> {
         private final Component name;
-        private final Icon icon;
+        private final Icon<?> icon;
 
-        protected SearchMode(Component name, Icon icon) {
+        protected SearchMode(Component name, Icon<?> icon) {
             this.name = name;
             this.icon = icon;
         }
@@ -155,7 +155,7 @@ public interface ResourceSearchMode<T> {
         }
 
         @Override
-        public Icon getIcon() {
+        public Icon<?> getIcon() {
             return icon;
         }
     }
@@ -163,7 +163,7 @@ public interface ResourceSearchMode<T> {
     /**
      * The icon used to represent this mode, for example on buttons and other widgets.
      */
-    Icon getIcon();
+    Icon<?> getIcon();
 
     /**
      * The name used to describe this mode.

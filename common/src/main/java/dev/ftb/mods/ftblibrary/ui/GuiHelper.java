@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;
@@ -34,7 +35,7 @@ public class GuiHelper {
 
     public static void drawHollowRect(GuiGraphics graphics, int x, int y, int w, int h, Color4I col, boolean roundEdges) {
         if (w <= 1 || h <= 1 || col.isEmpty()) {
-            col.draw(graphics, x, y, w, h);
+            IconHelper.renderIcon(col, graphics, x, y, w, h);
             return;
         }
 
@@ -114,4 +115,5 @@ public class GuiHelper {
         graphics.hLine(x + 1, x + w, y + h, lo.rgba());
         graphics.vLine(x + w, y, y + h, lo.rgba());
     }
+
 }

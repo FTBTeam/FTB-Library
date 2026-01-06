@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.client.gui.GuiGraphics;
@@ -79,7 +80,7 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         graphics.pose().pushMatrix();
-        Color4I.BLACK.withAlpha(45).draw(graphics, x + 3, y + 3, w, h);
+        IconHelper.renderIcon(Color4I.BLACK.withAlpha(45), graphics, x + 3, y + 3, w, h);
         super.draw(graphics, theme, x, y, w, h);
         graphics.pose().popMatrix();
     }

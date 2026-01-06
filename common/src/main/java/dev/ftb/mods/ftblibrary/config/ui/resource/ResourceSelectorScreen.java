@@ -3,6 +3,8 @@ package dev.ftb.mods.ftblibrary.config.ui.resource;
 import com.google.common.base.Stopwatch;
 import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.icon.Color4IRenderer;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ResourceConfigValue;
 import dev.ftb.mods.ftblibrary.config.StringConfig;
@@ -152,7 +154,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     @Override
     public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         if (!selectedStack.isEmpty()) {
-            selectedStack.getIcon().drawStatic(graphics, getX() + 6, getY() + 17, 30, 30);
+            IconHelper.renderIcon(selectedStack.getIcon(), graphics, getX() + 6, getY() + 17, 30, 30);
 //            GuiHelper.drawRectWithShade(graphics, getX() + 5, getY() + 16, 32, 32, Color4I.DARK_GRAY, -16);
             if (countBox.shouldDraw()) {
                 theme.drawString(graphics, "x", getX() + 38, getY() + 28, Theme.SHADOW);
@@ -264,7 +266,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
         @Override
         public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            getActiveSearchMode().ifPresent(mode -> mode.getIcon().draw(graphics, x, y, w, h));
+            getActiveSearchMode().ifPresent(mode -> IconHelper.renderIcon(mode.getIcon(), graphics, x, y, w, h));
         }
 
         @Override
@@ -291,7 +293,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
     private class NBTButton extends Button {
         public NBTButton(Panel panel) {
-            super(panel, Component.translatable("ftblibrary.select_item.nbt"), ItemIcon.getItemIcon(Items.NAME_TAG));
+            super(panel, Component.translatable("ftblibrary.select_item.nbt"), ItemIcon.ofItem(Items.NAME_TAG));
         }
 
         @Override
@@ -425,7 +427,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawSlot(graphics, x, y, w, h, WidgetType.NORMAL);
             if (isMouseOver) {
-                Color4I.WHITE.withAlpha(30).draw(graphics, x + 1, y + 1, w - 2, h - 2);
+                Color4IRenderer.INSTANCE.render(Color4I.WHITE.withAlpha(30), graphics, x + 1, y + 1, w - 2, h - 2);
             }
         }
 

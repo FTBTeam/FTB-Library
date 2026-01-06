@@ -1,10 +1,14 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 
-public abstract class IconWithParent extends Icon {
-    public final Icon parent;
+public abstract class IconWithParent<T extends Icon<T>> extends Icon<T> {
+    private final Icon<?> parent;
 
-    public IconWithParent(Icon i) {
-        parent = i;
+    protected IconWithParent(Icon<?> parent) {
+        this.parent = parent;
+    }
+
+    public Icon<?> getParent() {
+        return parent;
     }
 }

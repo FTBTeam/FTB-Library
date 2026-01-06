@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
 import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -55,14 +56,14 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     private static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacingWidth, int spacingHeight, Color4I backgroundColor, Color4I gridColor) {
-        backgroundColor.draw(graphics, x, y, width * spacingWidth, height * spacingHeight);
+        IconHelper.renderIcon(backgroundColor, graphics, x, y, width * spacingWidth, height * spacingHeight);
 
         for (var i = 0; i < width + 1; i++) {
-            gridColor.draw(graphics, x + i * spacingWidth, y, 1, height * spacingHeight + 1);
+            IconHelper.renderIcon(gridColor, graphics, x + i * spacingWidth, y, 1, height * spacingHeight + 1);
         }
 
         for (var i = 0; i < height + 1; i++) {
-            gridColor.draw(graphics, x, y + i * spacingHeight, width * spacingWidth, 1);
+            IconHelper.renderIcon(gridColor, graphics, x, y + i * spacingHeight, width * spacingWidth, 1);
         }
     }
 
@@ -88,7 +89,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
                 gridY = height - gridY - 1;
             }
 
-            Color4I.WHITE.withAlpha(127).draw(graphics, x + gridX * spacing + 1, y + gridY * spacing + 1, spacing - 1, spacing - 1);
+            IconHelper.renderIcon(Color4I.WHITE.withAlpha(127), graphics, x + gridX * spacing + 1, y + gridY * spacing + 1, spacing - 1, spacing - 1);
         }
     }
 
@@ -127,10 +128,10 @@ public class SidebarGroupGuiButton extends AbstractButton {
         if (!isEditMode && SidebarButtonManager.INSTANCE.getEnabledButtonList(false).isEmpty()) {
             if (mx >= xRenderStart + 2 && my >= yRenderStart + 2 && mx < xRenderStart + 18 && my < yRenderStart + 18) {
                 graphics.setTooltipForNextFrame(font, noButtonComponents, Optional.empty(), mx, my + 5);
-                Color4I.WHITE.withAlpha(33).draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
+                IconHelper.renderIcon( Color4I.WHITE.withAlpha(33), graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
                 mouseOverSettingsIcon = true;
             }
-            Icons.SETTINGS.draw(graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
+            IconHelper.renderIcon(Icons.SETTINGS, graphics, xRenderStart + 1, yRenderStart + 1, 16, 16);
 
         } else {
             for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
@@ -150,13 +151,13 @@ public class SidebarGroupGuiButton extends AbstractButton {
                         button.x = adjustedX + 1;
                         button.y = adjustedY + 1;
                     }
-                    button.getSidebarButton().getData().icon().draw(graphics, button.x, button.y, 16, 16);
+                    IconHelper.renderIcon(button.getSidebarButton().getData().icon(), graphics, button.x, button.y, 16, 16);
 
                     if (isEditMode) {
                         if (mx >= button.x + 12 && my <= button.y + 4 && mx < button.x + 16 && my >= button.y) {
-                            Icons.CANCEL.draw(graphics, button.x + 11, button.y - 1, 6, 6);
+                            IconHelper.renderIcon(Icons.CANCEL, graphics, button.x + 11, button.y - 1, 6, 6);
                         } else {
-                            Icons.CANCEL.draw(graphics, button.x + 12, button.y, 4, 4);
+                            IconHelper.renderIcon(Icons.CANCEL, graphics, button.x + 12, button.y, 4, 4);
                         }
                     } else {
                         pose.pushMatrix();
@@ -168,7 +169,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
                     }
 
                     if (button == mouseOver) {
-                        Color4I.WHITE.withAlpha(33).draw(graphics, button.x, button.y, 16, 16);
+                        IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, button.x, button.y, 16, 16);
                     }
 
                 }
@@ -189,11 +190,11 @@ public class SidebarGroupGuiButton extends AbstractButton {
             int addIconY = gridStartBottom ? yRenderStart + ((currentGridHeight - 1) * BUTTON_SPACING) : 0;
             int addIconX = gridStartRight ? xRenderStart - (2 * BUTTON_SPACING) : (currentGirdWidth + 1) * BUTTON_SPACING;
             drawGrid(graphics, addIconX, addIconY, 1, 1, BUTTON_SPACING, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
-            Icons.ADD.draw(graphics, addIconX + 1, addIconY + 1, 16, 16);
+            IconHelper.renderIcon(Icons.ADD, graphics, addIconX + 1, addIconY + 1, 16, 16);
 
             if (mx >= addIconX && my >= addIconY && mx < addIconX + 16 && my < addIconY + 16) {
                 isMouseOverAdd = true;
-                Color4I.WHITE.withAlpha(137).draw(graphics, addIconX + 1, addIconY + 1, 16, 16);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(137), graphics, addIconX + 1, addIconY + 1, 16, 16);
             }
 
             if (addBoxOpen) {
@@ -228,11 +229,11 @@ public class SidebarGroupGuiButton extends AbstractButton {
                     button.y = buttonY;
 
                     if (mx >= button.x && my >= button.y && mx < button.x + 16 && my < button.y + 16) {
-                        Color4I.WHITE.withAlpha(137).draw(graphics, button.x + 1, button.y + 1, 16, 16);
+                        IconHelper.renderIcon(Color4I.WHITE.withAlpha(137), graphics, button.x + 1, button.y + 1, 16, 16);
                         mouseOver = button;
                     }
 
-                    button.getSidebarButton().getData().icon().draw(graphics, button.x + 1, button.y + 1, 16, 16);
+                    IconHelper.renderIcon(button.getSidebarButton().getData().icon(), graphics, button.x + 1, button.y + 1, 16, 16);
 
                     String langText = I18n.get(button.getSidebarButton().getLangKey());
                     int textXPos = gridStartRight ? addIconX - Minecraft.getInstance().font.width(langText) - 2 : gridX + BUTTON_SPACING + 3;

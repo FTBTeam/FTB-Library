@@ -19,9 +19,9 @@ public enum Tristate {
     public final String displayName;
     public final InteractionResult result;
     public final Color4I color;
-    public final Icon icon;
+    public final Icon<?> icon;
     private final int opposite;
-    Tristate(String n, String dn, InteractionResult r, Color4I c, int o, Icon i) {
+    Tristate(String n, String dn, InteractionResult r, Color4I c, int o, Icon<?> i) {
         name = n;
         displayName = dn;
         result = r;

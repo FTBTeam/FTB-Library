@@ -23,7 +23,7 @@ public class ImageResourceConfig extends ResourceConfigValue<Identifier> {
     }
 
     public static Identifier getIdentifier(Icon icon) {
-        return icon instanceof IResourceIcon i ? i.getIdentifier() : NONE;
+        return icon instanceof IResourceIcon i ? i.getResourceId() : NONE;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class ImageComponent implements ComponentContents {
             Codec.BOOL.optionalFieldOf("fit", false).forGetter(ImageComponent::isFit)
     ).apply(instance, ImageComponent::create));
 
-    private Icon image = Icon.empty();
+    private Icon<?> image = Icon.empty();
     private int width = 100;
     private int height = 100;
     private ImageAlign align = ImageAlign.CENTER;
@@ -42,7 +42,7 @@ public class ImageComponent implements ComponentContents {
         return image.toString();
     }
 
-    public Icon getImage() {
+    public Icon<?> getImage() {
         return image;
     }
 

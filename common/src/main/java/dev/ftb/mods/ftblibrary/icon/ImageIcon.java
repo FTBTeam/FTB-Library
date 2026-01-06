@@ -2,33 +2,43 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.common.base.Objects;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
+import dev.ftb.mods.ftblibrary.client.icon.ImageIconRenderer;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
 
-public class ImageIcon extends Icon implements IResourceIcon {
+import java.net.URI;
+
+public class ImageIcon extends Icon<ImageIcon> implements IResourceIcon {
     public static final Identifier MISSING_IMAGE = FTBLibrary.rl("textures/gui/missing_image.png");
 
     public final Identifier texture;
     public float minU, minV, maxU, maxV;
     public double tileSize;
     public Color4I color;
+    @Nullable public final URI uri;
+    @Nullable private final String url;
 
-    public ImageIcon(Identifier tex) {
-        texture = tex;
-        minU = 0;
-        minV = 0;
-        maxU = 1;
-        maxV = 1;
-        tileSize = 0;
+    public ImageIcon(Identifier texture) {
+        this(texture, null);
+    }
+
+    public ImageIcon(Identifier texture, @Nullable URI uri) {
+        this.texture = texture;
+        minU = 0f;
+        minV = 0f;
+        maxU = 1f;
+        maxV = 1f;
+        tileSize = 0.0;
         color = Color4I.WHITE;
+
+        this.uri = uri;
+        url = uri == null ? null : uri.toString();
     }
 
     @Override
     public ImageIcon copy() {
-        var icon = new ImageIcon(texture);
+        var icon = new ImageIcon(texture, uri);
         icon.minU = minU;
         icon.minV = minV;
         icon.maxU = maxU;
@@ -48,8 +58,8 @@ public class ImageIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        graphics.blit(texture, x, y, x + w, y + h, minU, maxU, minV, maxV);
+    public IconRenderer<ImageIcon> getRenderer() {
+        return ImageIconRenderer.INSTANCE;
     }
 
     @Override
@@ -69,7 +79,7 @@ public class ImageIcon extends Icon implements IResourceIcon {
 
     @Override
     public String toString() {
-        return texture.toString();
+        return url == null ? texture.toString() : url;
     }
 
     @Override
@@ -95,29 +105,7 @@ public class ImageIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    public boolean hasPixelBuffer() {
-        return true;
-    }
-
-    @Override
-    @Nullable
-    public PixelBuffer createPixelBuffer() {
-        try {
-            return PixelBuffer.from(Minecraft.getInstance().getResourceManager().getResource(texture).orElseThrow().open());
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public double aspectRatio() {
-        if (maxV == minV) return 1.0;
-
-        return (maxU - minU) / (maxV - minV);
-    }
-
-    @Override
-    public Identifier getIdentifier() {
+    public Identifier getResourceId() {
         return texture;
     }
 }

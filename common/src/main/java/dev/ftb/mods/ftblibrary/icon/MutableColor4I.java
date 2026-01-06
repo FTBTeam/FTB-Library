@@ -3,9 +3,7 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.util.Mth;
-import org.jspecify.annotations.Nullable;
 
 
 public class MutableColor4I extends Color4I {
@@ -162,12 +160,6 @@ public class MutableColor4I extends Color4I {
         @Override
         public boolean isEmpty() {
             return !hasColor;
-        }
-
-        @Override
-        @Nullable
-        public PixelBuffer createPixelBuffer() {
-            return null;
         }
 
         public int hashCode() {

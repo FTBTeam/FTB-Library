@@ -27,7 +27,7 @@ public class BooleanConfig extends ConfigWithVariants<Boolean> {
     }
 
     @Override
-    public Icon getIcon(@Nullable Boolean v) {
+    public Icon<?> getIcon(@Nullable Boolean v) {
         return v == null || !v ? Icons.ACCEPT_GRAY : Icons.ACCEPT;
     }
 }

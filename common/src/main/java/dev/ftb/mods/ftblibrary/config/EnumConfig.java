@@ -76,7 +76,7 @@ public class EnumConfig<E> extends ConfigWithVariants<E> {
     }
 
     @Override
-    public Icon getIcon(@Nullable E v) {
+    public Icon<?> getIcon(@Nullable E v) {
         if (v != null) {
             var icon = nameMap.getIcon(v);
 

@@ -12,7 +12,7 @@ public class ToggleableButton extends SimpleButton {
 
     private boolean state;
 
-    public ToggleableButton(Panel panel, boolean defaultState, Icon enabled, Icon disabled, ToggleableCallback toggleableCallback) {
+    public ToggleableButton(Panel panel, boolean defaultState, Icon<?> enabled, Icon<?> disabled, ToggleableCallback toggleableCallback) {
         super(panel, Component.empty(), defaultState ? enabled : disabled, null);
         this.state = defaultState;
         this.setConsumer((widget, button) -> {

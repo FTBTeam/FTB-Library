@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.PartIcon;
@@ -16,9 +17,9 @@ public class NordTheme extends Theme {
     private static final Identifier BUTTON_TEX_MOUSE_OVER = rl("textures/gui/nord_button_hovered.png");
     private static final Identifier BUTTON_TEX_DISABLED = rl("textures/gui/nord_button_disabled.png");
 
-    private static final Icon BUTTON = PartIcon.wholeTexture(BUTTON_TEX.toString(), 200, 20, 4);
-    private static final Icon BUTTON_MOUSE_OVER = PartIcon.wholeTexture(BUTTON_TEX_MOUSE_OVER.toString(), 200, 20, 4);
-    private static final Icon BUTTON_DISABLED = PartIcon.wholeTexture(BUTTON_TEX_DISABLED.toString(), 200, 20, 4);
+    private static final Icon<?> BUTTON = PartIcon.wholeTexture(BUTTON_TEX.toString(), 200, 20, 4);
+    private static final Icon<?> BUTTON_MOUSE_OVER = PartIcon.wholeTexture(BUTTON_TEX_MOUSE_OVER.toString(), 200, 20, 4);
+    private static final Icon<?> BUTTON_DISABLED = PartIcon.wholeTexture(BUTTON_TEX_DISABLED.toString(), 200, 20, 4);
 
     @Override
     public Color4I getContentColor(WidgetType type) {
@@ -43,14 +44,14 @@ public class NordTheme extends Theme {
 
     @Override
     public void drawContextMenuBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-        NordColors.POLAR_NIGHT_1.draw(graphics, x, y, w, h);
+        IconHelper.renderIcon(NordColors.POLAR_NIGHT_1, graphics, x, y, w, h);
         GuiHelper.drawHollowRect(graphics, x - 1, y - 1, w + 2, h + 2, Color4I.rgb(0x101010), false);
     }
 
     @Override
     public void drawButton(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-        (type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON)
-                .draw(graphics, x, y, w, h);
+        Icon<?> icon = type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON;
+        IconHelper.renderIcon(icon, graphics, x, y, w, h);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class NordTheme extends Theme {
 
     @Override
     public void drawPanelBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-        NordColors.POLAR_NIGHT_2.draw(graphics, x, y, w, h);
+        IconHelper.renderIcon(NordColors.POLAR_NIGHT_2, graphics, x, y, w, h);
 //        GuiHelper.drawBorderedPanel(graphics, x, y, w, h, NordColors.POLAR_NIGHT_2, true);
     }
 }

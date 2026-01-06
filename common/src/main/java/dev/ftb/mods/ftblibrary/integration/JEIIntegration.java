@@ -28,6 +28,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,8 +39,8 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     public static IJeiRuntime runtime = null;
     private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
         @Override
-        public Icon getIcon() {
-            return ItemIcon.getItemIcon(Items.APPLE);
+        public Icon<?> getIcon() {
+            return ItemIcon.ofItem(Items.APPLE);
         }
 
         @Override

@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 
 public class FTBLibraryClient {
+    @Nullable
     public static CursorType lastCursorType = null;
 
     public static void onModConstruct() {

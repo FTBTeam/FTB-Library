@@ -19,7 +19,7 @@ package dev.ftb.mods.ftblibrary.integration;
 //    private static final ResourceSearchMode<ItemStack> EMI_ITEMS = new ResourceSearchMode<>() {
 //
 //        @Override
-//        public Icon getIcon() {
+//        public Icon<?> getIcon() {
 //            // https://github.com/emilyploszaj/emi/blob/1.20.4/xplat/src/main/resources/assets/emi/textures/gui/widgets.png (the grid towards the bottom)
 //            return Icon.getIcon(Identifier.fromNamespaceAndPath("emi", "textures/gui/widgets.png"))
 //                    .withUV(17, 147, 14, 14, 256, 256);

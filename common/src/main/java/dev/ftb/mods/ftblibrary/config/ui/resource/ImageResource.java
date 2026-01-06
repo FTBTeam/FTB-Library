@@ -8,7 +8,7 @@ import net.minecraft.resources.Identifier;
 public class ImageResource implements SelectableResource<Identifier> {
     private final Identifier location;
     private final Component name;
-    private final Icon icon;
+    private final Icon<?> icon;
 
     public ImageResource(Identifier location) {
         this.location = location;
@@ -39,7 +39,7 @@ public class ImageResource implements SelectableResource<Identifier> {
     }
 
     @Override
-    public Icon getIcon() {
+    public Icon<?> getIcon() {
         return icon;
     }
 

@@ -26,7 +26,7 @@
 //
 //    private static final ResourceSearchMode<ItemStack> REI_ITEMS = new ResourceSearchMode<>() {
 //        @Override
-//        public Icon getIcon() {
+//        public Icon<?> getIcon() {
 //            return ItemIcon.getItemIcon(Items.GLOW_BERRIES);
 //        }
 //

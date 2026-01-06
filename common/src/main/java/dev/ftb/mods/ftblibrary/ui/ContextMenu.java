@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.client.gui.GuiGraphics;
@@ -98,12 +99,12 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         graphics.pose().pushMatrix();
-        Color4I.BLACK.withAlpha(45).draw(graphics, x + 3, y + 3, w, h);
+        IconHelper.renderIcon(Color4I.BLACK.withAlpha(45), graphics, x + 3, y + 3, w, h);
         super.draw(graphics, theme, x, y, w, h);
         if (drawVerticalSeparators) {
             for (int i = 1; i < nColumns; i++) {
                 // vertical separator line between columns (only in multi-column layouts)
-                Color4I.WHITE.withAlpha(130).draw(graphics, x + columnWidth * i, y + MARGIN, 1, height - MARGIN * 2);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(130), graphics, x + columnWidth * i, y + MARGIN, 1, height - MARGIN * 2);
             }
         }
         graphics.pose().popMatrix();
@@ -122,8 +123,8 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
 
         @Override
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            theme.getContentColor(WidgetType.NORMAL).withAlpha(100).draw(graphics, x + 2, y + 2, parent.width - 10, 1);
-            theme.getContentColor(WidgetType.DISABLED).withAlpha(100).draw(graphics, x + 3, y + 3, parent.width - 10, 1);
+            IconHelper.renderIcon(theme.getContentColor(WidgetType.NORMAL).withAlpha(100), graphics, x + 2, y + 2, parent.width - 10, 1);
+            IconHelper.renderIcon(theme.getContentColor(WidgetType.DISABLED).withAlpha(100), graphics, x + 3, y + 3, parent.width - 10, 1);
         }
 
         @Override

@@ -52,7 +52,7 @@ public interface SelectableResource<T> {
     /**
      * {@return the displayable icon for this resource}
      */
-    Icon getIcon();
+    Icon<?> getIcon();
 
     /**
      * Deep-copy this resource, with an associated count.

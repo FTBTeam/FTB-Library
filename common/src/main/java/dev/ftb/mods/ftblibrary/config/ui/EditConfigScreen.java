@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -244,7 +245,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             theme.drawWidget(graphics, x, y, w, h, getWidgetType());
             theme.drawString(graphics, getTitle(), x + 3, y + 3);
             if (isMouseOver()) {
-                Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, x, y, w, h);
             }
         }
 
@@ -280,8 +281,8 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
         @Override
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            Icons.COLOR_BLANK.withColor(Color4I.GRAY).draw(graphics, x, y + 1, 10, 10);
-            Icons.INFO.draw(graphics, x + 1, y + 2, 8, 8);
+            IconHelper.renderIcon(Icons.COLOR_BLANK.withColor(Color4I.GRAY), graphics, x, y + 1, 10, 10);
+            IconHelper.renderIcon(Icons.INFO, graphics, x + 1, y + 2, 8, 8);
 
             theme.drawString(graphics, keyText, x + 13, y + 2, Bits.setFlag(0, Theme.SHADOW, isMouseOver()));
 
@@ -297,10 +298,10 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
             if (isMouseOver()) {
                 textCol.addBrightness(60);
-                Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, x, y, w, h);
             }
 
-            Color4I.GRAY.withAlpha(33).draw(graphics, x + widestKey + 18, y, 1, height);
+            IconHelper.renderIcon(Color4I.GRAY.withAlpha(33), graphics, x + widestKey + 18, y, 1, height);
 
             theme.drawString(graphics, valueText, x + widestKey + 23, y + 2, textCol, 0);
         }

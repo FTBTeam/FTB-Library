@@ -1,11 +1,9 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.util.UndashedUuid;
-import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import net.minecraft.client.Minecraft;
+import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import net.minecraft.resources.Identifier;
 
-import javax.imageio.ImageIO;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -15,10 +13,11 @@ public class URLImageIcon extends ImageIcon {
     public final URI uri;
     private final String url;
 
-    public URLImageIcon(Identifier tex, URI _uri) {
-        super(tex);
-        uri = _uri;
-        url = uri.toString();
+    public URLImageIcon(Identifier textureID, URI uri) {
+        super(textureID);
+
+        this.uri = uri;
+        url = this.uri.toString();
     }
 
     public URLImageIcon(URI uri) {
@@ -38,14 +37,5 @@ public class URLImageIcon extends ImageIcon {
 
     public String toString() {
         return url;
-    }
-
-    @Override
-    public PixelBuffer createPixelBuffer() {
-        try (var stream = uri.toURL().openConnection(Minecraft.getInstance().getProxy()).getInputStream()) {
-            return PixelBuffer.from(ImageIO.read(stream));
-        } catch (Exception ex) {
-            return null;
-        }
     }
 }

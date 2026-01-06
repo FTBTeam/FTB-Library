@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.nbtedit;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditStringConfigOverlay;
 import dev.ftb.mods.ftblibrary.icon.*;
@@ -39,25 +40,25 @@ import java.util.regex.Pattern;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NBTPanel> {
-    public static final Icon NBT_BYTE = getIcon("byte");
-    public static final Icon NBT_SHORT = getIcon("short");
-    public static final Icon NBT_INT = getIcon("int");
-    public static final Icon NBT_LONG = getIcon("long");
-    public static final Icon NBT_FLOAT = getIcon("float");
-    public static final Icon NBT_DOUBLE = getIcon("double");
-    public static final Icon NBT_STRING = getIcon("string");
-    public static final Icon NBT_LIST = getIcon("list");
-    public static final Icon NBT_LIST_CLOSED = getIcon("list").combineWith(getIcon("map_closed").withColor(Color4I.rgba(0xC0FFFFFF)));
-    public static final Icon NBT_LIST_OPEN = getIcon("list");
-    public static final Icon NBT_MAP = getIcon("map");
-    public static final Icon NBT_MAP_CLOSED = getIcon("map").combineWith(getIcon("map_closed").withColor(Color4I.rgba(0xC0FFFFFF)));
-    public static final Icon NBT_MAP_OPEN = getIcon("map");
-    public static final Icon NBT_BYTE_ARRAY = getIcon("byte_array");
-    public static final Icon NBT_BYTE_ARRAY_CLOSED = getIcon("byte_array_closed");
-    public static final Icon NBT_BYTE_ARRAY_OPEN = getIcon("byte_array_open");
-    public static final Icon NBT_INT_ARRAY = getIcon("int_array");
-    public static final Icon NBT_INT_ARRAY_CLOSED = getIcon("int_array_closed");
-    public static final Icon NBT_INT_ARRAY_OPEN = getIcon("int_array_open");
+    public static final Icon<?> NBT_BYTE = getIcon("byte");
+    public static final Icon<?> NBT_SHORT = getIcon("short");
+    public static final Icon<?> NBT_INT = getIcon("int");
+    public static final Icon<?> NBT_LONG = getIcon("long");
+    public static final Icon<?> NBT_FLOAT = getIcon("float");
+    public static final Icon<?> NBT_DOUBLE = getIcon("double");
+    public static final Icon<?> NBT_STRING = getIcon("string");
+    public static final Icon<?> NBT_LIST = getIcon("list");
+    public static final Icon<?> NBT_LIST_CLOSED = getIcon("list").combineWith(getIcon("map_closed").withColor(Color4I.rgba(0xC0FFFFFF)));
+    public static final Icon<?> NBT_LIST_OPEN = getIcon("list");
+    public static final Icon<?> NBT_MAP = getIcon("map");
+    public static final Icon<?> NBT_MAP_CLOSED = getIcon("map").combineWith(getIcon("map_closed").withColor(Color4I.rgba(0xC0FFFFFF)));
+    public static final Icon<?> NBT_MAP_OPEN = getIcon("map");
+    public static final Icon<?> NBT_BYTE_ARRAY = getIcon("byte_array");
+    public static final Icon<?> NBT_BYTE_ARRAY_CLOSED = getIcon("byte_array_closed");
+    public static final Icon<?> NBT_BYTE_ARRAY_OPEN = getIcon("byte_array_open");
+    public static final Icon<?> NBT_INT_ARRAY = getIcon("int_array");
+    public static final Icon<?> NBT_INT_ARRAY_CLOSED = getIcon("int_array_closed");
+    public static final Icon<?> NBT_INT_ARRAY_OPEN = getIcon("int_array_open");
     private static final int TOP_PANEL_H = 20;
     public final Panel panelTopLeft, panelTopRight;
     private final CompoundTag info;
@@ -94,7 +95,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }).openGui();
     }
 
-    private static Icon getIcon(String name) {
+    private static Icon<?> getIcon(String name) {
         return Icon.getIcon(FTBLibrary.MOD_ID + ":textures/icons/nbt/" + name + ".png");
     }
 
@@ -198,7 +199,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         };
     }
 
-    public SimpleButton newTag(Panel panel, String title, Icon icon, Supplier<Tag> supplier) {
+    public SimpleButton newTag(Panel panel, String title, Icon<?> icon, Supplier<Tag> supplier) {
         return new SimpleButton(panel, Component.literal(title), icon, (btn, mb) -> {
             if (selected instanceof ButtonNBTMap) {
                 var value = new StringConfig(Pattern.compile("^.+$"));
@@ -219,8 +220,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             }
         }) {
             @Override
-            public void drawBackground(GuiGraphics stack, Theme theme, int x, int y, int w, int h) {
-                IconWithBorder.BUTTON_ROUND_GRAY.draw(stack, x, y, w, h);
+            public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+                IconHelper.renderIcon(BorderedIcon.BUTTON_ROUND_GRAY, graphics, x, y, w, h);
             }
         };
     }
@@ -263,14 +264,14 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void draw(GuiGraphics pose, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             if (isSelected()) {
-                Color4I.WHITE.withAlpha(64).draw(pose, x, y, w, h);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(64), graphics, x, y, w, h);
             }
 
-            IconWithBorder.BUTTON_ROUND_GRAY.draw(pose, x + 1, y + 1, 8, 8);
-            drawIcon(pose, theme, x + 1, y + 1, 8, 8);
-            theme.drawString(pose, getTitle(), x + 11, y + 1);
+            IconHelper.renderIcon(BorderedIcon.BUTTON_ROUND_GRAY, graphics, x + 1, y + 1, 8, 8);
+            drawIcon(graphics, theme, x + 1, y + 1, 8, 8);
+            theme.drawString(graphics, getTitle(), x + 11, y + 1);
         }
 
         public boolean isSelected() {
@@ -388,10 +389,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
     public abstract class ButtonNBTCollection extends ButtonNBT {
         public final Map<String, ButtonNBT> children;
-        public final Icon iconOpen, iconClosed;
+        public final Icon<?> iconOpen, iconClosed;
         public boolean collapsed;
 
-        public ButtonNBTCollection(Panel panel, @Nullable ButtonNBTCollection parent, String key, Icon open, Icon closed) {
+        public ButtonNBTCollection(Panel panel, @Nullable ButtonNBTCollection parent, String key, Icon<?> open, Icon<?> closed) {
             super(panel, parent, key);
             iconOpen = open;
             iconClosed = closed;
@@ -455,7 +456,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
     public class ButtonNBTMap extends ButtonNBTCollection {
         private final CompoundTag map;
-        private Icon hoverIcon = Icon.empty();
+        private Icon<?> hoverIcon = Icon.empty();
 
         public ButtonNBTMap(Panel panel, @Nullable ButtonNBTCollection parent, String key, CompoundTag map) {
             super(panel, parent, key, NBT_MAP_OPEN, NBT_MAP_CLOSED);
@@ -489,7 +490,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             if (map.contains("id") && map.contains("Count")) {
                 ItemStack.CODEC.parse(ClientUtils.registryAccess().createSerializationContext(NbtOps.INSTANCE), map)
-                        .ifSuccess(stack -> hoverIcon = ItemIcon.getItemIcon(stack));
+                        .ifSuccess(stack -> hoverIcon = ItemIcon.ofItemStack(stack));
             }
 
             setWidth(12 + getTheme().getStringWidth(getTitle()) + (hoverIcon.isEmpty() ? 0 : 10));
@@ -512,11 +513,11 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void draw(GuiGraphics pose, Theme theme, int x, int y, int w, int h) {
-            super.draw(pose, theme, x, y, w, h);
+        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+            super.draw(graphics, theme, x, y, w, h);
 
             if (!hoverIcon.isEmpty()) {
-                hoverIcon.draw(pose, x + 12 + theme.getStringWidth(getTitle()), y + 1, 8, 8);
+                IconHelper.renderIcon(hoverIcon, graphics, x + 12 + theme.getStringWidth(getTitle()), y + 1, 8, 8);
             }
         }
 
@@ -758,7 +759,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             var canRename = selected.parent instanceof ButtonNBTMap;
 
-            Icon renameIcon = Icons.NOTES;
+            Icon<?> renameIcon = Icons.NOTES;
             add(new SimpleButton(this, Component.translatable("ftblibrary.gui.edit_tag_name"), canRename ? renameIcon : renameIcon.combineWith(Color4I.rgba(0xc0202020)), (btn, mb) -> {
                 if (canRename) {
                     getGui().pushModalPanel(makeRenameOverlay(btn));
@@ -867,7 +868,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
         @Override
         public void addWidgets() {
-            add(new SimpleButton(this, List.of(Component.translatable("gui.copy"), hotkeyTooltip("Ctrl + C")), ItemIcon.getItemIcon(Items.PAPER), (widget, button) -> copyToClipboard()));
+            add(new SimpleButton(this, List.of(Component.translatable("gui.copy"), hotkeyTooltip("Ctrl + C")), ItemIcon.ofItem(Items.PAPER), (widget, button) -> copyToClipboard()));
 
             add(new SimpleButton(this, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.COLLAPSE,
                     (widget, button) -> collapseAll(true)));

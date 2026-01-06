@@ -15,7 +15,7 @@ public class EntityFaceResource implements SelectableResource<EntityType<?>>, Co
     private final EntityType<?> type;
     private final Identifier location;
     private final Component name;
-    private final Icon icon;
+    private final Icon<?> icon;
 
     public EntityFaceResource(EntityType<?> type) {
         this.type = type;
@@ -56,7 +56,7 @@ public class EntityFaceResource implements SelectableResource<EntityType<?>>, Co
     }
 
     @Override
-    public Icon getIcon() {
+    public Icon<?> getIcon() {
         return icon;
     }
 
@@ -66,7 +66,7 @@ public class EntityFaceResource implements SelectableResource<EntityType<?>>, Co
     }
 
     @Override
-    public int compareTo(@NonNull EntityFaceResource o) {
+    public int compareTo(EntityFaceResource o) {
         return location.compareTo(o.location);
     }
 }

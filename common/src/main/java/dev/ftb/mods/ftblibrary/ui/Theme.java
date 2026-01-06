@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static dev.ftb.mods.ftblibrary.client.icon.IconHelper.renderIcon;
+
 
 public class Theme {
     public static final Theme DEFAULT = new Theme();
@@ -36,33 +38,33 @@ public class Theme {
     private static final Color4I CONTENT_COLOR_DARK = Color4I.rgb(0x404040);
     private static final ImageIcon TEXTURE_BEACON = (ImageIcon) Icon.getIcon("textures/gui/container/beacon.png");
     private static final ImageIcon TEXTURE_RECIPE_BOOK = (ImageIcon) Icon.getIcon("textures/gui/recipe_book.png");
-    private static final Icon GUI = new PartIcon("ftblibrary:textures/gui/background.png",
+    private static final Icon<?> GUI = new PartIcon("ftblibrary:textures/gui/background.png",
             0, 0, 16, 16, 4, 16, 16);
-    private static final Icon GUI_MOUSE_OVER = GUI.withTint(Color4I.rgb(0xAFB6DA));
-    private static final Icon BUTTON = PartIcon.wholeTexture("textures/gui/sprites/widget/button.png",
+    private static final Icon<?> GUI_MOUSE_OVER = GUI.withTint(Color4I.rgb(0xAFB6DA));
+    private static final Icon<?> BUTTON = PartIcon.wholeTexture("textures/gui/sprites/widget/button.png",
             200, 20, 4);
-    private static final Icon BUTTON_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/widget/button_highlighted.png",
+    private static final Icon<?> BUTTON_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/widget/button_highlighted.png",
             200, 20, 4);
-    private static final Icon BUTTON_DISABLED = PartIcon.wholeTexture("textures/gui/sprites/widget/button_disabled.png",
+    private static final Icon<?> BUTTON_DISABLED = PartIcon.wholeTexture("textures/gui/sprites/widget/button_disabled.png",
             200, 20, 4);
-    private static final Icon WIDGET = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button.png",
+    private static final Icon<?> WIDGET = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button.png",
             22, 22, 4);
-    private static final Icon WIDGET_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button_highlighted.png",
+    private static final Icon<?> WIDGET_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button_highlighted.png",
             22, 22, 4);
-    private static final Icon WIDGET_DISABLED = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button_disabled.png",
+    private static final Icon<?> WIDGET_DISABLED = PartIcon.wholeTexture("textures/gui/sprites/container/beacon/button_disabled.png",
             22, 22, 4);
-    private static final Icon SCROLLER = PartIcon.wholeTexture("textures/gui/sprites/widget/slider_handle.png",
+    private static final Icon<?> SCROLLER = PartIcon.wholeTexture("textures/gui/sprites/widget/slider_handle.png",
             8, 20, 2);
-    private static final Icon SCROLLER_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/widget/slider_handle_highlighted.png",
+    private static final Icon<?> SCROLLER_MOUSE_OVER = PartIcon.wholeTexture("textures/gui/sprites/widget/slider_handle_highlighted.png",
             8, 20, 2);
-    private static final Icon SLOT = new PartIcon(TEXTURE_BEACON, 35, 136, 18, 18, 3);
-    private static final Icon SLOT_MOUSE_OVER = SLOT.combineWith(Color4I.WHITE.withAlpha(33));
-    private static final Icon SCROLL_BAR_BG = SLOT;
-    private static final Icon SCROLL_BAR_BG_DISABLED = SCROLL_BAR_BG.withTint(Color4I.BLACK.withAlpha(100));
-    private static final Icon TEXT_BOX = PartIcon.wholeTexture("textures/gui/sprites/container/enchanting_table/enchantment_slot_disabled.png",
+    private static final Icon<?> SLOT = new PartIcon(TEXTURE_BEACON, 35, 136, 18, 18, 3);
+    private static final Icon<?> SLOT_MOUSE_OVER = SLOT.combineWith(Color4I.WHITE.withAlpha(33));
+    private static final Icon<?> SCROLL_BAR_BG = SLOT;
+    private static final Icon<?> SCROLL_BAR_BG_DISABLED = SCROLL_BAR_BG.withTint(Color4I.BLACK.withAlpha(100));
+    private static final Icon<?> TEXT_BOX = PartIcon.wholeTexture("textures/gui/sprites/container/enchanting_table/enchantment_slot_disabled.png",
             108, 19, 4);
-    private static final Icon TAB_H_UNSELECTED = TEXTURE_RECIPE_BOOK.withUV(150, 2, 35, 26, 256, 256);
-    private static final Icon TAB_H_SELECTED = TEXTURE_RECIPE_BOOK.withUV(188, 2, 35, 26, 256, 256);
+    private static final Icon<?> TAB_H_UNSELECTED = TEXTURE_RECIPE_BOOK.withUV(150, 2, 35, 26, 256, 256);
+    private static final Icon<?> TAB_H_SELECTED = TEXTURE_RECIPE_BOOK.withUV(188, 2, 35, 26, 256, 256);
     public static boolean renderDebugBoxes = false;
     private final BooleanStack fontUnicode = new BooleanArrayList();
 
@@ -75,35 +77,41 @@ public class Theme {
     }
 
     public void drawGui(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-        (type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI).draw(graphics, x - 3, y - 3, w + 6, h + 6);
+        Icon<?> icon = type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI;
+        renderIcon(icon, graphics, x - 3, y - 3, w + 6, h + 6);
     }
 
     public void drawWidget(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-        (type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : type == WidgetType.DISABLED ? WIDGET_DISABLED : WIDGET).draw(graphics, x, y, w, h);
+        Icon<?> icon = type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : type == WidgetType.DISABLED ? WIDGET_DISABLED : WIDGET;
+        renderIcon(icon, graphics, x, y, w, h);
     }
 
     public void drawSlot(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-        (type == WidgetType.MOUSE_OVER ? SLOT_MOUSE_OVER : SLOT).draw(graphics, x, y, w, h);
+        Icon<?> icon = type == WidgetType.MOUSE_OVER ? SLOT_MOUSE_OVER : SLOT;
+        renderIcon(icon, graphics, x, y, w, h);
     }
 
     public void drawContainerSlot(GuiGraphics graphics, int x, int y, int w, int h) {
-        SLOT.draw(graphics, x - 1, y - 1, w + 2, h + 2);
+        renderIcon(SLOT, graphics, x - 1, y - 1, w + 2, h + 2);
     }
 
     public void drawButton(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-        (type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON).draw(graphics, x, y, w, h);
+        Icon<?> icon = type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON;
+        renderIcon(icon, graphics, x, y, w, h);
     }
 
     public void drawScrollBarBackground(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
-        (type == WidgetType.DISABLED ? SCROLL_BAR_BG_DISABLED : SCROLL_BAR_BG).draw(graphics, x, y, w, h);
+        Icon<?> icon = type == WidgetType.DISABLED ? SCROLL_BAR_BG_DISABLED : SCROLL_BAR_BG;
+        renderIcon(icon, graphics, x, y, w, h);
     }
 
     public void drawScrollBar(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean vertical) {
-        (type == WidgetType.MOUSE_OVER ? SCROLLER_MOUSE_OVER : SCROLLER).draw(graphics, x + 1, y + 1, w - 2, h - 2);
+        Icon<?> icon = type == WidgetType.MOUSE_OVER ? SCROLLER_MOUSE_OVER : SCROLLER;
+        renderIcon(icon, graphics, x + 1, y + 1, w - 2, h - 2);
     }
 
     public void drawTextBox(GuiGraphics graphics, int x, int y, int w, int h) {
-        TEXT_BOX.draw(graphics, x, y, w, h);
+        renderIcon(TEXT_BOX, graphics, x, y, w, h);
     }
 
     public void drawCheckboxBackground(GuiGraphics graphics, int x, int y, int w, int h, boolean radioButton) {
@@ -117,16 +125,17 @@ public class Theme {
     }
 
     public void drawPanelBackground(GuiGraphics graphics, int x, int y, int w, int h) {
-        Color4I.rgb(0x8B8B8B).draw(graphics, x, y, w, h);
+        renderIcon(Color4I.rgb(0x8B8B8B), graphics, x, y, w, h);
     }
 
     public void drawHorizontalTab(GuiGraphics graphics, int x, int y, int w, int h, boolean selected) {
-        (selected ? TAB_H_SELECTED : TAB_H_UNSELECTED).draw(graphics, x, y, w, h);
+        Icon<?> icon = selected ? TAB_H_SELECTED : TAB_H_UNSELECTED;
+        renderIcon(icon, graphics, x, y, w, h);
     }
 
     public void drawContextMenuBackground(GuiGraphics graphics, int x, int y, int w, int h) {
         drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
-        Color4I.BLACK.withAlpha(90).draw(graphics, x, y, w, h);
+        renderIcon(Color4I.BLACK.withAlpha(90), graphics, x, y, w, h);
     }
 
     public Font getFont() {
@@ -210,47 +219,4 @@ public class Theme {
     public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y) {
         return drawString(graphics, text, x, y, getContentColor(WidgetType.NORMAL), 0);
     }
-
-	/*
-	public List<GuiBase.PositionedTextData> createDataFrom(ITextComponent component, int width)
-	{
-		if (width <= 0 || component.getString().isEmpty())
-		{
-			return Collections.emptyList();
-		}
-
-		List<GuiBase.PositionedTextData> list = new ArrayList<>();
-
-		int line = 0;
-		int currentWidth = 0;
-
-		for (IFormattableTextComponent t : component.deepCopy())
-		{
-			String text = t.getUnformattedComponentText();
-			int textWidth = getStringWidth(text);
-
-			while (textWidth > 0)
-			{
-				int w = textWidth;
-				if (w > width - currentWidth)
-				{
-					w = width - currentWidth;
-				}
-
-				list.add(new GuiBase.PositionedTextData(currentWidth, line * 10, w, 10, t.getStyle()));
-
-				currentWidth += w;
-				textWidth -= w;
-
-				if (currentWidth >= width)
-				{
-					currentWidth = 0;
-					line++;
-				}
-			}
-		}
-
-		return list;
-	}
-	 */
 }

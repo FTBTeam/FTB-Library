@@ -23,7 +23,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
     private Consumer<T> setter;
     private int order = 0;
     private String nameKey = "";
-    private Icon icon = Icons.SETTINGS;
+    private Icon<?> icon = Icons.SETTINGS;
     private boolean canEdit = true;
 
     protected static Component info(String key) {
@@ -161,7 +161,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
         return this;
     }
 
-    public Icon getIcon() {
+    public Icon<?> getIcon() {
         return getIcon(getValue());
     }
 
@@ -170,7 +170,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
         return this;
     }
 
-    public Icon getIcon(@Nullable T v) {
+    public Icon<?> getIcon(@Nullable T v) {
         return icon;
     }
 

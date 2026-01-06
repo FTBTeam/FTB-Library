@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.google.common.primitives.Ints;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.config.ColorConfig;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public class ColorSelectorPanel extends ModalPanel {
-    private static final Icon WHEEL = Icon.getIcon(FTBLibrary.rl("textures/gui/rgbcolorwheel.png"));
+    private static final Icon<?> WHEEL = Icon.getIcon(FTBLibrary.rl("textures/gui/rgbcolorwheel.png"));
     private static final MutableComponent ARGB = Component.literal("ARGB");
     private static final MutableComponent RGB = Component.literal("RGB");
     private static final Map<String, List<Integer>> PRESETS = Util.make(new LinkedHashMap<>(), ColorSelectorPanel::setupPalettes);
@@ -159,7 +160,7 @@ public class ColorSelectorPanel extends ModalPanel {
     public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawContextMenuBackground(graphics, x - 1, y - 1, w + 2, h + 2);
 
-        Color4I.GRAY.withAlpha(40).draw(graphics, x + 130, y + 43, 50, 50);
+        IconHelper.renderIcon(Color4I.GRAY.withAlpha(40), graphics, x + 130, y + 43, 50, 50);
     }
 
     @Override
@@ -224,8 +225,8 @@ public class ColorSelectorPanel extends ModalPanel {
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             super.draw(graphics, theme, x, y, w, h);
             int yVal = (int) (y + h * (1f - hsb[2]));
-            Color4I.BLACK.draw(graphics, x - 2, yVal, width + 4, 3);
-            Color4I.GRAY.draw(graphics, x - 1, yVal + 1, width + 2, 1);
+            IconHelper.renderIcon(Color4I.BLACK, graphics, x - 2, yVal, width + 4, 3);
+            IconHelper.renderIcon(Color4I.GRAY, graphics, x - 1, yVal + 1, width + 2, 1);
         }
 
         @Override
@@ -266,7 +267,7 @@ public class ColorSelectorPanel extends ModalPanel {
 
         @Override
         public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            WHEEL.draw(graphics, x, y, w, h);
+            IconHelper.renderIcon(WHEEL, graphics, x, y, w, h);
         }
 
         @Override
@@ -282,10 +283,10 @@ public class ColorSelectorPanel extends ModalPanel {
 
             graphics.pose().pushMatrix();
             graphics.pose().translate(x, y);
-            Color4I.BLACK.draw(graphics, dx - 1, dy - 5, 3, 11);
-            Color4I.BLACK.draw(graphics, dx - 5, dy - 1, 11, 3);
-            Color4I.GRAY.draw(graphics, dx, dy - 4, 1, 9);
-            Color4I.GRAY.draw(graphics, dx - 4, dy, 9, 1);
+            IconHelper.renderIcon(Color4I.BLACK, graphics, dx - 1, dy - 5, 3, 11);
+            IconHelper.renderIcon(Color4I.BLACK, graphics, dx - 5, dy - 1, 11, 3);
+            IconHelper.renderIcon(Color4I.GRAY, graphics, dx, dy - 4, 1, 9);
+            IconHelper.renderIcon(Color4I.GRAY, graphics, dx - 4, dy, 9, 1);
             graphics.pose().popMatrix();
         }
 
@@ -339,17 +340,17 @@ public class ColorSelectorPanel extends ModalPanel {
                     for (int i = 0; i < w; i += GRID_SIZE) {
                         for (int j = 0; j < h; j += GRID_SIZE) {
                             Color4I c = (i + j) / GRID_SIZE % 2 == 0 ? Color4I.WHITE : Color4I.GRAY;
-                            c.draw(graphics, x + i, y + j, GRID_SIZE, GRID_SIZE);
+                            IconHelper.renderIcon(c, graphics, x + i, y + j, GRID_SIZE, GRID_SIZE);
                         }
                     }
                 }
-                config.getValue().draw(graphics, x, y, w, h);
+                IconHelper.renderIcon(config.getValue(), graphics, x, y, w, h);
 
                 int xVal = x + (w - 1) * config.getValue().alphai() / 255;
-                Color4I.BLACK.draw(graphics, xVal, y - 2, 3, height + 4);
-                Color4I.GRAY.draw(graphics, xVal + 1, y - 1, 1, height + 2);
+                IconHelper.renderIcon(Color4I.BLACK, graphics, xVal, y - 2, 3, height + 4);
+                IconHelper.renderIcon(Color4I.GRAY, graphics, xVal + 1, y - 1, 1, height + 2);
             } else {
-                config.getValue().draw(graphics, x, y, w, h);
+                IconHelper.renderIcon(config.getValue(), graphics, x, y, w, h);
             }
         }
 
@@ -441,10 +442,10 @@ public class ColorSelectorPanel extends ModalPanel {
         @Override
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             if (icon instanceof Color4I col && !col.isEmpty()) {
-                col.draw(graphics, x, y, w, h);
+                IconHelper.renderIcon(col, graphics, x, y, w, h);
                 Color4I shade = col.addBrightness(-0.15f);
-                shade.draw(graphics, x, y + h - 1, w, 1);
-                shade.draw(graphics, x + w - 1, y, 1, h);
+                IconHelper.renderIcon(shade, graphics, x, y + h - 1, w, 1);
+                IconHelper.renderIcon(shade, graphics, x + w - 1, y, 1, h);
             }
 
         }

@@ -12,13 +12,13 @@ public class SimpleButton extends Button {
     private Callback consumer;
     private final List<Component> tooltip;
 
-    public SimpleButton(Panel panel, Component text, Icon icon, Callback c) {
+    public SimpleButton(Panel panel, Component text, Icon<?> icon, Callback c) {
         super(panel, text, icon);
         consumer = c;
         tooltip = List.of();
     }
 
-    public SimpleButton(Panel panel, List<Component> text, Icon icon, Callback c) {
+    public SimpleButton(Panel panel, List<Component> text, Icon<?> icon, Callback c) {
         super(panel, text.isEmpty() ? Component.empty() : text.getFirst(), icon);
         consumer = c;
         tooltip = text;

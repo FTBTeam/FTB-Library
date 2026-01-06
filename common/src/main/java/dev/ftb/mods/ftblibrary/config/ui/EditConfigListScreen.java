@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.config.ui;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.ftb.mods.ftblibrary.client.icon.Color4IRenderer;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ConfigValue;
 import dev.ftb.mods.ftblibrary.config.ListConfig;
@@ -195,9 +196,9 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends Abstract
 
             if (mouseOver) {
                 textCol.addBrightness(60);
-                Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
+                Color4IRenderer.INSTANCE.render(Color4I.WHITE.withAlpha(33), graphics, x, y, w, h);
                 if (getMouseX() >= x + w - 19) {
-                    Color4I.WHITE.withAlpha(33).draw(graphics, x + w - 19, y, 19, h);
+                    Color4IRenderer.INSTANCE.render(Color4I.WHITE.withAlpha(33), graphics, x + w - 19, y, 19, h);
                 }
             }
 

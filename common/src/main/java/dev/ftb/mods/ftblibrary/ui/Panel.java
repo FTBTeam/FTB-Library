@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
@@ -234,7 +235,7 @@ public abstract class Panel extends Widget {
         if (Theme.renderDebugBoxes) {
             var col = Color4I.rgb(Color4I.HSBtoRGB((widget.hashCode() & 255) / 255F, 1F, 1F));
             GuiHelper.drawHollowRect(graphics, wx, wy, ww, wh, col.withAlpha(150), false);
-            col.withAlpha(30).draw(graphics, wx + 1, wy + 1, ww - 2, wh - 2);
+            IconHelper.renderIcon(col.withAlpha(30), graphics, wx + 1, wy + 1, ww - 2, wh - 2);
         }
     }
 

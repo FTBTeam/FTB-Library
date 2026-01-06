@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.*;
@@ -196,7 +197,7 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
             theme.drawWidget(graphics, x, y, w, h, getWidgetType());
             theme.drawString(graphics, getTitle(), x + 3, y + 3);
             if (isMouseOver()) {
-                Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, x, y, w, h);
             }
         }
     }
@@ -217,7 +218,7 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
             var mouseOver = getMouseY() >= 20 && isMouseOver();
 
             if (mouseOver) {
-                Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, x, y, w, h);
             }
         }
 
