@@ -2,12 +2,12 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
-import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.sounds.SoundEvents;
@@ -203,10 +203,11 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
         return false;
     }
 
-    public void keyReleased(Key key) {
+    public boolean keyReleased(Key key) {
+        return false;
     }
 
-    public boolean charTyped(char c, KeyModifiers modifiers) {
+    public boolean charTyped(CharacterEvent event) {
         return false;
     }
 

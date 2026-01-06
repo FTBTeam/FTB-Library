@@ -115,17 +115,17 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends Abstract
     }
 
     @Override
-    public boolean keyPressed(Key key) {
-        if (super.keyPressed(key)) {
+    public boolean keyPressed(Key event) {
+        if (super.keyPressed(event)) {
             return true;
-        } else if (key.is(InputConstants.KEY_INSERT)) {
+        } else if (event.is(InputConstants.KEY_INSERT)) {
             addButton.onClicked(MouseButton.LEFT);
             return true;
-        } else if (key.is(InputConstants.KEY_DELETE)) {
+        } else if (event.is(InputConstants.KEY_DELETE)) {
             return mainPanel.getHoveredDeletable().map(d -> {
                 d.deleteItem();
                 return true;
-            }).orElse(super.keyPressed(key));
+            }).orElse(super.keyPressed(event));
         }
         return false;
     }

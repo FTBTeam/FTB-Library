@@ -88,10 +88,10 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
     }
 
     @Override
-    public boolean keyPressed(Key key) {
-        if (super.keyPressed(key)) {
+    public boolean keyPressed(Key event) {
+        if (super.keyPressed(event)) {
             return true;
-        } else if ((key.is(InputConstants.KEY_RETURN) || key.is(InputConstants.KEY_NUMPADENTER)) && key.modifiers().shift()) {
+        } else if ((event.is(InputConstants.KEY_RETURN) || event.is(InputConstants.KEY_NUMPADENTER)) && event.modifiers().shift()) {
             this.doAccept();
             return true;
         } else {

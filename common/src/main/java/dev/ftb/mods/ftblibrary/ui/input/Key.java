@@ -7,30 +7,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
-/**
- * TODO: @since 1.21.11
- *       This should really be removed / reduced as most of this data is now part of minecrafts KeyEvent
- */
-public record Key(int keyCode, int scanCode, KeyModifiers modifiers, KeyEvent originalEvent) {
-    public Key(int keyCode, int scanCode, int modifiers, KeyEvent originalEvent) {
-        this(keyCode, scanCode, new KeyModifiers(modifiers), originalEvent);
-    }
-
-    @ExpectPlatform
-    private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
-        throw new AssertionError();
-    }
-
+public record Key(KeyEvent event) {
     public boolean is(int k) {
-        return keyCode == k;
+        return event.key() == k;
     }
 
     public InputConstants.Key getInputMapping() {
-        return InputConstants.getKey(originalEvent);
+        return InputConstants.getKey(event);
     }
 
     public boolean esc() {
-        return is(GLFW.GLFW_KEY_ESCAPE);
+        return event.isEscape();
     }
 
     public boolean escOrInventory() {
@@ -46,22 +33,31 @@ public record Key(int keyCode, int scanCode, KeyModifiers modifiers, KeyEvent or
     }
 
     public boolean cut() {
-        return originalEvent.isCut();
+        return event.isCut();
     }
 
     public boolean paste() {
-        return originalEvent.isPaste();
+        return event.isPaste();
     }
 
     public boolean copy() {
-        return originalEvent.isCopy();
+        return event.isCopy();
     }
 
     public boolean selectAll() {
-        return originalEvent.isSelectAll();
+        return event.isSelectAll();
     }
 
     public boolean deselectAll() {
-        return keyCode == GLFW.GLFW_KEY_D && originalEvent.hasControlDown() && !originalEvent.hasShiftDown() && !originalEvent.hasAltDown();
+        return is(GLFW.GLFW_KEY_D) && event.hasControlDown() && !event.hasShiftDown() && !event.hasAltDown();
+    }
+
+    public KeyModifiers modifiers() {
+        return new KeyModifiers(event.modifiers());
+    }
+
+    @ExpectPlatform
+    private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
+        throw new AssertionError();
     }
 }

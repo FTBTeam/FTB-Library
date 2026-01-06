@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import dev.ftb.mods.ftblibrary.ui.input.Key;
-import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
@@ -74,8 +73,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        var key = new Key(event.key(), event.scancode(), event.modifiers(), event);
-
+        var key = new Key(event);
         if (wrappedGui.keyPressed(key)) {
             return true;
         } else {
@@ -97,19 +95,13 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
     @Override
     public boolean keyReleased(KeyEvent event) {
-        var key = new Key(event.key(), event.scancode(), event.modifiers(), event);
-        wrappedGui.keyReleased(key);
-        return super.keyReleased(event);
+//        var key = new Key(event.key(), event.scancode(), event.modifiers(), event);
+        return wrappedGui.keyReleased(new Key(event)) || super.keyReleased(event);
     }
 
     @Override
     public boolean charTyped(CharacterEvent event) {
-        // TODO: @since 21.11: verify that this is correct
-        if (wrappedGui.charTyped(Character.forDigit(event.codepoint(), Character.MAX_RADIX), new KeyModifiers(event.modifiers()))) {
-            return true;
-        }
-
-        return super.charTyped(event);
+        return wrappedGui.charTyped(event) || super.charTyped(event);
     }
 
     @Override

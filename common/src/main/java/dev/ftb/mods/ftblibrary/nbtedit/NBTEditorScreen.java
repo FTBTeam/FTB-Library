@@ -169,14 +169,14 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     }
 
     @Override
-    public boolean keyPressed(Key key) {
-        if (super.keyPressed(key)) {
+    public boolean keyPressed(Key event) {
+        if (super.keyPressed(event)) {
             return true;
-        } else if (key.is(InputConstants.KEY_ADD) || key.is(InputConstants.KEY_EQUALS)) {
+        } else if (event.is(InputConstants.KEY_ADD) || event.is(InputConstants.KEY_EQUALS)) {
             collapseAll(false);
-        } else if (key.is(InputConstants.KEY_MINUS) || key.is(GLFW.GLFW_KEY_KP_SUBTRACT)) {
+        } else if (event.is(InputConstants.KEY_MINUS) || event.is(GLFW.GLFW_KEY_KP_SUBTRACT)) {
             collapseAll(true);
-        } else if (key.is(InputConstants.KEY_C) && key.modifiers().control()) {
+        } else if (event.is(InputConstants.KEY_C) && event.modifiers().control()) {
             copyToClipboard();
         }
         return false;

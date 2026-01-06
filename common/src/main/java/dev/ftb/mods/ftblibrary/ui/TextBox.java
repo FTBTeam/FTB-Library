@@ -4,11 +4,11 @@ import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
-import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -343,7 +343,7 @@ public class TextBox extends Widget implements IFocusableWidget {
             insertText("");
             return true;
         } else {
-            switch (key.keyCode()) {
+            switch (key.event().key()) {
                 case GLFW.GLFW_KEY_ESCAPE -> {
                     setFocused(false);
                     return true;
@@ -401,10 +401,10 @@ public class TextBox extends Widget implements IFocusableWidget {
     }
 
     @Override
-    public boolean charTyped(char c, KeyModifiers modifiers) {
+    public boolean charTyped(CharacterEvent event) {
         if (allowInput() && isFocused()) {
-            if (StringUtil.isAllowedChatCharacter(c)) {
-                insertText(Character.toString(c));
+            if (event.isAllowedChatCharacter()) {
+                insertText(event.codepointAsString());
             }
 
             return true;

@@ -3,12 +3,12 @@ package dev.ftb.mods.ftblibrary.ui;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
-import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
@@ -425,37 +425,44 @@ public abstract class Panel extends Widget {
 
         setOffset(true);
 
+        boolean res = false;
         for (var i = widgets.size() - 1; i >= 0; i--) {
             var widget = widgets.get(i);
 
             if (widget.isEnabled() && widget.keyPressed(key)) {
-                setOffset(false);
-                return true;
+                res = true;
+                break;
             }
         }
 
         setOffset(false);
-        return false;
+        return res;
     }
 
     @Override
-    public void keyReleased(Key key) {
+    public boolean keyReleased(Key key) {
         setOffset(true);
 
+        boolean res = false;
         for (var i = widgets.size() - 1; i >= 0; i--) {
             var widget = widgets.get(i);
 
             if (widget.isEnabled()) {
-                widget.keyReleased(key);
+                if (widget.keyReleased(key)) {
+                    res = true;
+                    break;
+                }
             }
         }
 
         setOffset(false);
+
+        return res;
     }
 
     @Override
-    public boolean charTyped(char c, KeyModifiers modifiers) {
-        if (super.charTyped(c, modifiers)) {
+    public boolean charTyped(CharacterEvent event) {
+        if (super.charTyped(event)) {
             return true;
         }
 
@@ -464,7 +471,7 @@ public abstract class Panel extends Widget {
         for (var i = widgets.size() - 1; i >= 0; i--) {
             var widget = widgets.get(i);
 
-            if (widget.isEnabled() && widget.charTyped(c, modifiers)) {
+            if (widget.isEnabled() && widget.charTyped(event)) {
                 setOffset(false);
                 return true;
             }

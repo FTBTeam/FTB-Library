@@ -5,7 +5,6 @@ import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
-import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -16,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -34,11 +34,12 @@ public abstract class BaseScreen extends Panel {
     private float partialTicks;
     private boolean refreshWidgets;
     private long lastClickTime = 0L;
-    private Widget focusedWidget = null;
+    @Nullable private Widget focusedWidget = null;
     private boolean renderBlur = true;
 
     public BaseScreen(@Nullable Screen previousScreen) {
         super(null);
+
         setSize(176, 166);
         setOnlyRenderWidgetsInside(false);
         setOnlyInteractWithWidgetsInside(false);
@@ -249,8 +250,8 @@ public abstract class BaseScreen extends Panel {
         onClosed();
     }
 
-    public boolean onClosedByKey(Key key) {
-        return key.escOrInventory();
+    public boolean onClosedByKey(Key event) {
+        return event.escOrInventory();
     }
 
     public void onBack() {
@@ -421,19 +422,19 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public boolean keyPressed(Key key) {
-        if (focusedWidget != null && focusedWidget.keyPressed(key)) {
+    public boolean keyPressed(Key event) {
+        if (focusedWidget != null && focusedWidget.keyPressed(event)) {
             return true;
         } else if (!modalPanels.isEmpty()) {
-            if (key.esc()) {
+            if (event.esc()) {
                 popModalPanel();
                 return true;
             }
             //noinspection DataFlowIssue
-            return modalPanels.peekFirst().keyPressed(key);  // we already checked it's not empty
-        } else if (super.keyPressed(key)) {
+            return modalPanels.peekFirst().keyPressed(event);  // we already checked it's not empty
+        } else if (super.keyPressed(event)) {
             return true;
-        } else if (InputConstants.isKeyDown(getWindow(), GLFW.GLFW_KEY_F3) && key.is(GLFW.GLFW_KEY_B)) {
+        } else if (InputConstants.isKeyDown(getWindow(), GLFW.GLFW_KEY_F3) && event.is(GLFW.GLFW_KEY_B)) {
             Theme.renderDebugBoxes = !Theme.renderDebugBoxes;
             return true;
         }
@@ -442,12 +443,8 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public void keyReleased(Key key) {
-        if (modalPanels.isEmpty()) {
-            super.keyReleased(key);
-        } else {
-            modalPanels.peekFirst().keyReleased(key);
-        }
+    public boolean keyReleased(Key key) {
+        return modalPanels.isEmpty() ? super.keyReleased(key) : modalPanels.peekFirst().keyReleased(key);
     }
 
     @Override
@@ -478,11 +475,11 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public boolean charTyped(char c, KeyModifiers modifiers) {
-        if (focusedWidget != null && focusedWidget.charTyped(c, modifiers)) {
+    public boolean charTyped(CharacterEvent event) {
+        if (focusedWidget != null && focusedWidget.charTyped(event)) {
             return true;
         }
-        return modalPanels.isEmpty() ? super.charTyped(c, modifiers) : modalPanels.peekFirst().charTyped(c, modifiers);
+        return modalPanels.isEmpty() ? super.charTyped(event) : modalPanels.peekFirst().charTyped(event);
     }
 
     @Override
