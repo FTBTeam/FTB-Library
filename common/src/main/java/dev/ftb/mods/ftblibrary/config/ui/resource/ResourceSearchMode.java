@@ -10,10 +10,10 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
@@ -125,12 +125,12 @@ public interface ResourceSearchMode<T> {
                         () -> FTBLibrary.LOGGER.warn("Image {} has invalid path! Report this to author of '{}'!", rl, rl.getNamespace())
                 ));
 
+                TextureAtlas blockAtlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS);
                 cachedImages = images.stream().sorted().map(res -> {
                     // shorten <mod>:textures/A/B.png to <mod>:A/B
                     Identifier res1 = Identifier.fromNamespaceAndPath(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(res1);
-                    SpriteContents contents = sprite.contents();
-                    if (contents.name().equals(MissingTextureAtlasSprite.getLocation())) {
+                    TextureAtlasSprite sprite = blockAtlas.getSprite(res1);
+                    if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
                         res1 = res;
                     }
                     return new ImageResource(res1);
