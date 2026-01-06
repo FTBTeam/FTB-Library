@@ -23,14 +23,14 @@ import java.util.regex.Pattern;
  */
 public class ConfigGroup implements Comparable<ConfigGroup> {
     private final String id;
-    private final ConfigGroup parent;
+    private final @Nullable ConfigGroup parent;
     private final Map<String, ConfigValue<?>> values;
     private final Map<String, ConfigGroup> subgroups;
-    private final ConfigCallback savedCallback;
+    private final @Nullable ConfigCallback savedCallback;
     private final int displayOrder;
     private String nameKey;
 
-    private ConfigGroup(String id, ConfigGroup parent, ConfigCallback savedCallback, int displayOrder) {
+    private ConfigGroup(String id, @Nullable ConfigGroup parent, @Nullable ConfigCallback savedCallback, int displayOrder) {
         this.id = id;
         this.parent = parent;
         this.values = new LinkedHashMap<>();

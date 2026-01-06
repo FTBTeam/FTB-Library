@@ -8,6 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
+import org.jspecify.annotations.NonNull;
 
 public class EntityFaceResource implements SelectableResource<EntityType<?>>, Comparable<EntityFaceResource> {
     public static final EntityFaceResource NONE = new EntityFaceResource(EntityFaceConfig.NONE);
