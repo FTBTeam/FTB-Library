@@ -4,10 +4,14 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.math.Bits;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.client.gui.ActiveTextCollector;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+
+import java.util.Optional;
 
 
 public class TextField extends Widget {
@@ -18,7 +22,7 @@ public class TextField extends Widget {
     public float scale = 1.0F;
     public Color4I textColor = Icon.empty();
     public boolean trim = false;
-    private FormattedText[] formattedText = new FormattedText[0];
+    private FormattedCharSequence[] formattedText = new FormattedCharSequence[0];
     private Component rawText = Component.empty();
     private boolean tooltip = false;
 
@@ -70,7 +74,7 @@ public class TextField extends Widget {
         var theme = getGui().getTheme();
 
         rawText = txt;
-        formattedText = theme.listFormattedStringToWidth(Component.literal("").append(txt), maxWidth).toArray(new FormattedText[0]);
+        formattedText = theme.getFont().split(Component.literal("").append(txt), maxWidth).toArray(new FormattedCharSequence[0]);
 
         return resize(theme);
     }
@@ -82,7 +86,7 @@ public class TextField extends Widget {
     public TextField reflow() {
         var theme = getGui().getTheme();
 
-        formattedText = theme.listFormattedStringToWidth(rawText, (int) (maxWidth / scale)).toArray(new FormattedText[0]);
+        formattedText = theme.getFont().split(rawText, (int) (maxWidth / scale)).toArray(new FormattedCharSequence[0]);
 
         return resize(theme);
     }
@@ -109,8 +113,8 @@ public class TextField extends Widget {
     public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
     }
 
-    private FormattedText[] getDisplayedText() {
-        return trim && formattedText.length > 0 ? new FormattedText[]{formattedText[0]} : formattedText;
+    private FormattedCharSequence[] getDisplayedText() {
+        return trim && formattedText.length > 0 ? new FormattedCharSequence[]{formattedText[0]} : formattedText;
     }
 
     @Override
@@ -146,17 +150,20 @@ public class TextField extends Widget {
         }
     }
 
-    // TODO: @since 21.11: I have no idea how to fix componentStyleAtWidth as this has been completely removed.
-//    public Optional<Style> getComponentStyleAt(Theme theme, int mouseX, int mouseY) {
-//        int line = (mouseY - getY()) / theme.getFontHeight();
-//        if (line >= 0 && line < getDisplayedText().length) {
-//            boolean centered = Bits.getFlag(textFlags, Theme.CENTERED);
-//            int textWidth = theme.getFont().width(formattedText[line]);
-//            int xStart = centered ? getX() + (width - textWidth) / 2 : getX();
-//            if (mouseX >= xStart && mouseX <= xStart + textWidth) {
-//                return Optional.ofNullable(theme.getFont().getSplitter().componentStyleAtWidth(formattedText[line], mouseX - xStart));
-//            }
-//        }
-//        return Optional.empty();
-//    }
+    public Optional<Style> getClickableStyleAt(Theme theme, int mouseX, int mouseY) {
+        int line = (mouseY - getY()) / textSpacing;
+
+        if (line >= 0 && line < getDisplayedText().length) {
+            boolean centered = Bits.getFlag(textFlags, Theme.CENTERED);
+            int textWidth = theme.getFont().width(formattedText[line]);
+            int xStart = centered ? getX() + (width - textWidth) / 2 : getX();
+
+            if (mouseX >= xStart && mouseX <= xStart + textWidth) {
+                var finder = new ActiveTextCollector.ClickableStyleFinder(theme.getFont(), mouseX, mouseY);
+                finder.accept(xStart, getY() + line * textSpacing, formattedText[line]);
+                return Optional.ofNullable(finder.result());
+            }
+        }
+        return Optional.empty();
+    }
 }
