@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 
 import java.util.ArrayList;
@@ -28,6 +28,6 @@ public class IntArrayValue extends BaseValue<int[]> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
+    public void fillClientConfig(ConfigGroup group) {
     }
 }

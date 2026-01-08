@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import net.minecraft.util.Mth;
 
@@ -30,10 +30,9 @@ public class DoubleValue extends NumberValue<Double> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
+    public void fillClientConfig(ConfigGroup group) {
         group.addDouble(key, get(), this::set, defaultValue, minValue == null ? Double.NEGATIVE_INFINITY : minValue, maxValue == null ? Double.POSITIVE_INFINITY : maxValue)
                 .fader(fader)
-                .setCanEdit(enabled.getAsBoolean())
-        ;
+                .setCanEdit(enabled.getAsBoolean());
     }
 }

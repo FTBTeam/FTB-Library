@@ -2,8 +2,8 @@ package dev.ftb.mods.ftblibrary.net;
 
 import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.config.gui.ChooseConfigScreen;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
-import dev.ftb.mods.ftblibrary.config.ui.ChooseConfigScreen;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;

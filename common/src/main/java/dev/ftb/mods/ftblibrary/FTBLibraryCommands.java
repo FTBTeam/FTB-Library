@@ -15,7 +15,6 @@ import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.net.OpenTestScreenPacket;
-import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;

@@ -3,12 +3,12 @@ package dev.ftb.mods.ftblibrary.sidebar;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
-import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
-import net.minecraft.util.Util;
+import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
+import dev.ftb.mods.ftblibrary.client.gui.screens.LoadingScreen;
+import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;

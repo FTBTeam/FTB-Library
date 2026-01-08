@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class StringValue extends BaseValue<String> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
+    public void fillClientConfig(ConfigGroup group) {
         group.addString(key, get(), this::set, defaultValue, pattern)
                 .setCanEdit(enabled.getAsBoolean());
     }

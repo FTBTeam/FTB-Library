@@ -1,8 +1,10 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import net.minecraft.util.Mth;
+
+import java.util.Objects;
 
 public class IntValue extends NumberValue<Integer> {
     IntValue(SNBTConfig config, String key, int defaultValue) {
@@ -15,7 +17,7 @@ public class IntValue extends NumberValue<Integer> {
 
     @Override
     public void set(Integer value) {
-        super.set(Mth.clamp(value, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue));
+        super.set(Mth.clamp(value, Objects.requireNonNullElse(minValue, Integer.MAX_VALUE), Objects.requireNonNullElse(maxValue, Integer.MAX_VALUE)));
     }
 
     @Override
@@ -30,10 +32,11 @@ public class IntValue extends NumberValue<Integer> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
-        group.addInt(key, get(), this::set, defaultValue, minValue == null ? Integer.MIN_VALUE : minValue, maxValue == null ? Integer.MAX_VALUE : maxValue)
+    public void fillClientConfig(ConfigGroup group) {
+        group.addInt(key, get(), this::set, defaultValue,
+                        Objects.requireNonNullElse(minValue, Integer.MAX_VALUE), Objects.requireNonNullElse(maxValue, Integer.MAX_VALUE)
+                )
                 .fader(fader)
-                .setCanEdit(enabled.getAsBoolean())
-        ;
+                .setCanEdit(enabled.getAsBoolean());
     }
 }

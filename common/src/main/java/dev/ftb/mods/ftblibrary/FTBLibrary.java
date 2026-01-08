@@ -25,6 +25,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
 import org.apache.logging.log4j.LogManager;
@@ -90,9 +91,14 @@ public class FTBLibrary {
 
     private void playerJoined(ServerPlayer player) {
         player.sendSystemMessage(Component.literal("Hello from FTB Library!").withStyle(Style.EMPTY.withColor(RainbowTextColor.INSTANCE)));
-        if (KnownServerRegistries.server != null) {
-            // can be null, e.g. https://github.com/FTBTeam/FTB-Mods-Issues/issues/1387
-            NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
-        }
+
+        // scheduling this to run a bit later should avoid issues with KnownServerRegistries.server not been init'd yet
+        MinecraftServer server = player.level().getServer();
+        server.schedule(server.wrapRunnable(() -> {
+            if (KnownServerRegistries.server != null) {
+                // can be null, e.g. https://github.com/FTBTeam/FTB-Mods-Issues/issues/1387
+                NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
+            }
+        }));
     }
 }

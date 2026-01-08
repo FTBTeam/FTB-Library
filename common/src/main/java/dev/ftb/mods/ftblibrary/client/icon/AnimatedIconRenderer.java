@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.icon;
 
-import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.AnimatedIcon;
+import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.client.gui.GuiGraphics;
 
 public enum AnimatedIconRenderer implements IconRenderer<AnimatedIcon> {

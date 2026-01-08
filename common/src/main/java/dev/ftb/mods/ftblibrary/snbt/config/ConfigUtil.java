@@ -1,7 +1,8 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.architectury.platform.Platform;
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -18,7 +19,7 @@ public interface ConfigUtil {
 
     /**
      * Create a {@link ConfigGroup} object, suitable for passing as a parameter to the
-     * {@link dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen} constructor.
+     * {@link EditConfigScreen} constructor.
      *
      * @param config the config to be edited
      * @param groupName the config group name, which is the top-level path for objects in this group (used primarily for translations)
@@ -26,6 +27,6 @@ public interface ConfigUtil {
      * @return a new config group object
      */
     static ConfigGroup makeConfigEditGroup(SNBTConfig config, String groupName, boolean isServerConfig) {
-        return Util.make(ConfigGroup.createEditable(config, groupName, isServerConfig), config::createClientConfig);
+        return Util.make(ConfigGroup.createEditable(config, groupName, isServerConfig), config::fillClientConfig);
     }
 }

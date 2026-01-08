@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 
 import java.util.ArrayList;
@@ -29,9 +29,7 @@ public class BooleanValue extends BaseValue<Boolean> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
-        group.addBool(key, get(), this::set, defaultValue)
-                .setCanEdit(enabled.getAsBoolean())
-        ;
+    public void fillClientConfig(ConfigGroup group) {
+        group.addBool(key, get(), this::set, defaultValue).setCanEdit(enabled.getAsBoolean());
     }
 }

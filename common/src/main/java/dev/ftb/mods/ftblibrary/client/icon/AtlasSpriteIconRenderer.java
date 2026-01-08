@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.data.AtlasIds;
-import net.minecraft.world.inventory.InventoryMenu;
 
 public enum AtlasSpriteIconRenderer implements IconRenderer<AtlasSpriteIcon> {
     INSTANCE;

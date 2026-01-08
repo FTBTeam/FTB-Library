@@ -4,8 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.ftb.mods.ftblibrary.client.icon.BorderedIconRenderer;
 import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import net.minecraft.client.gui.GuiGraphics;
 
 
 public class BorderedIcon extends IconWithParent<BorderedIcon> {

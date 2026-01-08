@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.SNBTUtils;
 import org.jspecify.annotations.Nullable;
@@ -10,6 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
+/**
+ * Top-level class for all config values
+ *
+ * @param <T> the value's type
+ */
 public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     public final SNBTConfig parent;
     public final String key;
@@ -20,8 +26,8 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     protected List<String> comment = new ArrayList<>(0);
     private T value;
 
-    protected BaseValue(@Nullable SNBTConfig config, String key, T defaultValue) {
-        parent = config;
+    protected BaseValue(@Nullable SNBTConfig parent, String key, T defaultValue) {
+        this.parent = parent;
         this.key = key;
         this.defaultValue = defaultValue;
         value = this.defaultValue;
@@ -48,21 +54,23 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
         value = v;
     }
 
-    @SuppressWarnings("unchecked")
     public <E extends BaseValue<T>> E comment(String... comment) {
         this.comment.addAll(Arrays.asList(comment));
-        return (E) this;
+        return self();
     }
 
-    @SuppressWarnings("unchecked")
     public <E extends BaseValue<T>> E excluded() {
         excluded = true;
-        return (E) this;
+        return self();
     }
 
-    @SuppressWarnings("unchecked")
     public <E extends BaseValue<T>> E enabled(BooleanSupplier enabled) {
         this.enabled = enabled;
+        return self();
+    }
+
+    private <E extends BaseValue<T>> E self() {
+        //noinspection unchecked
         return (E) this;
     }
 
@@ -85,6 +93,16 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
         return i == 0 ? key.compareToIgnoreCase(other.key) : i;
     }
 
-    public void createClientConfig(ConfigGroup group) {
+    /**
+     * Called when a client-side ConfigGroup is being created via
+     * {@link dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient#editConfig(String)}. Implementations should
+     * add a suitable {@link AbstractEditableConfigValue} field to the given config group for this config value (many
+     * convenience methods exist in {@code ConfigGroup} for this).
+     * <p>
+     * This method should, of course, only be called on the client.
+     *
+     * @param group the config group being filled out
+     */
+    public void fillClientConfig(ConfigGroup group) {
     }
 }

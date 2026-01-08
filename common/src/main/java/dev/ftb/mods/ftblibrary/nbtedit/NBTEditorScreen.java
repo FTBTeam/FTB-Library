@@ -3,22 +3,24 @@ package dev.ftb.mods.ftblibrary.nbtedit;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.config.editable.*;
+import dev.ftb.mods.ftblibrary.client.config.gui.EditStringConfigOverlay;
+import dev.ftb.mods.ftblibrary.client.gui.input.Key;
+import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.layout.WidgetLayout;
+import dev.ftb.mods.ftblibrary.client.gui.screens.AbstractThreePanelScreen;
+import dev.ftb.mods.ftblibrary.client.gui.SimpleToast;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
+import dev.ftb.mods.ftblibrary.client.gui.widget.*;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
-import dev.ftb.mods.ftblibrary.config.*;
-import dev.ftb.mods.ftblibrary.config.ui.EditStringConfigOverlay;
+import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.icon.*;
 import dev.ftb.mods.ftblibrary.net.EditNBTResponsePacket;
-import dev.ftb.mods.ftblibrary.ui.*;
-import dev.ftb.mods.ftblibrary.ui.input.Key;
-import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.ui.misc.AbstractThreePanelScreen;
-import dev.ftb.mods.ftblibrary.ui.misc.SimpleToast;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
 import dev.ftb.mods.ftblibrary.util.SerializationUtil;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
-import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.ChatFormatting;
@@ -64,7 +66,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     private final CompoundTag info;
     private final NBTCallback callback;
     private final ButtonNBTMap buttonNBTRoot;
-    private ButtonNBT selected;
+    @Nullable private ButtonNBT selected;
     private boolean accepted = false;
 
     public NBTEditorScreen(CompoundTag info, CompoundTag nbt, NBTCallback callback) {
@@ -183,8 +185,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     }
 
     private void copyToClipboard() {
-        setClipboardString(selected.toNBT().toString());
-        SimpleToast.info(Component.translatable("ftblibrary.gui.nbt_copied"), Component.literal(" "));
+        if (selected != null) {
+            setClipboardString(selected.toNBT().toString());
+            SimpleToast.info(Component.translatable("ftblibrary.gui.nbt_copied"), Component.literal(" "));
+        }
     }
 
     private ButtonNBT makeNBTButton(ButtonNBTCollection parent, String key) {
@@ -202,7 +206,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     public SimpleButton newTag(Panel panel, String title, Icon<?> icon, Supplier<Tag> supplier) {
         return new SimpleButton(panel, Component.literal(title), icon, (btn, mb) -> {
             if (selected instanceof ButtonNBTMap) {
-                var value = new StringConfig(Pattern.compile("^.+$"));
+                var value = new EditableString(Pattern.compile("^.+$"));
                 var overlay = new EditStringConfigOverlay<>(this, value, accepted -> {
                     if (accepted && !value.getValue().isEmpty()) {
                         ((ButtonNBTCollection) selected).setTag(value.getValue(), supplier.get());
@@ -233,7 +237,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     }
 
     public abstract class ButtonNBT extends Button {
-        protected final ButtonNBTCollection parent;
+        @Nullable protected final ButtonNBTCollection parent;
         protected String key;
 
         public ButtonNBT(Panel panel, @Nullable ButtonNBTCollection parent, String key) {
@@ -299,7 +303,9 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                 case Tag.TAG_STRING -> setIcon(NBT_STRING);
             }
 
-            this.parent.setTag(this.key, this.nbt);
+            if (this.parent != null) {
+                this.parent.setTag(this.key, this.nbt);
+            }
             updateTitle();
         }
 
@@ -346,16 +352,16 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         public void edit() {
             switch (nbt.getId()) {
                 case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
-                        openEditOverlay(new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), nbt.asInt().orElseThrow());
+                        openEditOverlay(new EditableInt(Integer.MIN_VALUE, Integer.MAX_VALUE), nbt.asInt().orElseThrow());
                 case Tag.TAG_LONG ->
-                        openEditOverlay(new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE), nbt.asLong().orElseThrow());
+                        openEditOverlay(new EditableLong(Long.MIN_VALUE, Long.MAX_VALUE), nbt.asLong().orElseThrow());
                 case Tag.TAG_FLOAT, Tag.TAG_DOUBLE ->
-                        openEditOverlay(new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), nbt.asDouble().orElseThrow());
-                case Tag.TAG_STRING -> openEditOverlay(new StringConfig(), nbt.asString().orElseThrow());
+                        openEditOverlay(new EditableDouble(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), nbt.asDouble().orElseThrow());
+                case Tag.TAG_STRING -> openEditOverlay(new EditableString(), nbt.asString().orElseThrow());
             }
         }
 
-        private <T> void openEditOverlay(ConfigFromString<T> config, T val) {
+        private <T> void openEditOverlay(AbstractEditableStringifiedConfig<T> config, T val) {
             config.setValue(val);
             getGui().pushModalPanel(
                     new EditStringConfigOverlay<>(getGui(), config, accepted -> onCallback(config, accepted))
@@ -363,7 +369,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             );
         }
 
-        public void onCallback(ConfigValue<?> value, boolean accepted) {
+        public void onCallback(AbstractEditableConfigValue<?> value, boolean accepted) {
             if (accepted) {
                 switch (nbt.getId()) {
                     case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
@@ -374,7 +380,9 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                     case Tag.TAG_STRING -> nbt = StringTag.valueOf(value.getValue().toString());
                 }
 
-                parent.setTag(key, nbt);
+                if (parent != null) {
+                    parent.setTag(key, nbt);
+                }
                 updateTitle();
             }
 
@@ -831,7 +839,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
         @NonNull
         private EditStringConfigOverlay<String> makeRenameOverlay(SimpleButton button) {
-            var value = new StringConfig();
+            var value = new EditableString();
 //			int overlayWidth = 100;
             if (selected != null) {
                 value.setValue(selected.key);

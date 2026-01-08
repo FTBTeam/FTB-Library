@@ -1,11 +1,12 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
-import dev.ftb.mods.ftblibrary.config.NameMap;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
+import dev.ftb.mods.ftblibrary.util.NameMap;
 import net.minecraft.util.Util;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,10 +16,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * A config; basically a list of values, some of which themselves could be a config, allowing nested config sections.
+ */
 public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
     private int displayOrder = 0;
 
-    private SNBTConfig(SNBTConfig parent, String name, List<BaseValue<?>> defaultValue) {
+    private SNBTConfig(@Nullable SNBTConfig parent, String name, List<BaseValue<?>> defaultValue) {
         super(parent, name, defaultValue);
     }
 
@@ -69,14 +73,14 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
+    public void fillClientConfig(ConfigGroup group) {
         List<BaseValue<?>> sorted = defaultValue.stream()
                 .filter(v -> !v.excluded)
                 .sorted(Comparator.comparingInt(o -> o.displayOrder))
                 .toList();
 
         var g = parent == null ? group : group.getOrCreateSubgroup(key, displayOrder);
-        sorted.forEach(value -> value.createClientConfig(g));
+        sorted.forEach(value -> value.fillClientConfig(g));
     }
 
     public void load(Path path) {

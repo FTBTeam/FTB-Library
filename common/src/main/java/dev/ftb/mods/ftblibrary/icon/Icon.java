@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableImageResource;
 import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
-import dev.ftb.mods.ftblibrary.config.ImageResourceConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
@@ -19,7 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Represents any drawable object
+ * Represents any drawable object. Note that rendering code for icons is in a separate class which implements
+ * {@link IconRenderer}, so these objects are safe to load and use server-side (just don't ever call
+ * {@link #getRenderer()} on the server...)
  */
 public abstract class Icon<T extends Icon<T>> {
     public static final Codec<Icon<?>> CODEC = ExtraCodecs.JSON.xmap(Icon::getIcon, Icon::getJson);
@@ -210,7 +212,7 @@ public abstract class Icon<T extends Icon<T>> {
     }
 
     private static boolean isNone(String id) {
-        return id.isEmpty() || id.equals("none") || id.equals(ImageResourceConfig.NONE.toString());
+        return id.isEmpty() || id.equals("none") || id.equals(EditableImageResource.NONE.toString());
     }
 
     public boolean isEmpty() {
@@ -284,43 +286,6 @@ public abstract class Icon<T extends Icon<T>> {
         return o == this || o instanceof Icon<?> && getJson().equals(((Icon<?>) o).getJson());
     }
 
-//    /**
-//     * @return false if this should be queued for rendering
-//     */
-//    public boolean hasPixelBuffer() {
-//        return false;
-//    }
-//
-//    /**
-//     * @return null if this icon does not have a pixel buffer, or if it failed to load
-//     */
-//    @Nullable
-//    public PixelBuffer createPixelBuffer() {
-//        return null;
-//    }
-//
-//    /**
-//     * The number of animation frames in a pixel-buffer icon. Note: not to be confused with {@link IconAnimation},
-//     * which is a collection of individual icons. This returns 1 for most icon types, but icons with animated
-//     * textures (currently only atlas sprite icons) may have multiple frames.
-//     *
-//     * @return the number of frames
-//     */
-//    public int getPixelBufferFrameCount() {
-//        return 1;
-//    }
-//
-//    /**
-//     * Get the aspect ratio of the icon, which is the width divided by height. For most icon types this is always 1.0,
-//     * since icons do not in general know what size they are (they're scaled when drawn). However, for atlas sprite
-//     * and image icons, the underlying image's aspect ratio is returned.
-//     *
-//     * @return the aspect ratio of the icon
-//     */
-//    public double aspectRatio() {
-//        return 1.0;
-//    }
-
     @Nullable
     public Object getIngredient() {
         return null;
@@ -335,5 +300,10 @@ public abstract class Icon<T extends Icon<T>> {
         return (T) this;
     }
 
+    /**
+     * Get the clientside renderer to actually draw this icon on-screen. The renderer contains a few other methods
+     * which require clientside knowledge too. <strong>Do not call this method server-side!</strong>
+     * @return the renderer for this icon
+     */
     public abstract IconRenderer<T> getRenderer();
 }

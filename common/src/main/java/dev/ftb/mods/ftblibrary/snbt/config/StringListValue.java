@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
-import dev.ftb.mods.ftblibrary.config.StringConfig;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableString;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -50,8 +50,8 @@ public class StringListValue extends BaseValue<List<String>> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
-        group.addList(key, get(), new StringConfig(null), "")
+    public void fillClientConfig(ConfigGroup group) {
+        group.addList(key, get(), new EditableString(null), "")
                 .setCanEdit(enabled.getAsBoolean());
     }
 }

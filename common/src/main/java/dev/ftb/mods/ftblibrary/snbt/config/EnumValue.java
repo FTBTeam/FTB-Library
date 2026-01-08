@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
-import dev.ftb.mods.ftblibrary.config.NameMap;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
+import dev.ftb.mods.ftblibrary.util.NameMap;
 import net.minecraft.nbt.StringTag;
 
 import java.util.ArrayList;
@@ -51,9 +51,7 @@ public class EnumValue<T> extends BaseValue<T> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
-        group.addEnum(key, get(), this::set, nameMap)
-                .setCanEdit(enabled.getAsBoolean())
-        ;
+    public void fillClientConfig(ConfigGroup group) {
+        group.addEnum(key, get(), this::set, nameMap).setCanEdit(enabled.getAsBoolean());
     }
 }

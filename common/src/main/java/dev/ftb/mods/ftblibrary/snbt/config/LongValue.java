@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
-import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 
@@ -30,10 +30,9 @@ public class LongValue extends NumberValue<Long> {
     }
 
     @Override
-    public void createClientConfig(ConfigGroup group) {
+    public void fillClientConfig(ConfigGroup group) {
         group.addLong(key, get(), this::set, defaultValue, minValue == null ? Long.MIN_VALUE : minValue, maxValue == null ? Long.MAX_VALUE : maxValue)
                 .fader(fader)
-                .setCanEdit(enabled.getAsBoolean())
-        ;
+                .setCanEdit(enabled.getAsBoolean());
     }
 }

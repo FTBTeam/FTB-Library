@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.util.UndashedUuid;
-import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import net.minecraft.resources.Identifier;
 
 import java.net.URI;

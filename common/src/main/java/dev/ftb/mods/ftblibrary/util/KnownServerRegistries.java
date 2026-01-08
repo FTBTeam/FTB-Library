@@ -8,14 +8,17 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public record KnownServerRegistries(List<Identifier> dimension,
                                     Map<Identifier, AdvancementInfo> advancements) {
-    public static KnownServerRegistries client;
-    public static KnownServerRegistries server;
+    // null until player has logged in, and client has received data from server
+    @Nullable public static KnownServerRegistries client;
+    // null until server has started
+    @Nullable public static KnownServerRegistries server;
 
     public static StreamCodec<RegistryFriendlyByteBuf, KnownServerRegistries> STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC.apply(ByteBufCodecs.list()), KnownServerRegistries::dimension,
