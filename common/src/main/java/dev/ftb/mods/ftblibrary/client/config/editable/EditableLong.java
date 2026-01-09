@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class EditableLong extends AbstractEditableNumber<Long> {
+public class EditableLong extends EditableNumber<Long> {
     public EditableLong(long mn, long mx) {
         super(mn, mx);
     }

@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.client.config.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.layout.WidgetLayout;
@@ -58,7 +58,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
         title = readOnly ? baseTitle.append(" (").append(Component.translatable("ftblibrary.read_only")).append(")") : baseTitle;
         allConfigButtons = new ArrayList<>();
 
-        List<AbstractEditableConfigValue<?>> list = new ArrayList<>();
+        List<EditableConfigValue<?>> list = new ArrayList<>();
         collectAllConfigValues(group, list);
 
         if (!list.isEmpty()) {
@@ -98,7 +98,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
         getGui().refreshWidgets();
     }
 
-    private void collectAllConfigValues(EditableConfigGroup group, List<AbstractEditableConfigValue<?>> list) {
+    private void collectAllConfigValues(EditableConfigGroup group, List<EditableConfigValue<?>> list) {
         list.addAll(group.getValues().stream().sorted().toList());
 
         for (var subgroup : group.getSubgroups()) {
@@ -269,10 +269,10 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
     private class ConfigEntryButton<T> extends Button implements EditStringConfigOverlay.PosProvider {
         private final ConfigGroupButton groupButton;
-        private final AbstractEditableConfigValue<T> configValue;
+        private final EditableConfigValue<T> configValue;
         private final Component keyText;
 
-        public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, AbstractEditableConfigValue<T> configValue) {
+        public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, EditableConfigValue<T> configValue) {
             super(panel);
             setHeight(getTheme().getFontHeight() + 2);
             this.groupButton = groupButton;

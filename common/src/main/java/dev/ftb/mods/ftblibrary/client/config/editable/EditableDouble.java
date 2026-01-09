@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class EditableDouble extends AbstractEditableNumber<Double> {
+public class EditableDouble extends EditableNumber<Double> {
     public EditableDouble(double mn, double mx) {
         super(mn, mx);
         scrollIncrement = 1.0;

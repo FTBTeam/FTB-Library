@@ -7,7 +7,7 @@ import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.config.serializer.Json5ConfigSerializer;
 import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import dev.ftb.mods.ftblibrary.config.value.ConfigGroup;
+import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.config.ConfigUtil;
 import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
@@ -52,13 +52,13 @@ public enum ConfigManager {
 
     /**
      * Register a client config.
-     * @see #registerClientConfig(ConfigGroup, String, BooleanConsumer)
+     * @see #registerClientConfig(Config, String, BooleanConsumer)
      *
-     * @param config the {@link ConfigGroup} object, typically created by {@code ConfigGroup.create()}
+     * @param config the {@link Config} object, typically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @return the same config object
      */
-    public ConfigGroup registerClientConfig(ConfigGroup config, String groupPrefix) {
+    public Config registerClientConfig(Config config, String groupPrefix) {
         return registerClientConfig(config, groupPrefix, TrackedConfig.NO_ACTION);
     }
 
@@ -67,25 +67,25 @@ public enum ConfigManager {
      * Architectury {@code ClientLifecycleEvent.CLIENT_SETUP} event is fired. This method does not need to be called
      * on the server, though it does not hurt to do so.
      *
-     * @param config the {@link ConfigGroup} object, typically statically created by {@code ConfigGroup.create()}
+     * @param config the {@link Config} object, typically statically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param onEdited a BooleanConsumer which is called when the config is edited via GUI, or changed via sync from server
      * @return the same config object
      */
-    public ConfigGroup registerClientConfig(ConfigGroup config, String groupPrefix, BooleanConsumer onEdited) {
+    public Config registerClientConfig(Config config, String groupPrefix, BooleanConsumer onEdited) {
         pendingClient.put(config.key, TrackedConfig.createForRegistration(groupPrefix, ConfigType.CLIENT, config, false, onEdited));
         return config;
     }
 
     /**
-     * @see #registerServerConfig(ConfigGroup, String, boolean, BooleanConsumer)
+     * @see #registerServerConfig(Config, String, boolean, BooleanConsumer)
      *
-     * @param config the {@link ConfigGroup} object, typically statically created by {@code ConfigGroup.create()}
+     * @param config the {@link Config} object, typically statically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param sync if true, this config is automatically sync'd to clients when players log in
      * @return the same config object
      */
-    public ConfigGroup registerServerConfig(ConfigGroup config, String groupPrefix, boolean sync) {
+    public Config registerServerConfig(Config config, String groupPrefix, boolean sync) {
         return registerServerConfig(config, groupPrefix, sync, TrackedConfig.NO_ACTION);
     }
 
@@ -93,14 +93,14 @@ public enum ConfigManager {
      * Register a server config. Server configs are loaded on server startup, specifically when the
      * Architectury {@code LifecycleEvent.SERVER_BEFORE_START} event is fired.
      *
-     * @param config the {@link ConfigGroup} object, typically created by {@code ConfigGroup.create()}
+     * @param config the {@link Config} object, typically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param sync if true, this config is automatically sync'd to clients when players log in
      * @param onEdited a BooleanConsumer which is called when the config is changed via sync from client
      *
      * @return the same config object
      */
-    public ConfigGroup registerServerConfig(ConfigGroup config, String groupPrefix, boolean sync, BooleanConsumer onEdited) {
+    public Config registerServerConfig(Config config, String groupPrefix, boolean sync, BooleanConsumer onEdited) {
         pendingServer.put(config.key, TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, sync, onEdited));
         return config;
     }
@@ -111,10 +111,10 @@ public enum ConfigManager {
      * synchronized, and not editable in-game. This should only be used for configuring the setup phase of mods,
      * before the client or server are ready for use.
      *
-     * @param config the {@link ConfigGroup} object, typically created by {@code ConfigGroup.create()}
+     * @param config the {@link Config} object, typically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      */
-    public ConfigGroup registerStartupConfig(ConfigGroup config, String groupPrefix) {
+    public Config registerStartupConfig(Config config, String groupPrefix) {
         var tc = TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, false, TrackedConfig.NO_ACTION);
         findAndLoad(config.key, tc, ConfigUtil.LOCAL_DIR::resolve);
         return config;
@@ -270,7 +270,7 @@ public enum ConfigManager {
      *                   receives true if server-side (i.e. config received from client after GUI editing),
      *                   false if client-side (i.e. config has just been edited via GUI)
      */
-    record TrackedConfig(Path loadedFrom, ConfigType configType, ConfigGroup config, boolean synced, BooleanConsumer onEdited, String groupPrefix) {
+    record TrackedConfig(Path loadedFrom, ConfigType configType, Config config, boolean synced, BooleanConsumer onEdited, String groupPrefix) {
         static final BooleanConsumer NO_ACTION = isServer -> {};
 
         /**
@@ -290,7 +290,7 @@ public enum ConfigManager {
          * @param onChanged called when config is changed
          * @return a new proto-tracked-config object
          */
-        static TrackedConfig createForRegistration(String groupPrefix, ConfigType configType, ConfigGroup config, boolean sync, BooleanConsumer onChanged) {
+        static TrackedConfig createForRegistration(String groupPrefix, ConfigType configType, Config config, boolean sync, BooleanConsumer onChanged) {
             return new TrackedConfig(null, configType, config, sync, onChanged, groupPrefix);
         }
 

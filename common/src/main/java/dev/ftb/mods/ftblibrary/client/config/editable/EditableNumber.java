@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractEditableNumber<T extends Number> extends AbstractEditableStringifiedConfig<T> {
+public abstract class EditableNumber<T extends Number> extends EditableStringifiedConfig<T> {
     public static final Color4I COLOR = Color4I.rgb(0xAA5AE8);
 
     public final T min;
@@ -14,7 +14,7 @@ public abstract class AbstractEditableNumber<T extends Number> extends AbstractE
     public boolean fader;
     protected T scrollIncrement;
 
-    public AbstractEditableNumber(T mn, T mx) {
+    public EditableNumber(T mn, T mx) {
         min = mn;
         max = mx;
     }
@@ -24,7 +24,7 @@ public abstract class AbstractEditableNumber<T extends Number> extends AbstractE
         return COLOR;
     }
 
-    public AbstractEditableNumber<T> fader(boolean v) {
+    public EditableNumber<T> fader(boolean v) {
         fader = v;
         return this;
     }
@@ -43,7 +43,7 @@ public abstract class AbstractEditableNumber<T extends Number> extends AbstractE
         return StringUtils.formatDouble(v.doubleValue(), true);
     }
 
-    public AbstractEditableNumber<T> withScrollIncrement(T increment) {
+    public EditableNumber<T> withScrollIncrement(T increment) {
         scrollIncrement = increment;
         return this;
     }

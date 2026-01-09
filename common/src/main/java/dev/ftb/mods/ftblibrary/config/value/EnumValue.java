@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config.value;
 
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 import net.minecraft.nbt.StringTag;
@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 public class EnumValue<T> extends BaseValue<T> {
     private final NameMap<T> nameMap;
 
-    EnumValue(ConfigGroup parent, String key, NameMap<T> nameMap) {
+    EnumValue(Config parent, String key, NameMap<T> nameMap) {
         this(parent, key, nameMap, nameMap.defaultValue);
     }
 
-    EnumValue(ConfigGroup parent, String key, NameMap<T> nameMap, T defaultValue) {
+    EnumValue(Config parent, String key, NameMap<T> nameMap, T defaultValue) {
         super(parent, key, defaultValue);
         this.nameMap = nameMap;
     }
@@ -47,7 +47,7 @@ public class EnumValue<T> extends BaseValue<T> {
     }
 
     @Override
-    protected AbstractEditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
+    protected EditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
         return group.addEnum(key, get(), this::set, nameMap);
     }
 }

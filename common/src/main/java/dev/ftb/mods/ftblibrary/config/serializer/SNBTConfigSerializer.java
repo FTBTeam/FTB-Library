@@ -16,13 +16,13 @@ import java.nio.file.Path;
 import java.util.*;
 
 public record SNBTConfigSerializer(SNBTCompoundTag configTag) implements ConfigSerializer {
-    public static SNBTCompoundTag serialize(ConfigGroup config) {
+    public static SNBTCompoundTag serialize(Config config) {
         SNBTConfigSerializer serializer = new SNBTConfigSerializer(new SNBTCompoundTag());
         config.write(serializer);
         return serializer.configTag;
     }
 
-    public static void readFromFile(ConfigGroup config, Path path) throws IOException {
+    public static void readFromFile(Config config, Path path) throws IOException {
         if (!Files.exists(path)) {
             FTBLibrary.LOGGER.info("creating new default config file at {}", path);
             writeToFile(config, path);
@@ -30,7 +30,7 @@ public record SNBTConfigSerializer(SNBTCompoundTag configTag) implements ConfigS
         config.read(new SNBTConfigSerializer(SNBT.tryRead(path)));
     }
 
-    public static void writeToFile(ConfigGroup config, Path path) throws IOException {
+    public static void writeToFile(Config config, Path path) throws IOException {
         SNBT.tryWrite(path, serialize(config));
     }
 
@@ -58,7 +58,7 @@ public record SNBTConfigSerializer(SNBTCompoundTag configTag) implements ConfigS
     }
 
     @Override
-    public void putConfigSection(String key, ConfigGroup val, boolean topLevel) {
+    public void putConfigSection(String key, Config val, boolean topLevel) {
         if (topLevel) {
             configTag.comment("", val.getCommentString());
             writeToTag(val.get(), configTag);

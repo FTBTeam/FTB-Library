@@ -16,7 +16,7 @@ import net.minecraft.resources.Identifier;
 
 import java.util.OptionalLong;
 
-public class EditableImageResource extends AbstractEditableResource<Identifier> {
+public class EditableImageResource extends EditableResource<Identifier> {
     public static final Identifier NONE = FTBLibrary.rl("none");
 
     public EditableImageResource() {

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config.gui;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableStringifiedConfig;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableStringifiedConfig;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
@@ -17,7 +17,7 @@ import java.util.Objects;
 public class EditStringConfigOverlay<T> extends ModalPanel {
     protected final EditField textBox;
     private final Button accept, cancel;
-    private final AbstractEditableStringifiedConfig<T> config;
+    private final EditableStringifiedConfig<T> config;
     private final ConfigCallback callback;
     private final TextField titleField;
     private final Component title;
@@ -25,11 +25,11 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
 
     private T currentValue;
 
-    public EditStringConfigOverlay(Panel panel, AbstractEditableStringifiedConfig<T> config, ConfigCallback callback) {
+    public EditStringConfigOverlay(Panel panel, EditableStringifiedConfig<T> config, ConfigCallback callback) {
         this(panel, config, callback, null);
     }
 
-    public EditStringConfigOverlay(Panel panel, AbstractEditableStringifiedConfig<T> config, ConfigCallback callback, @Nullable Component title) {
+    public EditStringConfigOverlay(Panel panel, EditableStringifiedConfig<T> config, ConfigCallback callback, @Nullable Component title) {
         super(panel);
         this.config = config;
         this.callback = callback;

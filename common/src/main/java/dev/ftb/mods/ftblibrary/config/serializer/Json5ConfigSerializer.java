@@ -15,13 +15,13 @@ import java.util.*;
 import java.util.function.Function;
 
 public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSerializer {
-    public static Json5Object serialize(ConfigGroup config) {
+    public static Json5Object serialize(Config config) {
         Json5ConfigSerializer serializer = new Json5ConfigSerializer(new Json5Object());
         config.write(serializer);
         return serializer.configJson;
     }
 
-    public static void readFromFile(ConfigGroup config, Path path) throws IOException {
+    public static void readFromFile(Config config, Path path) throws IOException {
         if (!Files.exists(path)) {
             FTBLibrary.LOGGER.info("creating new default config file at {}", path);
             writeToFile(config, path);
@@ -34,7 +34,7 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
         }
     }
 
-    public static void writeToFile(ConfigGroup config, Path path) throws IOException {
+    public static void writeToFile(Config config, Path path) throws IOException {
         Files.writeString(path, new Json5().serialize(serialize(config)));
     }
 
@@ -63,7 +63,7 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
     }
 
     @Override
-    public void putConfigSection(String key, ConfigGroup val, boolean topLevel) {
+    public void putConfigSection(String key, Config val, boolean topLevel) {
         if (topLevel) {
             configJson.setComment(val.getCommentString());
             writeToJson(val.get(), configJson);

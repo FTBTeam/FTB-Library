@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config.value;
 
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
 import org.jspecify.annotations.Nullable;
 
@@ -12,7 +12,7 @@ public class StringValue extends BaseValue<String> {
     @Nullable
     protected Pattern pattern;
 
-    protected StringValue(ConfigGroup parent, String key, String defaultValue) {
+    protected StringValue(Config parent, String key, String defaultValue) {
         super(parent, key, defaultValue);
     }
 
@@ -49,7 +49,7 @@ public class StringValue extends BaseValue<String> {
     }
 
     @Override
-    protected AbstractEditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
+    protected EditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
         return group.addString(key, get(), this::set, defaultValue, pattern);
     }
 }

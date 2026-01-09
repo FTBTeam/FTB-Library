@@ -9,7 +9,7 @@ import java.util.Map;
 public abstract class AbstractMapValue<T> extends BaseValue<Map<String, T>> {
     private final Codec<T> codec;
 
-    protected AbstractMapValue(ConfigGroup parent, String key, Map<String, T> defaultValue, Codec<T> codec) {
+    protected AbstractMapValue(Config parent, String key, Map<String, T> defaultValue, Codec<T> codec) {
         super(parent, key, defaultValue);
         this.codec = codec;
         super.set(new HashMap<>(defaultValue));

@@ -11,10 +11,10 @@ import static dev.ftb.mods.ftblibrary.FTBLibrary.MOD_ID;
 public interface FTBLibraryClientConfig {
     String KEY = MOD_ID + "-client";
 
-    ConfigGroup CONFIG = ConfigGroup.create(KEY)
+    Config CONFIG = Config.create(KEY)
             .comment("Client-specific configuration for FTB Library");
 
-    ConfigGroup TOOLTIPS = CONFIG.addGroup("tooltips");
+    Config TOOLTIPS = CONFIG.addGroup("tooltips");
 
     BooleanValue ITEM_MODNAME = TOOLTIPS.addBoolean("item_modname", false)
             .comment("Add the name of the mod that items belong to in the item selection GUI.\n" +
@@ -26,12 +26,12 @@ public interface FTBLibraryClientConfig {
     BooleanValue ENTITY_MODNAME = TOOLTIPS.addBoolean("entity_modname", true)
             .comment("Add the name of the mod that entities belong to in the entity face selection GUI.");
 
-    ConfigGroup COLOR = CONFIG.addGroup("colorselector");
+    Config COLOR = CONFIG.addGroup("colorselector");
     IntArrayValue RECENT = COLOR.addIntArray("recents", new int[0])
             .comment("Colors recently selected in the color selector")
             .excludedFromGui();
 
-    ConfigGroup SIDEBAR = CONFIG.addGroup("sidebar");
+    Config SIDEBAR = CONFIG.addGroup("sidebar");
     BooleanValue SIDEBAR_ENABLED = SIDEBAR.addBoolean("enabled", true)
             .comment("Enable the sidebar");
     EnumValue<SidebarPosition> SIDEBAR_POSITION = SIDEBAR.addEnum("position", SidebarPosition.NAME_MAP, SidebarPosition.TOP_LEFT)

@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.client.config.editable.*;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.net.SyncConfigToServerPacket;
-import dev.ftb.mods.ftblibrary.config.value.ConfigGroup;
+import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -21,14 +21,14 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
- * Represents a collection of {@link AbstractEditableConfigValue} objects, possibly recursively nested in one or more
+ * Represents a collection of {@link EditableConfigValue} objects, possibly recursively nested in one or more
  * subgroups. This object can be passed to an {@link dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen} to
  * allow GUI editing of configs.
  */
 public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
     private final String id;
     private final @Nullable EditableConfigGroup parent;
-    private final Map<String, AbstractEditableConfigValue<?>> values;
+    private final Map<String, EditableConfigValue<?>> values;
     private final Map<String, EditableConfigGroup> subgroups;
     private final @Nullable ConfigCallback savedCallback;
     private final int displayOrder;
@@ -70,7 +70,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param serverConfig if true, sync config to server; if false, save locally
      * @return a new config group
      */
-    public static EditableConfigGroup createEditable(ConfigGroup config, String groupName, boolean serverConfig) {
+    public static EditableConfigGroup createEditable(Config config, String groupName, boolean serverConfig) {
         return new EditableConfigGroup(groupName, accepted -> {
             if (accepted) {
                 if (serverConfig) {
@@ -172,11 +172,11 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param value the initial value
      * @param setter a consumer to be called to apply changes to the value
      * @param defaultValue the default value
-     * @return the {@link AbstractEditableConfigValue} just added
+     * @return the {@link EditableConfigValue} just added
      * @param <T> the raw type
      * @param <CV> the config value type
      */
-    public <T, CV extends AbstractEditableConfigValue<T>> CV add(String id, CV type, T value, Consumer<T> setter, T defaultValue) {
+    public <T, CV extends EditableConfigValue<T>> CV add(String id, CV type, T value, Consumer<T> setter, T defaultValue) {
         values.put(id, type.init(this, id, value, setter, defaultValue));
         return type;
     }
@@ -294,7 +294,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
 
     /**
      * Add a new list config item to this group. This variant has a default setter callback which updates the list
-     * passed as {@code value}; see the {@link #addList(String, List, AbstractEditableConfigValue, Consumer, Object)} overload if
+     * passed as {@code value}; see the {@link #addList(String, List, EditableConfigValue, Consumer, Object)} overload if
      * you want a custom setter.
      *
      * @param id a unique id for this config item
@@ -305,7 +305,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param <E> the list type
      * @param <CV> the config value type which wraps the list type {@code E}
      */
-    public <E, CV extends AbstractEditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, E def) {
+    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, E def) {
         type.setDefaultValue(def);
         return add(id, new EditableList<>(type), value, c -> {
             value.clear();
@@ -325,7 +325,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param <E> the list type
      * @param <CV> the config value type which wraps the list type {@code E}
      */
-    public <E, CV extends AbstractEditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, E def) {
+    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, E def) {
         type.setDefaultValue(def);
         return add(id, new EditableList<>(type), value, setter, Collections.emptyList());
     }
@@ -455,7 +455,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
         return add(id, new EditableColor(), value, setter, def);
     }
 
-    public final Collection<AbstractEditableConfigValue<?>> getValues() {
+    public final Collection<EditableConfigValue<?>> getValues() {
         return values.values();
     }
 
@@ -469,7 +469,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
 
     public void save(boolean accepted) {
         if (accepted) {
-            values.values().forEach(AbstractEditableConfigValue::applyValue);
+            values.values().forEach(EditableConfigValue::applyValue);
         }
 
         for (var group : subgroups.values()) {

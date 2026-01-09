@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  *
  * @param <T> the type of object being edited
  */
-public abstract class AbstractEditableConfigValue<T> implements Comparable<AbstractEditableConfigValue<T>> {
+public abstract class EditableConfigValue<T> implements Comparable<EditableConfigValue<T>> {
     public static final Component NULL_TEXT = Component.literal("null");
 
     public String id = "";
@@ -48,7 +48,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
 
     /**
      * Initialise this config value; called when it's added to a config group with
-     * {@link EditableConfigGroup#add(String, AbstractEditableConfigValue, Object, Consumer, Object)}
+     * {@link EditableConfigGroup#add(String, EditableConfigValue, Object, Consumer, Object)}
      *
      * @param group the group being added to
      * @param id a unique id for this value
@@ -57,7 +57,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
      * @param defaultValue the default value
      * @return the initialised config value
      */
-    public AbstractEditableConfigValue<T> init(EditableConfigGroup group, String id, T value, Consumer<T> setter, T defaultValue) {
+    public EditableConfigValue<T> init(EditableConfigGroup group, String id, T value, Consumer<T> setter, T defaultValue) {
         this.group = group;
         this.id = id;
         this.value = value == null ? null : copy(value);
@@ -204,7 +204,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
         return nameKey.isEmpty() ? getPath() : nameKey;
     }
 
-    public AbstractEditableConfigValue<T> setNameKey(String key) {
+    public EditableConfigValue<T> setNameKey(String key) {
         nameKey = key;
         return this;
     }
@@ -218,7 +218,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
         return I18n.exists(k) ? I18n.get(k) : "";
     }
 
-    public AbstractEditableConfigValue<T> setOrder(int o) {
+    public EditableConfigValue<T> setOrder(int o) {
         order = o;
         return this;
     }
@@ -227,7 +227,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
         return canEdit;
     }
 
-    public AbstractEditableConfigValue<T> setCanEdit(boolean e) {
+    public EditableConfigValue<T> setCanEdit(boolean e) {
         canEdit = e;
         return this;
     }
@@ -236,7 +236,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
         return getIcon(getValue());
     }
 
-    public AbstractEditableConfigValue<T> setIcon(Icon<?> icon) {
+    public EditableConfigValue<T> setIcon(Icon<?> icon) {
         this.icon = icon;
         return this;
     }
@@ -246,7 +246,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
     }
 
     @Override
-    public int compareTo(AbstractEditableConfigValue<T> o) {
+    public int compareTo(EditableConfigValue<T> o) {
         // sort by group, then ordering, then display name
         var cg = group.compareTo(o.group);
         if (cg != 0) return cg;

@@ -7,7 +7,7 @@ import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 /**
  * A config value with some well-defined options, which can be cycled through.
  */
-public abstract class AbstractEditableVariantConfig<T> extends AbstractEditableConfigValue<T> {
+public abstract class EditableVariantConfig<T> extends EditableConfigValue<T> {
     /**
      * Get the next (or previous) valid value for this config item.
      * @param currentValue the current value

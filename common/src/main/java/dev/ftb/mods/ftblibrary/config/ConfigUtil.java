@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.config;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen;
-import dev.ftb.mods.ftblibrary.config.value.ConfigGroup;
+import dev.ftb.mods.ftblibrary.config.value.Config;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -27,7 +27,7 @@ public interface ConfigUtil {
      * @param isServerConfig if true, config is sync'd to server after editing; if false, config is saved locally on client
      * @return a new config group object
      */
-    static EditableConfigGroup makeConfigEditGroup(ConfigGroup config, String groupName, boolean isServerConfig) {
+    static EditableConfigGroup makeConfigEditGroup(Config config, String groupName, boolean isServerConfig) {
         return Util.make(EditableConfigGroup.createEditable(config, groupName, isServerConfig), config::addToEditableConfigGroup);
     }
 }

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config.value;
 
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
 import dev.ftb.mods.ftblibrary.snbt.SNBTUtils;
 import org.jspecify.annotations.Nullable;
@@ -17,7 +17,7 @@ import java.util.function.BooleanSupplier;
  * @param <T> the value's type
  */
 public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
-    public final ConfigGroup parent;
+    public final Config parent;
     public final String key;
     protected final T defaultValue;
     protected boolean excluded;
@@ -26,7 +26,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     protected List<String> comment = new ArrayList<>(0);
     private T value;
 
-    protected BaseValue(@Nullable ConfigGroup parent, String key, T defaultValue) {
+    protected BaseValue(@Nullable Config parent, String key, T defaultValue) {
         this.parent = parent;
         this.key = key;
         this.defaultValue = defaultValue;
@@ -112,7 +112,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     public abstract void read(ConfigSerializer serializer);
 
     private int getOrder() {
-        return this instanceof ConfigGroup ? 1 : 0;
+        return this instanceof Config ? 1 : 0;
     }
 
     @Override
@@ -131,7 +131,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     /**
      * Called when a client-side EditableConfigGroup is being created via
      * {@link dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient#editConfig(String)}. Implementations should
-     * add a suitable {@link AbstractEditableConfigValue} field to the given config group for this config value (many
+     * add a suitable {@link EditableConfigValue} field to the given config group for this config value (many
      * convenience methods exist in {@code ConfigGroup} for this).
      * <p>
      * This method should, of course, only be called on the client.
@@ -140,7 +140,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
      * @return the editable field that was added, or null if this type isn't editable in the config GUI
      */
     @Nullable
-    protected AbstractEditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
+    protected EditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
         return null;
     }
 

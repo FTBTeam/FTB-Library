@@ -32,13 +32,13 @@ public class SNBTConfigTest {
     }
 
     public interface General {
-        ConfigGroup CONFIG = ConfigGroup.create("ftblibrary").comment("Config test", "Line two");
+        Config CONFIG = Config.create("ftblibrary").comment("Config test", "Line two");
         BooleanValue TEST_1 = CONFIG.addBoolean("test_1", true);
         BooleanValue TEST_2 = CONFIG.addBoolean("test_2", true).comment("Boolean test 2");
         BooleanValue TEST_3 = CONFIG.addBoolean("test 3", false).comment("Boolean test 3");
         StringListValue STRING_LIST = CONFIG.addStringList("string_list", Arrays.asList("a", "b", "c"));
 
-        ConfigGroup SUB_TEST = CONFIG.addGroup("sub_test").comment("Group comment test", "Line 2");
+        Config SUB_TEST = CONFIG.addGroup("sub_test").comment("Group comment test", "Line 2");
         BooleanValue SUB_TEST_BOOLEAN = SUB_TEST.addBoolean("boolean", false);
         IntValue SUB_TEST_INT = SUB_TEST.addInt("int", 50).range(30, Integer.MAX_VALUE);
         DoubleValue SUB_TEST_DOUBLE = SUB_TEST.addDouble("double", 0.5D).range(0D, 1D);

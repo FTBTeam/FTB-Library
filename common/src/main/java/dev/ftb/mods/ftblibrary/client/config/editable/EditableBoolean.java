@@ -8,7 +8,7 @@ import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
-public class EditableBoolean extends AbstractEditableVariantConfig<Boolean> {
+public class EditableBoolean extends EditableVariantConfig<Boolean> {
     public static final Component TRUE_TEXT = Component.literal("True");
     public static final Component FALSE_TEXT = Component.literal("False");
 

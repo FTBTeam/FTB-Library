@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractListValue<T> extends BaseValue<List<T>> {
     private final Codec<T> codec;
 
-    protected AbstractListValue(ConfigGroup parent, String key, List<T> defaultValue, Codec<T> codec) {
+    protected AbstractListValue(Config parent, String key, List<T> defaultValue, Codec<T> codec) {
         super(parent, key, defaultValue);
         this.codec = codec;
         super.set(new ArrayList<>(defaultValue));

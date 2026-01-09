@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableResource;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableImageResource;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
@@ -25,7 +25,7 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<Identifier
             new SearchModeIndex<>(), idx -> idx.appendMode(ResourceSearchMode.IMAGES)
     );
 
-    public SelectImageResourceScreen(AbstractEditableResource<Identifier> config, ConfigCallback callback) {
+    public SelectImageResourceScreen(EditableResource<Identifier> config, ConfigCallback callback) {
         super(config, callback);
     }
 

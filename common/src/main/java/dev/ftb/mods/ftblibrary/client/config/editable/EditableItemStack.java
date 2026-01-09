@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.OptionalLong;
 
-public class EditableItemStack extends AbstractEditableResource<ItemStack> {
+public class EditableItemStack extends EditableResource<ItemStack> {
     private final boolean allowEmpty;
     private final boolean isFixedSize;
     private final long fixedSize;

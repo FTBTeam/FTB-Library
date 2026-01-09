@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config.value;
 
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 import org.jspecify.annotations.Nullable;
@@ -14,10 +14,10 @@ import java.util.List;
  * A config group is basically a list of config values of any BaseValue type, including another ConfigGroup,
  * allowing for nested config groups.
  */
-public class ConfigGroup extends BaseValue<List<BaseValue<?>>> {
+public class Config extends BaseValue<List<BaseValue<?>>> {
     private int displayOrder = 0;
 
-    private ConfigGroup(@Nullable ConfigGroup parent, String key, List<BaseValue<?>> defaultValue) {
+    private Config(@Nullable Config parent, String key, List<BaseValue<?>> defaultValue) {
         super(parent, key, defaultValue);
     }
 
@@ -27,8 +27,8 @@ public class ConfigGroup extends BaseValue<List<BaseValue<?>>> {
      * @param key the name for the config
      * @return the new config object
      */
-    public static ConfigGroup create(String key) {
-        return new ConfigGroup(null, key, new ArrayList<>());
+    public static Config create(String key) {
+        return new Config(null, key, new ArrayList<>());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ConfigGroup extends BaseValue<List<BaseValue<?>>> {
     }
 
     @Override
-    protected AbstractEditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
+    protected EditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
         List<BaseValue<?>> sorted = defaultValue.stream()
                 .filter(v -> !v.excluded)
                 .sorted(Comparator.comparingInt(o -> o.displayOrder))
@@ -59,12 +59,12 @@ public class ConfigGroup extends BaseValue<List<BaseValue<?>>> {
         return value;
     }
 
-    public ConfigGroup addGroup(String key) {
+    public Config addGroup(String key) {
         return addGroup(key, 0);
     }
 
-    public ConfigGroup addGroup(String key, int displayOrder) {
-        ConfigGroup value = new ConfigGroup(this, key, new ArrayList<>());
+    public Config addGroup(String key, int displayOrder) {
+        Config value = new Config(this, key, new ArrayList<>());
         value.displayOrder = displayOrder;
         return add(value);
     }

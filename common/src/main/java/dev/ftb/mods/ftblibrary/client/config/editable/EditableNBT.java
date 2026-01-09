@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class EditableNBT extends AbstractEditableStringifiedConfig<CompoundTag> {
+public class EditableNBT extends EditableStringifiedConfig<CompoundTag> {
     public static final Component EMPTY_NBT = Component.literal("{}");
     public static final Component NON_EMPTY_NBT = Component.literal("{...}");
 

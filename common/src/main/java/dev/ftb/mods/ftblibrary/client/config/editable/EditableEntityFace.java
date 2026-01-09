@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.OptionalLong;
 
-public class EditableEntityFace extends AbstractEditableResource<EntityType<?>> {
+public class EditableEntityFace extends EditableResource<EntityType<?>> {
     // any non-living entity would be ok here
     public static final EntityType<?> NONE = EntityType.AREA_EFFECT_CLOUD;
 

@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
-public class EditableEnum<E> extends AbstractEditableVariantConfig<E> {
+public class EditableEnum<E> extends EditableVariantConfig<E> {
     public final NameMap<E> nameMap;
 
     public EditableEnum(NameMap<E> nm) {

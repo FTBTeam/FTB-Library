@@ -2,14 +2,13 @@ package dev.ftb.mods.ftblibrary.config.value;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGuiButton;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class StringSidebarMapValue extends AbstractMapValue<StringSidebarMapValue.SideButtonInfo> {
-    public StringSidebarMapValue(ConfigGroup parent, String key, Map<String, SideButtonInfo> defaultValue) {
+    public StringSidebarMapValue(Config parent, String key, Map<String, SideButtonInfo> defaultValue) {
         super(parent, key, defaultValue, SideButtonInfo.CODEC);
 
         super.set(new HashMap<>(defaultValue));

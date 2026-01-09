@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableResource;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
@@ -22,7 +22,7 @@ public class SelectEntityFaceScreen extends ResourceSelectorScreen<EntityType<?>
             new SearchModeIndex<>(), idx -> idx.appendMode(ResourceSearchMode.ENTITY_FACES)
     );
 
-    public SelectEntityFaceScreen(AbstractEditableResource<EntityType<?>> config, ConfigCallback callback) {
+    public SelectEntityFaceScreen(EditableResource<EntityType<?>> config, ConfigCallback callback) {
         super(config, callback);
     }
 

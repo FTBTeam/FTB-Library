@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.OptionalLong;
 
-public class EditableFluid extends AbstractEditableResource<FluidStack> {
+public class EditableFluid extends EditableResource<FluidStack> {
     private final boolean allowEmpty;
     private final boolean isFixedSize;
     private final long fixedSize;

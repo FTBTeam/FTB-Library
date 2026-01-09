@@ -7,7 +7,7 @@ public abstract class NumberValue<T extends Number> extends BaseValue<T> {
     protected T minValue = null;
     protected T maxValue = null;
 
-    NumberValue(ConfigGroup parent, String key, T defaultValue) {
+    NumberValue(Config parent, String key, T defaultValue) {
         super(parent, key, defaultValue);
     }
 

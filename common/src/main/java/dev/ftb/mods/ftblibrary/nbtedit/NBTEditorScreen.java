@@ -361,7 +361,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             }
         }
 
-        private <T> void openEditOverlay(AbstractEditableStringifiedConfig<T> config, T val) {
+        private <T> void openEditOverlay(EditableStringifiedConfig<T> config, T val) {
             config.setValue(val);
             getGui().pushModalPanel(
                     new EditStringConfigOverlay<>(getGui(), config, accepted -> onCallback(config, accepted))
@@ -369,7 +369,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             );
         }
 
-        public void onCallback(AbstractEditableConfigValue<?> value, boolean accepted) {
+        public void onCallback(EditableConfigValue<?> value, boolean accepted) {
             if (accepted) {
                 switch (nbt.getId()) {
                     case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->

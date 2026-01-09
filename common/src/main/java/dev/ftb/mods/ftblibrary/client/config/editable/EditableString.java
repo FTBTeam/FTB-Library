@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-public class EditableString extends AbstractEditableStringifiedConfig<String> {
+public class EditableString extends EditableStringifiedConfig<String> {
     public static final Color4I COLOR = Color4I.rgb(0xFFAA49);
 
     public final Pattern pattern;

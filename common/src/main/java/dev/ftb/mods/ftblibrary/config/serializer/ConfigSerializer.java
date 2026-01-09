@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface ConfigSerializer {
     List<BaseValue<?>> getConfigSection(String key, List<BaseValue<?>> defVal, boolean topLevel);
-    void putConfigSection(String key, ConfigGroup val, boolean topLevel);
+    void putConfigSection(String key, Config val, boolean topLevel);
 
     boolean getBoolean(String key, boolean defVal);
     void putBoolean(String key, BooleanValue val);

@@ -14,7 +14,7 @@ import net.minecraft.network.chat.MutableComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditableList<E, CV extends AbstractEditableConfigValue<E>> extends AbstractEditableConfigValue<List<E>> {
+public class EditableList<E, CV extends EditableConfigValue<E>> extends EditableConfigValue<List<E>> {
     public static final Component EMPTY_LIST = Component.literal("[]");
     public static final Component NON_EMPTY_LIST = Component.literal("[...]");
 

@@ -7,7 +7,7 @@ import net.minecraft.resources.Identifier;
 import java.util.OptionalLong;
 import java.util.function.Predicate;
 
-public abstract class AbstractEditableResource<T> extends AbstractEditableConfigValue<T> {
+public abstract class EditableResource<T> extends EditableConfigValue<T> {
     private boolean allowNBTEdit = true;
     private boolean allowEmpty = true;
     private Predicate<T> filter = s -> true;
@@ -28,17 +28,17 @@ public abstract class AbstractEditableResource<T> extends AbstractEditableConfig
         return allowNBTEdit;
     }
 
-    public AbstractEditableResource<T> setAllowNBTEdit(boolean allow) {
+    public EditableResource<T> setAllowNBTEdit(boolean allow) {
         allowNBTEdit = allow;
         return this;
     }
 
-    public AbstractEditableResource<T> withFilter(Predicate<T> filter) {
+    public EditableResource<T> withFilter(Predicate<T> filter) {
         this.filter = filter;
         return this;
     }
 
-    public AbstractEditableResource<T> withAllowEmpty(boolean allowEmpty) {
+    public EditableResource<T> withAllowEmpty(boolean allowEmpty) {
         this.allowEmpty = allowEmpty;
         return this;
     }
@@ -47,7 +47,7 @@ public abstract class AbstractEditableResource<T> extends AbstractEditableConfig
         return filter.test(resource);
     }
 
-    public static abstract class Image<T> extends AbstractEditableResource<T> {
+    public static abstract class Image<T> extends EditableResource<T> {
         public static final Identifier NONE = FTBLibrary.rl("none");
 
         @Override

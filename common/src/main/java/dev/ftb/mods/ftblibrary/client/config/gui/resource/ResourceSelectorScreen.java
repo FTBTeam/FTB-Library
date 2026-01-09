@@ -4,7 +4,7 @@ import com.google.common.base.Stopwatch;
 import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableResource;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableString;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditMultilineStringConfigOverlay;
 import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
@@ -55,7 +55,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         return thread;
     });
 
-    private final AbstractEditableResource<T> config;
+    private final EditableResource<T> config;
     private final ConfigCallback callback;
     private final TextField selectedLabel;
     private final TextBox searchBox;
@@ -69,7 +69,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     private int nRows = ITEM_ROWS;
     private int nCols = ITEM_COLS;
 
-    public ResourceSelectorScreen(AbstractEditableResource<T> config, ConfigCallback callback) {
+    public ResourceSelectorScreen(EditableResource<T> config, ConfigCallback callback) {
         super();
 
         this.config = config;

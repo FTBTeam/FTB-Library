@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.client.config.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableList;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
@@ -28,7 +28,7 @@ import java.util.Optional;
 
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
-public class EditConfigListScreen<E, CV extends AbstractEditableConfigValue<E>> extends AbstractThreePanelScreen<EditConfigListScreen<E, CV>.ConfigPanel> {
+public class EditConfigListScreen<E, CV extends EditableConfigValue<E>> extends AbstractThreePanelScreen<EditConfigListScreen<E, CV>.ConfigPanel> {
     private final EditableList<E, CV> listConfig;
     private final ConfigCallback callback;
     private final List<E> localValues;

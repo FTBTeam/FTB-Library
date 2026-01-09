@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.net;
 import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
-import dev.ftb.mods.ftblibrary.config.value.ConfigGroup;
+import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,7 +20,7 @@ public record SyncConfigFromServerPacket(String configName, CompoundTag config) 
             SyncConfigFromServerPacket::new
     );
 
-    public static SyncConfigFromServerPacket create(ConfigGroup config) {
+    public static SyncConfigFromServerPacket create(Config config) {
         return new SyncConfigFromServerPacket(config.getKey(), SNBTConfigSerializer.serialize(config));
     }
 

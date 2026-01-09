@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public abstract class AbstractEditableStringifiedConfig<T> extends AbstractEditableConfigValue<T> {
+public abstract class EditableStringifiedConfig<T> extends EditableConfigValue<T> {
     public abstract boolean parse(@Nullable Consumer<T> callback, String string);
 
     public String getStringFromValue(@Nullable T v) {

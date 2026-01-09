@@ -1,14 +1,14 @@
 package dev.ftb.mods.ftblibrary.config.value;
 
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
-import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
 import net.minecraft.util.Mth;
 
 import java.util.Objects;
 
 public class DoubleValue extends NumberValue<Double> {
-    DoubleValue(ConfigGroup parent, String key, double defaultValue) {
+    DoubleValue(Config parent, String key, double defaultValue) {
         super(parent, key, defaultValue);
     }
 
@@ -32,7 +32,7 @@ public class DoubleValue extends NumberValue<Double> {
     }
 
     @Override
-    protected AbstractEditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
+    protected EditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
         return group.addDouble(key, get(), this::set, defaultValue,
                 Objects.requireNonNullElse(minValue, Double.NEGATIVE_INFINITY),
                 Objects.requireNonNullElse(maxValue, Double.POSITIVE_INFINITY)

@@ -9,7 +9,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
-public class EditableColor extends AbstractEditableConfigValue<Color4I> {
+public class EditableColor extends EditableConfigValue<Color4I> {
     private boolean allowAlphaEdit = false;
 
     public EditableColor() {
