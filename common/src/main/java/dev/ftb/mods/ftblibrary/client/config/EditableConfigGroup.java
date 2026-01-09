@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.client.config.editable.*;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.net.SyncConfigToServerPacket;
-import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
+import dev.ftb.mods.ftblibrary.config.value.ConfigGroup;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -25,16 +25,16 @@ import java.util.regex.Pattern;
  * subgroups. This object can be passed to an {@link dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen} to
  * allow GUI editing of configs.
  */
-public class ConfigGroup implements Comparable<ConfigGroup> {
+public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
     private final String id;
-    private final @Nullable ConfigGroup parent;
+    private final @Nullable EditableConfigGroup parent;
     private final Map<String, AbstractEditableConfigValue<?>> values;
-    private final Map<String, ConfigGroup> subgroups;
+    private final Map<String, EditableConfigGroup> subgroups;
     private final @Nullable ConfigCallback savedCallback;
     private final int displayOrder;
     private String nameKey;
 
-    private ConfigGroup(String id, @Nullable ConfigGroup parent, @Nullable ConfigCallback savedCallback, int displayOrder) {
+    private EditableConfigGroup(String id, @Nullable EditableConfigGroup parent, @Nullable ConfigCallback savedCallback, int displayOrder) {
         this.id = id;
         this.parent = parent;
         this.values = new LinkedHashMap<>();
@@ -48,7 +48,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      * Create a new top-level config group
      * @param id a unique id for this group
      */
-    public ConfigGroup(String id) {
+    public EditableConfigGroup(String id) {
         this(id, null, null, 0);
     }
 
@@ -57,7 +57,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      * @param id a unique id for this group
      * @param savedCallback a callback to be run when the {@link #save(boolean)} method is called
      */
-    public ConfigGroup(String id, ConfigCallback savedCallback) {
+    public EditableConfigGroup(String id, ConfigCallback savedCallback) {
         this(id, null, savedCallback, 0);
     }
 
@@ -70,8 +70,8 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      * @param serverConfig if true, sync config to server; if false, save locally
      * @return a new config group
      */
-    public static ConfigGroup createEditable(SNBTConfig config, String groupName, boolean serverConfig) {
-        return new ConfigGroup(groupName, accepted -> {
+    public static EditableConfigGroup createEditable(ConfigGroup config, String groupName, boolean serverConfig) {
+        return new EditableConfigGroup(groupName, accepted -> {
             if (accepted) {
                 if (serverConfig) {
                     NetworkManager.sendToServer(SyncConfigToServerPacket.create(config));
@@ -96,7 +96,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      * @return the parent group; will be null for a top-level group
      */
     @Nullable
-    public ConfigGroup getParent() {
+    public EditableConfigGroup getParent() {
         return parent;
     }
 
@@ -114,7 +114,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      * @param key a custom translation key
      * @return the group
      */
-    public ConfigGroup setNameKey(String key) {
+    public EditableConfigGroup setNameKey(String key) {
         nameKey = key;
         return this;
     }
@@ -144,11 +144,11 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      * @param displayOrder order in which groups are displayed in the GUI (higher numbers come after)
      * @return the subgroup, which may have just been created
      */
-    public ConfigGroup getOrCreateSubgroup(String id, int displayOrder) {
+    public EditableConfigGroup getOrCreateSubgroup(String id, int displayOrder) {
         var index = id.indexOf('.');
 
         if (index == -1) {
-            return subgroups.computeIfAbsent(id, k -> new ConfigGroup(id, this, null, displayOrder));
+            return subgroups.computeIfAbsent(id, k -> new EditableConfigGroup(id, this, null, displayOrder));
         } else {
             return getOrCreateSubgroup(id.substring(0, index), displayOrder).getOrCreateSubgroup(id.substring(index + 1), displayOrder);
         }
@@ -160,7 +160,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
      * @param id unique id of the subgroup
      * @return the subgroup, which may have just been created
      */
-    public ConfigGroup getOrCreateSubgroup(String id) {
+    public EditableConfigGroup getOrCreateSubgroup(String id) {
         return getOrCreateSubgroup(id, 0);
     }
 
@@ -459,7 +459,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
         return values.values();
     }
 
-    public final Collection<ConfigGroup> getSubgroups() {
+    public final Collection<EditableConfigGroup> getSubgroups() {
         return subgroups.values();
     }
 
@@ -482,7 +482,7 @@ public class ConfigGroup implements Comparable<ConfigGroup> {
     }
 
     @Override
-    public int compareTo(@NonNull ConfigGroup o) {
+    public int compareTo(@NonNull EditableConfigGroup o) {
         int i = Integer.compare(displayOrder, o.displayOrder);
         return i == 0 ? getPath().compareToIgnoreCase(o.getPath()) : i;
     }

@@ -28,7 +28,7 @@ public class EditableBoolean extends AbstractEditableVariantConfig<Boolean> {
     }
 
     @Override
-    public Icon<?> getIcon(@Nullable Boolean v) {
-        return v == null || !v ? Icons.ACCEPT_GRAY : Icons.ACCEPT;
+    public Icon<?> getIcon(@Nullable Boolean value) {
+        return value == null || !value ? Icons.ACCEPT_GRAY : Icons.ACCEPT;
     }
 }

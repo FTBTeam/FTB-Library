@@ -6,7 +6,7 @@ import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
-import dev.ftb.mods.ftblibrary.snbt.config.StringSidebarMapValue.SideButtonInfo;
+import dev.ftb.mods.ftblibrary.config.value.StringSidebarMapValue.SideButtonInfo;
 import dev.ftb.mods.ftblibrary.util.MapUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;

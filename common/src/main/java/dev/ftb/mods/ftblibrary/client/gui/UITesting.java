@@ -3,21 +3,21 @@ package dev.ftb.mods.ftblibrary.client.gui;
 import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.client.config.*;
+import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.editable.*;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectItemStackScreen;
-import dev.ftb.mods.ftblibrary.client.config.editable.*;
+import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.screens.AbstractButtonListScreen;
 import dev.ftb.mods.ftblibrary.client.gui.widget.ContextMenu;
-import dev.ftb.mods.ftblibrary.util.NameMap;
-import dev.ftb.mods.ftblibrary.icon.Color4I;
-import dev.ftb.mods.ftblibrary.icon.Icon;
-import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.client.gui.widget.ContextMenuItem;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.client.gui.widget.SimpleTextButton;
-import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.NameMap;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
@@ -31,10 +31,9 @@ import java.util.List;
 
 public class UITesting {
     public static void openTestScreen() {
-        var group = new ConfigGroup("test", accepted ->
+        var group = new EditableConfigGroup("test", accepted ->
                 Minecraft.getInstance().player.displayClientMessage(Component.literal("Accepted: " + accepted), false));
-        group.add("image", new EditableImageResource(), EditableImageResource.NONE, v -> {
-        }, EditableImageResource.NONE);
+        group.add("image", new EditableImageResource(), EditableImageResource.NONE, UITesting::onChanged, EditableImageResource.NONE);
 
         group.addItemStack("itemstack", ItemStack.EMPTY, UITesting::onChanged, ItemStack.EMPTY, false, true);
         group.addItemStack("item", ItemStack.EMPTY, UITesting::onChanged, ItemStack.EMPTY, 1).setAllowNBTEdit(false);
@@ -44,21 +43,21 @@ public class UITesting {
         group.addFluidStack("fluid", water, UITesting::onChanged, water, water.getAmount()).showAmount(false).setAllowNBTEdit(false);
         group.addEntityFace("face", EditableEntityFace.NONE, UITesting::onChanged, EditableEntityFace.NONE);
 
-        ConfigGroup grp1 = group.getOrCreateSubgroup("group1");
+        EditableConfigGroup grp1 = group.getOrCreateSubgroup("group1");
         grp1.addInt("integer", 1, UITesting::onChanged, 0, 0, 10);
         grp1.addLong("long", 10L, UITesting::onChanged, 0L, 0L, 1000L);
         grp1.addDouble("double", 1.5, UITesting::onChanged, 0.0, -10.0, 10.0);
         grp1.addBool("bool", true, UITesting::onChanged, false);
         grp1.addString("string", "some text", UITesting::onChanged, "");
 
-        ConfigGroup grp2 = grp1.getOrCreateSubgroup("subgroup1");
+        EditableConfigGroup grp2 = grp1.getOrCreateSubgroup("subgroup1");
         grp2.addEnum("enum", Direction.UP, UITesting::onChanged, NameMap.of(Direction.UP, Direction.values()).create());
         List<Integer> integers = new ArrayList<>(List.of(1, 2, 3, 4));
         grp2.addList("int_list", integers, new EditableInt(0, 10), 1);
         List<String> strings = new ArrayList<>(List.of("line one", "line two", "line three"));
         grp2.addList("str_list", strings, new EditableString(), "");
 
-        ConfigGroup grp3 = grp2.getOrCreateSubgroup("subgroup2");
+        EditableConfigGroup grp3 = grp2.getOrCreateSubgroup("subgroup2");
         grp3.addColor("color", Color4I.WHITE, UITesting::onChanged, Color4I.GRAY);
         grp3.addColor("color_alpha", Color4I.WHITE, UITesting::onChanged, Color4I.GRAY).withAlphaEditing();
         grp3.addItemStack("itemstack", ItemStack.EMPTY, UITesting::onChanged, ItemStack.EMPTY, false, false);
@@ -71,7 +70,7 @@ public class UITesting {
     }
     
     public static class TestConfigScreen extends EditConfigScreen {
-        public TestConfigScreen(ConfigGroup configGroup) {
+        public TestConfigScreen(EditableConfigGroup configGroup) {
             super(configGroup);
         }
 

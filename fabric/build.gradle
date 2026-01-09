@@ -47,6 +47,8 @@ dependencies {
     common(project(path: ":common", configuration: "dev")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
+    implementation("de.marhali:json5-java:${json5_version}")
+    include("de.marhali:json5-java:${json5_version}")
 //    modRuntimeOnly "curse.maven:atlasviewer-633577:6347925"
 }
 

@@ -38,6 +38,9 @@ dependencies {
     // modCompileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rootProject.rei_version}"
     //modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
     // modCompileOnly("mezz.jei:jei-1.21.1-neoforge-api:${jei_version}")
+    
+    implementation("de.marhali:json5-java:${json5_version}")
+    include("de.marhali:json5-java:${json5_version}")
 
     common(project(path: ":common", configuration: "dev")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }

@@ -1,10 +1,11 @@
 package dev.ftb.mods.ftblibrary.client.config.editable;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
-import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.config.value.BaseValue;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
@@ -19,7 +20,7 @@ import java.util.function.Consumer;
 
 /**
  * Base class for all editable configs. This is the "glue" between config objects as loaded from disk (see
- * {@link dev.ftb.mods.ftblibrary.snbt.config.BaseValue} and the GUI config editor.
+ * {@link BaseValue} and the GUI config editor.
  *
  * @param <T> the type of object being edited
  */
@@ -29,7 +30,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
     public String id = "";
     protected T value;
     protected T defaultValue;
-    private ConfigGroup group;
+    private EditableConfigGroup group;
     private Consumer<T> setter;
     private int order = 0;
     private String nameKey = "";
@@ -47,7 +48,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
 
     /**
      * Initialise this config value; called when it's added to a config group with
-     * {@link ConfigGroup#add(String, AbstractEditableConfigValue, Object, Consumer, Object)}
+     * {@link EditableConfigGroup#add(String, AbstractEditableConfigValue, Object, Consumer, Object)}
      *
      * @param group the group being added to
      * @param id a unique id for this value
@@ -56,7 +57,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
      * @param defaultValue the default value
      * @return the initialised config value
      */
-    public AbstractEditableConfigValue<T> init(ConfigGroup group, String id, T value, Consumer<T> setter, T defaultValue) {
+    public AbstractEditableConfigValue<T> init(EditableConfigGroup group, String id, T value, Consumer<T> setter, T defaultValue) {
         this.group = group;
         this.id = id;
         this.value = value == null ? null : copy(value);
@@ -68,7 +69,7 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
     /**
      * {@return the config group to which this editable belongs}
      */
-    public ConfigGroup getGroup() {
+    public EditableConfigGroup getGroup() {
         return group;
     }
 
@@ -235,12 +236,12 @@ public abstract class AbstractEditableConfigValue<T> implements Comparable<Abstr
         return getIcon(getValue());
     }
 
-    public AbstractEditableConfigValue<T> setIcon(Icon<?> i) {
-        icon = i;
+    public AbstractEditableConfigValue<T> setIcon(Icon<?> icon) {
+        this.icon = icon;
         return this;
     }
 
-    public Icon<?> getIcon(@Nullable T v) {
+    public Icon<?> getIcon(@Nullable T value) {
         return icon;
     }
 

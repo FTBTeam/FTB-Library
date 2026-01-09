@@ -1,25 +1,25 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.snbt.config.BooleanValue;
-import dev.ftb.mods.ftblibrary.snbt.config.IntValue;
-import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
-import dev.ftb.mods.ftblibrary.snbt.config.StringValue;
+import dev.ftb.mods.ftblibrary.config.value.BooleanValue;
+import dev.ftb.mods.ftblibrary.config.value.ConfigGroup;
+import dev.ftb.mods.ftblibrary.config.value.IntValue;
+import dev.ftb.mods.ftblibrary.config.value.StringValue;
 
 import static dev.ftb.mods.ftblibrary.FTBLibrary.MOD_ID;
 
 public interface FTBLibraryServerConfig {
     String KEY = MOD_ID + "-server";
 
-    SNBTConfig CONFIG = SNBTConfig.create(KEY)
+    ConfigGroup CONFIG = ConfigGroup.create(KEY)
             .comment("Server-specific configuration for FTB Library. Testing only!");
 
-    SNBTConfig SECT1 = CONFIG.addGroup("section1");
+    ConfigGroup SECT1 = CONFIG.addGroup("section1");
     StringValue TEST1 = SECT1.addString("test1", "hello");
     StringValue TEST2 = SECT1.addString("test2", "world");
     BooleanValue TEST3 = SECT1.addBoolean("test3", true);
 
-    SNBTConfig SECT2 = CONFIG.addGroup("section2");
+    ConfigGroup SECT2 = CONFIG.addGroup("section2");
     BooleanValue TEST4 = SECT2.addBoolean("test4", false);
     IntValue TEST5 = SECT2.addInt("test5", 1, 0, 10);
 

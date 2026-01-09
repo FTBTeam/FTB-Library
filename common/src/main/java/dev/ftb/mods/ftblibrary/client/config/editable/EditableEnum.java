@@ -80,16 +80,15 @@ public class EditableEnum<E> extends AbstractEditableVariantConfig<E> {
     }
 
     @Override
-    public Icon<?> getIcon(@Nullable E v) {
-        if (v != null) {
-            var icon = nameMap.getIcon(v);
-
+    public Icon<?> getIcon(@Nullable E value) {
+        if (value != null) {
+            var icon = nameMap.getIcon(value);
             if (!icon.isEmpty()) {
                 return icon;
             }
         }
 
-        return super.getIcon(v);
+        return super.getIcon(value);
     }
 
     private class EnumSelectScreen extends AbstractButtonListScreen {

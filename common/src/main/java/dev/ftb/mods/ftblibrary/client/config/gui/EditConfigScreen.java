@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.editable.AbstractEditableConfigValue;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
@@ -32,7 +32,7 @@ import java.util.List;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.ConfigPanel> {
-    private final ConfigGroup group;
+    private final EditableConfigGroup group;
     private final Component title;
     private final List<Widget> allConfigButtons; // both groups and entries
     private final Button buttonCollapseAll, buttonExpandAll;
@@ -45,11 +45,11 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
     private boolean openPrevScreenOnClose = true;
     private final boolean readOnly;
 
-    public EditConfigScreen(ConfigGroup configGroup) {
+    public EditConfigScreen(EditableConfigGroup configGroup) {
         this(configGroup, false);
     }
 
-    public EditConfigScreen(ConfigGroup configGroup, boolean readOnly) {
+    public EditConfigScreen(EditableConfigGroup configGroup, boolean readOnly) {
         super();
 
         this.readOnly = readOnly;
@@ -98,7 +98,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
         getGui().refreshWidgets();
     }
 
-    private void collectAllConfigValues(ConfigGroup group, List<AbstractEditableConfigValue<?>> list) {
+    private void collectAllConfigValues(EditableConfigGroup group, List<AbstractEditableConfigValue<?>> list) {
         list.addAll(group.getValues().stream().sorted().toList());
 
         for (var subgroup : group.getSubgroups()) {
@@ -210,18 +210,18 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
     }
 
     public static class ConfigGroupButton extends Button {
-        private final ConfigGroup group;
+        private final EditableConfigGroup group;
         @Nullable private final MutableComponent info;
         private final MutableComponent title;
         private boolean collapsed = false;
 
-        public ConfigGroupButton(Panel panel, ConfigGroup g) {
+        public ConfigGroupButton(Panel panel, EditableConfigGroup g) {
             super(panel);
             setHeight(14);
             group = g;
 
             if (group.getParent() != null) {
-                List<ConfigGroup> groups = new ArrayList<>();
+                List<EditableConfigGroup> groups = new ArrayList<>();
                 while (g.getParent() != null) {
                     groups.add(g);
                     g = g.getParent();

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.config;
 
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
-import dev.ftb.mods.ftblibrary.snbt.config.*;
+import dev.ftb.mods.ftblibrary.config.value.*;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 
 import java.util.HashMap;
@@ -11,10 +11,10 @@ import static dev.ftb.mods.ftblibrary.FTBLibrary.MOD_ID;
 public interface FTBLibraryClientConfig {
     String KEY = MOD_ID + "-client";
 
-    SNBTConfig CONFIG = SNBTConfig.create(KEY)
+    ConfigGroup CONFIG = ConfigGroup.create(KEY)
             .comment("Client-specific configuration for FTB Library");
 
-    SNBTConfig TOOLTIPS = CONFIG.addGroup("tooltips");
+    ConfigGroup TOOLTIPS = CONFIG.addGroup("tooltips");
 
     BooleanValue ITEM_MODNAME = TOOLTIPS.addBoolean("item_modname", false)
             .comment("Add the name of the mod that items belong to in the item selection GUI.\n" +
@@ -26,11 +26,12 @@ public interface FTBLibraryClientConfig {
     BooleanValue ENTITY_MODNAME = TOOLTIPS.addBoolean("entity_modname", true)
             .comment("Add the name of the mod that entities belong to in the entity face selection GUI.");
 
-    SNBTConfig COLOR = CONFIG.addGroup("colorselector");
+    ConfigGroup COLOR = CONFIG.addGroup("colorselector");
     IntArrayValue RECENT = COLOR.addIntArray("recents", new int[0])
-            .comment("Colors recently selected in the color selector");
+            .comment("Colors recently selected in the color selector")
+            .excludedFromGui();
 
-    SNBTConfig SIDEBAR = CONFIG.addGroup("sidebar");
+    ConfigGroup SIDEBAR = CONFIG.addGroup("sidebar");
     BooleanValue SIDEBAR_ENABLED = SIDEBAR.addBoolean("enabled", true)
             .comment("Enable the sidebar");
     EnumValue<SidebarPosition> SIDEBAR_POSITION = SIDEBAR.addEnum("position", SidebarPosition.NAME_MAP, SidebarPosition.TOP_LEFT)

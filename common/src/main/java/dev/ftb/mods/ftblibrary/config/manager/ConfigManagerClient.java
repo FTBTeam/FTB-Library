@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.config.manager;
 
 import dev.architectury.event.events.client.ClientLifecycleEvent;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen;
-import dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil;
+import dev.ftb.mods.ftblibrary.config.ConfigUtil;
 import net.minecraft.client.Minecraft;
 
 public class ConfigManagerClient {

@@ -3,18 +3,18 @@ package dev.ftb.mods.ftblibrary.config.manager;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.client.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
+import dev.ftb.mods.ftblibrary.config.serializer.Json5ConfigSerializer;
 import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
-import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil;
-import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
+import dev.ftb.mods.ftblibrary.config.value.ConfigGroup;
+import dev.ftb.mods.ftblibrary.config.ConfigUtil;
+import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Util;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,13 +52,13 @@ public enum ConfigManager {
 
     /**
      * Register a client config.
-     * @see #registerClientConfig(SNBTConfig, String, BooleanConsumer)
+     * @see #registerClientConfig(ConfigGroup, String, BooleanConsumer)
      *
-     * @param config the {@link SNBTConfig} object, typically created by {@code SNBTConfig.create()}
+     * @param config the {@link ConfigGroup} object, typically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @return the same config object
      */
-    public SNBTConfig registerClientConfig(SNBTConfig config, String groupPrefix) {
+    public ConfigGroup registerClientConfig(ConfigGroup config, String groupPrefix) {
         return registerClientConfig(config, groupPrefix, TrackedConfig.NO_ACTION);
     }
 
@@ -67,25 +67,25 @@ public enum ConfigManager {
      * Architectury {@code ClientLifecycleEvent.CLIENT_SETUP} event is fired. This method does not need to be called
      * on the server, though it does not hurt to do so.
      *
-     * @param config the {@link SNBTConfig} object, typically statically created by {@code SNBTConfig.create()}
+     * @param config the {@link ConfigGroup} object, typically statically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param onEdited a BooleanConsumer which is called when the config is edited via GUI, or changed via sync from server
      * @return the same config object
      */
-    public SNBTConfig registerClientConfig(SNBTConfig config, String groupPrefix, BooleanConsumer onEdited) {
+    public ConfigGroup registerClientConfig(ConfigGroup config, String groupPrefix, BooleanConsumer onEdited) {
         pendingClient.put(config.key, TrackedConfig.createForRegistration(groupPrefix, ConfigType.CLIENT, config, false, onEdited));
         return config;
     }
 
     /**
-     * @see #registerServerConfig(SNBTConfig, String, boolean, BooleanConsumer)
+     * @see #registerServerConfig(ConfigGroup, String, boolean, BooleanConsumer)
      *
-     * @param config the {@link SNBTConfig} object, typically statically created by {@code SNBTConfig.create()}
+     * @param config the {@link ConfigGroup} object, typically statically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param sync if true, this config is automatically sync'd to clients when players log in
      * @return the same config object
      */
-    public SNBTConfig registerServerConfig(SNBTConfig config, String groupPrefix, boolean sync) {
+    public ConfigGroup registerServerConfig(ConfigGroup config, String groupPrefix, boolean sync) {
         return registerServerConfig(config, groupPrefix, sync, TrackedConfig.NO_ACTION);
     }
 
@@ -93,14 +93,14 @@ public enum ConfigManager {
      * Register a server config. Server configs are loaded on server startup, specifically when the
      * Architectury {@code LifecycleEvent.SERVER_BEFORE_START} event is fired.
      *
-     * @param config the {@link SNBTConfig} object, typically created by {@code SNBTConfig.create()}
+     * @param config the {@link ConfigGroup} object, typically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param sync if true, this config is automatically sync'd to clients when players log in
      * @param onEdited a BooleanConsumer which is called when the config is changed via sync from client
      *
      * @return the same config object
      */
-    public SNBTConfig registerServerConfig(SNBTConfig config, String groupPrefix, boolean sync, BooleanConsumer onEdited) {
+    public ConfigGroup registerServerConfig(ConfigGroup config, String groupPrefix, boolean sync, BooleanConsumer onEdited) {
         pendingServer.put(config.key, TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, sync, onEdited));
         return config;
     }
@@ -111,10 +111,10 @@ public enum ConfigManager {
      * synchronized, and not editable in-game. This should only be used for configuring the setup phase of mods,
      * before the client or server are ready for use.
      *
-     * @param config the {@link SNBTConfig} object, typically created by {@code SNBTConfig.create()}
+     * @param config the {@link ConfigGroup} object, typically created by {@code ConfigGroup.create()}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      */
-    public SNBTConfig registerStartupConfig(SNBTConfig config, String groupPrefix) {
+    public ConfigGroup registerStartupConfig(ConfigGroup config, String groupPrefix) {
         var tc = TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, false, TrackedConfig.NO_ACTION);
         findAndLoad(config.key, tc, ConfigUtil.LOCAL_DIR::resolve);
         return config;
@@ -127,7 +127,8 @@ public enum ConfigManager {
         }
 
         try {
-            SNBT.tryWrite(tc.loadedFrom, Util.make(new SNBTCompoundTag(), tc.config::write));
+//            SNBTConfigSerializer.writeToFile(tc.config, tc.loadedFrom);
+            Json5ConfigSerializer.writeToFile(tc.config, tc.loadedFrom);
             FTBLibrary.LOGGER.debug("saved config name={} path={}", key, tc.loadedFrom);
         } catch (IOException e) {
             FTBLibrary.LOGGER.error("failed to save config {}: {}", tc, e.getMessage());
@@ -143,7 +144,7 @@ public enum ConfigManager {
     public void syncFromServer(String serverConfigName, CompoundTag tag) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(SNBTCompoundTag.of(tag));
+            tc.config.read(new SNBTConfigSerializer(SNBTCompoundTag.of(tag)));
             tc.onEdited.accept(false);
             FTBLibrary.LOGGER.info("received server config settings for config: {}", serverConfigName);
         } else {
@@ -161,7 +162,7 @@ public enum ConfigManager {
     public void syncFromClient(String serverConfigName, CompoundTag tag, String playerName) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(SNBTCompoundTag.of(tag));
+            tc.config.read(new SNBTConfigSerializer(SNBTCompoundTag.of(tag)));
             tc.onEdited.accept(true);
             save(serverConfigName);
             FTBLibrary.LOGGER.info("received client config settings from {} for config: {}", playerName, serverConfigName);
@@ -186,7 +187,8 @@ public enum ConfigManager {
     }
 
     void findAndLoad(String key, TrackedConfig protoTc, Function<String, Path> overridePathSupplier) {
-        String fileName = key + ".snbt";
+//        String fileName = key + ".snbt";
+        String fileName = key + ".json5";
 
         Path primaryPath = ConfigUtil.CONFIG_DIR.resolve(fileName);
         Path overridePath = overridePathSupplier.apply(fileName);
@@ -205,12 +207,20 @@ public enum ConfigManager {
 
         if (Files.exists(overridePath)) {
             // an override exists in .../<world>/serverconfig/<name>.snbt, use that
-            protoTc.config.load(overridePath);
-            track(key, protoTc.promoteToFull(overridePath));
+            loadAndTrack(key, protoTc, overridePath);
         } else {
             // no override; just load the config from the primary config path: .../config/<name>.snbt
-            protoTc.config.load(primaryPath);
-            track(key, protoTc.promoteToFull(primaryPath));
+            loadAndTrack(key, protoTc, primaryPath);
+        }
+    }
+
+    private void loadAndTrack(String key, TrackedConfig protoTc, Path path) {
+        try {
+//            SNBTConfigSerializer.readFromFile(protoTc.config, path);
+            Json5ConfigSerializer.readFromFile(protoTc.config, path);
+            track(key, protoTc.promoteToFull(path));
+        } catch (IOException e) {
+            FTBLibrary.LOGGER.error("can't read config {} from {}: {}/{}", key, path, e.getClass().getName(), e.getMessage());
         }
     }
 
@@ -243,7 +253,7 @@ public enum ConfigManager {
      * @param configName the config name, as previously registered
      * @return a ConfigGroup object, or {@code Optional.empty()} if the config is not known or is a startup config
      */
-    public Optional<ConfigGroup> createConfigGroup(String configName) {
+    public Optional<EditableConfigGroup> createConfigGroup(String configName) {
         TrackedConfig tc = trackedConfigs.get(configName);
         return tc != null && tc.configType != ConfigType.STARTUP ?
                 Optional.of(ConfigUtil.makeConfigEditGroup(tc.config, tc.groupPrefix, tc.configType == ConfigType.SERVER)) :
@@ -260,7 +270,7 @@ public enum ConfigManager {
      *                   receives true if server-side (i.e. config received from client after GUI editing),
      *                   false if client-side (i.e. config has just been edited via GUI)
      */
-    record TrackedConfig(Path loadedFrom, ConfigType configType, SNBTConfig config, boolean synced, BooleanConsumer onEdited, String groupPrefix) {
+    record TrackedConfig(Path loadedFrom, ConfigType configType, ConfigGroup config, boolean synced, BooleanConsumer onEdited, String groupPrefix) {
         static final BooleanConsumer NO_ACTION = isServer -> {};
 
         /**
@@ -280,7 +290,7 @@ public enum ConfigManager {
          * @param onChanged called when config is changed
          * @return a new proto-tracked-config object
          */
-        static TrackedConfig createForRegistration(String groupPrefix, ConfigType configType, SNBTConfig config, boolean sync, BooleanConsumer onChanged) {
+        static TrackedConfig createForRegistration(String groupPrefix, ConfigType configType, ConfigGroup config, boolean sync, BooleanConsumer onChanged) {
             return new TrackedConfig(null, configType, config, sync, onChanged, groupPrefix);
         }
 
