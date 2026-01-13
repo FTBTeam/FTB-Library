@@ -34,7 +34,7 @@ public class IntValue extends NumberValue<Integer> {
     @Override
     protected EditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
         return group.addInt(key, get(), this::set, defaultValue,
-                Objects.requireNonNullElse(minValue, Integer.MAX_VALUE),
+                Objects.requireNonNullElse(minValue, Integer.MIN_VALUE),
                 Objects.requireNonNullElse(maxValue, Integer.MAX_VALUE)
         );
     }
