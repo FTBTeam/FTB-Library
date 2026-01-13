@@ -18,7 +18,7 @@ public class IntValue extends NumberValue<Integer> {
 
     @Override
     public void set(Integer value) {
-        super.set(Mth.clamp(value, Objects.requireNonNullElse(minValue, Integer.MAX_VALUE), Objects.requireNonNullElse(maxValue, Integer.MAX_VALUE)));
+        super.set(Mth.clamp(value, Objects.requireNonNullElse(minValue, Integer.MIN_VALUE), Objects.requireNonNullElse(maxValue, Integer.MAX_VALUE)));
     }
 
     @Override
