@@ -9,6 +9,7 @@ import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.gui.render.state.TiledBlitRenderState;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import org.joml.Matrix3x2f;
 import org.jspecify.annotations.Nullable;
 
 import javax.imageio.ImageIO;
@@ -24,7 +25,7 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
             graphics.guiRenderState.submitGuiElement(new BlitRenderState(
                     RenderPipelines.GUI_TEXTURED,
                     TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler()),
-                    graphics.pose(),
+                    new Matrix3x2f(graphics.pose()),
                     x, y, x + w, y + h,
                     icon.minU, icon.maxU, icon.minV, icon.maxV,
                     icon.color.rgba(),
@@ -34,7 +35,7 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
             graphics.guiRenderState.submitGuiElement(new TiledBlitRenderState(
                     RenderPipelines.GUI_TEXTURED,
                     TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler()),
-                    graphics.pose(),
+                    new Matrix3x2f(graphics.pose()),
                     (int) icon.tileSize, (int) icon.tileSize,
                     x, y, x + w, y + h,
                     icon.minU, icon.maxU, icon.minV, icon.maxV,
