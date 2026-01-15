@@ -11,8 +11,8 @@ public enum PermissionHelper {
 
     private PermissionProvider activeImpl = null;
 
-    public PermissionHelper getInstance() {
-        return INSTANCE;
+    public static PermissionProvider getProvider() {
+        return INSTANCE.provider();
     }
 
     public void setProviderImpl(PermissionProvider newProvider) {
@@ -24,7 +24,7 @@ public enum PermissionHelper {
         activeImpl = newProvider;
     }
 
-    public PermissionProvider getProvider() {
+    public PermissionProvider provider() {
         return Objects.requireNonNullElse(activeImpl, FALLBACK_PROVIDER);
     }
 }
