@@ -255,21 +255,13 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
                                 width - innerPadding() :
                                 font.width(s.substring(stringView1.beginIndex(), stringView.endIndex()));
 
-                        renderHighlight(graphics, xPos1 + xOff1, yPos, xPos1 + xOff2, yPos + font.lineHeight);
+                        graphics.textHighlight(xPos1 + xOff1, yPos - 1, xPos1 + xOff2, yPos + font.lineHeight - 1, true);
                     }
 
                 }
                 yPos += font.lineHeight;
             }
         }
-    }
-
-    private void renderHighlight(GuiGraphics graphics, int x1, int y1, int x2, int y2) {
-        GlStateManager._enableColorLogicOp();
-        GlStateManager._logicOp(LogicOp.OR_REVERSE.ordinal());
-
-        IconHelper.renderIcon(Color4I.rgb(0x0000FF), graphics, x1, y1, x2 - x1, y2 - y1);
-        GlStateManager._disableColorLogicOp();
     }
 
     private boolean withinContentArea(int y1, int y2) {

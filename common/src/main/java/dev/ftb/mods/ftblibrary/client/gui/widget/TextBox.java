@@ -484,6 +484,7 @@ public class TextBox extends Widget implements IFocusableWidget {
             endX = Math.min(endX, x + w);
             startX = Math.min(startX, x + w);
 
+            graphics.textHighlight(startX, startY, endX, endY, true);
             graphics.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, startX, startY, endX, endY, 0x80000080);
         }
     }
