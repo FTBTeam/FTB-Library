@@ -2,9 +2,9 @@ package dev.ftb.mods.ftblibrary.client.config.editable;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditConfigListScreen;
+import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
-import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
@@ -48,28 +48,27 @@ public class EditableList<E, CV extends EditableConfigValue<E>> extends Editable
 
     @Override
     public void addInfo(TooltipList l) {
-        if (!getValue().isEmpty()) {
+        if (value != null && !value.isEmpty()) {
             l.add(info("List"));
 
-            List<E> val = getValue();
-            for (int i = 0; i < val.size(); i++) {
+            for (int i = 0; i < value.size(); i++) {
                 if (i >= 10) {
                     // prevent big lists producing giant unwieldy tooltips
-                    l.add(Component.literal("... " + (val.size() - i) + " more ...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+                    l.add(Component.literal("... " + (value.size() - i) + " more ...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
                     break;
                 }
-                var value = val.get(i);
-                l.add(type.getStringForGUI(value));
+                var element = value.get(i);
+                l.add(type.getStringForGUI(element));
             }
 
-            if (!getDefaultValue().isEmpty()) {
+            if (defaultValue != null && !defaultValue.isEmpty()) {
                 l.blankLine();
             }
         }
 
-        if (!getDefaultValue().isEmpty()) {
+        if (defaultValue != null && !defaultValue.isEmpty()) {
             l.add(info("Default"));
-            for (var value : getDefaultValue()) {
+            for (var value : defaultValue) {
                 l.add(type.getStringForGUI(value));
             }
         }

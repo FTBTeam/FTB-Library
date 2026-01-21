@@ -11,6 +11,7 @@ public class OptionalBoolean {
     public static final OptionalBoolean EMPTY = new OptionalBoolean(null);
     public static final OptionalBoolean TRUE = new OptionalBoolean(true);
     public static final OptionalBoolean FALSE = new OptionalBoolean(false);
+    @Nullable
     private final Boolean value;
 
     private OptionalBoolean(@Nullable Boolean v) {

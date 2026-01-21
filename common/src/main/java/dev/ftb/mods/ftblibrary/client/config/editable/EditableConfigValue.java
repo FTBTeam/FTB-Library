@@ -28,8 +28,8 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
     public static final Component NULL_TEXT = Component.literal("null");
 
     public String id = "";
-    protected T value;
-    protected T defaultValue;
+    @Nullable protected T value;
+    @Nullable protected T defaultValue;
     private EditableConfigGroup group;
     private Consumer<T> setter;
     private int order = 0;
@@ -57,7 +57,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * @param defaultValue the default value
      * @return the initialised config value
      */
-    public EditableConfigValue<T> init(EditableConfigGroup group, String id, T value, Consumer<T> setter, T defaultValue) {
+    public EditableConfigValue<T> init(EditableConfigGroup group, String id, @Nullable T value, Consumer<T> setter, @Nullable T defaultValue) {
         this.group = group;
         this.id = id;
         this.value = value == null ? null : copy(value);
@@ -76,6 +76,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
     /**
      * {@return the current value for this editable}
      */
+    @Nullable
     public T getValue() {
         return value;
     }
@@ -84,7 +85,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * Unconditionally set a new value. See also {@link #updateValue(Object)}
      * @param newValue the new value
      */
-    public void setValue(T newValue) {
+    public void setValue(@Nullable T newValue) {
         this.value = newValue;
     }
 
@@ -94,7 +95,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * @param newValue the new value
      * @return true if the value was actually changed, false if the newValue is the same as value
      */
-    public final boolean updateValue(T newValue) {
+    public final boolean updateValue(@Nullable T newValue) {
         if (!isEqual(value, newValue)) {
             value = newValue;
             return true;
@@ -106,6 +107,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
     /**
      * {@return the default value for this editable}
      */
+    @Nullable
     public T getDefaultValue() {
         return defaultValue;
     }
@@ -115,7 +117,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * a list or a map.
      * @param defaultValue the new default value
      */
-    public void setDefaultValue(T defaultValue) {
+    public void setDefaultValue(@Nullable T defaultValue) {
         this.defaultValue = defaultValue;
     }
 

@@ -16,6 +16,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class EditableEnum<E> extends EditableVariantConfig<E> {
@@ -105,7 +106,7 @@ public class EditableEnum<E> extends EditableVariantConfig<E> {
         }
 
         @Override
-        public void addButtons(Panel panel) {
+        public void addButtons(@NonNull Panel panel) {
             for (var v : nameMap) {
                 panel.add(new SimpleTextButton(panel, nameMap.getDisplayName(v), nameMap.getIcon(v)) {
                     @Override

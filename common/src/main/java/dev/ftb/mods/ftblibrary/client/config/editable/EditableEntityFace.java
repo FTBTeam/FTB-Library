@@ -51,7 +51,7 @@ public class EditableEntityFace extends EditableResource<EntityType<?>> {
     public void addInfo(TooltipList list) {
         if (value != null && !value.equals(defaultValue)) {
             list.add(Component.translatable("config.group.value").append(": ").withStyle(ChatFormatting.AQUA)
-                    .append(getValue().getDescription().copy().withStyle(ChatFormatting.WHITE)));
+                    .append(value.getDescription().copy().withStyle(ChatFormatting.WHITE)));
         }
 
         super.addInfo(list);

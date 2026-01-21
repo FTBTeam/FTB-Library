@@ -15,6 +15,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.Util;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
@@ -139,4 +141,11 @@ public class ClientUtils {
         throw new AssertionError();
     }
 
+    public static Level getClientLevel() {
+        return Objects.requireNonNull(Minecraft.getInstance().level);
+    }
+
+    public static Player getClientPlayer() {
+        return Objects.requireNonNull(Minecraft.getInstance().player);
+    }
 }

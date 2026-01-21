@@ -64,7 +64,7 @@ public class EditableFluid extends EditableResource<FluidStack> {
 
     @Override
     public boolean isEmpty() {
-        return getValue().isEmpty();
+        return value == null || value.isEmpty();
     }
 
     @Override

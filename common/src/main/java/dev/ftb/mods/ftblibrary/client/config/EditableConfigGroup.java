@@ -176,7 +176,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param <T> the raw type
      * @param <CV> the config value type
      */
-    public <T, CV extends EditableConfigValue<T>> CV add(String id, CV type, T value, Consumer<T> setter, T defaultValue) {
+    public <T, CV extends EditableConfigValue<T>> CV add(String id, CV type, @Nullable T value, Consumer<T> setter, @Nullable T defaultValue) {
         values.put(id, type.init(this, id, value, setter, defaultValue));
         return type;
     }
@@ -305,7 +305,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param <E> the list type
      * @param <CV> the config value type which wraps the list type {@code E}
      */
-    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, E def) {
+    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, @Nullable E def) {
         type.setDefaultValue(def);
         return add(id, new EditableList<>(type), value, c -> {
             value.clear();
@@ -325,7 +325,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param <E> the list type
      * @param <CV> the config value type which wraps the list type {@code E}
      */
-    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, E def) {
+    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, @Nullable E def) {
         type.setDefaultValue(def);
         return add(id, new EditableList<>(type), value, setter, Collections.emptyList());
     }

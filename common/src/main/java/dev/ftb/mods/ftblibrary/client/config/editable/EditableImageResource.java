@@ -56,7 +56,7 @@ public class EditableImageResource extends EditableResource<Identifier> {
     public void addInfo(TooltipList list) {
         if (value != null && !value.equals(defaultValue)) {
             list.add(Component.translatable("config.group.value").append(": ").withStyle(ChatFormatting.AQUA)
-                    .append(Component.literal(getValue().toString()).withStyle(ChatFormatting.WHITE)));
+                    .append(Component.literal(value.toString()).withStyle(ChatFormatting.WHITE)));
         }
 
         super.addInfo(list);

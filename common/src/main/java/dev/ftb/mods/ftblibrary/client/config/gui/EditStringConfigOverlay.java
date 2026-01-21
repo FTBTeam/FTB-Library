@@ -20,9 +20,11 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
     private final EditableStringifiedConfig<T> config;
     private final ConfigCallback callback;
     private final TextField titleField;
+    @Nullable
     private final Component title;
     private boolean addAcceptCancelButtons = true;
 
+    @Nullable
     private T currentValue;
 
     public EditStringConfigOverlay(Panel panel, EditableStringifiedConfig<T> config, ConfigCallback callback) {
@@ -36,7 +38,8 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         this.currentValue = config.getValue() == null ? null : config.copy(config.getValue());
         this.title = title;
 
-        width = currentValue == null ? 100 : getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue)) + 86;
+        int stringWidth = currentValue == null ? 0 : getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue));
+        width = Math.min(getWindow().getGuiScaledWidth() / 2, stringWidth + config.getExtraEditorWidth());
 
         titleField = new TextField(this).addFlags(Theme.SHADOW).setText(Objects.requireNonNullElse(title, Component.empty()));
         titleField.setSize(0, 0);
@@ -153,9 +156,7 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         public void onTextChanged() {
             config.parse(t -> currentValue = t, getText());
 
-            if (accept != null) {
-                accept.setIcon(isTextValid() ? Icons.ACCEPT : Icons.ACCEPT.withTint(Color4I.DARK_GRAY.withAlpha(160)));
-            }
+            accept.setIcon(isTextValid() ? Icons.ACCEPT : Icons.ACCEPT.withTint(Color4I.DARK_GRAY.withAlpha(160)));
         }
 
         @Override
@@ -167,6 +168,9 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
 
         @Override
         public boolean mouseScrolled(double scroll) {
+            if (currentValue == null) {
+                return super.mouseScrolled(scroll);
+            }
             return config.scrollValue(currentValue, scroll > 0).map(v -> {
                 textBox.setText(config.getStringFromValue(v));
                 textBox.setSelectionPos(textBox.getCursorPos());

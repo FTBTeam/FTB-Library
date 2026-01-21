@@ -774,9 +774,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                 }
             }));
 
-            if (selected instanceof ButtonBasicTag) {
-                add(new SimpleButton(this, Component.translatable("ftblibrary.gui.edit_tag_value"), Icons.FEATHER,
-                        (widget, button) -> ((ButtonBasicTag) selected).edit()));
+            if (selected instanceof ButtonBasicTag bbt) {
+                add(new SimpleButton(this, Component.translatable("ftblibrary.gui.edit_tag_value"), Icons.FEATHER, (widget, button) -> bbt.edit()));
             }
 
             List<Widget> addBtns = buildAddButtons();

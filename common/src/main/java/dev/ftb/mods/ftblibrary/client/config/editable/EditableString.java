@@ -53,4 +53,9 @@ public class EditableString extends EditableStringifiedConfig<String> {
             list.add(info("Regex", pattern.pattern()));
         }
     }
+
+    @Override
+    public int getExtraEditorWidth() {
+        return 200;
+    }
 }

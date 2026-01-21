@@ -41,17 +41,15 @@ public class EditableDouble extends EditableNumber<Double> {
 
     @Override
     public boolean parse(@Nullable Consumer<Double> callback, String string) {
-        if (string.equals("-") || string.equals("+") || string.isEmpty()) return okValue(callback, 0D);
-
         switch (string) {
+            case "-", "+", "" -> {
+                return min <= 0 && max >= 0 && okValue(callback, 0D);
+            }
             case "+Inf" -> {
                 return max == Double.POSITIVE_INFINITY && okValue(callback, Double.POSITIVE_INFINITY);
             }
             case "-Inf" -> {
                 return min == Double.NEGATIVE_INFINITY && okValue(callback, Double.NEGATIVE_INFINITY);
-            }
-            case "-" -> {
-                return min <= 0 && max >= 0 && okValue(callback, 0d);
             }
         }
 

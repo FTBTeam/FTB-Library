@@ -324,7 +324,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         @NonNull
         private EditMultilineStringConfigOverlay makeMultilineEditPanel(EditableString config) {
             var panel = new EditMultilineStringConfigOverlay(ResourceSelectorScreen.this, config, accepted -> {
-                if (accepted) {
+                if (accepted && config.getValue() != null) {
                     try {
                         selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
                     } catch (SNBTSyntaxException e) {
