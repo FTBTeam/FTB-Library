@@ -1,5 +1,6 @@
 {
   "use_mob_texture": true,
+  "texture": "minecraft:textures/entity/cow/red_mooshroom.png",
   "slice": {
     "x": 6,
     "y": 6,
@@ -8,6 +9,6 @@
   },
   "default_image_size": {
     "width": 64,
-    "height": 32
+    "height": 64
   }
 }

@@ -10,6 +10,7 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.Enemy;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -42,7 +44,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static final Map<EntityType<?>, Map<Identifier, Icon>> ICON_CACHE = new HashMap<>();
+    private static final Map<EntityType<?>, Map<Identifier, Icon<?>>> ICON_CACHE = new HashMap<>();
     private static final Map<EntityType<?>, EntityIconSettings> ENTITY_SETTINGS = new HashMap<>();
     private static final Set<EntityType<?>> DYNAMIC_JSON_TEXTURES = new HashSet<>();
 
@@ -63,7 +65,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
 
             if (resourceManager.getResource(invisible).isPresent()) {
                 LOGGER.error("Entity {} is using legacy invisible texture, please update it to use the new system!", id);
-                entityIconSettings = EntityIconSettings.OLD_HIDDEN;
+                entityIconSettings = EntityIconSettings.legacy();
             }
 
             Optional<Resource> resource = resourceManager.getResource(FTBLibrary.rl(basePath + ".json"));
@@ -77,14 +79,11 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
                 }
             }
 
-            if (entityIconSettings == null && entityType.getCategory() != MobCategory.MISC) {
-                if (ModUtils.isDevMode()) {
-                    LOGGER.error("Missing entity icon settings for {}", id);
-                }
-                entityIconSettings = EntityIconSettings.legacy();
+            if (entityIconSettings == null && entityType.getCategory() != MobCategory.MISC && ModUtils.isDevMode()) {
+                LOGGER.error("Missing entity icon settings for {}", id);
             }
 
-            map.put(entityType, entityIconSettings);
+            map.put(entityType, Objects.requireNonNullElse(entityIconSettings, EntityIconSettings.legacy()));
         }
 
         return map;
@@ -106,6 +105,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         return "textures/faces/" + id.getNamespace() + "/" + id.getPath();
     }
 
+    @Nullable
     private EntityIconSettings loadEntitySetting(Identifier id, Resource resource) {
         try {
             JsonElement jsonElement = GsonHelper.fromJson(GSON, resource.openAsReader(), JsonElement.class);
@@ -125,7 +125,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         if (renderer instanceof LivingEntityRenderer/*<?,?,?>*/ entityRenderer && state instanceof LivingEntityRenderState ls) {
             return getSettings(entity.getType()).map(settings -> settings.useMobTexture ?
                     getOrCreateIcon(entity.getType(), entityRenderer.getTextureLocation(ls), settings) :
-                    settings.texture.map(Identifier -> getOrCreateIcon(entity.getType(), Identifier, settings)).orElse(null));
+                    settings.texture.map(texture -> getOrCreateIcon(entity.getType(), texture, settings)).orElse(null));
         } else {
             return Optional.empty();
         }
@@ -146,7 +146,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
     }
 
     public static Icon<?> getIcon(EntityType<?> entityType) {
-        Entity entity = entityType.create(Minecraft.getInstance().level, EntitySpawnReason.LOAD);
+        Entity entity = entityType.create(ClientUtils.getClientLevel(), EntitySpawnReason.LOAD);
         return entity == null ? EntityIconLoader.NORMAL : getIcon(entity);
     }
 
