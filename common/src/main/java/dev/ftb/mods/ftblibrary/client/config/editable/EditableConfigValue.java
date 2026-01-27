@@ -2,9 +2,9 @@ package dev.ftb.mods.ftblibrary.client.config.editable;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
+import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
-import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.config.value.BaseValue;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
@@ -25,13 +25,18 @@ import java.util.function.Consumer;
  * @param <T> the type of object being edited
  */
 public abstract class EditableConfigValue<T> implements Comparable<EditableConfigValue<T>> {
-    public static final Component NULL_TEXT = Component.literal("null");
-
-    public String id = "";
-    @Nullable protected T value;
-    @Nullable protected T defaultValue;
+    // these 5 fields are always init'd in the init() method, which is called from EditableConfigGroup#add
+    @SuppressWarnings("NotNullFieldNotInitialized")
+    public String id;
+    @SuppressWarnings("NotNullFieldNotInitialized")
+    protected T value;
+    @SuppressWarnings("NotNullFieldNotInitialized")
+    protected T defaultValue;
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private EditableConfigGroup group;
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private Consumer<T> setter;
+
     private int order = 0;
     private String nameKey = "";
     private Icon<?> icon = Icons.SETTINGS;
@@ -57,10 +62,10 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * @param defaultValue the default value
      * @return the initialised config value
      */
-    public EditableConfigValue<T> init(EditableConfigGroup group, String id, @Nullable T value, Consumer<T> setter, @Nullable T defaultValue) {
+    public EditableConfigValue<T> init(EditableConfigGroup group, String id, T value, Consumer<T> setter, T defaultValue) {
         this.group = group;
         this.id = id;
-        this.value = value == null ? null : copy(value);
+        this.value = copy(value);
         this.setter = setter;
         this.defaultValue = defaultValue;
         return this;
@@ -76,7 +81,6 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
     /**
      * {@return the current value for this editable}
      */
-    @Nullable
     public T getValue() {
         return value;
     }
@@ -85,7 +89,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * Unconditionally set a new value. See also {@link #updateValue(Object)}
      * @param newValue the new value
      */
-    public void setValue(@Nullable T newValue) {
+    public void setValue(T newValue) {
         this.value = newValue;
     }
 
@@ -95,7 +99,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * @param newValue the new value
      * @return true if the value was actually changed, false if the newValue is the same as value
      */
-    public final boolean updateValue(@Nullable T newValue) {
+    public final boolean updateValue(T newValue) {
         if (!isEqual(value, newValue)) {
             value = newValue;
             return true;
@@ -107,7 +111,6 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
     /**
      * {@return the default value for this editable}
      */
-    @Nullable
     public T getDefaultValue() {
         return defaultValue;
     }
@@ -117,7 +120,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * a list or a map.
      * @param defaultValue the new default value
      */
-    public void setDefaultValue(@Nullable T defaultValue) {
+    public void setDefaultValue(T defaultValue) {
         this.defaultValue = defaultValue;
     }
 
@@ -164,16 +167,17 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      *
      * @implNote themes are currently ignored but the theme parameter is in the API now, which is a start!
      */
-    public Color4I getColor(@Nullable T value, Theme theme) {
-        return Color4I.GRAY;
+    public Color4I getColor(T value, Theme theme) {
+        return theme.hasDarkBackground() ? Color4I.GRAY : Color4I.DARK_GRAY;
     }
 
     /**
      * Add some descriptive text for this editable, for tooltip purposes in the editor GUI.
      *
-     * @param list the tooltip list to append to
+     * @param list  the tooltip list to append to
+     * @param theme
      */
-    public void addInfo(TooltipList list) {
+    public void addInfo(TooltipList list, Theme theme) {
         list.add(info("Default", getStringForGUI(defaultValue)));
     }
 
@@ -192,14 +196,13 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
         return Component.literal(String.valueOf(value));
     }
 
-    public Component getStringForGUI(@Nullable T v) {
-        return Component.literal(String.valueOf(v));
+    public Component getStringForGUI(T value) {
+        return Component.literal(String.valueOf(value));
     }
 
     public String getPath() {
-        if (group == null) return id;
-        var p = group.getPath();
-        return p.isEmpty() ? id : (p + '.' + id);
+        var path = group.getPath();
+        return path.isEmpty() ? id : (path + '.' + id);
     }
 
     public String getNameKey() {
@@ -243,7 +246,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
         return this;
     }
 
-    public Icon<?> getIcon(@Nullable T value) {
+    public Icon<?> getIcon(T value) {
         return icon;
     }
 
@@ -256,6 +259,9 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
         return co != 0 ? co : getName().compareTo(o.getName());
     }
 
+    /**
+     * Called when a config group is saved via the config editor screen to actually apply the changes.
+     */
     public void applyValue() {
         setter.accept(value);
     }

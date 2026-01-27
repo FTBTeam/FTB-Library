@@ -25,6 +25,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 
 import java.util.*;
 
@@ -86,8 +87,9 @@ public interface ResourceSearchMode<T> {
         public Collection<? extends SelectableResource<EntityType<?>>> getAllResources() {
             if (allTypesCache == null) {
                 List<SelectableResource<EntityType<?>>> types = new ArrayList<>();
+                Level clientLevel = ClientUtils.getClientLevel();
                 BuiltInRegistries.ENTITY_TYPE.forEach(entityType -> {
-                    if (entityType.create(Minecraft.getInstance().level, EntitySpawnReason.LOAD) instanceof LivingEntity) {
+                    if (entityType.create(clientLevel, EntitySpawnReason.LOAD) instanceof LivingEntity) {
                         types.add(new EntityFaceResource(entityType));
                     }
                 });

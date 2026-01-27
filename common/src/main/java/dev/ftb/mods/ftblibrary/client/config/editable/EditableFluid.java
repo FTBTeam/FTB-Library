@@ -38,11 +38,11 @@ public class EditableFluid extends EditableResource<FluidStack> {
     }
 
     @Override
-    public Component getStringForGUI(FluidStack v) {
-        if (v == null || v.isEmpty()) {
+    public Component getStringForGUI(FluidStack value) {
+        if (value.isEmpty()) {
             return Component.translatable("gui.none");
         }
-        return showAmount ? Component.literal(v.getAmount() + "mB ").append(v.getName()) : v.getName();
+        return showAmount ? Component.literal(value.getAmount() + "mB ").append(value.getName()) : value.getName();
     }
 
     @Override

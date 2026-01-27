@@ -32,7 +32,7 @@ public class EditableColor extends EditableConfigValue<Color4I> {
     }
 
     @Override
-    public Component getStringForGUI(@Nullable Color4I v) {
-        return super.getStringForGUI(v).copy().append(Component.literal(" ■").withColor(allowAlphaEdit ? value.rgba() : value.rgb()));
+    public Component getStringForGUI(Color4I value) {
+        return super.getStringForGUI(value).copy().append(Component.literal(" ■").withColor(allowAlphaEdit ? this.value.rgba() : this.value.rgb()));
     }
 }

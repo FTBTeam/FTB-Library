@@ -24,7 +24,7 @@ public class EditMultilineStringConfigOverlay extends ModalPanel {
         super(panel);
         this.config = config;
         this.callback = callback;
-        this.currentValue = config.getValue() == null ? null : config.copy(config.getValue());
+        this.currentValue = config.getValue();
 
         textBoxPanel = new TextBoxPanel();
         textBox = new MultilineTextBox(textBoxPanel);

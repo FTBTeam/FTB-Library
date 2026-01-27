@@ -4,6 +4,7 @@ import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
+import dev.ftb.mods.ftblibrary.client.config.Tristate;
 import dev.ftb.mods.ftblibrary.client.config.editable.*;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectItemStackScreen;
@@ -13,13 +14,13 @@ import dev.ftb.mods.ftblibrary.client.gui.widget.ContextMenu;
 import dev.ftb.mods.ftblibrary.client.gui.widget.ContextMenuItem;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.client.gui.widget.SimpleTextButton;
+import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -32,7 +33,7 @@ import java.util.List;
 public class UITesting {
     public static void openTestScreen() {
         var group = new EditableConfigGroup("test", accepted ->
-                Minecraft.getInstance().player.displayClientMessage(Component.literal("Accepted: " + accepted), false));
+                ClientUtils.getClientPlayer().displayClientMessage(Component.literal("Accepted: " + accepted), false));
         group.add("image", new EditableImageResource(), EditableImageResource.NONE, UITesting::onChanged, EditableImageResource.NONE);
 
         group.addItemStack("itemstack", ItemStack.EMPTY, UITesting::onChanged, ItemStack.EMPTY, false, true);
@@ -49,6 +50,7 @@ public class UITesting {
         grp1.addDouble("double", 1.5, UITesting::onChanged, 0.0, -10.0, 10.0);
         grp1.addBool("bool", true, UITesting::onChanged, false);
         grp1.addString("string", "some text", UITesting::onChanged, "");
+        grp1.addTristate("tristate", Tristate.DEFAULT, UITesting::onChanged);
 
         EditableConfigGroup grp2 = grp1.getOrCreateSubgroup("subgroup1");
         grp2.addEnum("enum", Direction.UP, UITesting::onChanged, NameMap.of(Direction.UP, Direction.values()).create());
@@ -68,7 +70,7 @@ public class UITesting {
     private static void onChanged(Object o) {
         FTBLibrary.LOGGER.info("changed config val: {}", o);
     }
-    
+
     public static class TestConfigScreen extends EditConfigScreen {
         public TestConfigScreen(EditableConfigGroup configGroup) {
             super(configGroup);
@@ -83,15 +85,15 @@ public class UITesting {
             ContextMenu menu = new ContextMenu(parent, List.of(
                     ContextMenuItem.title(Component.literal("Title")),
                     ContextMenuItem.SEPARATOR,
-                    new ContextMenuItem(Component.literal("Select item"), Icons.ADD, button -> {
-                        new SelectItemStackScreen(new EditableItemStack(1), accepted -> parent.getGui().run()).openGui();
-                    }),
+                    new ContextMenuItem(Component.literal("Select item"), Icons.ADD,
+                            button -> new SelectItemStackScreen(new EditableItemStack(1), accepted -> parent.getGui().run()).openGui()
+                    ),
                     ContextMenuItem.subMenu(Component.literal("line 2 >"), Icons.REMOVE, List.of(
-                            ContextMenuItem.title(Component.literal("Submenu")),
-                            ContextMenuItem.SEPARATOR,
-                            new ContextMenuItem(Component.literal("line 2a"), Icons.FRIENDS_GROUP, button1 -> {
-                            }
-                            ))),
+                                    ContextMenuItem.title(Component.literal("Submenu")),
+                                    ContextMenuItem.SEPARATOR,
+                                    new ContextMenuItem(Component.literal("line 2a"), Icons.FRIENDS_GROUP, button1 -> {})
+                            )
+                    ),
                     new ContextMenuItem(Component.literal("Test Search"), Icon.empty(), button -> openTestButtonList()) {
                         @Override
                         public void addMouseOverText(TooltipList list) {

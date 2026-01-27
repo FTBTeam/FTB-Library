@@ -40,14 +40,14 @@ public class EditableItemStack extends EditableResource<ItemStack> {
     }
 
     @Override
-    public Component getStringForGUI(@Nullable ItemStack v) {
-        if (v == null || v.isEmpty()) {
+    public Component getStringForGUI(@Nullable ItemStack value) {
+        if (value == null || value.isEmpty()) {
             return Component.translatable("gui.none");
-        } else if (v.getCount() <= 1) {
-            return v.getHoverName();
+        } else if (value.getCount() <= 1) {
+            return value.getHoverName();
         }
 
-        return Component.literal(v.getCount() + "x ").append(v.getHoverName());
+        return Component.literal(value.getCount() + "x ").append(value.getHoverName());
     }
 
     @Override

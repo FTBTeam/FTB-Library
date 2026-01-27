@@ -2,6 +2,8 @@ package dev.ftb.mods.ftblibrary.client.config.editable;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectableResource;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.resources.Identifier;
 
 import java.util.OptionalLong;
@@ -26,6 +28,11 @@ public abstract class EditableResource<T> extends EditableConfigValue<T> {
 
     public boolean canHaveNBT() {
         return allowNBTEdit;
+    }
+
+    @Override
+    public Color4I getColor(T value, Theme theme) {
+        return theme.hasDarkBackground() ? Color4I.rgb(0xA0A0FF) : Color4I.rgb(0x202080);
     }
 
     public EditableResource<T> setAllowNBTEdit(boolean allow) {
@@ -62,7 +69,7 @@ public abstract class EditableResource<T> extends EditableConfigValue<T> {
 
         @Override
         public boolean isEmpty() {
-            return value == null || value.equals(NONE);
+            return value.equals(NONE);
         }
     }
 }

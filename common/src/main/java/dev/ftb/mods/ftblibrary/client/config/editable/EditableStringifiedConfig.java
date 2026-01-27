@@ -18,13 +18,13 @@ import java.util.function.Consumer;
 public abstract class EditableStringifiedConfig<T> extends EditableConfigValue<T> {
     public abstract boolean parse(@Nullable Consumer<T> callback, String string);
 
-    public String getStringFromValue(@Nullable T v) {
+    public String getStringFromValue(T v) {
         return String.valueOf(v);
     }
 
     @Override
-    public Component getStringForGUI(@Nullable T v) {
-        return Component.literal(getStringFromValue(v));
+    public Component getStringForGUI(T value) {
+        return Component.literal(getStringFromValue(value));
     }
 
     @Override

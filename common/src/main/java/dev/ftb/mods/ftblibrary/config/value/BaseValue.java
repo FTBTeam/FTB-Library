@@ -17,8 +17,9 @@ import java.util.function.BooleanSupplier;
  * @param <T> the value's type
  */
 public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
-    public final Config parent;
-    public final String key;
+    @Nullable
+    protected final Config parent;
+    protected final String key;
     protected final T defaultValue;
     protected boolean excluded;
     protected BooleanSupplier enabled = SNBTUtils.ALWAYS_TRUE;

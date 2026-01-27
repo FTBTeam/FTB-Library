@@ -74,6 +74,10 @@ public class NordTheme extends Theme {
     @Override
     public void drawPanelBackground(GuiGraphics graphics, int x, int y, int w, int h) {
         IconHelper.renderIcon(NordColors.POLAR_NIGHT_2, graphics, x, y, w, h);
-//        GuiHelper.drawBorderedPanel(graphics, x, y, w, h, NordColors.POLAR_NIGHT_2, true);
+    }
+
+    @Override
+    public boolean hasDarkBackground() {
+        return true;
     }
 }

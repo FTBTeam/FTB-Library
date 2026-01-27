@@ -73,7 +73,7 @@ public enum ConfigManager {
      * @return the same config object
      */
     public Config registerClientConfig(Config config, String groupPrefix, BooleanConsumer onEdited) {
-        pendingClient.put(config.key, TrackedConfig.createForRegistration(groupPrefix, ConfigType.CLIENT, config, false, onEdited));
+        pendingClient.put(config.getKey(), TrackedConfig.createForRegistration(groupPrefix, ConfigType.CLIENT, config, false, onEdited));
         return config;
     }
 
@@ -101,7 +101,7 @@ public enum ConfigManager {
      * @return the same config object
      */
     public Config registerServerConfig(Config config, String groupPrefix, boolean sync, BooleanConsumer onEdited) {
-        pendingServer.put(config.key, TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, sync, onEdited));
+        pendingServer.put(config.getKey(), TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, sync, onEdited));
         return config;
     }
 
@@ -116,7 +116,7 @@ public enum ConfigManager {
      */
     public Config registerStartupConfig(Config config, String groupPrefix) {
         var tc = TrackedConfig.createForRegistration(groupPrefix, ConfigType.SERVER, config, false, TrackedConfig.NO_ACTION);
-        findAndLoad(config.key, tc, ConfigUtil.LOCAL_DIR::resolve);
+        findAndLoad(config.getKey(), tc, ConfigUtil.LOCAL_DIR::resolve);
         return config;
     }
 

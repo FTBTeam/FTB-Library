@@ -17,7 +17,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 public class EditableEnum<E> extends EditableVariantConfig<E> {
     public final NameMap<E> nameMap;
@@ -29,19 +28,19 @@ public class EditableEnum<E> extends EditableVariantConfig<E> {
     }
 
     @Override
-    public Component getStringForGUI(E v) {
-        return nameMap.getDisplayName(v);
+    public Component getStringForGUI(E value) {
+        return nameMap.getDisplayName(value);
     }
 
     @Override
     public Color4I getColor(E value, Theme theme) {
         var col = nameMap.getColor(value);
-        return col.isEmpty() ? Tristate.DEFAULT.color : col;
+        return col.isEmpty() ? Tristate.DEFAULT.getColor(theme) : col;
     }
 
     @Override
-    public void addInfo(TooltipList list) {
-        super.addInfo(list);
+    public void addInfo(TooltipList list, Theme theme) {
+        super.addInfo(list, theme);
 
         if (nameMap.size() > 0) {
             list.blankLine();
@@ -81,15 +80,10 @@ public class EditableEnum<E> extends EditableVariantConfig<E> {
     }
 
     @Override
-    public Icon<?> getIcon(@Nullable E value) {
-        if (value != null) {
-            var icon = nameMap.getIcon(value);
-            if (!icon.isEmpty()) {
-                return icon;
-            }
-        }
+    public Icon<?> getIcon(E value) {
+        var icon = nameMap.getIcon(value);
+        return !icon.isEmpty() ? icon : super.getIcon(value);
 
-        return super.getIcon(value);
     }
 
     private class EnumSelectScreen extends AbstractButtonListScreen {
@@ -137,7 +131,7 @@ public class EditableEnum<E> extends EditableVariantConfig<E> {
         @Override
         protected void doAccept() {
             parent.run();
-            callback.save(false);
+            callback.save(true);
         }
     }
 }

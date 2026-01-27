@@ -12,6 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
@@ -50,8 +51,8 @@ public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
 
         @Override
         public boolean shouldAdd(SearchTerms searchTerms) {
-            return searchTerms.match(
-                    RegistrarManager.getId(getResource().getItem(), Registries.ITEM),
+            Identifier resourceId = RegistrarManager.getId(getResource().getItem(), Registries.ITEM);
+            return resourceId != null && searchTerms.match(resourceId,
                     getResource().getHoverName().getString(),
                     id -> getResource().is(TagKey.create(Registries.ITEM, id))
             );

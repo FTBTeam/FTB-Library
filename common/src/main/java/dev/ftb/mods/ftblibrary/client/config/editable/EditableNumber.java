@@ -11,22 +11,16 @@ public abstract class EditableNumber<T extends Number> extends EditableStringifi
 
     public final T min;
     public final T max;
-    public boolean fader;
     protected T scrollIncrement;
 
-    public EditableNumber(T mn, T mx) {
-        min = mn;
-        max = mx;
+    public EditableNumber(T min, T max) {
+        this.min = min;
+        this.max = max;
     }
 
     @Override
-    public Color4I getColor(@Nullable T value, Theme theme) {
-        return COLOR;
-    }
-
-    public EditableNumber<T> fader(boolean v) {
-        fader = v;
-        return this;
+    public Color4I getColor(T value, Theme theme) {
+        return theme.hasDarkBackground() ? COLOR : Color4I.rgb(0xFF9026A0);
     }
 
     @Override
@@ -35,8 +29,8 @@ public abstract class EditableNumber<T extends Number> extends EditableStringifi
     }
 
     @Override
-    public Component getStringForGUI(@Nullable T v) {
-        return v == null ? NULL_TEXT : Component.literal(formatValue(v));
+    public Component getStringForGUI(T value) {
+        return Component.literal(formatValue(value));
     }
 
     protected String formatValue(T v) {

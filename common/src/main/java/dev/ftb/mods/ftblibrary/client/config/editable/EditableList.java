@@ -43,30 +43,31 @@ public class EditableList<E, CV extends EditableConfigValue<E>> extends Editable
 
     @Override
     public Color4I getColor(List<E> value, Theme theme) {
-        return COLOR;
+        return theme.hasDarkBackground() ? EditableString.COLOR_HI : EditableString.COLOR_LO;
     }
 
     @Override
-    public void addInfo(TooltipList l) {
-        if (value != null && !value.isEmpty()) {
+    public void addInfo(TooltipList l, Theme theme) {
+        if (!value.isEmpty()) {
             l.add(info("List"));
 
+            ChatFormatting col = theme.hasDarkBackground() ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY;
             for (int i = 0; i < value.size(); i++) {
                 if (i >= 10) {
                     // prevent big lists producing giant unwieldy tooltips
-                    l.add(Component.literal("... " + (value.size() - i) + " more ...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+                    l.add(Component.literal("... " + (value.size() - i) + " more ...").withStyle(col, ChatFormatting.ITALIC));
                     break;
                 }
                 var element = value.get(i);
                 l.add(type.getStringForGUI(element));
             }
 
-            if (defaultValue != null && !defaultValue.isEmpty()) {
+            if (!defaultValue.isEmpty()) {
                 l.blankLine();
             }
         }
 
-        if (defaultValue != null && !defaultValue.isEmpty()) {
+        if (!defaultValue.isEmpty()) {
             l.add(info("Default"));
             for (var value : defaultValue) {
                 l.add(type.getStringForGUI(value));
@@ -80,14 +81,14 @@ public class EditableList<E, CV extends EditableConfigValue<E>> extends Editable
     }
 
     @Override
-    public Component getStringForGUI(List<E> v) {
-        return v == null ? NULL_TEXT : v.isEmpty() ? EMPTY_LIST : formatListSize(v);
+    public Component getStringForGUI(List<E> value) {
+        return value.isEmpty() ? EMPTY_LIST : formatListSize(value);
     }
 
     private Component formatListSize(List<E> v) {
         MutableComponent main = v.size() == 1 ?
                 Component.translatable("ftblibrary.gui.listSize1") :
                 Component.translatable("ftblibrary.gui.listSize", v.size());
-        return Component.literal("[ ").append(main.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY)).append(" ]");
+        return Component.literal("[ ").append(main.withStyle(ChatFormatting.ITALIC)).append(" ]");
     }
 }

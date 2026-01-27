@@ -242,7 +242,7 @@ public class EditConfigListScreen<E, CV extends EditableConfigValue<E>> extends 
                 l.add(hotkeyTooltip("Del"));
             } else {
                 listConfig.getType().setValue(localValues.get(index));
-                listConfig.getType().addInfo(l);
+                listConfig.getType().addInfo(l, getTheme());
             }
         }
 

@@ -136,7 +136,7 @@ public final class NameMap<E> implements Iterable<E> {
         private Function<T, String> idProvider = t -> StringUtils.getID(t, StringUtils.FLAG_ID_FIX | StringUtils.FLAG_ID_ONLY_LOWERCASE);
         private Function<T, Component> nameProvider = t -> Component.literal(idProvider.apply(t));
         private Function<T, Color4I> colorProvider = t -> Icon.empty();
-        private Function<T, Icon> iconProvider = t -> Icon.empty();
+        private Function<T, Icon<?>> iconProvider = t -> Icon.empty();
 
         private Builder(T def, List<T> v) {
             defaultValue = def;
@@ -166,7 +166,7 @@ public final class NameMap<E> implements Iterable<E> {
             return this;
         }
 
-        public Builder<T> icon(Function<T, Icon> p) {
+        public Builder<T> icon(Function<T, Icon<?>> p) {
             iconProvider = p;
             return this;
         }

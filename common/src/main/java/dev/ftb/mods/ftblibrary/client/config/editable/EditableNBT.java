@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config.editable;
 
 import com.mojang.brigadier.StringReader;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
@@ -19,21 +20,17 @@ public class EditableNBT extends EditableStringifiedConfig<CompoundTag> {
     }
 
     @Override
-    public String getStringFromValue(@Nullable CompoundTag v) {
-        return v == null ? "null" : v.toString();
+    public String getStringFromValue(CompoundTag v) {
+        return v.toString();
     }
 
     @Override
-    public Component getStringForGUI(@Nullable CompoundTag v) {
-        return v == null ? NULL_TEXT : v.isEmpty() ? EMPTY_NBT : NON_EMPTY_NBT;
+    public Component getStringForGUI(CompoundTag value) {
+        return value.isEmpty() ? EMPTY_NBT : NON_EMPTY_NBT;
     }
 
     @Override
     public boolean parse(@Nullable Consumer<CompoundTag> callback, String string) {
-        if (string.equals("null")) {
-            return okValue(callback, null);
-        }
-
         try {
             return okValue(callback, TagParser.parseCompoundAsArgument(new StringReader(string)));
         } catch (Exception ex) {
@@ -42,8 +39,8 @@ public class EditableNBT extends EditableStringifiedConfig<CompoundTag> {
     }
 
     @Override
-    public void addInfo(TooltipList list) {
-        list.add(info("Value", value == null ? "null" : value));
-        list.add(info("Default", defaultValue == null ? "null" : defaultValue));
+    public void addInfo(TooltipList list, Theme theme) {
+        list.add(info("Value", value));
+        list.add(info("Default", defaultValue));
     }
 }

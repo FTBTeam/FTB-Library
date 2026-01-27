@@ -12,7 +12,6 @@ import dev.ftb.mods.ftblibrary.client.gui.widget.*;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.math.Bits;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -288,7 +287,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             IconHelper.renderIcon(Icons.COLOR_BLANK.withColor(Color4I.GRAY), graphics, x, y + 1, 10, 10);
             IconHelper.renderIcon(Icons.INFO, graphics, x + 1, y + 2, 8, 8);
 
-            theme.drawString(graphics, keyText, x + 13, y + 2, Bits.setFlag(0, Theme.SHADOW, isMouseOver()));
+            theme.drawStringOnBackground(graphics, keyText, x + 13, y + 2);//Bits.setFlag(0, Theme.SHADOW, isMouseOver()));
 
             Component valueText = configValue.getStringForGUI(configValue.getValue());
 
@@ -302,7 +301,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
             if (isMouseOver()) {
                 textCol.addBrightness(60);
-                IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, x, y, w, h);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(60), graphics, x, y, w, h);
             }
 
             IconHelper.renderIcon(Color4I.GRAY.withAlpha(33), graphics, x + widestKey + 18, y, 1, height);
@@ -336,7 +335,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
                     }
 
                     list.blankLine();
-                    configValue.addInfo(list);
+                    configValue.addInfo(list, getTheme());
                 }
             }
         }

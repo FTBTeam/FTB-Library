@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.client.config.editable;
 
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
@@ -14,8 +15,8 @@ public class EditableInt extends EditableNumber<Integer> {
     }
 
     @Override
-    public void addInfo(TooltipList list) {
-        super.addInfo(list);
+    public void addInfo(TooltipList list, Theme theme) {
+        super.addInfo(list, theme);
 
         if (min != Integer.MIN_VALUE) {
             list.add(info("Min", formatValue(min)));

@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.client.config.editable;
 
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
@@ -14,8 +15,8 @@ public class EditableDouble extends EditableNumber<Double> {
     }
 
     @Override
-    public void addInfo(TooltipList list) {
-        super.addInfo(list);
+    public void addInfo(TooltipList list, Theme theme) {
+        super.addInfo(list, theme);
 
         if (min != Double.NEGATIVE_INFINITY) {
             list.add(info("Min", formatValue(min)));
@@ -27,10 +28,8 @@ public class EditableDouble extends EditableNumber<Double> {
     }
 
     @Override
-    public String getStringFromValue(@Nullable Double v) {
-        if (v == null) {
-            return "null";
-        } else if (v == Double.POSITIVE_INFINITY) {
+    public String getStringFromValue(Double v) {
+        if (v == Double.POSITIVE_INFINITY) {
             return "+Inf";
         } else if (v == Double.NEGATIVE_INFINITY) {
             return "-Inf";

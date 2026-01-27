@@ -5,6 +5,7 @@ import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.ImageResource;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectableResource;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.icon.IResourceIcon;
@@ -23,7 +24,7 @@ public class EditableImageResource extends EditableResource<Identifier> {
         value = NONE;
     }
 
-    public static Identifier getIdentifier(Icon icon) {
+    public static Identifier getIdentifier(Icon<?> icon) {
         return icon instanceof IResourceIcon i ? i.getResourceId() : NONE;
     }
 
@@ -39,7 +40,7 @@ public class EditableImageResource extends EditableResource<Identifier> {
 
     @Override
     public boolean isEmpty() {
-        return value == null || value.equals(NONE);
+        return value.equals(NONE);
     }
 
     @Override
@@ -53,12 +54,12 @@ public class EditableImageResource extends EditableResource<Identifier> {
     }
 
     @Override
-    public void addInfo(TooltipList list) {
-        if (value != null && !value.equals(defaultValue)) {
+    public void addInfo(TooltipList list, Theme theme) {
+        if (!value.equals(defaultValue)) {
             list.add(Component.translatable("config.group.value").append(": ").withStyle(ChatFormatting.AQUA)
                     .append(Component.literal(value.toString()).withStyle(ChatFormatting.WHITE)));
         }
 
-        super.addInfo(list);
+        super.addInfo(list, theme);
     }
 }

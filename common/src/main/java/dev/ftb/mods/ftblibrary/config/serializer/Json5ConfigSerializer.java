@@ -54,7 +54,7 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
 
         List<BaseValue<?>> res = new ArrayList<>();
         for (var value : defVal) {
-            if (json.has(value.key)) {
+            if (json.has(value.getKey())) {
                 value.read(serializer);
                 res.add(value);
             }

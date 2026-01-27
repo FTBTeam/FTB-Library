@@ -176,7 +176,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param <T> the raw type
      * @param <CV> the config value type
      */
-    public <T, CV extends EditableConfigValue<T>> CV add(String id, CV type, @Nullable T value, Consumer<T> setter, @Nullable T defaultValue) {
+    public <T, CV extends EditableConfigValue<T>> CV add(String id, CV type, T value, Consumer<T> setter, T defaultValue) {
         values.put(id, type.init(this, id, value, setter, defaultValue));
         return type;
     }
@@ -246,7 +246,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param setter a consumer to be called to apply changes to the value
      * @param def the default value
      * @param pattern a regular expression to constrain the valid values of the string
-     * @return the {@link EditableInt} just added
+     * @return the {@link EditableString} just added
      */
     public EditableString addString(String id, String value, Consumer<String> setter, String def, @Nullable Pattern pattern) {
         return add(id, new EditableString(pattern), value, setter, def);
@@ -305,11 +305,11 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param <E> the list type
      * @param <CV> the config value type which wraps the list type {@code E}
      */
-    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, @Nullable E def) {
+    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, E def) {
         type.setDefaultValue(def);
-        return add(id, new EditableList<>(type), value, c -> {
+        return add(id, new EditableList<>(type), value, newContents -> {
             value.clear();
-            value.addAll(c);
+            value.addAll(newContents);
         }, Collections.emptyList());
     }
 
@@ -325,7 +325,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @param <E> the list type
      * @param <CV> the config value type which wraps the list type {@code E}
      */
-    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, @Nullable E def) {
+    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, E def) {
         type.setDefaultValue(def);
         return add(id, new EditableList<>(type), value, setter, Collections.emptyList());
     }
@@ -467,13 +467,17 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
         return parent == null ? id : parent.getPath() + '.' + id;
     }
 
+    /**
+     * Called from the config editor screen when Done or Cancel is clicked.
+     *
+     * @param accepted true if the changes should be applied, false if they should be discarded
+     */
     public void save(boolean accepted) {
         if (accepted) {
             values.values().forEach(EditableConfigValue::applyValue);
-        }
-
-        for (var group : subgroups.values()) {
-            group.save(accepted);
+            for (var group : subgroups.values()) {
+                group.save(true);
+            }
         }
 
         if (savedCallback != null) {

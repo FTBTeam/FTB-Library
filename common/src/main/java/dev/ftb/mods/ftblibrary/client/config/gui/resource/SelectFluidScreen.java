@@ -13,6 +13,7 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Util;
 
@@ -49,8 +50,8 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
 
         @Override
         public boolean shouldAdd(SearchTerms searchTerms) {
-            return searchTerms.match(
-                    RegistrarManager.getId(getResource().getFluid(), Registries.FLUID),
+            Identifier resourceId = RegistrarManager.getId(getResource().getFluid(), Registries.FLUID);
+            return resourceId != null && searchTerms.match(resourceId,
                     getResource().getName().getString(),
                     id -> getResource().getFluid().builtInRegistryHolder().is(TagKey.create(Registries.FLUID, id))
             );

@@ -23,8 +23,6 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
     @Nullable
     private final Component title;
     private boolean addAcceptCancelButtons = true;
-
-    @Nullable
     private T currentValue;
 
     public EditStringConfigOverlay(Panel panel, EditableStringifiedConfig<T> config, ConfigCallback callback) {
@@ -35,10 +33,10 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         super(panel);
         this.config = config;
         this.callback = callback;
-        this.currentValue = config.getValue() == null ? null : config.copy(config.getValue());
+        this.currentValue = config.copy(config.getValue());
         this.title = title;
 
-        int stringWidth = currentValue == null ? 0 : getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue));
+        int stringWidth = getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue));
         width = Math.min(getWindow().getGuiScaledWidth() / 2, stringWidth + config.getExtraEditorWidth());
 
         titleField = new TextField(this).addFlags(Theme.SHADOW).setText(Objects.requireNonNullElse(title, Component.empty()));
@@ -102,8 +100,7 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
 
     protected void onAccepted(Button btn, MouseButton mb) {
         if (textBox.isTextValid()) {
-            config.updateValue(currentValue);
-            callback.save(true);
+            callback.save(config.updateValue(currentValue));
             getGui().popModalPanel();
         }
     }
@@ -168,9 +165,6 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
 
         @Override
         public boolean mouseScrolled(double scroll) {
-            if (currentValue == null) {
-                return super.mouseScrolled(scroll);
-            }
             return config.scrollValue(currentValue, scroll > 0).map(v -> {
                 textBox.setText(config.getStringFromValue(v));
                 textBox.setSelectionPos(textBox.getCursorPos());

@@ -49,7 +49,7 @@ public record SNBTConfigSerializer(SNBTCompoundTag configTag) implements ConfigS
         SNBTConfigSerializer serializer = new SNBTConfigSerializer(tag);
         List<BaseValue<?>> res = new ArrayList<>();
         for (var value : defVal) {
-            if (tag.contains(value.key)) {
+            if (tag.contains(value.getKey())) {
                 value.read(serializer);
                 res.add(value);
             }
@@ -71,7 +71,7 @@ public record SNBTConfigSerializer(SNBTCompoundTag configTag) implements ConfigS
     private SNBTCompoundTag writeToTag(List<BaseValue<?>> values, SNBTCompoundTag tag) {
         SNBTConfigSerializer serializer = new SNBTConfigSerializer(tag);
         values.stream().sorted().toList().forEach(value -> {
-            tag.comment(value.key, value.getCommentString());
+            tag.comment(value.getKey(), value.getCommentString());
             value.write(serializer);
         });
         return tag;

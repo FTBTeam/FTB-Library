@@ -220,4 +220,18 @@ public class Theme {
     public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y) {
         return drawString(graphics, text, x, y, getContentColor(WidgetType.NORMAL), 0);
     }
+
+    public final int drawStringOnBackground(GuiGraphics graphics, @Nullable Object text, int x, int y) {
+        return drawString(graphics, text, x, y, hasDarkBackground() ? getContentColor(WidgetType.NORMAL) : getInvertedContentColor(), 0);
+    }
+
+    /**
+     * Does this theme have a dark-coloured background? This can be important for determining foreground-colours, e.g.
+     * see {@link dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue#getColor(Theme)}
+     *
+     * @return true if the background is dark, false otherwise
+     */
+    public boolean hasDarkBackground() {
+        return false;
+    }
 }

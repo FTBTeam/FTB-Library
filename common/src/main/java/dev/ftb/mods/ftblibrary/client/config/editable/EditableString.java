@@ -11,12 +11,15 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class EditableString extends EditableStringifiedConfig<String> {
-    public static final Color4I COLOR = Color4I.rgb(0xFFAA49);
+    public static final Color4I COLOR_HI = Color4I.rgb(0xFFAA49);
+    public static final Color4I COLOR_LO = Color4I.rgb(0x805524);
 
+    @Nullable
     public final Pattern pattern;
 
-    public EditableString(@Nullable Pattern p) {
-        pattern = p;
+    public EditableString(@Nullable Pattern pattern) {
+        this.pattern = pattern;
+
         defaultValue = "";
         value = "";
     }
@@ -26,8 +29,8 @@ public class EditableString extends EditableStringifiedConfig<String> {
     }
 
     @Override
-    public Color4I getColor(@Nullable String value, Theme theme) {
-        return COLOR;
+    public Color4I getColor(String value, Theme theme) {
+        return theme.hasDarkBackground() ? COLOR_HI : COLOR_LO;
     }
 
     @Override
@@ -36,18 +39,18 @@ public class EditableString extends EditableStringifiedConfig<String> {
     }
 
     @Override
-    public Component getStringForGUI(@Nullable String v) {
-        return v == null ? NULL_TEXT : Component.literal('"' + v + '"');
+    public Component getStringForGUI(String value) {
+        return Component.literal('"' + value + '"');
     }
 
     @Override
-    public void addInfo(TooltipList list) {
-        if (value != null && !value.equals(defaultValue)) {
+    public void addInfo(TooltipList list, Theme theme) {
+        if (!value.equals(defaultValue)) {
             list.add(Component.translatable("config.group.value").append(": ").withStyle(ChatFormatting.AQUA)
                     .append(Component.literal("\"" + value + "\"").withStyle(ChatFormatting.WHITE)));
         }
 
-        super.addInfo(list);
+        super.addInfo(list, theme);
 
         if (pattern != null) {
             list.add(info("Regex", pattern.pattern()));
