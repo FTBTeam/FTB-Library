@@ -79,11 +79,16 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
                 }
             }
 
-            if (entityIconSettings == null && entityType.getCategory() != MobCategory.MISC && ModUtils.isDevMode()) {
-                LOGGER.error("Missing entity icon settings for {}", id);
+            if (entityIconSettings == null && entityType.getCategory() != MobCategory.MISC) {
+                if (ModUtils.isDevMode()) {
+                    LOGGER.error("Missing entity icon settings for {}", id);
+                }
+                entityIconSettings = EntityIconSettings.legacy();
             }
 
-            map.put(entityType, Objects.requireNonNullElse(entityIconSettings, EntityIconSettings.legacy()));
+            if (entityIconSettings != null) {
+                map.put(entityType, entityIconSettings);
+            }
         }
 
         return map;
