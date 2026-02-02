@@ -11,6 +11,7 @@ import dev.ftb.mods.ftblibrary.client.gui.widget.TextField;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.util.Lazy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -24,7 +25,7 @@ import java.util.Set;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButtonListScreen {
-    protected final List<GroupData<G, E>> groups;
+    private final Lazy<List<GroupData<G, E>>> groupData;
     private final Set<G> collapsed = new HashSet<>();
 
     private final Button buttonCollapseAll, buttonExpandAll;
@@ -35,12 +36,9 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
         showCloseButton(true);
         setHasSearchBox(true);
         this.title = title;
-        this.groups = getGroups();
+        this.groupData = Lazy.of(this::buildGroupData);
 
-        groups.stream()
-                .filter(GroupData::defaultedCollapsed)
-                .map(GroupData::group)
-                .forEach(collapsed::add);
+        rebuildGroupData();
 
         buttonExpandAll = new SimpleButton(topPanel, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.EXPAND,
                 (widget, button) -> toggleAll(false));
@@ -48,7 +46,20 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
                 (widget, button) -> toggleAll(true));
     }
 
-    protected abstract List<GroupData<G, E>> getGroups();
+    protected abstract List<GroupData<G, E>> buildGroupData();
+
+    protected final void rebuildGroupData() {
+        groupData.invalidate();
+        collapsed.clear();
+        groupData.get().stream()
+                .filter(GroupData::defaultedCollapsed)
+                .map(GroupData::group)
+                .forEach(collapsed::add);
+    }
+
+    protected final List<GroupData<G, E>> getGroupData() {
+        return groupData.get();
+    }
 
     protected GroupButton createGroupButton(Panel panel, GroupData<G, E> group) {
         return new GroupButton(panel, group.group(), group.groupName, group.values());
@@ -57,24 +68,22 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
     protected abstract RowPanel createRowPanel(Panel panel, E value);
 
     private void toggleAll(boolean collapsed) {
-        boolean allOpen = this.groups.stream().noneMatch(g -> isCollapsed(g.group));
+        boolean allOpen = this.groupData.get().stream().noneMatch(g -> isCollapsed(g.group));
         // Don't try and re-render if everything is already open
         if (allOpen && !collapsed) {
             return;
         }
-        this.groups.forEach(group -> setCollapsed(group.group(), collapsed));
+        this.groupData.get().forEach(group -> setCollapsed(group.group(), collapsed));
         scrollBar.setValue(0);
         getGui().refreshWidgets();
     }
 
     @Override
     protected void doCancel() {
-
     }
 
     @Override
     protected void doAccept() {
-
     }
 
     @Override
@@ -108,7 +117,7 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
 
     @Override
     public void addButtons(Panel panel) {
-        for (GroupData<G, E> group : groups) {
+        for (GroupData<G, E> group : groupData.get()) {
             GroupButton groupButton = createGroupButton(panel, group);
             panel.add(groupButton);
             if (!groupButton.isCollapsed()) {
@@ -116,7 +125,6 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
             }
         }
     }
-
 
     public boolean isCollapsed(G group) {
         return collapsed.contains(group);
@@ -142,7 +150,7 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
             titleLabel.addFlags(Theme.CENTERED_V);
             add(titleLabel);
 
-            if (groups.size() > 1) {
+            if (groupData.get().size() > 1) {
                 add(buttonExpandAll);
                 add(buttonCollapseAll);
             }
@@ -151,7 +159,7 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
         @Override
         public void alignWidgets() {
             titleLabel.setPosAndSize(4, 0, titleLabel.width, height);
-            if (groups.size() > 1) {
+            if (groupData.get().size() > 1) {
                 buttonExpandAll.setPos(width - 18, 2);
                 buttonCollapseAll.setPos(width - 38, 2);
             }
@@ -219,9 +227,7 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             super.draw(graphics, theme, x, y, w, h);
 
-            var mouseOver = getMouseY() >= 20 && isMouseOver();
-
-            if (mouseOver) {
+            if (getMouseY() >= 20 && isMouseOver()) {
                 IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, x, y, w, h);
             }
         }
