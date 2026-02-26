@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.Nullable;
 
 public record FluidStackResource(FluidStack resource) implements SelectableResource<FluidStack> {
     @Override
@@ -39,6 +40,7 @@ public record FluidStackResource(FluidStack resource) implements SelectableResou
     }
 
     @Override
+    @Nullable
     public CompoundTag getComponentsTag() {
         Tag tag = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, resource.getComponents()).result()
                 .orElse(new CompoundTag());

@@ -2,7 +2,8 @@ package dev.ftb.mods.ftblibrary.client.gui.widget;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
-import dev.ftb.mods.ftblibrary.client.gui.*;
+import dev.ftb.mods.ftblibrary.client.gui.CursorType;
+import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.screens.LoadingScreen;
@@ -19,10 +20,7 @@ import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
 import org.apache.commons.lang3.Validate;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -174,6 +172,7 @@ public abstract class BaseScreen extends Panel {
      *
      * @return the panel that was just popped/closed, or null if no modal panels were present
      */
+    @Nullable
     public ModalPanel popModalPanel() {
         if (modalPanels.isEmpty()) {
             return null;
@@ -587,23 +586,5 @@ public abstract class BaseScreen extends Panel {
      */
     public Minecraft getMinecraft() {
         return Minecraft.getInstance();
-    }
-
-    public static class PositionedTextData {
-        public final int posX, posY;
-        public final int width, height;
-        public final ClickEvent clickEvent;
-        public final HoverEvent hoverEvent;
-        public final String insertion;
-
-        public PositionedTextData(int x, int y, int w, int h, Style s) {
-            posX = x;
-            posY = y;
-            width = w;
-            height = h;
-            clickEvent = s.getClickEvent();
-            hoverEvent = s.getHoverEvent();
-            insertion = s.getInsertion();
-        }
     }
 }

@@ -21,6 +21,8 @@ public record Key(KeyEvent event) {
     }
 
     public boolean escOrInventory() {
+        // arch expect
+        //noinspection ConstantValue
         return esc() || matchesWithoutConflicts(Minecraft.getInstance().options.keyInventory, getInputMapping());
     }
 

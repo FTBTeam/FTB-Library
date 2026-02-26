@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
  * @param <T> the resource type
  */
 public interface SelectableResource<T> {
+
     static SelectableResource<ItemStack> item(ItemStack stack) {
         return new ItemStackResource(stack);
     }
@@ -75,5 +76,38 @@ public interface SelectableResource<T> {
      * @param tag the data to apply
      */
     default void applyComponentsTag(CompoundTag tag) {
+    }
+
+    static <T> SelectableResource<T> empty(T emptyResource) {
+        return new SelectableResource<>() {
+            @Override
+            public T resource() {
+                return emptyResource;
+            }
+
+            @Override
+            public long getCount() {
+                return 0;
+            }
+
+            @Override
+            public void setCount(int count) {
+            }
+
+            @Override
+            public Component getName() {
+                return Component.empty();
+            }
+
+            @Override
+            public Icon<?> getIcon() {
+                return Icon.empty();
+            }
+
+            @Override
+            public SelectableResource<T> copyWithCount(long count) {
+                return this;
+            }
+        };
     }
 }

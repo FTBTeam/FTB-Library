@@ -15,12 +15,6 @@ public class MouseButton {
     public static final MouseButton BACK = get(3);
     public static final MouseButton NEXT = get(4);
 
-//    static {
-//        for (var i = 0; i < BUTTONS.length; i++) {
-//            BUTTONS[i] = new MouseButton(i);
-//        }
-//    }
-
     public final int id;
 
     private MouseButton(int b) {

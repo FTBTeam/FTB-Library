@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
 import dev.architectury.fluid.FluidStack;
-import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableFluid;
@@ -17,8 +16,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Util;
 
-import java.util.Objects;
-
 public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
     private static final SearchModeIndex<ResourceSearchMode<FluidStack>> KNOWN_MODES = Util.make(
             new SearchModeIndex<>(), idx -> idx.appendMode(ResourceSearchMode.ALL_FLUIDS)
@@ -29,8 +26,8 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
     }
 
     @Override
-    protected int defaultQuantity() {
-        return (int) FluidStackHooks.bucketAmount();
+    protected FluidStack emptyResource() {
+        return FluidStack.empty();
     }
 
     @Override
@@ -40,7 +37,12 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
 
     @Override
     protected ResourceSelectorScreen<FluidStack>.ResourceButton makeResourceButton(Panel panel, SelectableResource<FluidStack> resource) {
-        return new FluidStackButton(panel, Objects.requireNonNullElse(resource, SelectableResource.fluid(FluidStack.empty())));
+        return new FluidStackButton(panel, resource);
+    }
+
+    @Override
+    protected ResourceSelectorScreen<FluidStack>.ResourceButton makeEmptyResourceButton(Panel panel) {
+        return new FluidStackButton(panel, SelectableResource.fluid(FluidStack.empty()));
     }
 
     private class FluidStackButton extends ResourceButton {

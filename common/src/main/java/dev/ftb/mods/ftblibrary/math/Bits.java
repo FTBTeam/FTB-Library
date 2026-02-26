@@ -33,8 +33,6 @@ public class Bits {
         }
     }
 
-    //
-
     //Int
     public static long intsToLong(int a, int b) {
         return (((long) a) << 32) | (b & MAX_INT);

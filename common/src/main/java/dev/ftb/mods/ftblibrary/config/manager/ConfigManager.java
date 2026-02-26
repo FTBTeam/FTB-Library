@@ -193,18 +193,6 @@ public enum ConfigManager {
         Path primaryPath = ConfigUtil.CONFIG_DIR.resolve(fileName);
         Path overridePath = overridePathSupplier.apply(fileName);
 
-        if (!Files.exists(primaryPath) && Files.exists(overridePath)) {
-            // likely to happen when first migrating to new config standard; no file in the .../config/ directory yet
-            try {
-                Files.move(overridePath, primaryPath);
-                FTBLibrary.LOGGER.info("config migration: moved {} to {}", overridePath, primaryPath);
-            } catch (IOException e) {
-                FTBLibrary.LOGGER.error("can't move {} to {}: {}", overridePath, primaryPath, e.getMessage());
-            }
-        } else {
-            checkForIdenticalConfigFiles(key, primaryPath, overridePath);
-        }
-
         if (Files.exists(overridePath)) {
             // an override exists in .../<world>/serverconfig/<name>.snbt, use that
             loadAndTrack(key, protoTc, overridePath);
@@ -221,17 +209,6 @@ public enum ConfigManager {
             track(key, protoTc.promoteToFull(path));
         } catch (IOException e) {
             FTBLibrary.LOGGER.error("can't read config {} from {}: {}/{}", key, path, e.getClass().getName(), e.getMessage());
-        }
-    }
-
-    private static void checkForIdenticalConfigFiles(String key, Path primaryPath, Path overridePath) {
-        try {
-            if (Files.exists(primaryPath) && Files.exists(overridePath) && Files.mismatch(primaryPath, overridePath) == -1L) {
-                FTBLibrary.LOGGER.info("{} and {} are identical; deleting {}", primaryPath, overridePath, overridePath);
-                Files.delete(overridePath);
-            }
-        } catch (IOException e) {
-            FTBLibrary.LOGGER.error("Caught exception while examining configs for {}: {}", key, e.getMessage());
         }
     }
 

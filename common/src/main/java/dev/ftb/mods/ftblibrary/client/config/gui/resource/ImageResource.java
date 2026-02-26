@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableImageResource;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -13,7 +14,7 @@ public class ImageResource implements SelectableResource<Identifier> {
     public ImageResource(Identifier location) {
         this.location = location;
 
-        name = location == null ? Component.translatable("gui.none").withStyle(ChatFormatting.GRAY) :
+        name = location.equals(EditableImageResource.NONE) ? Component.translatable("gui.none").withStyle(ChatFormatting.GRAY) :
                 Component.literal(location.getNamespace()).withStyle(ChatFormatting.GOLD).append(":")
                         .append(Component.literal(location.getPath()).withStyle(ChatFormatting.YELLOW));
         icon = Icon.getIcon(location);

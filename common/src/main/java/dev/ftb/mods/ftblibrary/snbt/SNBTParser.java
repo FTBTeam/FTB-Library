@@ -33,7 +33,7 @@ class SNBTParser {
 
     static SNBTCompoundTag read(List<String> lines) {
         var parser = new SNBTParser(lines);
-        return (SNBTCompoundTag) SpecialTag.unwrap(parser.readTag(parser.nextNS()));
+        return (SNBTCompoundTag) parser.readTag(parser.nextNS());
     }
 
     private String posString() {
@@ -95,16 +95,16 @@ class SNBTParser {
         var s = readWordString(first);
 
         return switch (s) {
-            case "true" -> SpecialTag.TRUE.wrappedTag;
-            case "false" -> SpecialTag.FALSE.wrappedTag;
+            case "true" -> SpecialTags.TRUE;
+            case "false" -> SpecialTags.FALSE;
             case "null", "end", "END" -> EndTag.INSTANCE;
             case "Infinity", "Infinityd", "+Infinity", "+Infinityd", "∞", "∞d", "+∞", "+∞d" ->
-                    SpecialTag.POS_INFINITY_D.wrappedTag;
-            case "-Infinity", "-Infinityd", "-∞", "-∞d" -> SpecialTag.NEG_INFINITY_D.wrappedTag;
-            case "NaN", "NaNd" -> SpecialTag.NAN_D.wrappedTag;
-            case "Infinityf", "+Infinityf", "∞f", "+∞f" -> SpecialTag.POS_INFINITY_F.wrappedTag;
-            case "-Infinityf", "-∞f" -> SpecialTag.NEG_INFINITY_F.wrappedTag;
-            case "NaNf" -> SpecialTag.NAN_F.wrappedTag;
+                    SpecialTags.POS_INFINITY_D;
+            case "-Infinity", "-Infinityd", "-∞", "-∞d" -> SpecialTags.NEG_INFINITY_D;
+            case "NaN", "NaNd" -> SpecialTags.NAN_D;
+            case "Infinityf", "+Infinityf", "∞f", "+∞f" -> SpecialTags.POS_INFINITY_F;
+            case "-Infinityf", "-∞f" -> SpecialTags.NEG_INFINITY_F;
+            case "NaNf" -> SpecialTags.NAN_F;
             default -> switch (SNBTUtils.getNumberType(s)) {
                 case Tag.TAG_BYTE -> ByteTag.valueOf(Byte.parseByte(s.substring(0, s.length() - 1)));
                 case Tag.TAG_SHORT -> ShortTag.valueOf(Short.parseShort(s.substring(0, s.length() - 1)));
@@ -146,13 +146,13 @@ class SNBTParser {
             if (n == ':' || n == '=') {
                 var t = readTag(nextNS());
 
-                if (t == SpecialTag.TRUE.wrappedTag) {
+                if (t.equals(SpecialTags.TRUE)) {
                     tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_TRUE;
-                } else if (t == SpecialTag.FALSE.wrappedTag) {
+                } else if (t.equals(SpecialTags.FALSE)) {
                     tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_FALSE;
                 }
 
-                tag.put(key, SpecialTag.unwrap(t));
+                tag.put(key, t);
             } else {
                 throw new SNBTSyntaxException("Expected ':', got '" + n + "' @ " + posString());
             }
@@ -185,7 +185,7 @@ class SNBTParser {
                 continue;
             }
 
-            var t = SpecialTag.unwrap(readTag(c));
+            var t = readTag(c);
 
             try {
                 tag.add(t);
@@ -224,7 +224,7 @@ class SNBTParser {
                 continue;
             }
 
-            var tag = SpecialTag.unwrap(readTag(c));
+            var tag = readTag(c);
             if (tag instanceof NumericTag numericTag) {
                 switch (type) {
                     case 'i' -> intList.add(numericTag.asInt().orElseThrow());

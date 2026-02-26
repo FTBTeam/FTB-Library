@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.client.gui.screens;
 
-import dev.ftb.mods.ftblibrary.client.gui.*;
+import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.layout.WidgetLayout;
 import dev.ftb.mods.ftblibrary.client.gui.theme.NordTheme;
@@ -134,12 +134,12 @@ public class KeyReferenceScreen extends BaseScreen {
             for (var entry : data) {
                 if (entry.getRight().getString().isEmpty()) {
                     // header line
-                    reflowed.add(Pair.of(entry.getLeft(), null));
+                    reflowed.add(Pair.of(entry.getLeft(), FormattedCharSequence.EMPTY));
                     h += theme.getFontHeight() + 3;
                 } else {
                     var l = theme.getFont().split(entry.getRight(), maxWidth - 10 - widestL);
                     if (!l.isEmpty()) {
-                        reflowed.add(Pair.of(entry.getLeft(), l.get(0)));
+                        reflowed.add(Pair.of(entry.getLeft(), l.getFirst()));
                         for (int i = 1; i < l.size(); i++) {
                             reflowed.add(Pair.of(Component.empty(), l.get(i)));
                         }
@@ -156,7 +156,7 @@ public class KeyReferenceScreen extends BaseScreen {
             int yPos = y;
 
             for (var entry : reflowed) {
-                boolean header = entry.getRight() == null;
+                boolean header = entry.getRight() == FormattedCharSequence.EMPTY;
                 int leftWidth = theme.getStringWidth(entry.getLeft());
                 int xOff = header ? (width - leftWidth) / 2 : widestL - leftWidth - 2;
                 theme.drawString(graphics, entry.getLeft(), x + xOff, yPos);

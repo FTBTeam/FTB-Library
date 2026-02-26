@@ -26,11 +26,13 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public interface ResourceSearchMode<T> {
     ResourceSearchMode<ItemStack> ALL_ITEMS = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.all"), Icons.COMPASS) {
+        @Nullable
         private List<SelectableResource<ItemStack>> allItemsCache = null;
 
         @Override
@@ -64,6 +66,7 @@ public interface ResourceSearchMode<T> {
         }
     };
     ResourceSearchMode<FluidStack> ALL_FLUIDS = new SearchMode<>(Component.translatable("ftblibrary.select_fluid.list_mode.all"), ItemIcon.ofItem(Items.COMPASS)) {
+        @Nullable
         private List<SelectableResource<FluidStack>> allFluidsCache = null;
 
         @Override
@@ -81,6 +84,7 @@ public interface ResourceSearchMode<T> {
         }
     };
     ResourceSearchMode<EntityType<?>> ENTITY_FACES = new SearchMode<>(Component.translatable("ftblibrary.select_entity.all_entities"), Icons.PLAYER) {
+        @Nullable
         private List<SelectableResource<EntityType<?>>> allTypesCache = null;
 
         @Override
@@ -99,6 +103,7 @@ public interface ResourceSearchMode<T> {
         }
     };
     ResourceSearchMode<Identifier> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), Icons.ART) {
+        @Nullable
         private List<ImageResource> cachedImages = null;
 
         @Override

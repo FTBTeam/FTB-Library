@@ -10,7 +10,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 
 public class EntityFaceResource implements SelectableResource<EntityType<?>>, Comparable<EntityFaceResource> {
-    public static final EntityFaceResource NONE = new EntityFaceResource(EditableEntityFace.NONE);
+    public static final EntityFaceResource NONE = new EntityFaceResource(EditableEntityFace.NONE) {
+        @Override
+        public long getCount() {
+            return 0;
+        }
+    };
 
     private final EntityType<?> type;
     private final Identifier location;
@@ -43,11 +48,6 @@ public class EntityFaceResource implements SelectableResource<EntityType<?>>, Co
 
     @Override
     public void setCount(int count) {
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return type == EditableEntityFace.NONE;
     }
 
     @Override

@@ -96,6 +96,7 @@ public class SNBTTest {
         list.add(DoubleTag.valueOf(0.0001d));
         list.add(DoubleTag.valueOf(5.3d));
         list.add(DoubleTag.valueOf(-4.56e-4d));
+        list.add(SpecialTags.NEG_INFINITY_D);
         tag.put("double_list", list);
 
         SNBTCompoundTag subTag = new SNBTCompoundTag();

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 class SNBTBuilder {
-    public final List<String> lines = new ArrayList<>();
-    public final StringBuilder line = new StringBuilder();
-    public String indent = "";
+    private final List<String> lines = new ArrayList<>();
+    private final StringBuilder line = new StringBuilder();
+    private String indent = "";
     public int singleLine = 0;
 
     public void print(Object string) {
@@ -25,5 +25,9 @@ class SNBTBuilder {
 
     public void pop() {
         indent = indent.substring(1);
+    }
+
+    public List<String> build() {
+        return lines;
     }
 }

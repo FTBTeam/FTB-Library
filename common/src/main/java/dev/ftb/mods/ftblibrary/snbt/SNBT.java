@@ -71,7 +71,7 @@ public class SNBT {
 
         append(builder, nbt);
         builder.println();
-        return builder.lines;
+        return builder.build();
     }
 
     private static void append(SNBTBuilder builder, @Nullable Tag nbt) {

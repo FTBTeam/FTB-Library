@@ -40,8 +40,18 @@ public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
     }
 
     @Override
+    protected ItemStack emptyResource() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     protected ResourceSelectorScreen<ItemStack>.ResourceButton makeResourceButton(Panel panel, SelectableResource<ItemStack> resource) {
-        return new ItemStackButton(panel, Objects.requireNonNullElse(resource, SelectableResource.item(ItemStack.EMPTY)));
+        return new ItemStackButton(panel, resource);
+    }
+
+    @Override
+    protected ResourceSelectorScreen<ItemStack>.ResourceButton makeEmptyResourceButton(Panel panel) {
+        return new ItemStackButton(panel, SelectableResource.item(ItemStack.EMPTY));
     }
 
     private class ItemStackButton extends ResourceButton {

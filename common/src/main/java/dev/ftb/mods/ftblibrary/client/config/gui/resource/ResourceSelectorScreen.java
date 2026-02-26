@@ -36,7 +36,6 @@ import net.minecraft.util.Util;
 import net.minecraft.world.item.Items;
 import org.apache.commons.lang3.Validate;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -64,7 +63,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     private final SearchModeButton searchModeButton;
     private final NBTButton nbtButton;
     public long update = Long.MAX_VALUE;
-    private SelectableResource<T> selectedStack;
+    private SelectableResource<T> selectedStack = SelectableResource.empty(emptyResource());
     private int refreshTimer = 0;
     private int nRows = ITEM_ROWS;
     private int nCols = ITEM_COLS;
@@ -99,6 +98,8 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
         setSelected(config.getResource());
     }
+
+    protected abstract T emptyResource();
 
     public ResourceSelectorScreen<T> withGridSize(int rows, int cols) {
         Validate.isTrue(rows >= 1 && cols >= 1);
@@ -158,7 +159,6 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         if (!selectedStack.isEmpty()) {
             IconHelper.renderIcon(selectedStack.getIcon(), graphics, getX() + 6, getY() + 17, 30, 30);
-//            GuiHelper.drawRectWithShade(graphics, getX() + 5, getY() + 16, 32, 32, Color4I.DARK_GRAY, -16);
             if (countBox.shouldDraw()) {
                 theme.drawString(graphics, "x", getX() + 38, getY() + 28, Theme.SHADOW);
             }
@@ -166,7 +166,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     }
 
     protected void setSelected(SelectableResource<T> stack) {
-        long count = selectedStack == null || selectedStack.isEmpty() ? Math.max(stack.getCount(), countBox.getCount()) : selectedStack.getCount();
+        long count = selectedStack.isEmpty() ? Math.max(stack.getCount(), countBox.getCount()) : selectedStack.getCount();
         selectedStack = stack.copyWithCount(count);
 
         Component name = selectedStack.isEmpty() ?
@@ -187,11 +187,9 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         callback.save(changed);
     }
 
-    protected int defaultQuantity() {
-        return 1;
-    }
+    protected abstract ResourceButton makeResourceButton(Panel panel, SelectableResource<T> resource);
 
-    protected abstract ResourceButton makeResourceButton(Panel panel, @Nullable SelectableResource<T> resource);
+    protected abstract ResourceButton makeEmptyResourceButton(Panel panel);
 
     protected abstract SearchModeIndex<ResourceSearchMode<T>> getSearchModeIndex();
 
@@ -211,7 +209,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
         SearchTerms searchTerms = SearchTerms.parse(search);
 
-        ResourceButton emptyButton = makeResourceButton(mainPanel, null);
+        ResourceButton emptyButton = makeEmptyResourceButton(mainPanel);
         if (config.allowEmptyResource() && emptyButton.shouldAdd(searchTerms)) {
             emptyButton.setPos(1, 1);
             widgets.add(emptyButton);
@@ -324,7 +322,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         @NonNull
         private EditMultilineStringConfigOverlay makeMultilineEditPanel(EditableString config) {
             var panel = new EditMultilineStringConfigOverlay(ResourceSelectorScreen.this, config, accepted -> {
-                if (accepted && config.getValue() != null) {
+                if (accepted) {
                     try {
                         selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
                     } catch (SNBTSyntaxException e) {

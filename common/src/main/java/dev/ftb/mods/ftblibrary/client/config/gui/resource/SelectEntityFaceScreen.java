@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableEntityFace;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
@@ -13,9 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntityType;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
 
 public class SelectEntityFaceScreen extends ResourceSelectorScreen<EntityType<?>> {
     private static final SearchModeIndex<ResourceSearchMode<EntityType<?>>> KNOWN_MODES = Util.make(
@@ -27,8 +25,18 @@ public class SelectEntityFaceScreen extends ResourceSelectorScreen<EntityType<?>
     }
 
     @Override
-    protected ResourceSelectorScreen<EntityType<?>>.ResourceButton makeResourceButton(Panel panel, @Nullable SelectableResource<EntityType<?>> resource) {
-        return new EntityFaceButton(panel, Objects.requireNonNullElse(resource, EntityFaceResource.NONE));
+    protected EntityType<?> emptyResource() {
+        return EditableEntityFace.NONE;
+    }
+
+    @Override
+    protected ResourceSelectorScreen<EntityType<?>>.ResourceButton makeResourceButton(Panel panel, SelectableResource<EntityType<?>> resource) {
+        return new EntityFaceButton(panel, resource);
+    }
+
+    @Override
+    protected ResourceSelectorScreen<EntityType<?>>.ResourceButton makeEmptyResourceButton(Panel panel) {
+        return new EntityFaceButton(panel, EntityFaceResource.NONE);
     }
 
     @Override
@@ -43,6 +51,9 @@ public class SelectEntityFaceScreen extends ResourceSelectorScreen<EntityType<?>
 
         @Override
         public boolean shouldAdd(SearchTerms searchTerms) {
+            if (selectable == EntityFaceResource.NONE) {
+                return true;
+            }
             return selectable instanceof EntityFaceResource r
                     && searchTerms.match(r.getLocation(), r.getLocation().toString(), key -> getResource().is(TagKey.create(Registries.ENTITY_TYPE, key)));
         }

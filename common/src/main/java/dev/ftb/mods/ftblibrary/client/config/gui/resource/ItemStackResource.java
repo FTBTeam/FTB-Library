@@ -8,6 +8,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public record ItemStackResource(ItemStack resource) implements SelectableResource<ItemStack> {
     @Override
@@ -36,6 +37,7 @@ public record ItemStackResource(ItemStack resource) implements SelectableResourc
     }
 
     @Override
+    @Nullable
     public CompoundTag getComponentsTag() {
         Tag tag = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, resource.getComponents()).result()
                 .orElse(new CompoundTag());

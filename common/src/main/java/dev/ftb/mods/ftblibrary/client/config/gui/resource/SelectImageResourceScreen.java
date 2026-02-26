@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
-import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableImageResource;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
@@ -14,9 +14,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.Util;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
 
 public class SelectImageResourceScreen extends ResourceSelectorScreen<Identifier> {
     private static final SelectableResource<Identifier> NO_IMAGE = new ImageResource(EditableImageResource.NONE);
@@ -30,8 +27,18 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<Identifier
     }
 
     @Override
-    protected ResourceSelectorScreen<Identifier>.ResourceButton makeResourceButton(Panel panel, @Nullable SelectableResource<Identifier> resource) {
-        return new ImageButton(panel, Objects.requireNonNullElse(resource, NO_IMAGE));
+    protected Identifier emptyResource() {
+        return EditableImageResource.NONE;
+    }
+
+    @Override
+    protected ResourceSelectorScreen<Identifier>.ResourceButton makeResourceButton(Panel panel, SelectableResource<Identifier> resource) {
+        return new ImageButton(panel, resource);
+    }
+
+    @Override
+    protected ResourceSelectorScreen<Identifier>.ResourceButton makeEmptyResourceButton(Panel panel) {
+        return new ImageButton(panel, NO_IMAGE);
     }
 
     @Override

@@ -29,6 +29,7 @@ public abstract class Panel extends Widget {
     private double scrollStep = 20;
     private int contentWidth = -1, contentHeight = -1;
     private int contentWidthExtra, contentHeightExtra;
+    @Nullable
     private PanelScrollBar attachedScrollbar = null;
 
     public Panel(Panel panel) {

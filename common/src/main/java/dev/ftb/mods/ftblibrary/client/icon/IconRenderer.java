@@ -73,11 +73,4 @@ public interface IconRenderer<T extends Icon<T>> {
     default double aspectRatio(T icon) {
         return 1.0;
     }
-
-//    default void draw3D(GuiGraphics graphics) {
-//        graphics.pose().pushMatrix();
-//        graphics.pose().scale(1F / 16F, 1F / 16F);
-//        draw(graphics, -8, -8, 16, 16);
-//        graphics.pose().popMatrix();
-//    }
 }
