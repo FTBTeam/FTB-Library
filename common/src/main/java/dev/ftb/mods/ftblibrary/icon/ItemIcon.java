@@ -1,15 +1,11 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
+import dev.ftb.mods.ftblibrary.client.icon.ItemIconRenderer;
+import dev.ftb.mods.ftblibrary.util.Lazy;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -17,42 +13,41 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-public class ItemIcon extends Icon implements IResourceIcon {
+public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
     private final ItemStack stack;
 
     private ItemIcon(ItemStack is) {
         stack = is;
     }
 
-    public static Icon getItemIcon(ItemStack stack) {
+    public static Icon<?> ofItemStack(ItemStack stack) {
         if (stack.isEmpty()) {
             return empty();
-        } else if (stack.getItem() instanceof CustomIconItem) {
-            return ((CustomIconItem) stack.getItem()).getCustomIcon(stack);
+        } else if (stack.getItem() instanceof CustomIconItem c) {
+            return c.getCustomIcon(stack);
         }
 
         return new ItemIcon(stack);
     }
 
-    public static Icon getItemIcon(Item item) {
-        return item == Items.AIR ? empty() : getItemIcon(item.getDefaultInstance());
+    public static Icon<?> ofItem(Item item) {
+        return item == Items.AIR ? empty() : ofItemStack(item.getDefaultInstance());
     }
 
-    public static Icon getItemIcon(String lazyStackString) {
+    public static Icon<?> parse(String lazyStackString) {
         if (lazyStackString.isEmpty()) {
             return empty();
         }
 
-        return new LazyIcon(() -> {
+        return new LazyIcon(Lazy.of(() -> {
             var s = lazyStackString.split(" ", 4);
-            var stack = BuiltInRegistries.ITEM.get(ResourceLocation.parse(s[0])).getDefaultInstance();
+            var stack = new ItemStack(BuiltInRegistries.ITEM.get(Identifier.parse(s[0])).get());
 
             if (s.length >= 2 && !s[1].equals("1")) {
                 stack.setCount(Integer.parseInt(s[1]));
@@ -64,7 +59,7 @@ public class ItemIcon extends Icon implements IResourceIcon {
 
             if (s.length >= 4 && !s[3].equals("null")) {
                 try {
-                    DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseTag(s[3]))
+                    DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseCompoundFully(s[3]))
                             .resultOrPartial(err -> FTBLibrary.LOGGER.error("can't parse data component map for {}: {}", s[3], err))
                             .ifPresent(stack::applyComponents);
                 } catch (CommandSyntaxException ex) {
@@ -75,11 +70,11 @@ public class ItemIcon extends Icon implements IResourceIcon {
             if (stack.isEmpty()) {
                 ItemStack fallback = new ItemStack(Items.BARRIER);
                 fallback.set(DataComponents.CUSTOM_NAME, Component.literal(lazyStackString));
-                return getItemIcon(fallback);
+                return ofItemStack(fallback);
             }
 
-            return getItemIcon(stack);
-        }) {
+            return ofItemStack(stack);
+        })) {
             @Override
             public String toString() {
                 return "item:" + lazyStackString;
@@ -87,53 +82,44 @@ public class ItemIcon extends Icon implements IResourceIcon {
         };
     }
 
-    @Environment(EnvType.CLIENT)
-    public static void drawItem3D(GuiGraphics graphics, ItemStack stack) {
-        //FIXME: Draw flat 3D item
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, 240, OverlayTexture.NO_OVERLAY, graphics.pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().level, 0);
-    }
-
     public ItemStack getStack() {
         return stack;
     }
 
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        PoseStack poseStack = graphics.pose();
-        poseStack.pushPose();
-        poseStack.translate(x + w / 2D, y + h / 2D, 0);
-
-        if (w != 16 || h != 16) {
-            float s = Math.min(w, h) / 16F;
-            poseStack.scale(s, s, s);
-        }
-
-        GuiHelper.drawItem(graphics, getStack(), 0, true, null);
-        poseStack.popPose();
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
-        PoseStack poseStack = graphics.pose();
-        poseStack.pushPose();
-        poseStack.translate(x + w / 2D, y + h / 2D, 0);
-
-        if (w != 16 || h != 16) {
-            float s = Math.min(w, h) / 16F;
-            poseStack.scale(s, s, s);
-        }
-
-        GuiHelper.drawItem(graphics, getStack(), 0, false, null);
-        poseStack.popPose();
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void draw3D(GuiGraphics graphics) {
-        drawItem3D(graphics, getStack());
-    }
+//    @Override
+//    public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
+//        var poseStack = graphics.pose();
+//        poseStack.pushMatrix();
+//        poseStack.translate(x + w / 2F, y + h / 2F);
+//
+//        if (w != 16 || h != 16) {
+//            float s = Math.min(w, h) / 16F;
+//            poseStack.scale(s, s);
+//        }
+//
+//        GuiHelper.drawItem(graphics, getStack(), true, null);
+//        poseStack.popMatrix();
+//    }
+//
+//    @Override
+//    public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
+//        var poseStack = graphics.pose();
+//        poseStack.pushMatrix();
+//        poseStack.translate(x + w / 2F, y + h / 2F);
+//
+//        if (w != 16 || h != 16) {
+//            float s = Math.min(w, h) / 16F;
+//            poseStack.scale(s, s);
+//        }
+//
+//        GuiHelper.drawItem(graphics, getStack(), false, null);
+//        poseStack.popMatrix();
+//    }
+//
+//    @Override
+//    public void draw3D(GuiGraphics graphics) {
+//        drawItem3D(graphics, getStack());
+//    }
 
     public String toString() {
         var stack = getStack();
@@ -177,7 +163,12 @@ public class ItemIcon extends Icon implements IResourceIcon {
     }
 
     @Override
-    public ResourceLocation getResourceLocation() {
+    public IconRenderer<ItemIcon> getRenderer() {
+        return ItemIconRenderer.INSTANCE;
+    }
+
+    @Override
+    public Identifier getResourceId() {
         return BuiltInRegistries.ITEM.getKey(stack.getItem());
     }
 }

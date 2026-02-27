@@ -1,0 +1,83 @@
+package dev.ftb.mods.ftblibrary.client.config.gui.resource;
+
+import dev.architectury.registry.registries.RegistrarManager;
+import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableItemStack;
+import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.SearchTerms;
+import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.Util;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+
+import java.util.Objects;
+
+public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
+    public static final SearchModeIndex<ResourceSearchMode<ItemStack>> KNOWN_MODES = Util.make(
+            new SearchModeIndex<>(),
+            index -> {
+                index.appendMode(ResourceSearchMode.ALL_ITEMS);
+                index.appendMode(ResourceSearchMode.INVENTORY);
+            }
+    );
+
+    public SelectItemStackScreen(EditableItemStack config, ConfigCallback callback) {
+        super(config, callback);
+    }
+
+    @Override
+    protected SearchModeIndex<ResourceSearchMode<ItemStack>> getSearchModeIndex() {
+        return KNOWN_MODES;
+    }
+
+    @Override
+    protected ItemStack emptyResource() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    protected ResourceSelectorScreen<ItemStack>.ResourceButton makeResourceButton(Panel panel, SelectableResource<ItemStack> resource) {
+        return new ItemStackButton(panel, resource);
+    }
+
+    @Override
+    protected ResourceSelectorScreen<ItemStack>.ResourceButton makeEmptyResourceButton(Panel panel) {
+        return new ItemStackButton(panel, SelectableResource.item(ItemStack.EMPTY));
+    }
+
+    private class ItemStackButton extends ResourceButton {
+        private ItemStackButton(Panel panel, SelectableResource<ItemStack> resource) {
+            super(panel, resource);
+        }
+
+        @Override
+        public boolean shouldAdd(SearchTerms searchTerms) {
+            Identifier resourceId = RegistrarManager.getId(getResource().getItem(), Registries.ITEM);
+            return resourceId != null && searchTerms.match(resourceId,
+                    getResource().getHoverName().getString(),
+                    id -> getResource().is(TagKey.create(Registries.ITEM, id))
+            );
+        }
+
+        @Override
+        public void addMouseOverText(TooltipList list) {
+            if (!getResource().isEmpty()) {
+                TooltipFlag flag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
+                getResource().getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player, flag).forEach(list::add);
+                if (FTBLibraryClientConfig.ITEM_MODNAME.get()) {
+                    ModUtils.getModName(getResource().getItem()).ifPresent(name ->
+                            list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
+                }
+            }
+        }
+    }
+}

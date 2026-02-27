@@ -6,17 +6,32 @@ import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import dev.ftb.mods.ftblibrary.api.color.RegisterCustomColorEvent;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryStartupConfig;
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.items.ModItems;
+import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
+import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
-import net.minecraft.resources.ResourceLocation;
+import dev.ftb.mods.ftblibrary.util.text.ExtendableTextColor;
+import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FTBLibrary {
     public static final String MOD_ID = "ftblibrary";
@@ -24,6 +39,14 @@ public class FTBLibrary {
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
     public FTBLibrary() {
+        ConfigManager cfgMgr = ConfigManager.getInstance();
+        cfgMgr.init();
+        cfgMgr.registerClientConfig(FTBLibraryClientConfig.CONFIG, MOD_ID + ".client_settings");
+        if (ModUtils.isDevMode()) {
+            cfgMgr.registerStartupConfig(FTBLibraryStartupConfig.CONFIG, MOD_ID + ".startup_settings");
+            cfgMgr.registerServerConfig(FTBLibraryServerConfig.CONFIG, MOD_ID + ".server_settings", true, FTBLibraryServerConfig::onChanged);
+        }
+
         CommandRegistrationEvent.EVENT.register(FTBLibraryCommands::registerCommands);
         FTBLibraryNet.register();
         LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
@@ -32,11 +55,23 @@ public class FTBLibrary {
 
         ModItems.init();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::init);
+        EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::onModConstruct);
+        RegisterCustomColorEvent.EVENT.register((event) -> {
+            event.register("ftb:rainbow", RainbowTextColor.INSTANCE);
+        });
+
+        LifecycleEvent.SETUP.register(this::onSetup);
     }
 
-    public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    private void onSetup() {
+        Map<String, TextColor> customColors = new HashMap<>();
+        RegisterCustomColorEvent.EVENT.invoker().accept(new RegisterCustomColorEvent(customColors));
+
+        customColors.forEach(ExtendableTextColor::addCustomColor);
+    }
+
+    public static Identifier rl(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static DeferredSupplier<CreativeModeTab> getCreativeModeTab() {
@@ -45,6 +80,8 @@ public class FTBLibrary {
 
     private void serverStarted(MinecraftServer server) {
         KnownServerRegistries.server = KnownServerRegistries.create(server);
+
+        NBTEditResponseHandlers.registerBuiltinHandlers();
     }
 
     private void serverStopped(MinecraftServer server) {
@@ -52,9 +89,15 @@ public class FTBLibrary {
     }
 
     private void playerJoined(ServerPlayer player) {
-        if (KnownServerRegistries.server != null) {
-            // can be null, e.g. https://github.com/FTBTeam/FTB-Mods-Issues/issues/1387
-            NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
-        }
+        player.sendSystemMessage(Component.literal("Hello from FTB Library!").withStyle(Style.EMPTY.withColor(RainbowTextColor.INSTANCE)));
+
+        // scheduling this to run a bit later should avoid issues with KnownServerRegistries.server not been init'd yet
+        MinecraftServer server = player.level().getServer();
+        server.schedule(server.wrapRunnable(() -> {
+            if (KnownServerRegistries.server != null) {
+                // can be null, e.g. https://github.com/FTBTeam/FTB-Mods-Issues/issues/1387
+                NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
+            }
+        }));
     }
 }

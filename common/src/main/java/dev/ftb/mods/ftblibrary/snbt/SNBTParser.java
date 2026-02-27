@@ -8,6 +8,7 @@ import java.util.List;
 class SNBTParser {
     private final char[] buffer;
     private int position;
+
     private SNBTParser(List<String> lines) {
         var bufferBuilder = new StringBuilder();
 
@@ -32,7 +33,7 @@ class SNBTParser {
 
     static SNBTCompoundTag read(List<String> lines) {
         var parser = new SNBTParser(lines);
-        return (SNBTCompoundTag) SpecialTag.unwrap(parser.readTag(parser.nextNS()));
+        return (SNBTCompoundTag) parser.readTag(parser.nextNS());
     }
 
     private String posString() {
@@ -94,16 +95,16 @@ class SNBTParser {
         var s = readWordString(first);
 
         return switch (s) {
-            case "true" -> SpecialTag.TRUE;
-            case "false" -> SpecialTag.FALSE;
+            case "true" -> SpecialTags.TRUE;
+            case "false" -> SpecialTags.FALSE;
             case "null", "end", "END" -> EndTag.INSTANCE;
             case "Infinity", "Infinityd", "+Infinity", "+Infinityd", "∞", "∞d", "+∞", "+∞d" ->
-                    SpecialTag.POS_INFINITY_D;
-            case "-Infinity", "-Infinityd", "-∞", "-∞d" -> SpecialTag.NEG_INFINITY_D;
-            case "NaN", "NaNd" -> SpecialTag.NAN_D;
-            case "Infinityf", "+Infinityf", "∞f", "+∞f" -> SpecialTag.POS_INFINITY_F;
-            case "-Infinityf", "-∞f" -> SpecialTag.NEG_INFINITY_F;
-            case "NaNf" -> SpecialTag.NAN_F;
+                    SpecialTags.POS_INFINITY_D;
+            case "-Infinity", "-Infinityd", "-∞", "-∞d" -> SpecialTags.NEG_INFINITY_D;
+            case "NaN", "NaNd" -> SpecialTags.NAN_D;
+            case "Infinityf", "+Infinityf", "∞f", "+∞f" -> SpecialTags.POS_INFINITY_F;
+            case "-Infinityf", "-∞f" -> SpecialTags.NEG_INFINITY_F;
+            case "NaNf" -> SpecialTags.NAN_F;
             default -> switch (SNBTUtils.getNumberType(s)) {
                 case Tag.TAG_BYTE -> ByteTag.valueOf(Byte.parseByte(s.substring(0, s.length() - 1)));
                 case Tag.TAG_SHORT -> ShortTag.valueOf(Short.parseShort(s.substring(0, s.length() - 1)));
@@ -145,20 +146,20 @@ class SNBTParser {
             if (n == ':' || n == '=') {
                 var t = readTag(nextNS());
 
-                if (t == SpecialTag.TRUE) {
+                if (t.equals(SpecialTags.TRUE)) {
                     tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_TRUE;
-                } else if (t == SpecialTag.FALSE) {
+                } else if (t.equals(SpecialTags.FALSE)) {
                     tag.getOrCreateProperties(key).valueType = SNBTTagProperties.TYPE_FALSE;
                 }
 
-                tag.put(key, SpecialTag.unwrap(t));
+                tag.put(key, t);
             } else {
                 throw new SNBTSyntaxException("Expected ':', got '" + n + "' @ " + posString());
             }
         }
     }
 
-    private CollectionTag<?> readCollection() {
+    private CollectionTag readCollection() {
         var prevPos = position;
         var next1 = nextNS();
         var next2 = nextNS();
@@ -184,7 +185,7 @@ class SNBTParser {
                 continue;
             }
 
-            var t = SpecialTag.unwrap(readTag(c));
+            var t = readTag(c);
 
             try {
                 tag.add(t);
@@ -194,7 +195,7 @@ class SNBTParser {
         }
     }
 
-    private CollectionTag<?> readArray(int pos, char type) {
+    private CollectionTag readArray(int pos, char type) {
         List<Integer> intList = new ArrayList<>();
         List<Long> longList = new ArrayList<>();
         List<Byte> byteList = new ArrayList<>();
@@ -206,21 +207,29 @@ class SNBTParser {
 
             if (c == ']') {
                 return switch (type) {
-                    case 'i' -> new IntArrayTag(intList);
-                    case 'l' -> new LongArrayTag(longList);
-                    case 'b' -> new ByteArrayTag(byteList);
+                    case 'i' -> new IntArrayTag(intList.stream().mapToInt(e -> e).toArray());
+                    case 'l' -> new LongArrayTag(longList.stream().mapToLong(e -> e).toArray());
+                    case 'b' -> {
+                        // Create a raw byte array
+                        byte[] bytes = new byte[byteList.size()];
+                        for (int i = 0; i < byteList.size(); i++) {
+                            bytes[i] = byteList.get(i);
+                        }
+
+                        yield new ByteArrayTag(bytes);
+                    }
                     default -> throw new SNBTSyntaxException("Unknown array type: " + type + " @ " + posString(pos));
                 };
             } else if (c == ',') {
                 continue;
             }
 
-            var tag = SpecialTag.unwrap(readTag(c));
+            var tag = readTag(c);
             if (tag instanceof NumericTag numericTag) {
                 switch (type) {
-                    case 'i' -> intList.add(numericTag.getAsInt());
-                    case 'l' -> longList.add(numericTag.getAsLong());
-                    case 'b' -> byteList.add(numericTag.getAsByte());
+                    case 'i' -> intList.add(numericTag.asInt().orElseThrow());
+                    case 'l' -> longList.add(numericTag.asLong().orElseThrow());
+                    case 'b' -> byteList.add(numericTag.asByte().orElseThrow());
                 }
             } else {
                 throw new SNBTSyntaxException("Unexpected tag '" + tag + "' in list @ " + posString() + " - expected a numeric tag!");

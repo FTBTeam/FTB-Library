@@ -1,0 +1,493 @@
+package dev.ftb.mods.ftblibrary.client.config;
+
+import dev.architectury.fluid.FluidStack;
+import dev.architectury.networking.NetworkManager;
+import dev.ftb.mods.ftblibrary.client.config.editable.*;
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.net.SyncConfigToServerPacket;
+import dev.ftb.mods.ftblibrary.config.value.Config;
+import dev.ftb.mods.ftblibrary.util.NameMap;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+
+/**
+ * Represents a collection of {@link EditableConfigValue} objects, possibly recursively nested in one or more
+ * subgroups. This object can be passed to an {@link dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen} to
+ * allow GUI editing of configs.
+ */
+public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
+    private final String id;
+    private final @Nullable EditableConfigGroup parent;
+    private final Map<String, EditableConfigValue<?>> values;
+    private final Map<String, EditableConfigGroup> subgroups;
+    private final @Nullable ConfigCallback savedCallback;
+    private final int displayOrder;
+    private String nameKey;
+
+    private EditableConfigGroup(String id, @Nullable EditableConfigGroup parent, @Nullable ConfigCallback savedCallback, int displayOrder) {
+        this.id = id;
+        this.parent = parent;
+        this.values = new LinkedHashMap<>();
+        this.subgroups = new LinkedHashMap<>();
+        this.savedCallback = savedCallback;
+        this.nameKey = "";
+        this.displayOrder = displayOrder;
+    }
+
+    /**
+     * Create a new top-level config group
+     * @param id a unique id for this group
+     */
+    public EditableConfigGroup(String id) {
+        this(id, null, null, 0);
+    }
+
+    /**
+     * Create a new top-level config group
+     * @param id a unique id for this group
+     * @param savedCallback a callback to be run when the {@link #save(boolean)} method is called
+     */
+    public EditableConfigGroup(String id, ConfigCallback savedCallback) {
+        this(id, null, savedCallback, 0);
+    }
+
+    /**
+     * Convenience method to create a config group with default on-accepted behaviour of saving the edited config
+     * object.
+     *
+     * @param config       the config object to be edited
+     * @param groupName    unique name for the config group
+     * @param serverConfig if true, sync config to server; if false, save locally
+     * @return a new config group
+     */
+    public static EditableConfigGroup createEditable(Config config, String groupName, boolean serverConfig) {
+        return new EditableConfigGroup(groupName, accepted -> {
+            if (accepted) {
+                if (serverConfig) {
+                    NetworkManager.sendToServer(SyncConfigToServerPacket.create(config));
+                } else {
+                    ConfigManager.getInstance().editedOnClient(config.getKey());
+                    ConfigManager.getInstance().save(config.getKey());
+                }
+            }
+        });
+    }
+
+    /**
+     * Get this group's unique id
+     * @return the ID
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Get this group's parent group
+     * @return the parent group; will be null for a top-level group
+     */
+    @Nullable
+    public EditableConfigGroup getParent() {
+        return parent;
+    }
+
+    /**
+     * Get the group's naming key, for translation purposes.
+     * @return the translation key
+     */
+    public String getNameKey() {
+        return nameKey.isEmpty() ? getPath() : nameKey;
+    }
+
+    /**
+     * Set a custom translation key for this group. By default, the translation is built as a path based on the group
+     * hierarchy, e.g. "toplevelgroup_id.subgroup1_id.subgroup2_id".
+     * @param key a custom translation key
+     * @return the group
+     */
+    public EditableConfigGroup setNameKey(String key) {
+        nameKey = key;
+        return this;
+    }
+
+    /**
+     * Get the displayable group name
+     * @return the group name
+     */
+    public Component getName() {
+        return Component.translatable(getNameKey());
+    }
+
+    /**
+     * Get the tooltip text for this group. This depends on a ".tooltip" translation key existing for the group,
+     * which is the result of {@link #getNameKey()} with ".tooltip" appended;
+     * @return the tooltip text, or {@code Component.empty()} if no tooltip translation key exists
+     */
+    public Component getTooltip() {
+        var t = getNameKey() + ".tooltip";
+        return I18n.exists(t) ? Component.translatable(t) : Component.empty();
+    }
+
+    /**
+     * Get, or create, a subgroup in this group.
+     *
+     * @param id unique id of the subgroup
+     * @param displayOrder order in which groups are displayed in the GUI (higher numbers come after)
+     * @return the subgroup, which may have just been created
+     */
+    public EditableConfigGroup getOrCreateSubgroup(String id, int displayOrder) {
+        var index = id.indexOf('.');
+
+        if (index == -1) {
+            return subgroups.computeIfAbsent(id, k -> new EditableConfigGroup(id, this, null, displayOrder));
+        } else {
+            return getOrCreateSubgroup(id.substring(0, index), displayOrder).getOrCreateSubgroup(id.substring(index + 1), displayOrder);
+        }
+    }
+
+    /**
+     * Get, or create, a subgroup in this group.
+     *
+     * @param id unique id of the subgroup
+     * @return the subgroup, which may have just been created
+     */
+    public EditableConfigGroup getOrCreateSubgroup(String id) {
+        return getOrCreateSubgroup(id, 0);
+    }
+
+    /**
+     * Add a new config item to this group. In general, the various {@code addX()} convenience methods should be used.
+     *
+     * @param id a unique id for this config item
+     * @param type an instance of the config value being added
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param defaultValue the default value
+     * @return the {@link EditableConfigValue} just added
+     * @param <T> the raw type
+     * @param <CV> the config value type
+     */
+    public <T, CV extends EditableConfigValue<T>> CV add(String id, CV type, T value, Consumer<T> setter, T defaultValue) {
+        values.put(id, type.init(this, id, value, setter, defaultValue));
+        return type;
+    }
+
+    /**
+     * Add a new boolean config item to this group.
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @return the {@link EditableBoolean} just added
+     */
+    public EditableBoolean addBool(String id, boolean value, Consumer<Boolean> setter, boolean def) {
+        return add(id, new EditableBoolean(), value, setter, def);
+    }
+
+    /**
+     * Add a new integer config item to this group.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @param min the minimum permitted value
+     * @param max the maximum permitted value
+     * @return the {@link EditableInt} just added
+     */
+    public EditableInt addInt(String id, int value, Consumer<Integer> setter, int def, int min, int max) {
+        return add(id, new EditableInt(min, max), value, setter, def);
+    }
+
+    /**
+     * Add a new long config item to this group.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @param min the minimum permitted value
+     * @param max the maximum permitted value
+     * @return the {@link EditableLong} just added
+     */
+    public EditableLong addLong(String id, long value, Consumer<Long> setter, long def, long min, long max) {
+        return add(id, new EditableLong(min, max), value, setter, def);
+    }
+
+    /**
+     * Add a new double config item to this group.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @param min the minimum permitted value
+     * @param max the maximum permitted value
+     * @return the {@link EditableDouble} just added
+     */
+    public EditableDouble addDouble(String id, double value, Consumer<Double> setter, double def, double min, double max) {
+        return add(id, new EditableDouble(min, max), value, setter, def);
+    }
+
+    /**
+     * Add a new String config item to this group.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @param pattern a regular expression to constrain the valid values of the string
+     * @return the {@link EditableString} just added
+     */
+    public EditableString addString(String id, String value, Consumer<String> setter, String def, @Nullable Pattern pattern) {
+        return add(id, new EditableString(pattern), value, setter, def);
+    }
+
+    /**
+     * Add a new String config item to this group.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @return the {@link EditableString} just added
+     */
+    public EditableString addString(String id, String value, Consumer<String> setter, String def) {
+        return addString(id, value, setter, def, null);
+    }
+
+    /**
+     * Add a new enum config item to this group.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param nameMap the {@link NameMap} object which handles serialization/deserialization of the enum
+     * @param def the default value
+     * @return the {@link EditableEnum} just added
+     */
+    public <E> EditableEnum<E> addEnum(String id, E value, Consumer<E> setter, NameMap<E> nameMap, E def) {
+        return add(id, new EditableEnum<>(nameMap), value, setter, def);
+    }
+
+    /**
+     * Add a new enum config item to this group.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param nameMap the {@link NameMap} object which handles serialization/deserialization of the enum
+     * @return the {@link EditableEnum} just added
+     */
+    public <E> EditableEnum<E> addEnum(String id, E value, Consumer<E> setter, NameMap<E> nameMap) {
+        return addEnum(id, value, setter, nameMap, nameMap.defaultValue);
+    }
+
+    /**
+     * Add a new list config item to this group. This variant has a default setter callback which updates the list
+     * passed as {@code value}; see the {@link #addList(String, List, EditableConfigValue, Consumer, Object)} overload if
+     * you want a custom setter.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param type the config value type which wraps the type contained in the list
+     * @param def the default value
+     * @return the {@link EditableList} just added
+     * @param <E> the list type
+     * @param <CV> the config value type which wraps the list type {@code E}
+     */
+    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, E def) {
+        type.setDefaultValue(def);
+        return add(id, new EditableList<>(type), value, newContents -> {
+            value.clear();
+            value.addAll(newContents);
+        }, Collections.emptyList());
+    }
+
+    /**
+     * Add a new list config item to this group
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param type the config value type which wraps the type contained in the list
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @return the {@link EditableList} just added
+     * @param <E> the list type
+     * @param <CV> the config value type which wraps the list type {@code E}
+     */
+    public <E, CV extends EditableConfigValue<E>> EditableList<E, CV> addList(String id, List<E> value, CV type, Consumer<List<E>> setter, E def) {
+        type.setDefaultValue(def);
+        return add(id, new EditableList<>(type), value, setter, Collections.emptyList());
+    }
+
+    /**
+     * Convenience case of {@link #addEnum(String, Object, Consumer, NameMap)} for {@code Tristate values}
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @return the {@link EditableEnum} just added
+     */
+    public EditableEnum<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter, Tristate def) {
+        return addEnum(id, value, setter, Tristate.NAME_MAP, def);
+    }
+
+    /**
+     * Convenience case of {@link #addEnum(String, Object, Consumer, NameMap)} for {@code Tristate values}. This
+     * variant uses {@code Tristate.DEFAULT} as the default config value.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @return the {@link EditableEnum} just added
+     */
+    public EditableEnum<Tristate> addTristate(String id, Tristate value, Consumer<Tristate> setter) {
+        return addTristate(id, value, setter, Tristate.DEFAULT);
+    }
+
+    /**
+     * Add a new {@code ItemStack} config item to this group
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @param singleItem if true, the resulting selection screen will only permit inserting a single item (itemstack count is always 1)
+     * @param allowEmpty if true, the resulting selection screen will permit selecting {@code ItemStack.EMPTY}
+     * @return the {@link EditableItemStack} just added
+     */
+    public EditableItemStack addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, boolean singleItem, boolean allowEmpty) {
+        return add(id, new EditableItemStack(singleItem, allowEmpty), value, setter, def);
+    }
+
+    /**
+     * Add a new {@code ItemStack} config item to this group
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @param fixedSize the resulting itemstack will always have this size
+     * @return the {@link EditableItemStack} just added
+     */
+    public EditableItemStack addItemStack(String id, ItemStack value, Consumer<ItemStack> setter, ItemStack def, int fixedSize) {
+        return add(id, new EditableItemStack(fixedSize), value, setter, def);
+    }
+
+    /**
+     * Add a new {@code FluidStack} config item to this group (note: this is an Architectury {@link FluidStack}).
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @param allowEmpty if true, the resulting selection screen will permit selecting {@code FluidStack.EMPTY}
+     * @return the {@link EditableFluid} just added
+     */
+    public EditableFluid addFluidStack(String id, FluidStack value, Consumer<FluidStack> setter, FluidStack def, boolean allowEmpty) {
+        return add(id, new EditableFluid(allowEmpty), value, setter, def);
+    }
+
+    /**
+     * Add a new {@code FluidStack} config item to this group (note: this is an Architectury {@link FluidStack}).
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @param fixedSize the resulting fluidstack will always have this size
+     * @return the {@link EditableFluid} just added
+     */
+    public EditableFluid addFluidStack(String id, FluidStack value, Consumer<FluidStack> setter, FluidStack def, long fixedSize) {
+        return add(id, new EditableFluid(fixedSize), value, setter, def);
+    }
+
+    /**
+     * Add a new image config item to this group (note: this is in effect a Identifier referring to an image known
+     * to the client's resource manager).
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @return the {@link EditableImageResource} just added
+     */
+    public EditableImageResource addImage(String id, Identifier value, Consumer<Identifier> setter, Identifier def) {
+        return add(id, new EditableImageResource(), value, setter, def);
+    }
+
+    /**
+     * Add a new entity face config item to this group (note: this is in effect an EntityType referring to a
+     * registered entity)
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @return the {@link EditableEntityFace} just added
+     */
+    public EditableEntityFace addEntityFace(String id, EntityType<?> value, Consumer<EntityType<?>> setter, EntityType<?> def) {
+        return add(id, new EditableEntityFace(), value, setter, def);
+    }
+
+    /**
+     * Add a new color config item to this group. By default, this allows selection of RGB colors; if you wish to
+     * allow alpha selection too, call {@link EditableColor#withAlphaEditing()} on the result of this method.
+     *
+     * @param id a unique id for this config item
+     * @param value the initial value
+     * @param setter a consumer to be called to apply changes to the value
+     * @param def the default value
+     * @return the {@link EditableColor} just added
+     */
+    public EditableColor addColor(String id, Color4I value, Consumer<Color4I> setter, Color4I def) {
+        return add(id, new EditableColor(), value, setter, def);
+    }
+
+    public final Collection<EditableConfigValue<?>> getValues() {
+        return values.values();
+    }
+
+    public final Collection<EditableConfigGroup> getSubgroups() {
+        return subgroups.values();
+    }
+
+    public String getPath() {
+        return parent == null ? id : parent.getPath() + '.' + id;
+    }
+
+    /**
+     * Called from the config editor screen when Done or Cancel is clicked.
+     *
+     * @param accepted true if the changes should be applied, false if they should be discarded
+     */
+    public void save(boolean accepted) {
+        if (accepted) {
+            values.values().forEach(EditableConfigValue::applyValue);
+            for (var group : subgroups.values()) {
+                group.save(true);
+            }
+        }
+
+        if (savedCallback != null) {
+            savedCallback.save(accepted);
+        }
+    }
+
+    @Override
+    public int compareTo(@NonNull EditableConfigGroup o) {
+        int i = Integer.compare(displayOrder, o.displayOrder);
+        return i == 0 ? getPath().compareToIgnoreCase(o.getPath()) : i;
+    }
+}

@@ -1,0 +1,28 @@
+{
+  "use_mob_texture": true,
+  "slice": {
+    "x": 10,
+    "y": 10,
+    "width": 8,
+    "height": 5
+  },
+  "children": [
+    {
+      "texture": "minecraft:textures/entity/copper_golem/copper_golem_eyes.png",
+      "slice": {
+        "x": 10,
+        "y": 10,
+        "width": 8,
+        "height": 5
+      },
+      "offset": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "default_image_size": {
+    "width": 64,
+    "height": 64
+  }
+}

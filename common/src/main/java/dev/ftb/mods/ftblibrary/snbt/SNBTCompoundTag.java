@@ -1,27 +1,18 @@
 package dev.ftb.mods.ftblibrary.snbt;
 
-import net.minecraft.nbt.*;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.nbt.CollectionTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.EndTag;
+import net.minecraft.nbt.Tag;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 
 public class SNBTCompoundTag extends CompoundTag {
-    public static final StreamCodec<FriendlyByteBuf, SNBTCompoundTag> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public SNBTCompoundTag decode(FriendlyByteBuf object) {
-            return SNBTNet.readCompound(object);
-        }
-
-        @Override
-        public void encode(FriendlyByteBuf object, SNBTCompoundTag object2) {
-            SNBTNet.write(object, object2);
-        }
-    };
     boolean singleLine;
     private HashMap<String, SNBTTagProperties> properties;
+
     public SNBTCompoundTag() {
         super(new LinkedHashMap<>());
         singleLine = false;
@@ -30,11 +21,11 @@ public class SNBTCompoundTag extends CompoundTag {
     public static SNBTCompoundTag of(@Nullable Tag tag) {
         if (tag instanceof SNBTCompoundTag) {
             return (SNBTCompoundTag) tag;
-        } else if (tag instanceof CompoundTag) {
+        } else if (tag instanceof CompoundTag c) {
             var tag1 = new SNBTCompoundTag();
 
-            for (var s : ((CompoundTag) tag).getAllKeys()) {
-                tag1.put(s, ((CompoundTag) tag).get(s));
+            for (var key : c.keySet()) {
+                tag1.put(key, c.get(key));
             }
 
             return tag1;
@@ -107,8 +98,13 @@ public class SNBTCompoundTag extends CompoundTag {
         return t == SNBTTagProperties.TYPE_TRUE || t == SNBTTagProperties.TYPE_FALSE;
     }
 
-    @Override
-    public SNBTCompoundTag getCompound(String string) {
+    // TODO: verify this isn't needed
+//    @Override
+//    public Optional<CompoundTag> getCompound(String string) {
+//        return Optional.of(of(get(string)));
+//    }
+
+    public SNBTCompoundTag getAsSnbtComponent(String string) {
         return of(get(string));
     }
 
@@ -136,17 +132,11 @@ public class SNBTCompoundTag extends CompoundTag {
         put(key, EndTag.INSTANCE);
     }
 
-    @Nullable
-    public ListTag getNullableList(String key, byte type) {
-        var tag = get(key);
-        return tag instanceof ListTag && (((ListTag) tag).isEmpty() || type == 0 || ((ListTag) tag).getElementType() == type) ? (ListTag) tag : null;
-    }
-
     @SuppressWarnings("unchecked")
     public <T extends Tag> List<T> getList(String key, Class<T> type) {
         var tag = get(key);
 
-        if (!(tag instanceof CollectionTag<?> l)) {
+        if (!(tag instanceof CollectionTag l)) {
             return Collections.emptyList();
         }
 
@@ -163,5 +153,31 @@ public class SNBTCompoundTag extends CompoundTag {
         }
 
         return list;
+    }
+
+    /**
+     * Recursively merge another compound tag into this one.
+     * @param into the compound tag to merge into
+     * @param from the compound tag to merge from
+     * @param overwrite allow fields in the "from" compound tag to overwrite fields in the "into" compound tag
+     * @return the "into" tag, modified in-place
+     */
+    public static CompoundTag merge(CompoundTag into, CompoundTag from, boolean overwrite) {
+        for (String key : from.keySet()) {
+            Tag subTag = from.get(key);
+            if (subTag != null && (overwrite || !into.contains(key))) {
+                if (subTag.getId() == Tag.TAG_COMPOUND) {
+                    if (into.contains(key)) {
+                        merge(into.getCompound(key).orElseThrow(), from, overwrite);
+                    } else {
+                        into.put(key, subTag.copy());
+                    }
+                } else {
+                    into.put(key, subTag.copy());
+                }
+            }
+        }
+
+        return into;
     }
 }

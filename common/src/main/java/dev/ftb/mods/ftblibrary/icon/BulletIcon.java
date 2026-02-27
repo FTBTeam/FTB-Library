@@ -2,30 +2,22 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.icon.BulletIconRenderer;
+import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
+import net.minecraft.resources.Identifier;
 
 
-public class BulletIcon extends Icon {
-    private static final MutableColor4I DEFAULT_COLOR = Color4I.rgb(0xEDEDED).mutable();
-    private static final MutableColor4I DEFAULT_COLOR_B = Color4I.rgb(0xFFFFFF).mutable();
-    private static final MutableColor4I DEFAULT_COLOR_D = Color4I.rgb(0xDDDDDD).mutable();
+public class BulletIcon extends Icon<BulletIcon> {
+    public static final Identifier TYPE = FTBLibrary.rl("bullet");
 
-    private Color4I color, colorB, colorD;
+    private Color4I color, brightColor, darkColor;
     private boolean inverse;
 
     public BulletIcon() {
         color = Icon.empty();
-        colorB = Icon.empty();
-        colorD = Icon.empty();
+        brightColor = Icon.empty();
+        darkColor = Icon.empty();
         inverse = false;
     }
 
@@ -33,10 +25,14 @@ public class BulletIcon extends Icon {
     public BulletIcon copy() {
         var icon = new BulletIcon();
         icon.color = color;
-        icon.colorB = colorB;
-        icon.colorD = colorD;
+        icon.brightColor = brightColor;
+        icon.darkColor = darkColor;
         icon.inverse = inverse;
         return icon;
+    }
+
+    public Color4I getColor() {
+        return color;
     }
 
     public BulletIcon setColor(Color4I col) {
@@ -48,11 +44,23 @@ public class BulletIcon extends Icon {
 
         var c = color.mutable();
         c.addBrightness(18);
-        colorB = c.copy();
+        brightColor = c.copy();
         c = color.mutable();
         c.addBrightness(-18);
-        colorD = c.copy();
+        darkColor = c.copy();
         return this;
+    }
+
+    public Color4I getBrightColor() {
+        return brightColor;
+    }
+
+    public Color4I getDarkColor() {
+        return darkColor;
+    }
+
+    public boolean isInverse() {
+        return inverse;
     }
 
     @Override
@@ -77,31 +85,8 @@ public class BulletIcon extends Icon {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        Color4I c, cb, cd;
-
-        if (color.isEmpty()) {
-            c = DEFAULT_COLOR;
-            cb = DEFAULT_COLOR_B;
-            cd = DEFAULT_COLOR_D;
-        } else {
-            c = color;
-            cb = colorB;
-            cd = colorD;
-        }
-
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-
-        GuiHelper.addRectToBuffer(graphics, buffer, x, y + 1, 1, h - 2, inverse ? cd : cb);
-        GuiHelper.addRectToBuffer(graphics, buffer, x + w - 1, y + 1, 1, h - 2, inverse ? cb : cd);
-        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y, w - 2, 1, inverse ? cd : cb);
-        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + h - 1, w - 2, 1, inverse ? cb : cd);
-        GuiHelper.addRectToBuffer(graphics, buffer, x + 1, y + 1, w - 2, h - 2, c);
-
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
+    public IconRenderer<BulletIcon> getRenderer() {
+        return BulletIconRenderer.INSTANCE;
     }
 
     @Override

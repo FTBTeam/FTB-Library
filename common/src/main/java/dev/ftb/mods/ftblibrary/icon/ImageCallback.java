@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import org.jetbrains.annotations.Nullable;
-
+import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
 public interface ImageCallback<T> {

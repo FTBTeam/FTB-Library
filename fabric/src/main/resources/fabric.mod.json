@@ -31,9 +31,11 @@
     "ftblibrary-common.mixins.json",
     "ftblibrary-fabric.mixins.json"
   ],
+  "accessWidener": "ftblibrary.accesswidener",
   "depends": {
     "fabric": "${fabricapiversionrange}",
     "minecraft": "~${mcversion}",
     "architectury": ">=${archversion}"
-  }
+  },
+  "accessWidener" : "ftblibrary.accesswidener"
 }

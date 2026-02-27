@@ -71,6 +71,7 @@ public class TimeUtils {
         return builder.toString();
     }
 
+    // FIXME needs localising
     private static void prettyTimeString(StringBuilder builder, long seconds, boolean addAnother) {
         if (seconds <= 0L) {
             return;

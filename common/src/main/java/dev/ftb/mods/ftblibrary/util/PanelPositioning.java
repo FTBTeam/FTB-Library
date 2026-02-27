@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import dev.ftb.mods.ftblibrary.config.NameMap;
-
 public enum PanelPositioning {
     // 0: align left/top, 1: align center, 2: align right/bottom
     TOP_LEFT(0, 0),

@@ -3,32 +3,36 @@ package dev.ftb.mods.ftblibrary.nbtedit;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.config.*;
-import dev.ftb.mods.ftblibrary.config.ui.EditStringConfigOverlay;
+import dev.ftb.mods.ftblibrary.client.config.editable.*;
+import dev.ftb.mods.ftblibrary.client.config.gui.EditStringConfigOverlay;
+import dev.ftb.mods.ftblibrary.client.gui.input.Key;
+import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.layout.WidgetLayout;
+import dev.ftb.mods.ftblibrary.client.gui.screens.AbstractThreePanelScreen;
+import dev.ftb.mods.ftblibrary.client.gui.SimpleToast;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
+import dev.ftb.mods.ftblibrary.client.gui.widget.*;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
+import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.icon.*;
 import dev.ftb.mods.ftblibrary.net.EditNBTResponsePacket;
-import dev.ftb.mods.ftblibrary.ui.*;
-import dev.ftb.mods.ftblibrary.ui.input.Key;
-import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
-import dev.ftb.mods.ftblibrary.ui.misc.AbstractThreePanelScreen;
-import dev.ftb.mods.ftblibrary.ui.misc.SimpleToast;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
+import dev.ftb.mods.ftblibrary.util.SerializationUtil;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
@@ -38,31 +42,31 @@ import java.util.regex.Pattern;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NBTPanel> {
-    public static final Icon NBT_BYTE = getIcon("byte");
-    public static final Icon NBT_SHORT = getIcon("short");
-    public static final Icon NBT_INT = getIcon("int");
-    public static final Icon NBT_LONG = getIcon("long");
-    public static final Icon NBT_FLOAT = getIcon("float");
-    public static final Icon NBT_DOUBLE = getIcon("double");
-    public static final Icon NBT_STRING = getIcon("string");
-    public static final Icon NBT_LIST = getIcon("list");
-    public static final Icon NBT_LIST_CLOSED = getIcon("list").combineWith(getIcon("map_closed").withColor(Color4I.rgba(0xC0FFFFFF)));
-    public static final Icon NBT_LIST_OPEN = getIcon("list");
-    public static final Icon NBT_MAP = getIcon("map");
-    public static final Icon NBT_MAP_CLOSED = getIcon("map").combineWith(getIcon("map_closed").withColor(Color4I.rgba(0xC0FFFFFF)));
-    public static final Icon NBT_MAP_OPEN = getIcon("map");
-    public static final Icon NBT_BYTE_ARRAY = getIcon("byte_array");
-    public static final Icon NBT_BYTE_ARRAY_CLOSED = getIcon("byte_array_closed");
-    public static final Icon NBT_BYTE_ARRAY_OPEN = getIcon("byte_array_open");
-    public static final Icon NBT_INT_ARRAY = getIcon("int_array");
-    public static final Icon NBT_INT_ARRAY_CLOSED = getIcon("int_array_closed");
-    public static final Icon NBT_INT_ARRAY_OPEN = getIcon("int_array_open");
+    public static final Icon<?> NBT_BYTE = getIcon("byte");
+    public static final Icon<?> NBT_SHORT = getIcon("short");
+    public static final Icon<?> NBT_INT = getIcon("int");
+    public static final Icon<?> NBT_LONG = getIcon("long");
+    public static final Icon<?> NBT_FLOAT = getIcon("float");
+    public static final Icon<?> NBT_DOUBLE = getIcon("double");
+    public static final Icon<?> NBT_STRING = getIcon("string");
+    public static final Icon<?> NBT_LIST = getIcon("list");
+    public static final Icon<?> NBT_LIST_CLOSED = getIcon("list").combineWith(getIcon("map_closed").withColor(Color4I.rgba(0xC0FFFFFF)));
+    public static final Icon<?> NBT_LIST_OPEN = getIcon("list");
+    public static final Icon<?> NBT_MAP = getIcon("map");
+    public static final Icon<?> NBT_MAP_CLOSED = getIcon("map").combineWith(getIcon("map_closed").withColor(Color4I.rgba(0xC0FFFFFF)));
+    public static final Icon<?> NBT_MAP_OPEN = getIcon("map");
+    public static final Icon<?> NBT_BYTE_ARRAY = getIcon("byte_array");
+    public static final Icon<?> NBT_BYTE_ARRAY_CLOSED = getIcon("byte_array_closed");
+    public static final Icon<?> NBT_BYTE_ARRAY_OPEN = getIcon("byte_array_open");
+    public static final Icon<?> NBT_INT_ARRAY = getIcon("int_array");
+    public static final Icon<?> NBT_INT_ARRAY_CLOSED = getIcon("int_array_closed");
+    public static final Icon<?> NBT_INT_ARRAY_OPEN = getIcon("int_array_open");
     private static final int TOP_PANEL_H = 20;
     public final Panel panelTopLeft, panelTopRight;
     private final CompoundTag info;
     private final NBTCallback callback;
     private final ButtonNBTMap buttonNBTRoot;
-    private ButtonNBT selected;
+    @Nullable private ButtonNBT selected;
     private boolean accepted = false;
 
     public NBTEditorScreen(CompoundTag info, CompoundTag nbt, NBTCallback callback) {
@@ -93,16 +97,15 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }).openGui();
     }
 
-    private static Icon getIcon(String name) {
+    private static Icon<?> getIcon(String name) {
         return Icon.getIcon(FTBLibrary.MOD_ID + ":textures/icons/nbt/" + name + ".png");
     }
 
     private String getInfoTitle(CompoundTag info) {
         if (info.contains("title")) {
-            MutableComponent title = Component.Serializer.fromJson(info.getString("title"), Minecraft.getInstance().level.registryAccess());
-            if (title != null) return title.getString();
+            return info.getStringOr("title", "<?>");
         } else if (info.contains("type")) {
-            return info.getString("type").toUpperCase();
+            return info.getStringOr("type", "").toUpperCase();
         }
         return "ROOT";
     }
@@ -143,7 +146,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         return new CustomTopPanel();
     }
 
-    private void setSelected(@NotNull ButtonNBT newSelected) {
+    private void setSelected(@NonNull ButtonNBT newSelected) {
         ButtonNBT prevSelected = selected;
         selected = newSelected;
         if (prevSelected != null) prevSelected.updateTitle();
@@ -156,8 +159,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     }
 
     @Override
-    public void onClosed() {
-        super.onClosed();
+    public void closeGui() {
+        super.closeGui();
 
         callback.handle(accepted, buttonNBTRoot.map);
     }
@@ -168,22 +171,24 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     }
 
     @Override
-    public boolean keyPressed(Key key) {
-        if (super.keyPressed(key)) {
+    public boolean keyPressed(Key event) {
+        if (super.keyPressed(event)) {
             return true;
-        } else if (key.is(InputConstants.KEY_ADD) || key.is(InputConstants.KEY_EQUALS)) {
+        } else if (event.is(InputConstants.KEY_ADD) || event.is(InputConstants.KEY_EQUALS)) {
             collapseAll(false);
-        } else if (key.is(InputConstants.KEY_MINUS) || key.is(GLFW.GLFW_KEY_KP_SUBTRACT)) {
+        } else if (event.is(InputConstants.KEY_MINUS) || event.is(GLFW.GLFW_KEY_KP_SUBTRACT)) {
             collapseAll(true);
-        } else if (key.is(InputConstants.KEY_C) && key.modifiers.control()) {
+        } else if (event.is(InputConstants.KEY_C) && event.modifiers().control()) {
             copyToClipboard();
         }
         return false;
     }
 
     private void copyToClipboard() {
-        setClipboardString(selected.toNBT().toString());
-        SimpleToast.info(Component.translatable("ftblibrary.gui.nbt_copied"), Component.literal(" "));
+        if (selected != null) {
+            setClipboardString(selected.toNBT().toString());
+            SimpleToast.info(Component.translatable("ftblibrary.gui.nbt_copied"), Component.literal(" "));
+        }
     }
 
     private ButtonNBT makeNBTButton(ButtonNBTCollection parent, String key) {
@@ -198,10 +203,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         };
     }
 
-    public SimpleButton newTag(Panel panel, String title, Icon icon, Supplier<Tag> supplier) {
+    public SimpleButton newTag(Panel panel, String title, Icon<?> icon, Supplier<Tag> supplier) {
         return new SimpleButton(panel, Component.literal(title), icon, (btn, mb) -> {
             if (selected instanceof ButtonNBTMap) {
-                var value = new StringConfig(Pattern.compile("^.+$"));
+                var value = new EditableString(Pattern.compile("^.+$"));
                 var overlay = new EditStringConfigOverlay<>(this, value, accepted -> {
                     if (accepted && !value.getValue().isEmpty()) {
                         ((ButtonNBTCollection) selected).setTag(value.getValue(), supplier.get());
@@ -219,8 +224,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             }
         }) {
             @Override
-            public void drawBackground(GuiGraphics stack, Theme theme, int x, int y, int w, int h) {
-                IconWithBorder.BUTTON_ROUND_GRAY.draw(stack, x, y, w, h);
+            public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+                IconHelper.renderIcon(BorderedIcon.BUTTON_ROUND_GRAY, graphics, x, y, w, h);
             }
         };
     }
@@ -232,7 +237,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
     }
 
     public abstract class ButtonNBT extends Button {
-        protected final ButtonNBTCollection parent;
+        @Nullable protected final ButtonNBTCollection parent;
         protected String key;
 
         public ButtonNBT(Panel panel, @Nullable ButtonNBTCollection parent, String key) {
@@ -263,14 +268,14 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void draw(GuiGraphics pose, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             if (isSelected()) {
-                Color4I.WHITE.withAlpha(64).draw(pose, x, y, w, h);
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(64), graphics, x, y, w, h);
             }
 
-            IconWithBorder.BUTTON_ROUND_GRAY.draw(pose, x + 1, y + 1, 8, 8);
-            drawIcon(pose, theme, x + 1, y + 1, 8, 8);
-            theme.drawString(pose, getTitle(), x + 11, y + 1);
+            IconHelper.renderIcon(BorderedIcon.BUTTON_ROUND_GRAY, graphics, x + 1, y + 1, 8, 8);
+            drawIcon(graphics, theme, x + 1, y + 1, 8, 8);
+            theme.drawString(graphics, getTitle(), x + 11, y + 1);
         }
 
         public boolean isSelected() {
@@ -294,21 +299,25 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                 case Tag.TAG_INT -> setIcon(NBT_INT);
                 case Tag.TAG_LONG -> setIcon(NBT_LONG);
                 case Tag.TAG_FLOAT -> setIcon(NBT_FLOAT);
-                case Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> setIcon(NBT_DOUBLE);
+                case Tag.TAG_DOUBLE -> setIcon(NBT_DOUBLE);
                 case Tag.TAG_STRING -> setIcon(NBT_STRING);
             }
 
-            this.parent.setTag(this.key, this.nbt);
+            if (this.parent != null) {
+                this.parent.setTag(this.key, this.nbt);
+            }
             updateTitle();
         }
 
         @Override
         public void updateTitle() {
             Object value = switch (nbt.getId()) {
-                case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT -> ((NumericTag) nbt).getAsInt();
-                case Tag.TAG_LONG -> ((NumericTag) nbt).getAsLong();
-                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> ((NumericTag) nbt).getAsDouble();
-                case Tag.TAG_STRING -> nbt.getAsString();
+                case Tag.TAG_BYTE -> nbt.asByte().orElse((byte) 0);
+                case Tag.TAG_SHORT -> nbt.asShort().orElse((short) 0);
+                case Tag.TAG_INT -> nbt.asInt().orElse(0);
+                case Tag.TAG_LONG -> nbt.asLong().orElse(0L);
+                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE -> nbt.asDouble().orElse(0D);
+                case Tag.TAG_STRING -> nbt.asString().orElse("");
                 default -> "";
             };
 
@@ -343,16 +352,16 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         public void edit() {
             switch (nbt.getId()) {
                 case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
-                        openEditOverlay(new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), ((NumericTag) nbt).getAsInt());
+                        openEditOverlay(new EditableInt(Integer.MIN_VALUE, Integer.MAX_VALUE), nbt.asInt().orElseThrow());
                 case Tag.TAG_LONG ->
-                        openEditOverlay(new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE), ((NumericTag) nbt).getAsLong());
-                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC ->
-                        openEditOverlay(new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), ((NumericTag) nbt).getAsDouble());
-                case Tag.TAG_STRING -> openEditOverlay(new StringConfig(), nbt.getAsString());
+                        openEditOverlay(new EditableLong(Long.MIN_VALUE, Long.MAX_VALUE), nbt.asLong().orElseThrow());
+                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE ->
+                        openEditOverlay(new EditableDouble(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), nbt.asDouble().orElseThrow());
+                case Tag.TAG_STRING -> openEditOverlay(new EditableString(), nbt.asString().orElseThrow());
             }
         }
 
-        private <T> void openEditOverlay(ConfigFromString<T> config, T val) {
+        private <T> void openEditOverlay(EditableStringifiedConfig<T> config, T val) {
             config.setValue(val);
             getGui().pushModalPanel(
                     new EditStringConfigOverlay<>(getGui(), config, accepted -> onCallback(config, accepted))
@@ -360,18 +369,20 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             );
         }
 
-        public void onCallback(ConfigValue<?> value, boolean accepted) {
+        public void onCallback(EditableConfigValue<?> value, boolean accepted) {
             if (accepted) {
                 switch (nbt.getId()) {
                     case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
                             nbt = IntTag.valueOf(((Number) value.getValue()).intValue());
                     case Tag.TAG_LONG -> nbt = LongTag.valueOf(((Number) value.getValue()).longValue());
-                    case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC ->
+                    case Tag.TAG_FLOAT, Tag.TAG_DOUBLE ->
                             nbt = DoubleTag.valueOf(((Number) value.getValue()).doubleValue());
                     case Tag.TAG_STRING -> nbt = StringTag.valueOf(value.getValue().toString());
                 }
 
-                parent.setTag(key, nbt);
+                if (parent != null) {
+                    parent.setTag(key, nbt);
+                }
                 updateTitle();
             }
 
@@ -386,10 +397,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
     public abstract class ButtonNBTCollection extends ButtonNBT {
         public final Map<String, ButtonNBT> children;
-        public final Icon iconOpen, iconClosed;
+        public final Icon<?> iconOpen, iconClosed;
         public boolean collapsed;
 
-        public ButtonNBTCollection(Panel panel, @Nullable ButtonNBTCollection parent, String key, Icon open, Icon closed) {
+        public ButtonNBTCollection(Panel panel, @Nullable ButtonNBTCollection parent, String key, Icon<?> open, Icon<?> closed) {
             super(panel, parent, key);
             iconOpen = open;
             iconClosed = closed;
@@ -453,7 +464,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
     public class ButtonNBTMap extends ButtonNBTCollection {
         private final CompoundTag map;
-        private Icon hoverIcon = Icon.empty();
+        private Icon<?> hoverIcon = Icon.empty();
 
         public ButtonNBTMap(Panel panel, @Nullable ButtonNBTCollection parent, String key, CompoundTag map) {
             super(panel, parent, key, NBT_MAP_OPEN, NBT_MAP_CLOSED);
@@ -469,7 +480,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         public void updateChildren(boolean first) {
             children.clear();
 
-            map.getAllKeys().stream().sorted(StringUtils.IGNORE_CASE_COMPARATOR).forEach(key -> {
+            map.keySet().stream().sorted(StringUtils.IGNORE_CASE_COMPARATOR).forEach(key -> {
                 var nbt = makeNBTButton(this, key);
                 children.put(key, nbt);
                 nbt.updateChildren(first);
@@ -485,9 +496,9 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         private void updateHoverIcon() {
             hoverIcon = Icon.empty();
 
-            if (map.contains("id", Tag.TAG_STRING) && map.contains("Count", Tag.TAG_ANY_NUMERIC)) {
-                ItemStack.parse(Minecraft.getInstance().level.registryAccess(), map)
-                        .ifPresent(stack -> hoverIcon = ItemIcon.getItemIcon(stack));
+            if (map.contains("id") && map.contains("Count")) {
+                ItemStack.CODEC.parse(ClientUtils.registryAccess().createSerializationContext(NbtOps.INSTANCE), map)
+                        .ifSuccess(stack -> hoverIcon = ItemIcon.ofItemStack(stack));
             }
 
             setWidth(12 + getTheme().getStringWidth(getTitle()) + (hoverIcon.isEmpty() ? 0 : 10));
@@ -496,28 +507,25 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         @Override
         public void addMouseOverText(TooltipList list) {
             if (this == buttonNBTRoot) {
-                var infoList = info.getList("text", Tag.TAG_STRING);
+                var infoList = info.getListOrEmpty("text");
 
                 if (!infoList.isEmpty()) {
                     list.add(Component.translatable("gui.info").append(":"));
 
                     for (var i = 0; i < infoList.size(); i++) {
-                        var component = Component.Serializer.fromJson(infoList.getString(i), Minecraft.getInstance().level.registryAccess());
-
-                        if (component != null) {
-                            list.add(component);
-                        }
+                        SerializationUtil.deserializeComponent(infoList.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess())
+                                .ifPresent(list::add);
                     }
                 }
             }
         }
 
         @Override
-        public void draw(GuiGraphics pose, Theme theme, int x, int y, int w, int h) {
-            super.draw(pose, theme, x, y, w, h);
+        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+            super.draw(graphics, theme, x, y, w, h);
 
             if (!hoverIcon.isEmpty()) {
-                hoverIcon.draw(pose, x + 12 + theme.getStringWidth(getTitle()), y + 1, 8, 8);
+                IconHelper.renderIcon(hoverIcon, graphics, x + 12 + theme.getStringWidth(getTitle()), y + 1, 8, 8);
             }
         }
 
@@ -557,15 +565,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             if (this == buttonNBTRoot) {
                 var infoList1 = new ListTag();
-                var infoList0 = info.getList("text", Tag.TAG_STRING);
+                var infoList0 = info.getListOrEmpty("text");
 
                 if (!infoList0.isEmpty()) {
                     for (var i = 0; i < infoList0.size(); i++) {
-                        var component = Component.Serializer.fromJson(infoList0.getString(i), Minecraft.getInstance().level.registryAccess());
-
-                        if (component != null) {
-                            infoList1.add(StringTag.valueOf(component.getString()));
-                        }
+                        SerializationUtil.deserializeComponent(infoList0.getString(i).orElseThrow(), Minecraft.getInstance().level.registryAccess())
+                                .ifPresent(c -> infoList1.add(StringTag.valueOf(c.getString())));
                     }
 
                     nbt.put("_", infoList1);
@@ -626,7 +631,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
         @Override
         public boolean canCreateNew(int id) {
-            return list.isEmpty() || list.getElementType() == id;
+            return list.isEmpty() || list.getFirst().getId() == id;
         }
 
         @Override
@@ -665,10 +670,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             if (id == -1) {
                 if (base != null) {
-                    list.add(((NumericTag) base).getAsByte());
+                    byte key1 = base.asByte().orElse((byte) 0);
+                    list.add(key1);
                 }
             } else if (base != null) {
-                list.set(id, ((NumericTag) base).getAsByte());
+                byte k = base.asByte().orElse((byte) 0);
+                list.set(id, k);
             } else {
                 list.removeByte(id);
             }
@@ -719,10 +726,10 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             if (id == -1) {
                 if (base != null) {
-                    list.add(((NumericTag) base).getAsInt());
+                    list.add(base.asInt().orElse(0));
                 }
             } else if (base != null) {
-                list.set(id, ((NumericTag) base).getAsInt());
+                list.set(id, base.asInt().orElse(0));
             } else {
                 list.rem(id);
             }
@@ -760,16 +767,15 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
             var canRename = selected.parent instanceof ButtonNBTMap;
 
-            Icon renameIcon = Icons.NOTES;
+            Icon<?> renameIcon = Icons.NOTES;
             add(new SimpleButton(this, Component.translatable("ftblibrary.gui.edit_tag_name"), canRename ? renameIcon : renameIcon.combineWith(Color4I.rgba(0xc0202020)), (btn, mb) -> {
                 if (canRename) {
                     getGui().pushModalPanel(makeRenameOverlay(btn));
                 }
             }));
 
-            if (selected instanceof ButtonBasicTag) {
-                add(new SimpleButton(this, Component.translatable("ftblibrary.gui.edit_tag_value"), Icons.FEATHER,
-                        (widget, button) -> ((ButtonBasicTag) selected).edit()));
+            if (selected instanceof ButtonBasicTag bbt) {
+                add(new SimpleButton(this, Component.translatable("ftblibrary.gui.edit_tag_value"), Icons.FEATHER, (widget, button) -> bbt.edit()));
             }
 
             List<Widget> addBtns = buildAddButtons();
@@ -791,7 +797,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             }
         }
 
-        @NotNull
+        @NonNull
         private List<Widget> buildAddButtons() {
             List<Widget> addBtns = new ArrayList<>();
             if (selected.canCreateNew(Tag.TAG_COMPOUND)) {
@@ -830,9 +836,9 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             return addBtns;
         }
 
-        @NotNull
+        @NonNull
         private EditStringConfigOverlay<String> makeRenameOverlay(SimpleButton button) {
-            var value = new StringConfig();
+            var value = new EditableString();
 //			int overlayWidth = 100;
             if (selected != null) {
                 value.setValue(selected.key);
@@ -869,12 +875,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
         @Override
         public void addWidgets() {
-            add(new SimpleButton(this, List.of(Component.translatable("gui.copy"), hotkeyTooltip("Ctrl + C")), ItemIcon.getItemIcon(Items.PAPER), (widget, button) -> copyToClipboard()));
+            add(new SimpleButton(this, List.of(Component.translatable("gui.copy"), hotkeyTooltip("Ctrl + C")), ItemIcon.ofItem(Items.PAPER), (widget, button) -> copyToClipboard()));
 
-            add(new SimpleButton(this, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.DOWN,
+            add(new SimpleButton(this, List.of(Component.translatable("gui.collapse_all"), hotkeyTooltip("-")), Icons.COLLAPSE,
                     (widget, button) -> collapseAll(true)));
 
-            add(new SimpleButton(this, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.UP,
+            add(new SimpleButton(this, List.of(Component.translatable("gui.expand_all"), hotkeyTooltip("="), hotkeyTooltip("+")), Icons.EXPAND,
                     (widget, button) -> collapseAll(false)));
         }
 

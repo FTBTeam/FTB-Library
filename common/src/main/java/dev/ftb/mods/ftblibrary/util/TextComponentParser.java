@@ -1,14 +1,15 @@
 package dev.ftb.mods.ftblibrary.util;
 
+import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.PlainTextContents;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -37,6 +38,10 @@ public class TextComponentParser {
         map.put('n', ChatFormatting.UNDERLINE);
         map.put('o', ChatFormatting.ITALIC);
         map.put('r', ChatFormatting.RESET);
+    });
+
+    public static final Char2ObjectOpenHashMap<TextColor> SPECIAL_COLOR_CODES = Util.make(new Char2ObjectOpenHashMap<>(), map -> {
+        map.put('z', RainbowTextColor.INSTANCE);
     });
 
     private final String text;
@@ -134,8 +139,14 @@ public class TextComponentParser {
                         }
 
                         var formatting = CODE_TO_FORMATTING.get(c[i]);
-
                         if (formatting == null) {
+                            var specialColor = SPECIAL_COLOR_CODES.get(c[i]);
+                            if (specialColor != null) {
+                                style = style.withColor(specialColor);
+                                continue;
+                            }
+
+
                             throw new BadFormatException("Invalid formatting! Unknown formatting symbol after &: '" + c[i] + "'!");
                         }
 

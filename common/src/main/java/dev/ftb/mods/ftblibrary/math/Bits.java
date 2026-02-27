@@ -2,9 +2,6 @@ package dev.ftb.mods.ftblibrary.math;
 
 import java.util.*;
 
-/**
- * Made by LatvianModder
- */
 public class Bits {
     private static final int MAX_BYTE = 0xFF;
     private static final int MAX_SHORT = 0xFFFF;
@@ -35,8 +32,6 @@ public class Bits {
             b[j] = ((d >> j) & 1) == 1;
         }
     }
-
-    //
 
     //Int
     public static long intsToLong(int a, int b) {

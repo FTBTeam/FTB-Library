@@ -4,17 +4,18 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.FTBLibraryClient;
-import dev.ftb.mods.ftblibrary.config.ui.ResourceSearchMode;
-import dev.ftb.mods.ftblibrary.config.ui.SelectItemStackScreen;
-import dev.ftb.mods.ftblibrary.config.ui.SelectableResource;
+import dev.ftb.mods.ftblibrary.client.config.gui.resource.ResourceSearchMode;
+import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectableResource;
+import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
-import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
-import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.builder.IClickableIngredientFactory;
 import mezz.jei.api.gui.handlers.IGlobalGuiHandler;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
@@ -24,10 +25,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,8 +39,8 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     public static IJeiRuntime runtime = null;
     private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
         @Override
-        public Icon getIcon() {
-            return ItemIcon.getItemIcon(Items.APPLE);
+        public Icon<?> getIcon() {
+            return ItemIcon.ofItem(Items.APPLE);
         }
 
         @Override
@@ -76,8 +77,8 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     }
 
     @Override
-    @NotNull
-    public ResourceLocation getPluginUid() {
+    @NonNull
+    public Identifier getPluginUid() {
         return FTBLibrary.rl("jei");
     }
 
@@ -90,7 +91,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     }
 
     @Override
-    @NotNull
+    @NonNull
     public Collection<Rect2i> getGuiExtraAreas() {
         var currentScreen = Minecraft.getInstance().screen;
 
@@ -102,13 +103,13 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     }
 
     @Override
-    public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(double mouseX, double mouseY) {
+    public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(IClickableIngredientFactory builder, double mouseX, double mouseY) {
         var currentScreen = Minecraft.getInstance().screen;
 
         if (currentScreen instanceof IScreenWrapper wrapper && wrapper.getGui().getIngredientUnderMouse().isPresent()) {
             PositionedIngredient underMouse = wrapper.getGui().getIngredientUnderMouse().get();
             if (underMouse.ingredient() instanceof ItemStack stack) {
-                Optional<ITypedIngredient<ItemStack>> typed = runtime.getIngredientManager().createTypedIngredient(VanillaTypes.ITEM_STACK, stack);
+                Optional<ITypedIngredient<ItemStack>> typed = runtime.getIngredientManager().createTypedIngredient(VanillaTypes.ITEM_STACK, stack, false);
                 if (typed.isPresent()) {
                     return Optional.of(new ClickableIngredient<>(typed.get(), underMouse.area()));
                 }

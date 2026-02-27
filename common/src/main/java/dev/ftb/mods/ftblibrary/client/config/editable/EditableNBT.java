@@ -1,0 +1,46 @@
+package dev.ftb.mods.ftblibrary.client.config.editable;
+
+import com.mojang.brigadier.StringReader;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
+import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.Nullable;
+
+import java.util.function.Consumer;
+
+public class EditableNBT extends EditableStringifiedConfig<CompoundTag> {
+    public static final Component EMPTY_NBT = Component.literal("{}");
+    public static final Component NON_EMPTY_NBT = Component.literal("{...}");
+
+    @Override
+    public CompoundTag copy(CompoundTag v) {
+        return v.copy();
+    }
+
+    @Override
+    public String getStringFromValue(CompoundTag v) {
+        return v.toString();
+    }
+
+    @Override
+    public Component getStringForGUI(CompoundTag value) {
+        return value.isEmpty() ? EMPTY_NBT : NON_EMPTY_NBT;
+    }
+
+    @Override
+    public boolean parse(@Nullable Consumer<CompoundTag> callback, String string) {
+        try {
+            return okValue(callback, TagParser.parseCompoundAsArgument(new StringReader(string)));
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public void addInfo(TooltipList list, Theme theme) {
+        list.add(info("Value", value));
+        list.add(info("Default", defaultValue));
+    }
+}

@@ -2,13 +2,14 @@ package dev.ftb.mods.ftblibrary.sidebar;
 
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
-import dev.ftb.mods.ftblibrary.ui.GuiHelper;
-import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
-import dev.ftb.mods.ftblibrary.util.ChainedBooleanSupplier;
-import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
-import net.minecraft.Util;
+import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton;
+import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
+import dev.ftb.mods.ftblibrary.client.gui.screens.LoadingScreen;
+import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,17 +17,17 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-public class RegisteredSidebarButton implements dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton {
-
+public class RegisteredSidebarButton implements SidebarButton {
     private final SidebarButtonData data;
-    private final ResourceLocation id;
+    private final Identifier id;
     private final String langKey;
     private final Component tooltip;
     private final List<ButtonOverlayRender> extraRenderers;
-    private Supplier<List<Component>> tooltipOverride;
-    private ChainedBooleanSupplier visible = ChainedBooleanSupplier.TRUE;
+    private @Nullable Supplier<List<Component>> tooltipOverride;
+    private BooleanSupplier visible = () -> true;
+    private boolean forceHidden = false;
 
-    public RegisteredSidebarButton(ResourceLocation id, SidebarButtonData data) {
+    public RegisteredSidebarButton(Identifier id, SidebarButtonData data) {
         this.id = id;
         this.data = data;
         this.langKey = Util.makeDescriptionId("sidebar_button", id);
@@ -36,15 +37,21 @@ public class RegisteredSidebarButton implements dev.ftb.mods.ftblibrary.api.side
         }
         data.requiredMods().ifPresent(mods -> addVisibilityCondition(() -> mods.stream().allMatch(Platform::isModLoaded)));
         extraRenderers = new ArrayList<>();
+        if (!data.envCondition().isEmpty()) {
+            if (data.envCondition().startsWith("!")) {
+                addVisibilityCondition(() -> !System.getenv().containsKey(data.envCondition().substring(1)));
+            } else {
+                addVisibilityCondition(() -> System.getenv().containsKey(data.envCondition()));
+            }
+        }
     }
-
 
     public SidebarButtonData getData() {
         return data;
     }
 
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return id;
     }
 
@@ -69,7 +76,7 @@ public class RegisteredSidebarButton implements dev.ftb.mods.ftblibrary.api.side
 
     public void clickButton(boolean shift) {
         if (data.loadingScreen()) {
-            new LoadingScreen(Component.translatable(getLangKey())).openGui();
+            new LoadingScreen(Component. translatable(getLangKey())).openGui();
         }
 
         boolean canShift = shift && data.shiftClickEvent().isPresent();
@@ -80,12 +87,17 @@ public class RegisteredSidebarButton implements dev.ftb.mods.ftblibrary.api.side
     }
 
     public boolean canSee() {
-        return visible.getAsBoolean();
+        return !forceHidden && visible.getAsBoolean();
+    }
+
+    public void setForceHidden(boolean forceHidden) {
+        this.forceHidden = forceHidden;
     }
 
     @Override
     public void addVisibilityCondition(BooleanSupplier condition) {
-        visible = visible.and(condition);
+        BooleanSupplier previous = visible;
+        visible = () -> previous.getAsBoolean() && condition.getAsBoolean();
     }
 
     @Override
@@ -102,4 +114,3 @@ public class RegisteredSidebarButton implements dev.ftb.mods.ftblibrary.api.side
         return extraRenderers;
     }
 }
-

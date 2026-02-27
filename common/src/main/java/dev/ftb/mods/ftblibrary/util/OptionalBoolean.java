@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 import java.util.function.BooleanSupplier;
@@ -11,6 +11,7 @@ public class OptionalBoolean {
     public static final OptionalBoolean EMPTY = new OptionalBoolean(null);
     public static final OptionalBoolean TRUE = new OptionalBoolean(true);
     public static final OptionalBoolean FALSE = new OptionalBoolean(false);
+    @Nullable
     private final Boolean value;
 
     private OptionalBoolean(@Nullable Boolean v) {

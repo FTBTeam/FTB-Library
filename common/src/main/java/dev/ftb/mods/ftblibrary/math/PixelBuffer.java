@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.math;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;

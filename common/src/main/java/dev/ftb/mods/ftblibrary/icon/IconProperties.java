@@ -1,11 +1,10 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 
 public class IconProperties {
     private final Map<String, String> map = new LinkedHashMap<>();
@@ -50,6 +49,6 @@ public class IconProperties {
     @Nullable
     public Color4I getColor(String key) {
         var s = map.get(key);
-        return s == null ? null : Color4I.fromString(s);
+        return s == null ? null : Color4I.parse(s);
     }
 }

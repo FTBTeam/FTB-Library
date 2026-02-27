@@ -3,39 +3,45 @@ package dev.ftb.mods.ftblibrary.icon;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
-import dev.ftb.mods.ftblibrary.config.ImageResourceConfig;
-import dev.ftb.mods.ftblibrary.math.PixelBuffer;
+import com.mojang.serialization.DataResult;
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableImageResource;
+import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.Util;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
-public abstract class Icon implements Drawable {
-    public static final Codec<Icon> CODEC = ExtraCodecs.JSON.xmap(Icon::getIcon, Icon::getJson);
-    public static final StreamCodec<FriendlyByteBuf, Icon> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public Icon decode(FriendlyByteBuf buf) {
-            return Icon.getIcon(buf.readUtf());
-        }
-
-        @Override
-        public void encode(FriendlyByteBuf buf, Icon icon) {
-            buf.writeUtf(icon.toString());
-        }
-    };
+/**
+ * Represents any drawable object. Note that rendering code for icons is in a separate class which implements
+ * {@link IconRenderer}, so these objects are safe to load and use server-side (just don't ever call
+ * {@link #getRenderer()} on the server...)
+ */
+public abstract class Icon<T extends Icon<T>> {
+    public static final Codec<Icon<?>> CODEC = ExtraCodecs.JSON.xmap(Icon::getIcon, Icon::getJson);
+    public static final Codec<Icon<?>> STRING_CODEC = Codec.STRING.comapFlatMap(
+            s -> {
+                Icon<?> res = Icon.getIcon(s);
+                return res.isEmpty() ? DataResult.error(() -> "Invalid icon spec: " + s) : DataResult.success(res);
+            },
+            Icon::toString
+    );
+    public static final StreamCodec<FriendlyByteBuf, Icon<?>> STREAM_CODEC = StreamCodec.of(
+            (buf, icon) -> buf.writeUtf(icon.toString()),
+            buf -> Icon.getIcon(buf.readUtf())
+    );
 
     public static Color4I empty() {
         return Color4I.EMPTY_ICON;
     }
 
-    public static Icon getIcon(@Nullable JsonElement json) {
+    public static Icon<?> getIcon(@Nullable JsonElement json) {
         if (json == null || json.isJsonNull()) {
             return empty();
         } else if (json.isJsonObject()) {
@@ -52,16 +58,16 @@ public abstract class Icon implements Drawable {
                     case "tint":
                         return getIcon(o.get("parent")).withTint(Color4I.fromJson(o.get("color")));
                     case "animation": {
-                        List<Icon> icons = new ArrayList<>();
+                        List<Icon<?>> icons = new ArrayList<>();
 
                         for (var e : o.get("icons").getAsJsonArray()) {
                             icons.add(getIcon(e));
                         }
 
-                        return IconAnimation.fromList(icons, true);
+                        return AnimatedIcon.fromList(icons, true);
                     }
                     case "border": {
-                        Icon icon = empty();
+                        Icon<?> icon = empty();
                         var outline = empty();
                         var roundEdges = false;
 
@@ -96,53 +102,43 @@ public abstract class Icon implements Drawable {
                 }
             }
         } else if (json.isJsonArray()) {
-            List<Icon> list = new ArrayList<>();
-
-            for (var e : json.getAsJsonArray()) {
-                list.add(getIcon(e));
-            }
-
+            List<Icon<?>> list = Util.make(new ArrayList<>(), l -> json.getAsJsonArray().forEach(el -> l.add(getIcon(el))));
             return CombinedIcon.getCombined(list);
         }
 
-        var s = json.getAsString();
-
-        if (isNone(s)) {
+        var str = json.getAsString();
+        if (isNone(str)) {
             return empty();
         }
 
-        var icon = IconPresets.MAP.get(s);
-        return icon == null ? getIcon(s) : icon;
+        var icon = IconPresets.MAP.get(str);
+        return icon == null ? getIcon(str) : icon;
     }
 
-    public static Icon getIcon(ResourceLocation id) {
+    public static Icon<?> getIcon(@Nullable Identifier id) {
         return id == null ? empty() : getIcon(id.toString());
     }
 
-    public static Icon getIcon(String id) {
+    public static Icon<?> getIcon(String id) {
         if (isNone(id)) {
             return empty();
         }
 
         var comb = id.split(" \\+ ");
-
         if (comb.length > 1) {
-            var list = new ArrayList<Icon>(comb.length);
-
+            var list = new ArrayList<Icon<?>>(comb.length);
             for (var s : comb) {
                 list.add(getIcon(s));
             }
-
             return CombinedIcon.getCombined(list);
         }
 
         var ids = id.split("; ");
-
         for (var i = 0; i < ids.length; i++) {
             ids[i] = ids[i].trim();
         }
 
-        var icon = getIcon0(ids[0]);
+        var icon = getIconInternal(ids[0]);
 
         if (ids.length > 1 && !icon.isEmpty()) {
             var properties = new IconProperties();
@@ -178,27 +174,25 @@ public abstract class Icon implements Drawable {
         return icon;
     }
 
-    private static Icon getIcon0(String id) {
+    private static Icon<?> getIconInternal(String id) {
         if (isNone(id)) {
             return Icon.empty();
         }
 
-        var col = Color4I.fromString(id);
-
+        var col = Color4I.parse(id);
         if (!col.isEmpty()) {
             return col;
         }
 
         var ida = id.split(":", 2);
-
         if (ida.length == 2) {
             switch (ida[0]) {
                 case "color":
-                    return Color4I.fromString(ida[1]);
+                    return Color4I.parse(ida[1]);
                 case "item":
-                    return ItemIcon.getItemIcon(ida[1]);
+                    return ItemIcon.parse(ida[1]);
                 case "bullet":
-                    return new BulletIcon().withColor(Color4I.fromString(ida[1]));
+                    return new BulletIcon().withColor(Color4I.parse(ida[1]));
                 case "http":
                 case "https":
                 case "file":
@@ -208,24 +202,24 @@ public abstract class Icon implements Drawable {
                         return new ImageIcon(ImageIcon.MISSING_IMAGE);
                     }
                 case "hollow_rectangle":
-                    return new HollowRectangleIcon(Color4I.fromString(ida[1]), false);
+                    return new HollowRectangleIcon(Color4I.parse(ida[1]), false);
                 case "part":
                     return new PartIcon(getIcon(ida[1]));
             }
         }
 
-        return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(ResourceLocation.parse(id)) : new AtlasSpriteIcon(ResourceLocation.parse(id));
+        return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(Identifier.parse(id)) : new AtlasSpriteIcon(Identifier.parse(id));
     }
 
     private static boolean isNone(String id) {
-        return id.isEmpty() || id.equals("none") || id.equals(ImageResourceConfig.NONE.toString());
+        return id.isEmpty() || id.equals("none") || id.equals(EditableImageResource.NONE.toString());
     }
 
     public boolean isEmpty() {
         return false;
     }
 
-    public Icon copy() {
+    public Icon<T> copy() {
         return this;
     }
 
@@ -233,7 +227,7 @@ public abstract class Icon implements Drawable {
         return new JsonPrimitive(toString());
     }
 
-    public final Icon combineWith(Icon icon) {
+    public final Icon<?> combineWith(Icon<?> icon) {
         if (icon.isEmpty()) {
             return this;
         } else if (isEmpty()) {
@@ -243,44 +237,44 @@ public abstract class Icon implements Drawable {
         return new CombinedIcon(this, icon);
     }
 
-    public final Icon combineWith(Icon... icons) {
+    public final Icon<?> combineWith(Icon<?>... icons) {
         if (icons.length == 0) {
             return this;
         } else if (icons.length == 1) {
             return combineWith(icons[0]);
         }
 
-        List<Icon> list = new ArrayList<>(icons.length + 1);
+        List<Icon<?>> list = new ArrayList<>(icons.length + 1);
         list.add(this);
         list.addAll(Arrays.asList(icons));
         return CombinedIcon.getCombined(list);
     }
 
-    public Icon withColor(Color4I color) {
+    public Icon<T> withColor(Color4I color) {
         return copy();
     }
 
-    public final Icon withBorder(Color4I color, boolean roundEdges) {
+    public final Icon<?> withBorder(Color4I color, boolean roundEdges) {
         if (color.isEmpty()) {
             return withPadding(1);
         }
 
-        return new IconWithBorder(this, color, roundEdges);
+        return new BorderedIcon(this, color, roundEdges);
     }
 
-    public final Icon withPadding(int padding) {
-        return padding == 0 ? this : new IconWithPadding(this, padding);
+    public final Icon<?> withPadding(int padding) {
+        return padding == 0 ? this : new PaddedIcon(this, padding);
     }
 
-    public Icon withTint(Color4I color) {
+    public Icon<T> withTint(Color4I color) {
         return this;
     }
 
-    public Icon withUV(float u0, float v0, float u1, float v1) {
+    public Icon<T> withUV(float u0, float v0, float u1, float v1) {
         return this;
     }
 
-    public Icon withUV(float x, float y, float w, float h, float tw, float th) {
+    public Icon<T> withUV(float x, float y, float w, float h, float tw, float th) {
         return withUV(x / tw, y / th, (x + w) / tw, (y + h) / th);
     }
 
@@ -289,22 +283,7 @@ public abstract class Icon implements Drawable {
     }
 
     public boolean equals(Object o) {
-        return o == this || o instanceof Icon && getJson().equals(((Icon) o).getJson());
-    }
-
-    /**
-     * @return false if this should be queued for rendering
-     */
-    public boolean hasPixelBuffer() {
-        return false;
-    }
-
-    /**
-     * @return null if failed to load
-     */
-    @Nullable
-    public PixelBuffer createPixelBuffer() {
-        return null;
+        return o == this || o instanceof Icon<?> && getJson().equals(((Icon<?>) o).getJson());
     }
 
     @Nullable
@@ -314,4 +293,17 @@ public abstract class Icon implements Drawable {
 
     protected void setProperties(IconProperties properties) {
     }
+
+    public T self() {
+        // this is safe to do because Icon<> is a self-referential generic
+        //noinspection unchecked
+        return (T) this;
+    }
+
+    /**
+     * Get the clientside renderer to actually draw this icon on-screen. The renderer contains a few other methods
+     * which require clientside knowledge too. <strong>Do not call this method server-side!</strong>
+     * @return the renderer for this icon
+     */
+    public abstract IconRenderer<T> getRenderer();
 }
