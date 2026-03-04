@@ -73,9 +73,10 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
      * @param modName the mod's display name
      * @param key the config key which was passed to {@link Config#create(String)}
      * @param forClient true if this is a client config, false if server config
+     * @param extraLines any extra text you may wish to add
      * @return the value itself, for fluency
      */
-    public <E extends BaseValue<T>> E standardTopLevelComment(String modName, String key, boolean forClient) {
+    public <E extends BaseValue<T>> E standardTopLevelComment(String modName, String key, boolean forClient, String... extraLines) {
         String filename = key + ".json5";
         List<String> txt = forClient ?
                 List.of(
@@ -93,7 +94,8 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
                         "  (will NOT be overwritten on modpack update)"
                 );
 
-        this.comment.addAll(txt);
+        comment.addAll(txt);
+        comment.addAll(Arrays.asList(extraLines));
 
         return self();
     }
