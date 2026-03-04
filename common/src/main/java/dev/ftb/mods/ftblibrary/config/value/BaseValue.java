@@ -68,6 +68,37 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     }
 
     /**
+     * Add a standard top-level comment. Useful for the majority of configs.
+     *
+     * @param modName the mod's display name
+     * @param key the config key which was passed to {@link Config#create(String)}
+     * @param forClient true if this is a client config, false if server config
+     * @return the value itself, for fluency
+     */
+    public <E extends BaseValue<T>> E standardTopLevelComment(String modName, String key, boolean forClient) {
+        String filename = key + ".json5";
+        List<String> txt = forClient ?
+                List.of(
+                        "Client-specific configuration for " + modName,
+                        "Modpack defaults should be defined in <instance>/config/" + filename,
+                        "  (may be overwritten on modpack update)",
+                        "Players may locally override this by copying into <instance>/local/" + filename,
+                        "  (will NOT be overwritten on modpack update)"
+                ) :
+                List.of(
+                        "Server-specific configuration for " + modName,
+                        "Modpack defaults should be defined in <instance>/config/" + filename,
+                        "  (may be overwritten on modpack update)",
+                        "Server admins may locally override this by copying into <instance>/world/serverconfig/" + filename,
+                        "  (will NOT be overwritten on modpack update)"
+                );
+
+        this.comment.addAll(txt);
+
+        return self();
+    }
+
+    /**
      * Mark this config value as being excluded from GUI config editing, even the value's type is normally editable.
      * This can be used for values that may be managed automatically, where direct player editing is undesirable.
      *
