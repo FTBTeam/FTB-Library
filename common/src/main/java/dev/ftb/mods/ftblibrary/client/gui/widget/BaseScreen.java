@@ -289,12 +289,12 @@ public abstract class BaseScreen extends Panel {
     @Override
     public void updateMouseOver(int mouseX, int mouseY) {
         isMouseOver = checkMouseOver(mouseX, mouseY);
-        setOffset(true);
 
-        modalPanels.forEach(p -> p.updateMouseOver(mouseX, mouseY));
-        widgets.forEach(w -> w.updateMouseOver(mouseX, mouseY));
+        doWithScrollOffset(() -> {
+            modalPanels.forEach(p -> p.updateMouseOver(mouseX, mouseY));
+            widgets.forEach(w -> w.updateMouseOver(mouseX, mouseY));
 
-        setOffset(false);
+        });
     }
 
     @Override

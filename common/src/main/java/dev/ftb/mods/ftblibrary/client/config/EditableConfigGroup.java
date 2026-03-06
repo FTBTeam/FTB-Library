@@ -414,7 +414,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
     }
 
     /**
-     * Add a new image config item to this group (note: this is in effect a Identifier referring to an image known
+     * Add a new image config item to this group (note: this is in effect an Identifier referring to an image known
      * to the client's resource manager).
      *
      * @param id a unique id for this config item

@@ -24,7 +24,7 @@ public class Config extends BaseValue<List<BaseValue<?>>> {
     /**
      * Create a new config object
      *
-     * @param key the name for the config
+     * @param key the name for the config, typically something like "{modid}-client" or "{modid}-server"
      * @return the new config object
      */
     public static Config create(String key) {
@@ -42,6 +42,7 @@ public class Config extends BaseValue<List<BaseValue<?>>> {
     }
 
     @Override
+    @Nullable
     protected EditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
         List<BaseValue<?>> sorted = defaultValue.stream()
                 .filter(v -> !v.excluded)

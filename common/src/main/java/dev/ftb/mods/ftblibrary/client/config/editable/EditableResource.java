@@ -1,10 +1,8 @@
 package dev.ftb.mods.ftblibrary.client.config.editable;
 
-import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectableResource;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import net.minecraft.resources.Identifier;
 
 import java.util.OptionalLong;
 import java.util.function.Predicate;
@@ -52,24 +50,5 @@ public abstract class EditableResource<T> extends EditableConfigValue<T> {
 
     public boolean allowResource(T resource) {
         return filter.test(resource);
-    }
-
-    public static abstract class Image<T> extends EditableResource<T> {
-        public static final Identifier NONE = FTBLibrary.rl("none");
-
-        @Override
-        public boolean canHaveNBT() {
-            return false;
-        }
-
-        @Override
-        public OptionalLong fixedResourceSize() {
-            return OptionalLong.of(1);
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return value.equals(NONE);
-        }
     }
 }

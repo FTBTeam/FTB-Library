@@ -17,7 +17,7 @@ import net.minecraft.util.Mth;
 public class SimpleToast implements Toast {
     private static final Identifier BACKGROUND_SPRITE = Identifier.parse("toast/advancement");
     private boolean hasPlayedSound = false;
-    private Visibility visibility;
+    private Visibility visibility = Visibility.SHOW;
 
     public static void info(Component title, Component subtitle) {
         Minecraft.getInstance().getToastManager().addToast(

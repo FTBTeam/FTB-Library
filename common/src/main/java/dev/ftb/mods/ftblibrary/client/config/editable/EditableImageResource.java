@@ -29,6 +29,11 @@ public class EditableImageResource extends EditableResource<Identifier> {
     }
 
     @Override
+    public boolean canHaveNBT() {
+        return false;
+    }
+
+    @Override
     public void onClicked(Widget clicked, MouseButton button, ConfigCallback callback) {
         new SelectImageResourceScreen(this, callback).withGridSize(8, 12).openGui();
     }

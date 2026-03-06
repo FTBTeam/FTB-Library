@@ -83,6 +83,7 @@ public interface Icons {
     Icon<?> VISIBILITY_HIDE = get("visibility_hide");
     Icon<?> COLLAPSE = get("collapse");
     Icon<?> EXPAND = get("expand");
+    Icon<?> KEYBOARD = get("keyboard");
 
     static Icon<?> get(String id) {
         return Icon.getIcon(FTBLibrary.MOD_ID + ":icons/" + id);

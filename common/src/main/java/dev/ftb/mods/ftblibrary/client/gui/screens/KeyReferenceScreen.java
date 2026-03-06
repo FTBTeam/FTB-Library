@@ -97,7 +97,7 @@ public class KeyReferenceScreen extends BaseScreen {
         theme.drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
 
         int w1 = theme.getStringWidth(getTitle());
-        theme.drawString(graphics, getTitle(), x + (w - w1) / 2, y - theme.getFontHeight() - 1, Color4I.rgb(0x00FFFF), Theme.SHADOW);
+        theme.drawString(graphics, getTitle(), x + (w - w1) / 2, y - theme.getFontHeight() - 2, Color4I.rgb(0x00FFFF), Theme.SHADOW);
     }
 
     protected void drawTextBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {

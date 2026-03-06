@@ -11,8 +11,7 @@ import static dev.ftb.mods.ftblibrary.FTBLibrary.MOD_ID;
 public interface FTBLibraryClientConfig {
     String KEY = MOD_ID + "-client";
 
-    Config CONFIG = Config.create(KEY)
-            .comment("Client-specific configuration for FTB Library");
+    Config CONFIG = Config.create(KEY).standardTopLevelComment("FTB Library", KEY, true);
 
     Config TOOLTIPS = CONFIG.addGroup("tooltips");
 

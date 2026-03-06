@@ -15,9 +15,9 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public abstract class Panel extends Widget {
     protected final List<Widget> widgets;
@@ -203,19 +203,18 @@ public abstract class Panel extends Widget {
             graphics.enableScissor(x, y, x + w, y + h);
         }
 
-        setOffset(true);
+        doWithScrollOffset(() -> {
+            var byLayer = widgets.stream()
+                    .collect(Collectors.groupingBy(Widget::getDrawLayer, () -> new EnumMap<>(DrawLayer.class), Collectors.toList()));
 
-        widgets.stream()
-                .filter(widget -> widget.shouldRenderInLayer(DrawLayer.BACKGROUND, x, y, w, h))
-                .forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
+            byLayer.getOrDefault(DrawLayer.BACKGROUND, List.of())
+                    .forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
 
-        drawOffsetBackground(graphics, theme, x + offsetX, y + offsetY, w, h);
+            drawOffsetBackground(graphics, theme, x + offsetX, y + offsetY, w, h);
 
-        widgets.stream()
-                .filter(widget -> widget.shouldRenderInLayer(DrawLayer.FOREGROUND, x, y, w, h))
-                .forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
-
-        setOffset(false);
+            byLayer.getOrDefault(DrawLayer.FOREGROUND, List.of())
+                    .forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
+        });
 
         if (renderInside) {
             graphics.disableScissor();
@@ -243,39 +242,52 @@ public abstract class Panel extends Widget {
         }
     }
 
+    public void doWithScrollOffset(Runnable runnable) {
+        setOffset(true);
+        try {
+            runnable.run();
+        } finally {
+            setOffset(false);
+        }
+    }
+
+    public <T> T getWithScrollOffset(Supplier<T> supplier) {
+        setOffset(true);
+        try {
+            return supplier.get();
+        } finally {
+            setOffset(false);
+        }
+    }
+
     @Override
     public void addMouseOverText(TooltipList list) {
-        if (!shouldAddMouseOverText() || getOnlyInteractWithWidgetsInside() && !isMouseOver()) {
-            return;
-        }
+        if (shouldAddMouseOverText() && (isMouseOver() || !getOnlyInteractWithWidgetsInside())) {
+            doWithScrollOffset(() -> {
+                for (var i = widgets.size() - 1; i >= 0; i--) {
+                    var widget = widgets.get(i);
 
-        setOffset(true);
+                    if (widget.shouldAddMouseOverText()) {
+                        widget.addMouseOverText(list);
 
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.shouldAddMouseOverText()) {
-                widget.addMouseOverText(list);
-
-                if (Theme.renderDebugBoxes) {
-                    list.styledString(widget + "#" + (i + 1) + ": " + widget.width + "x" + widget.height, ChatFormatting.DARK_GRAY);
+                        if (Theme.renderDebugBoxes) {
+                            list.styledString(widget + "#" + (i + 1) + ": " + widget.width + "x" + widget.height, ChatFormatting.DARK_GRAY);
+                        }
+                    }
                 }
-            }
+            });
         }
-
-        setOffset(false);
     }
 
     @Override
     public void updateMouseOver(int mouseX, int mouseY) {
         super.updateMouseOver(mouseX, mouseY);
-        setOffset(true);
 
-        for (var widget : widgets) {
-            widget.updateMouseOver(mouseX, mouseY);
-        }
-
-        setOffset(false);
+        doWithScrollOffset(() -> {
+            for (var widget : widgets) {
+                widget.updateMouseOver(mouseX, mouseY);
+            }
+        });
     }
 
     @Override
@@ -284,19 +296,15 @@ public abstract class Panel extends Widget {
             return false;
         }
 
-        setOffset(true);
-
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled() && widget.shouldDraw() && widget.mousePressed(button)) {
-                setOffset(false);
-                return true;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.shouldDraw() && widget.mousePressed(button)) {
+                    return true;
+                }
             }
-        }
-
-        setOffset(false);
-        return false;
+            return false;
+        });
     }
 
     @Override
@@ -305,69 +313,56 @@ public abstract class Panel extends Widget {
             return false;
         }
 
-        setOffset(true);
-
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled() && widget.mouseDoubleClicked(button)) {
-                setOffset(false);
-                return true;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.mouseDoubleClicked(button)) {
+                    return true;
+                }
             }
-        }
-
-        setOffset(false);
-        return false;
+            return false;
+        });
     }
 
     @Override
     public void mouseReleased(MouseButton button) {
-        setOffset(true);
-
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled()) {
-                widget.mouseReleased(button);
+        doWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled()) {
+                    widget.mouseReleased(button);
+                }
             }
-        }
-
-        setOffset(false);
+        });
     }
 
     @Override
     public boolean mouseScrolled(double scroll) {
-        setOffset(true);
-
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled() && widget.mouseScrolled(scroll)) {
-                setOffset(false);
-                return true;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.mouseScrolled(scroll)) {
+                    return true;
+                }
             }
-        }
 
-        var scrollPanel = scrollPanel(scroll);
-        setOffset(false);
-        return scrollPanel;
+            return scrollPanel(scroll);
+        });
     }
 
     @Override
     public boolean mouseDragged(int button, double dragX, double dragY) {
-        setOffset(true);
-
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled() && widget.mouseDragged(button, dragX, dragY)) {
-                setOffset(false);
-                return true;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.mouseDragged(button, dragX, dragY)) {
+                    return true;
+                }
             }
-        }
 
-        setOffset(false);
-        return false;
+            return false;
+        });
+
     }
 
     public boolean scrollPanel(double scroll) {
@@ -427,41 +422,28 @@ public abstract class Panel extends Widget {
             return true;
         }
 
-        setOffset(true);
-
-        boolean res = false;
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled() && widget.keyPressed(key)) {
-                res = true;
-                break;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.keyPressed(key)) {
+                    return true;
+                }
             }
-        }
-
-        setOffset(false);
-        return res;
+            return false;
+        });
     }
 
     @Override
     public boolean keyReleased(Key key) {
-        setOffset(true);
-
-        boolean res = false;
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled()) {
-                if (widget.keyReleased(key)) {
-                    res = true;
-                    break;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.keyReleased(key)) {
+                    return true;
                 }
             }
-        }
-
-        setOffset(false);
-
-        return res;
+            return false;
+        });
     }
 
     @Override
@@ -470,19 +452,15 @@ public abstract class Panel extends Widget {
             return true;
         }
 
-        setOffset(true);
-
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled() && widget.charTyped(event)) {
-                setOffset(false);
-                return true;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.charTyped(event)) {
+                    return true;
+                }
             }
-        }
-
-        setOffset(false);
-        return false;
+            return false;
+        });
     }
 
     @Override
@@ -499,37 +477,30 @@ public abstract class Panel extends Widget {
 
     @Override
     public Optional<PositionedIngredient> getIngredientUnderMouse() {
-        setOffset(true);
-
-        Optional<PositionedIngredient> result = Optional.empty();
-
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-            if (widget.isEnabled() && widget.isMouseOver()) {
-                var ingredient = widget.getIngredientUnderMouse();
-                if (ingredient.isPresent()) {
-                    result = ingredient;
-                    break;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.isMouseOver()) {
+                    var ingredient = widget.getIngredientUnderMouse();
+                    if (ingredient.isPresent()) {
+                        return ingredient;
+                    }
                 }
             }
-        }
 
-        setOffset(false);
-
-        return result;
+            return Optional.empty();
+        });
     }
 
     @Override
     public void tick() {
-        setOffset(true);
-
-        for (var widget : widgets) {
-            if (widget.isEnabled()) {
-                widget.tick();
+        doWithScrollOffset(() -> {
+            for (var widget : widgets) {
+                if (widget.isEnabled()) {
+                    widget.tick();
+                }
             }
-        }
-
-        setOffset(false);
+        });
     }
 
     public boolean isMouseOverAnyWidget() {
@@ -545,22 +516,17 @@ public abstract class Panel extends Widget {
     @Override
     @Nullable
     public CursorType getCursor() {
-        setOffset(true);
-
-        for (var i = widgets.size() - 1; i >= 0; i--) {
-            var widget = widgets.get(i);
-
-            if (widget.isEnabled() && widget.isMouseOver()) {
-                var cursor = widget.getCursor();
-
-                if (cursor != null) {
-                    setOffset(false);
-                    return cursor;
+        return getWithScrollOffset(() -> {
+            for (var i = widgets.size() - 1; i >= 0; i--) {
+                var widget = widgets.get(i);
+                if (widget.isEnabled() && widget.isMouseOver()) {
+                    var cursor = widget.getCursor();
+                    if (cursor != null) {
+                        return cursor;
+                    }
                 }
             }
-        }
-
-        setOffset(false);
-        return null;
+            return null;
+        });
     }
 }

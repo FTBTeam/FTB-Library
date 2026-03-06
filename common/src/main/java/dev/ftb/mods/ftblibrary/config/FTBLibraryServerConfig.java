@@ -12,7 +12,7 @@ public interface FTBLibraryServerConfig {
     String KEY = MOD_ID + "-server";
 
     Config CONFIG = Config.create(KEY)
-            .comment("Server-specific configuration for FTB Library. Testing only!");
+            .standardTopLevelComment("FTB Library", KEY, false, "This is for testing only!");
 
     Config SECT1 = CONFIG.addGroup("section1");
     StringValue TEST1 = SECT1.addString("test1", "hello");

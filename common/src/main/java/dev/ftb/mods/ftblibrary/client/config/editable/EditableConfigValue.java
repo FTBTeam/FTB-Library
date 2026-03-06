@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 /**
  * Base class for all editable configs. This is the "glue" between config objects as loaded from disk (see
- * {@link BaseValue} and the GUI config editor.
+ * {@link BaseValue}) and the GUI config editor.
  *
  * @param <T> the type of object being edited
  */
@@ -151,8 +151,6 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      *
      * @param theme the GUI theme currently being used
      * @return the display color
-     *
-     * @implNote themes are currently ignored but the theme parameter is in the API now, which is a start!
      */
     public final Color4I getColor(Theme theme) {
         return getColor(value, theme);
@@ -164,8 +162,6 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * @param value the object
      * @param theme the GUI theme currently being used
      * @return the display color
-     *
-     * @implNote themes are currently ignored but the theme parameter is in the API now, which is a start!
      */
     public Color4I getColor(T value, Theme theme) {
         return theme.hasDarkBackground() ? Color4I.GRAY : Color4I.DARK_GRAY;
@@ -175,7 +171,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
      * Add some descriptive text for this editable, for tooltip purposes in the editor GUI.
      *
      * @param list  the tooltip list to append to
-     * @param theme
+     * @param theme the GUI theme currently being used
      */
     public void addInfo(TooltipList list, Theme theme) {
         list.add(info("Default", getStringForGUI(defaultValue)));
