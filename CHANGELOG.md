@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2111.1.1]
 
+### Added
+* Entity face selector screen has multiple modes now (all/hostile/neutral/animal)
+* Added keyboard icons (`Icons.KEYBOARD`)
+
 ### Changed
 * Added BaseValue#standardTopLevelComment method
 
