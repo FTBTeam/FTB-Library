@@ -4,9 +4,7 @@ import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
-import dev.ftb.mods.ftblibrary.icon.Icon;
-import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.icon.ItemIcon;
+import dev.ftb.mods.ftblibrary.icon.*;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -17,9 +15,9 @@ import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -29,6 +27,8 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public interface ResourceSearchMode<T> {
     ResourceSearchMode<ItemStack> ALL_ITEMS = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.all"), Icons.COMPASS) {
@@ -83,25 +83,15 @@ public interface ResourceSearchMode<T> {
             return allFluidsCache;
         }
     };
-    ResourceSearchMode<EntityType<?>> ENTITY_FACES = new SearchMode<>(Component.translatable("ftblibrary.select_entity.all_entities"), Icons.PLAYER) {
-        @Nullable
-        private List<SelectableResource<EntityType<?>>> allTypesCache = null;
+    ResourceSearchMode<EntityType<?>> ALL_LIVING_ENTITIES = entitySearchMode(e -> e instanceof LivingEntity,
+            "all_entities", () -> EntityIconLoader.getIcon(EntityType.VILLAGER));
+    ResourceSearchMode<EntityType<?>> HOSTILES = entitySearchMode(e -> e instanceof Enemy && !(e instanceof NeutralMob),
+            "hostiles",() ->  EntityIconLoader.getIcon(EntityType.ZOMBIE));
+    ResourceSearchMode<EntityType<?>> NEUTRALS = entitySearchMode(e -> e instanceof NeutralMob,
+            "neutrals", () ->  EntityIconLoader.getIcon(EntityType.ENDERMAN));
+    ResourceSearchMode<EntityType<?>> ANIMALS = entitySearchMode(e -> e instanceof Animal,
+            "animals", () -> EntityIconLoader.getIcon(EntityType.SHEEP));
 
-        @Override
-        public Collection<? extends SelectableResource<EntityType<?>>> getAllResources() {
-            if (allTypesCache == null) {
-                List<SelectableResource<EntityType<?>>> types = new ArrayList<>();
-                Level clientLevel = ClientUtils.getClientLevel();
-                BuiltInRegistries.ENTITY_TYPE.forEach(entityType -> {
-                    if (entityType.create(clientLevel, EntitySpawnReason.LOAD) instanceof LivingEntity) {
-                        types.add(new EntityFaceResource(entityType));
-                    }
-                });
-                allTypesCache = types.stream().sorted().toList();
-            }
-            return allTypesCache;
-        }
-    };
     ResourceSearchMode<Identifier> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), Icons.ART) {
         @Nullable
         private List<ImageResource> cachedImages = null;
@@ -147,13 +137,39 @@ public interface ResourceSearchMode<T> {
         }
     };
 
+    static ResourceSearchMode<EntityType<?>> entitySearchMode(Predicate<@Nullable Entity> predicate, String xlate, Supplier<Icon<?>> icon) {
+        return new SearchMode<>(Component.translatable("ftblibrary.select_entity." + xlate), icon) {
+            @Nullable
+            private List<SelectableResource<EntityType<?>>> allTypesCache = null;
+
+            @Override
+            public Collection<? extends SelectableResource<EntityType<?>>> getAllResources() {
+                if (allTypesCache == null) {
+                    List<SelectableResource<EntityType<?>>> types = new ArrayList<>();
+                    Level clientLevel = ClientUtils.getClientLevel();
+                    BuiltInRegistries.ENTITY_TYPE.forEach(entityType -> {
+                        if (predicate.test(entityType.create(clientLevel, EntitySpawnReason.LOAD))) {
+                            types.add(new EntityFaceResource(entityType));
+                        }
+                    });
+                    allTypesCache = types.stream().sorted().toList();
+                }
+                return allTypesCache;
+            }
+        };
+    }
+
     abstract class SearchMode<T> implements ResourceSearchMode<T> {
         private final Component name;
-        private final Icon<?> icon;
+        private final Supplier<Icon<?>> icon;
 
-        protected SearchMode(Component name, Icon<?> icon) {
+        protected SearchMode(Component name, Supplier<Icon<?>> icon) {
             this.name = name;
             this.icon = icon;
+        }
+
+        protected SearchMode(Component name, Icon<?> icon) {
+            this(name, () -> icon);
         }
 
         @Override
@@ -163,7 +179,7 @@ public interface ResourceSearchMode<T> {
 
         @Override
         public Icon<?> getIcon() {
-            return icon;
+            return icon.get();
         }
     }
 

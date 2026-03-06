@@ -23,6 +23,11 @@ public class EditableEntityFace extends EditableResource<EntityType<?>> {
     }
 
     @Override
+    public boolean canHaveNBT() {
+        return false;
+    }
+
+    @Override
     public OptionalLong fixedResourceSize() {
         return OptionalLong.of(1L);
     }

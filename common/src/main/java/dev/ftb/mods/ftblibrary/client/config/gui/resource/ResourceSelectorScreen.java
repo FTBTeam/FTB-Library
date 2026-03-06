@@ -267,7 +267,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
         @Override
         public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-            getActiveSearchMode().ifPresent(mode -> IconHelper.renderIcon(mode.getIcon(), graphics, x, y, w, h));
+            getActiveSearchMode().ifPresent(mode -> IconHelper.renderIcon(mode.getIcon(), graphics, x + 4, y + 4, w - 8, h - 8));
         }
 
         @Override
@@ -490,9 +490,11 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             if (config.canHaveNBT()) {
                 add(nbtButton);
             }
-            add(countBox);
-            add(upBtn);
-            add(downBtn);
+            if (config.fixedResourceSize().isEmpty()) {
+                add(countBox);
+                add(upBtn);
+                add(downBtn);
+            }
         }
 
         @Override
@@ -503,10 +505,11 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             searchModeButton.setPos(5, 54);
             searchBox.setPosAndSize(searchModeButton.posX + 22, 56, 100, 16);
 
-            countBox.setPosAndSize(46, 25, 45, 16);
-            upBtn.setPosAndSize(countBox.posX + countBox.width + 1, 21, 12, 12);
-            downBtn.setPosAndSize(countBox.posX + countBox.width + 1, 33, 12, 12);
-
+            if (config.fixedResourceSize().isEmpty()) {
+                countBox.setPosAndSize(46, 25, 45, 16);
+                upBtn.setPosAndSize(countBox.posX + countBox.width + 1, 21, 12, 12);
+                downBtn.setPosAndSize(countBox.posX + countBox.width + 1, 33, 12, 12);
+            }
             if (config.canHaveNBT()) {
                 int x = config.fixedResourceSize().isEmpty() ? upBtn.getPosX() + 16 : 44;
                 nbtButton.setPosAndSize(x, 23, 20, 20);

@@ -17,7 +17,12 @@ import net.minecraft.world.entity.EntityType;
 
 public class SelectEntityFaceScreen extends ResourceSelectorScreen<EntityType<?>> {
     private static final SearchModeIndex<ResourceSearchMode<EntityType<?>>> KNOWN_MODES = Util.make(
-            new SearchModeIndex<>(), idx -> idx.appendMode(ResourceSearchMode.ENTITY_FACES)
+            new SearchModeIndex<>(), idx -> {
+                idx.appendMode(ResourceSearchMode.ALL_LIVING_ENTITIES);
+                idx.appendMode(ResourceSearchMode.HOSTILES);
+                idx.appendMode(ResourceSearchMode.NEUTRALS);
+                idx.appendMode(ResourceSearchMode.ANIMALS);
+            }
     );
 
     public SelectEntityFaceScreen(EditableResource<EntityType<?>> config, ConfigCallback callback) {
