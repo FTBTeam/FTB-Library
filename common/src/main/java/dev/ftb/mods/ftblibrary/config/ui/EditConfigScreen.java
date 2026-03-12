@@ -242,7 +242,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
         @Override
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawWidget(graphics, x, y, w, h, getWidgetType());
-            theme.drawString(graphics, getTitle(), x + 3, y + 3);
+            theme.drawString(graphics, getTitle(), x + 3, y + (height + 1 - theme.getFontHeight()) / 2);
             if (isMouseOver()) {
                 Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
             }
@@ -372,12 +372,12 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
     }
 
     protected class CustomTopPanel extends TopPanel {
-        private final TextField titleLabel = new TextField(this);
+        private final TextField titleLabel = new TextField(this).addFlags(Theme.SHADOW);
 
         @Override
         public void addWidgets() {
             titleLabel.setText(getGui().getTitle());
-            titleLabel.addFlags(Theme.CENTERED_V);
+            titleLabel.addFlags(Theme.CENTERED_V | Theme.SHADOW);
             add(titleLabel);
 
             if (groupSize > 1) {

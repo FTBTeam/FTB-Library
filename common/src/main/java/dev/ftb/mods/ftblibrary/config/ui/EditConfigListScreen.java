@@ -283,7 +283,7 @@ public class EditConfigListScreen<E, CV extends ConfigValue<E>> extends Abstract
     }
 
     private class CustomTopPanel extends TopPanel {
-        private final TextField titleLabel = new TextField(this).setText(getTitle());
+        private final TextField titleLabel = new TextField(this).setText(getTitle()).addFlags(Theme.SHADOW);
 
         @Override
         public void addWidgets() {

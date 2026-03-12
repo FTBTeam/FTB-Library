@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.31]
+
+### Changed
+* Some minor visual GUI changes in a couple of places (text drawn with shadows, better widget alignment)
+* Updated pt_br translation (thanks @PrincessStelllar)
+
+### Fixed
+* EnumSelectScreen now correctly saves values when inside a list (thanks @WinterWolfSV)
+
 ## [2101.1.30]
 
 ### Added
