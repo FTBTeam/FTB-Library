@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2101.1.31]
 
+### Changed
+* Some minor visual GUI changes in a couple of places (text drawn with shadows, better widget alignment)
+* Updated pt_br translation (thanks @PrincessStelllar)
+
 ### Fixed
-* EnumSelectScreen now saves values when inside a list. FTBTeam/FTB-Mods-Issues#1900
+* EnumSelectScreen now correctly saves values when inside a list (thanks @WinterWolfSV)
 
 ## [2101.1.30]
 
