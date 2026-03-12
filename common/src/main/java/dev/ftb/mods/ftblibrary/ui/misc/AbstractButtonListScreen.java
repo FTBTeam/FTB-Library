@@ -23,7 +23,7 @@ public abstract class AbstractButtonListScreen extends AbstractThreePanelScreen<
         scrollBar.setCanAlwaysScroll(true);
         scrollBar.setScrollStep(20);
 
-        titleField = new TextField(topPanel);
+        titleField = new TextField(topPanel).addFlags(Theme.SHADOW);
 
         searchBox = new TextBox(topPanel) {
             @Override

@@ -10,6 +10,7 @@ import dev.ftb.mods.ftblibrary.ui.TextField;
 import dev.ftb.mods.ftblibrary.ui.Theme;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -133,7 +134,7 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
     }
 
     protected class CustomTopPanel extends TopPanel {
-        private final TextField titleLabel = new TextField(this);
+        private final TextField titleLabel = new TextField(this).addFlags(Theme.SHADOW);
 
         @Override
         public void addWidgets() {
@@ -192,16 +193,20 @@ public abstract class AbstractGroupedButtonListScreen<G, E> extends AbstractButt
         public void setCollapsed(boolean collapsed) {
             AbstractGroupedButtonListScreen.this.setCollapsed(group, collapsed);
             boolean isCollapsed = isCollapsed();
-            setTitle(Component.literal(isCollapsed ? "▶ " : "▼ ").withStyle(isCollapsed ? ChatFormatting.RED : ChatFormatting.GREEN).append(titleText));
+            setTitle(Component.literal(isCollapsed ? "▶ " : "▼ ").withStyle(isCollapsed ? ChatFormatting.DARK_GREEN : ChatFormatting.GREEN).append(titleText));
         }
 
         @Override
         public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawWidget(graphics, x, y, w, h, getWidgetType());
-            theme.drawString(graphics, getTitle(), x + 3, y + 3);
+            theme.drawString(graphics, getTitle(), x + 3, y + (height + 1 - theme.getFontHeight()) / 2, Theme.SHADOW);
             if (isMouseOver()) {
                 Color4I.WHITE.withAlpha(33).draw(graphics, x, y, w, h);
             }
+        }
+
+        @Override
+        public void addMouseOverText(TooltipList list) {
         }
     }
 

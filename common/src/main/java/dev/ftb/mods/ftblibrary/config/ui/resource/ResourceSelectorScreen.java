@@ -74,7 +74,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
         nbtButton = new NBTButton(topPanel);
 
-        selectedLabel = new TextField(topPanel);
+        selectedLabel = new TextField(topPanel).addFlags(Theme.SHADOW);
 
         searchBox = new TextBox(topPanel) {
             @Override
