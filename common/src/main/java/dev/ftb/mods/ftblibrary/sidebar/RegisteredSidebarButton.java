@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
-import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.api.sidebar.ButtonOverlayRender;
 import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButton;
 import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
 import dev.ftb.mods.ftblibrary.client.gui.screens.LoadingScreen;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -35,7 +35,7 @@ public class RegisteredSidebarButton implements SidebarButton {
         if (data.requiresOp()) {
             addVisibilityCondition(ClientUtils.IS_CLIENT_OP);
         }
-        data.requiredMods().ifPresent(mods -> addVisibilityCondition(() -> mods.stream().allMatch(Platform::isModLoaded)));
+        data.requiredMods().ifPresent(mods -> addVisibilityCondition(() -> mods.stream().allMatch(Platform.get()::isModLoaded)));
         extraRenderers = new ArrayList<>();
         if (!data.envCondition().isEmpty()) {
             if (data.envCondition().startsWith("!")) {

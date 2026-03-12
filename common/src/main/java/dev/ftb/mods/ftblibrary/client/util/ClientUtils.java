@@ -1,22 +1,23 @@
 package dev.ftb.mods.ftblibrary.client.util;
 
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientChatEvent;
-import dev.architectury.fluid.FluidStack;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.gui.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.client.ClientChatEvent;
 import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
@@ -131,14 +132,17 @@ public class ClientUtils {
         return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
     }
 
-    @ExpectPlatform
     public static Identifier getStillTexture(FluidStack stack) {
-        throw new AssertionError();
+        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState()).stillMaterial();
     }
 
-    @ExpectPlatform
     public static int getFluidColor(FluidStack stack) {
-        throw new AssertionError();
+        FluidModel fluidModel = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState());
+        if (fluidModel.tintSource() == null) {
+            return -1;
+        }
+
+        return fluidModel.tintSource().color(Blocks.AIR.defaultBlockState());
     }
 
     public static Level getClientLevel() {

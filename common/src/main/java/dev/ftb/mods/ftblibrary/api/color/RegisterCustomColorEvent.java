@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.api.color;
 
-import dev.architectury.event.Event;
-import dev.architectury.event.EventFactory;
+import dev.ftb.mods.ftblibrary.platform.event.Event;
+import dev.ftb.mods.ftblibrary.platform.event.EventFactory;
 import net.minecraft.network.chat.TextColor;
 
 import java.util.Map;

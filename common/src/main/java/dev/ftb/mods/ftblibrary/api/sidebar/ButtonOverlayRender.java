@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.api.sidebar;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.function.Supplier;
 
@@ -15,7 +15,7 @@ public interface ButtonOverlayRender {
             if (!text.isEmpty()) {
                 var nw = font.width(text);
                 IconHelper.renderIcon(Color4I.LIGHT_RED, graphics, buttonSize - nw, -1, nw + 1, 9);
-                graphics.drawString(font, text, buttonSize - nw + 1, 0, 0xFFFFFFFF);
+                graphics.text(font, text, buttonSize - nw + 1, 0, 0xFFFFFFFF);
             }
         };
     }
@@ -27,5 +27,5 @@ public interface ButtonOverlayRender {
      * @param font The font object
      * @param buttonSize The size of the button
      */
-    void render(GuiGraphics graphics, Font font, int buttonSize);
+    void render(GuiGraphicsExtractor graphics, Font font, int buttonSize);
 }

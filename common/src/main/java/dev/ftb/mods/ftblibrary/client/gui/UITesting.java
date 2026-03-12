@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.gui;
 
-import dev.architectury.fluid.FluidStack;
-import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.Tristate;
@@ -18,6 +16,7 @@ import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -39,9 +38,9 @@ public class UITesting {
         group.addItemStack("itemstack", ItemStack.EMPTY, UITesting::onChanged, ItemStack.EMPTY, false, true);
         group.addItemStack("item", ItemStack.EMPTY, UITesting::onChanged, ItemStack.EMPTY, 1).setAllowNBTEdit(false);
         group.addItemStack("itemstack(blocks)", ItemStack.EMPTY, UITesting::onChanged, ItemStack.EMPTY, 1).withFilter(s -> s.getItem() instanceof BlockItem).setAllowNBTEdit(false);
-        group.addFluidStack("fluidstack", FluidStack.empty(), UITesting::onChanged, FluidStack.empty(), true);
-        FluidStack water = FluidStack.create(Fluids.WATER, FluidStackHooks.bucketAmount());
-        group.addFluidStack("fluid", water, UITesting::onChanged, water, water.getAmount()).showAmount(false).setAllowNBTEdit(false);
+        group.addFluidStack("fluidstack", FluidStack.EMPTY, UITesting::onChanged, FluidStack.EMPTY, true);
+        FluidStack water = new FluidStack(Fluids.WATER, FluidStack.bucketFluidAmount());
+        group.addFluidStack("fluid", water, UITesting::onChanged, water, water.amount()).showAmount(false).setAllowNBTEdit(false);
         group.addEntityFace("face", EditableEntityFace.NONE, UITesting::onChanged, EditableEntityFace.NONE);
 
         EditableConfigGroup grp1 = group.getOrCreateSubgroup("group1");

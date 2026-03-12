@@ -7,7 +7,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Mod;
-import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
@@ -15,6 +14,8 @@ import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.net.OpenTestScreenPacket;
+import dev.ftb.mods.ftblibrary.platform.Platform;
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
@@ -121,7 +122,7 @@ public class FTBLibraryCommands {
                 .then(literal("clientconfig")
                         .requires(CommandSourceStack::isPlayer)
                         .executes(context -> {
-                            NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryClientConfig.KEY));
+                            Server2PlayNetworking.send(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryClientConfig.KEY));
                             return Command.SINGLE_SUCCESS;
                         })
                 );
@@ -129,14 +130,14 @@ public class FTBLibraryCommands {
         if (ModUtils.isDevMode()) {
             command.then(literal("test_screen")
                     .executes(context -> {
-                        NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), OpenTestScreenPacket.INSTANCE);
+                        Server2PlayNetworking.send(context.getSource().getPlayerOrException(), OpenTestScreenPacket.INSTANCE);
                         return Command.SINGLE_SUCCESS;
                     })
             );
             command.then(literal("serverconfig")
                     .requires(cs -> cs.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                     .executes(context -> {
-                        NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryServerConfig.KEY));
+                        Server2PlayNetworking.send(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryServerConfig.KEY));
                         return Command.SINGLE_SUCCESS;
                     })
             );
@@ -153,7 +154,7 @@ public class FTBLibraryCommands {
 
         if (!info.isEmpty()) {
             EDITING_NBT.put(player.getUUID(), info);
-            NetworkManager.sendToPlayer(player, new EditNBTPacket(info, tag));
+            Server2PlayNetworking.send(player, new EditNBTPacket(info, tag));
             return Command.SINGLE_SUCCESS;
         }
 
@@ -176,7 +177,7 @@ public class FTBLibraryCommands {
         info.put("text", InfoBuilder.create(context)
                 .add("Class", Component.literal(stack.getItem().getClass().getName()))
                 .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getModOptional(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
                 .build());
     }
 
@@ -217,7 +218,7 @@ public class FTBLibraryCommands {
         info.put("text", InfoBuilder.create(context)
                 .add("Class", Component.literal(entity.getClass().getName()))
                 .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getModOptional(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
                 .build());
 
         String name = entity.getDisplayName() == null ? "?" : entity.getDisplayName().getString();

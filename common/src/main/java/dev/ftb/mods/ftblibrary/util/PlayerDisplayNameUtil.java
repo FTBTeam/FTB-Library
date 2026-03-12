@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import net.minecraft.world.entity.player.Player;
 
 public class PlayerDisplayNameUtil {
@@ -11,8 +11,7 @@ public class PlayerDisplayNameUtil {
      *
      * @param player the player in question
      */
-    @ExpectPlatform
     public static void refreshDisplayName(Player player) {
-        throw new AssertionError();
+        Platform.get().misc().refreshDisplayName(player);
     }
 }

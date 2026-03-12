@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
@@ -13,9 +11,11 @@ import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -298,8 +298,8 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public final void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        super.draw(graphics, theme, x, y, w, h);
+    public final void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+        super.extract(graphics, theme, x, y, w, h);
 
         if (!modalPanels.isEmpty()) {
             // allow modal panels to draw outside scissor area if needed
@@ -316,7 +316,7 @@ public abstract class BaseScreen extends Panel {
                     // dim the rest of the gui so the top modal panel is effectively highlighted
                     IconHelper.renderIcon(Color4I.rgba(0xA0202020), graphics, 0, 0, getWindow().getGuiScaledWidth(), getWindow().getGuiScaledHeight());
                 }
-                p.draw(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
+                p.extract(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
             }
             graphics.pose().popMatrix();
 
@@ -378,16 +378,16 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
     }
 
 
-    public boolean drawDefaultBackground(GuiGraphics graphics) {
+    public boolean extractDefaultBackground(GuiGraphicsExtractor graphics) {
         return true;
     }
 
-    public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void extractForeground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
     private Panel getDoubleClickTarget() {

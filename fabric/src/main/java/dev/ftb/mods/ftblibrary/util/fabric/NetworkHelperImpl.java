@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.util.fabric;
 
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.architectury.networking.NetworkManager;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.protocol.Packet;
@@ -32,7 +33,7 @@ public class NetworkHelperImpl {
 
     public static <T extends CustomPacketPayload> void sendTo(ServerPlayer player, T packet) {
         if (ServerPlayNetworking.canSend(player, packet.type())) {
-            NetworkManager.sendToPlayer(player, packet);
+            Server2PlayNetworking.send(player, packet);
         }
     }
 }

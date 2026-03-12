@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -82,7 +82,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
                     wrappedGui.closeGui(true);
                 }
                 return true;
-            } else if (Platform.isModLoaded("jei")) {
+            } else if (Platform.get().isModLoaded("jei")) {
                 wrappedGui.getIngredientUnderMouse().ifPresent(underMouse -> handleIngredientKey(key, underMouse.ingredient()));
             }
 
@@ -114,7 +114,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
         var theme = wrappedGui.getTheme();
 
         wrappedGui.draw(graphics, theme, x, y, w, h);
-        wrappedGui.drawForeground(graphics, theme, x, y, w, h);
+        wrappedGui.extractForeground(graphics, theme, x, y, w, h);
         wrappedGui.addMouseOverText(tooltipList);
 
         graphics.pose().pushMatrix();
@@ -137,7 +137,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
     @Override
     public void renderBackground(GuiGraphics matrixStack, int x, int y, float partialTicks) {
-        if (wrappedGui.drawDefaultBackground(matrixStack)) {
+        if (wrappedGui.extractDefaultBackground(matrixStack)) {
             super.renderBackground(matrixStack, x, y, partialTicks);
         }
     }

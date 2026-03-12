@@ -35,7 +35,7 @@ public record KnownServerRegistries(List<Identifier> dimension,
 
         List<AdvancementInfo> advancementList = new ArrayList<>();
         server.getAdvancements().getAllAdvancements().forEach(advancement -> advancement.value().display().ifPresent(display ->
-                advancementList.add(new AdvancementInfo(advancement.id(), display.getTitle(), display.getIcon())))
+                advancementList.add(new AdvancementInfo(advancement.id(), display.getTitle(), display.getIcon().create())))
         );
         advancementList.sort(Comparator.comparing(o -> o.id));
 

@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.util.neoforge;
 
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -31,7 +32,7 @@ public class NetworkHelperImpl {
 
     public static <T extends CustomPacketPayload> void sendTo(ServerPlayer player, T packet) {
         if (player.connection.hasChannel(packet.type())) {
-            NetworkManager.sendToPlayer(player, packet);
+            Server2PlayNetworking.send(player, packet);
         }
     }
 }

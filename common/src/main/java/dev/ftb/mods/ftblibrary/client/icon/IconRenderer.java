@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.client.icon;
 import dev.ftb.mods.ftblibrary.icon.AnimatedIcon;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.Nullable;
 
 public interface IconRenderer<T extends Icon<T>> {
@@ -17,7 +17,7 @@ public interface IconRenderer<T extends Icon<T>> {
      * @param w the icon width
      * @param h the icon height
      */
-    void render(T icon, GuiGraphics graphics, int x, int y, int w, int h);
+    void render(T icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h);
 
     /**
      * In most cases, this can just default to {@link #render(Icon, GuiGraphics, int, int, int, int)}, but some icon types
@@ -31,7 +31,7 @@ public interface IconRenderer<T extends Icon<T>> {
      * @param w the icon width
      * @param h the icon height
      */
-    default void renderStatic(T icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    default void renderStatic(T icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         render(icon, graphics, x, y, w, h);
     }
 

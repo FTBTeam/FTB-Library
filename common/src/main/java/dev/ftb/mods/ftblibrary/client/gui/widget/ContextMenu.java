@@ -5,7 +5,7 @@ import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.List;
 
@@ -94,15 +94,15 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawContextMenuBackground(graphics, x, y, w, h);
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         graphics.pose().pushMatrix();
         IconHelper.renderIcon(Color4I.BLACK.withAlpha(45), graphics, x + 3, y + 3, w, h);
-        super.draw(graphics, theme, x, y, w, h);
+        super.extract(graphics, theme, x, y, w, h);
         if (drawVerticalSeparators) {
             for (int i = 1; i < nColumns; i++) {
                 // vertical separator line between columns (only in multi-column layouts)
@@ -124,7 +124,7 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             IconHelper.renderIcon(theme.getContentColor(WidgetType.NORMAL).withAlpha(100), graphics, x + 2, y + 2, parent.width - 10, 1);
             IconHelper.renderIcon(theme.getContentColor(WidgetType.DISABLED).withAlpha(100), graphics, x + 3, y + 3, parent.width - 10, 1);
         }

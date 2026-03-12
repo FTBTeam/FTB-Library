@@ -1,19 +1,19 @@
 package dev.ftb.mods.ftblibrary.config;
 
-import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen;
 import dev.ftb.mods.ftblibrary.config.value.Config;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.nio.file.Path;
 
 public interface ConfigUtil {
-    Path ROOT_DIR = Platform.getGameFolder();
+    Path ROOT_DIR = Platform.get().paths().gamePath();
 
     Path DEFAULT_CONFIG_DIR = ROOT_DIR.resolve("defaultconfigs");
-    Path CONFIG_DIR = Platform.getConfigFolder();
+    Path CONFIG_DIR = Platform.get().paths().configPath();
     Path LOCAL_DIR = ROOT_DIR.resolve("local");
 
     LevelResource SERVER_CONFIG_DIR = new LevelResource("serverconfig");

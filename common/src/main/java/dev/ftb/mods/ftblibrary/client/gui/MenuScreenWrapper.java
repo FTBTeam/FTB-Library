@@ -124,7 +124,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
         graphics.pose().translate(-leftPos, -topPos);
 
         var theme = wrappedGui.getTheme();
-        wrappedGui.drawForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
+        wrappedGui.extractForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
         wrappedGui.addMouseOverText(tooltipList);
 
@@ -150,7 +150,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
     @Override
     public void renderBackground(GuiGraphics graphics, int x, int y, float partialTicks) {
-        if (wrappedGui.drawDefaultBackground(graphics)) {
+        if (wrappedGui.extractDefaultBackground(graphics)) {
             super.renderBackground(graphics, x, y, partialTicks);
         }
     }

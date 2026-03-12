@@ -13,8 +13,8 @@ import net.minecraft.world.level.Level;
 
 public record ChunkDimPos(ResourceKey<Level> dimension, ChunkPos chunkPos) implements Comparable<ChunkDimPos> {
     private static final StreamCodec<ByteBuf, ChunkPos> CHUNK_POS_STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, cp -> cp.x,
-            ByteBufCodecs.INT, cp -> cp.z,
+            ByteBufCodecs.INT, ChunkPos::x,
+            ByteBufCodecs.INT, ChunkPos::z,
             ChunkPos::new
     );
 
@@ -37,11 +37,11 @@ public record ChunkDimPos(ResourceKey<Level> dimension, ChunkPos chunkPos) imple
     }
 
     public int x() {
-        return chunkPos.x;
+        return chunkPos.x();
     }
 
     public int z() {
-        return chunkPos.z;
+        return chunkPos.z();
     }
 
     public ResourceKey<Level> dimension() {
@@ -51,7 +51,7 @@ public record ChunkDimPos(ResourceKey<Level> dimension, ChunkPos chunkPos) imple
     @Override
     public int compareTo(ChunkDimPos o) {
         var i = dimension.identifier().compareTo(o.dimension.identifier());
-        return i == 0 ? Long.compare(chunkPos.toLong(), o.chunkPos.toLong()) : i;
+        return i == 0 ? Long.compare(chunkPos.pack(), o.chunkPos.pack()) : i;
     }
 
     public ChunkDimPos offset(int ox, int oz) {

@@ -1,11 +1,10 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
-import dev.architectury.fluid.FluidStack;
-import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableFluid;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -27,7 +26,7 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
 
     @Override
     protected FluidStack emptyResource() {
-        return FluidStack.empty();
+        return FluidStack.EMPTY;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
 
     @Override
     protected ResourceSelectorScreen<FluidStack>.ResourceButton makeEmptyResourceButton(Panel panel) {
-        return new FluidStackButton(panel, SelectableResource.fluid(FluidStack.empty()));
+        return new FluidStackButton(panel, SelectableResource.fluid(FluidStack.EMPTY));
     }
 
     private class FluidStackButton extends ResourceButton {

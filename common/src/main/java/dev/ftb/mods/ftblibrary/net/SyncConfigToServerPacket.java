@@ -5,6 +5,7 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -42,7 +43,7 @@ public record SyncConfigToServerPacket(String configName, CompoundTag config) im
                 // send the updated config to all other players
                 for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                     if (!sp.getUUID().equals(player.getUUID())) {
-                        NetworkManager.sendToPlayer(player, new SyncConfigFromServerPacket(message.configName, message.config));
+                        Server2PlayNetworking.send(player, new SyncConfigFromServerPacket(message.configName, message.config));
                     }
                 }
             });

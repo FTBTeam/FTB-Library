@@ -1,11 +1,5 @@
 package dev.ftb.mods.ftblibrary;
 
-import dev.architectury.event.events.common.CommandRegistrationEvent;
-import dev.architectury.event.events.common.LifecycleEvent;
-import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.registry.registries.DeferredSupplier;
-import dev.architectury.utils.Env;
-import dev.architectury.utils.EnvExecutor;
 import dev.ftb.mods.ftblibrary.api.color.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
@@ -15,11 +9,17 @@ import dev.ftb.mods.ftblibrary.items.ModItems;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
+import dev.ftb.mods.ftblibrary.platform.Env;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import dev.ftb.mods.ftblibrary.util.text.ExtendableTextColor;
 import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
+import com.mojang.brigadier.CommandDispatcher;
+import dev.architectury.registry.registries.DeferredSupplier;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
@@ -47,23 +47,19 @@ public class FTBLibrary {
             cfgMgr.registerServerConfig(FTBLibraryServerConfig.CONFIG, MOD_ID + ".server_settings", true, FTBLibraryServerConfig::onChanged);
         }
 
-        CommandRegistrationEvent.EVENT.register(FTBLibraryCommands::registerCommands);
         FTBLibraryNet.register();
-        LifecycleEvent.SERVER_STARTED.register(this::serverStarted);
-        LifecycleEvent.SERVER_STOPPED.register(this::serverStopped);
-        PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
-
         ModItems.init();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> FTBLibraryClient::onModConstruct);
+        Env.runInEnv(Env.CLIENT, () -> FTBLibraryClient::onModConstruct);
         RegisterCustomColorEvent.EVENT.register((event) -> {
             event.register("ftb:rainbow", RainbowTextColor.INSTANCE);
         });
 
-        LifecycleEvent.SETUP.register(this::onSetup);
+        // TODO: Missing on fabric atm
+//        LifecycleEvent.SETUP.register(this::onSetup);
     }
 
-    private void onSetup() {
+    public void onSetup() {
         Map<String, TextColor> customColors = new HashMap<>();
         RegisterCustomColorEvent.EVENT.invoker().accept(new RegisterCustomColorEvent(customColors));
 
@@ -78,17 +74,17 @@ public class FTBLibrary {
         return ModItems.FTB_LIBRARY_TAB;
     }
 
-    private void serverStarted(MinecraftServer server) {
+    public void serverStarted(MinecraftServer server) {
         KnownServerRegistries.server = KnownServerRegistries.create(server);
 
         NBTEditResponseHandlers.registerBuiltinHandlers();
     }
 
-    private void serverStopped(MinecraftServer server) {
+    public void serverStopped(MinecraftServer server) {
         KnownServerRegistries.server = null;
     }
 
-    private void playerJoined(ServerPlayer player) {
+    public void playerJoined(ServerPlayer player) {
         player.sendSystemMessage(Component.literal("Hello from FTB Library!").withStyle(Style.EMPTY.withColor(RainbowTextColor.INSTANCE)));
 
         // scheduling this to run a bit later should avoid issues with KnownServerRegistries.server not been init'd yet
@@ -99,5 +95,9 @@ public class FTBLibrary {
                 NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
             }
         }));
+    }
+
+    public void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
+        FTBLibraryCommands.registerCommands(dispatcher, registryAccess, environment);
     }
 }

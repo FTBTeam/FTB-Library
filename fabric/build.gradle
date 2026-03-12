@@ -1,100 +1,47 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id 'net.fabricmc.fabric-loom'
 }
-
-architectury {
-    platformSetupLoomIde()
-    fabric()
-}
-
-configurations {
-    common
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
-    dev
-}
-
-def generatedResources = file("src/generated/resources")
-def accessWidenerFile = project(":common").file("src/main/resources/ftblibrary.accesswidener")
 
 loom {
-    accessWidenerPath = accessWidenerFile
-}
+    accessWidenerPath = project(":common").file("src/main/resources/ftblibrary.accesswidener")
 
-sourceSets {
-    main {
-        resources {
-            srcDir generatedResources
+    runs {
+        configureEach {
+            ideConfigGenerated = true
+        }
+//        client {
+//            source = sourceSets.main
+//            ideConfigGenerated = true
+//            client()
+//        }
+        // TODO: Tell loom to generate runs for all things
+    }
+
+    mods {
+        "${project.mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet("main", project(":common"))
         }
     }
-}
 
-artifacts {
-    dev(jar)
-}
-
-dependencies {
-    modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
-
-    //modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
-//    modCompileOnlyApi("mezz.jei:jei-1.21.1-fabric-api:${jei_version}")
-
-    common(project(path: ":common", configuration: "dev")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
-
-    implementation("de.marhali:json5-java:${json5_version}")
-    include("de.marhali:json5-java:${json5_version}")
-//    modRuntimeOnly "curse.maven:atlasviewer-633577:6347925"
+    mixin {
+        useLegacyMixinAp = false
+    }
 }
 
 apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
 
-tasks.register('copyAccessWidener', Copy) {
-    from accessWidenerFile
-    into generatedResources
-}
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
-processResources {
-    dependsOn(copyAccessWidener)
-    inputs.property "version", project.version
+    api "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    api "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "archversion": project.architectury_version,
-                "fabricapiversionrange": project.fabric_api_version_range,
-                "mcversion": project.minecraft_version
-    }
-}
+    //modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
+//    modCompileOnlyApi("mezz.jei:jei-1.21.1-fabric-api:${jei_version}")
 
-sourcesJar {
-    dependsOn copyAccessWidener
-}
-
-shadowJar {
-    configurations = [project.configurations.shadowCommon]
-    setArchiveClassifier("dev-shadow")
-}
-
-remapJar {
-    inputFile.set shadowJar.archiveFile
-    dependsOn shadowJar
-    archiveBaseName.set "${rootProject.archives_base_name}-${project.name}"
-    archiveClassifier.set null
-}
-
-jar {
-    setArchiveClassifier("dev")
-}
-
-components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
+    include(implementation("de.marhali:json5-java:${json5_version}"))
+//    modRuntimeOnly "curse.maven:atlasviewer-633577:6347925"
 }
 
 publishing {

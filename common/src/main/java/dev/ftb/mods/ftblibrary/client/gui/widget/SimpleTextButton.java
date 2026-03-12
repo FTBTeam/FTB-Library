@@ -8,6 +8,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 
@@ -74,7 +75,7 @@ public abstract class SimpleTextButton extends Button {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         drawBackground(graphics, theme, x, y, w, h);
         var s = h >= 16 ? 16 : 8;
         var off = (h - s) / 2;

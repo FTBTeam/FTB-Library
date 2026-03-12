@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.client.config.editable;
 
-import dev.architectury.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectFluidScreen;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectableResource;
-import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import net.minecraft.network.chat.Component;
 
 import java.util.OptionalLong;
@@ -42,7 +42,7 @@ public class EditableFluid extends EditableResource<FluidStack> {
         if (value.isEmpty()) {
             return Component.translatable("gui.none");
         }
-        return showAmount ? Component.literal(value.getAmount() + "mB ").append(value.getName()) : value.getName();
+        return showAmount ? Component.literal(value.amount() + "mB ").append(value.name()) : value.name();
     }
 
     @Override

@@ -1,13 +1,13 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
-import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.icon.Icon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 import java.util.Optional;
@@ -48,22 +48,22 @@ public abstract class Button extends Widget {
         return this;
     }
 
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawButton(graphics, x, y, w, h, getWidgetType());
     }
 
-    public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void extractIcon(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         IconHelper.renderIcon(icon, graphics, x, y, w, h);
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
-        drawBackground(graphics, theme, x, y, w, h);
+    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+        extractBackground(graphics, theme, x, y, w, h);
         if (forceButtonSize) {
             var s = h >= 16 ? 16 : 8;
-            drawIcon(graphics, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
+            extractIcon(graphics, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
         }else {
-            drawIcon(graphics, theme, x, y, w, h);
+            extractIcon(graphics, theme, x, y, w, h);
         }
     }
 

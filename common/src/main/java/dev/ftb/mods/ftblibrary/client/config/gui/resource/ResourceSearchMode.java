@@ -1,10 +1,12 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
-import dev.architectury.fluid.FluidStack;
-import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
-import dev.ftb.mods.ftblibrary.icon.*;
+import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
+import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.icon.ItemIcon;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -75,7 +77,7 @@ public interface ResourceSearchMode<T> {
                 List<SelectableResource<FluidStack>> fluidstacks = new ArrayList<>();
                 BuiltInRegistries.FLUID.forEach(f -> {
                     if (f.isSource(f.defaultFluidState())) {
-                        fluidstacks.add(SelectableResource.fluid(FluidStack.create(f, FluidStackHooks.bucketAmount())));
+                        fluidstacks.add(SelectableResource.fluid(new FluidStack(f, FluidStack.bucketFluidAmount())));
                     }
                 });
                 allFluidsCache = List.copyOf(fluidstacks);

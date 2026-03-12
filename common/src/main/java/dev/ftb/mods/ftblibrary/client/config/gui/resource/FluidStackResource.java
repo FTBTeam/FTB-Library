@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
-import dev.architectury.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 public record FluidStackResource(FluidStack resource) implements SelectableResource<FluidStack> {
     @Override
     public long getCount() {
-        return resource().getAmount();
+        return resource().amount();
     }
 
     @Override
@@ -24,7 +24,7 @@ public record FluidStackResource(FluidStack resource) implements SelectableResou
 
     @Override
     public Component getName() {
-        return resource.getName();
+        return resource.name();
     }
 
     @Override
