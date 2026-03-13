@@ -1,12 +1,11 @@
 package dev.ftb.mods.ftblibrary.client.util;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientChatEvent;
 import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
@@ -35,9 +34,8 @@ public class ClientUtils {
 
     public static void execClientCommand(String command, boolean printChat) {
         if (!command.isEmpty() && Minecraft.getInstance().player != null) {
-            EventResult res = ClientChatEvent.SEND.invoker().send(command, null);
-
-            if (!res.interruptsFurtherEvaluation()) {
+            boolean result = EventPostingHandler.INSTANCE.postEventWithResult(new AllowChatCommandEvent.Data(command));
+            if (result) {
                 if (printChat) {
                     Minecraft.getInstance().gui.getChat().addRecentChat(command);
                 }
