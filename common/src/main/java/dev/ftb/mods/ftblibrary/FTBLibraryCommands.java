@@ -1,10 +1,5 @@
 package dev.ftb.mods.ftblibrary;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
@@ -16,6 +11,11 @@ import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.RegistryHelper;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -62,38 +62,6 @@ public class FTBLibraryCommands {
                                 context.getSource().getPlayerOrException().setGameMode(GameType.SURVIVAL);
                             }
 
-                            return Command.SINGLE_SUCCESS;
-                        })
-                )
-                .then(literal("rain")
-                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
-                        .executes(context -> {
-                            //Use overworld as that controls the weather for the whole server
-                            if (context.getSource().getServer().overworld().isRaining()) {
-                                context.getSource().getServer().overworld().setWeatherParameters(6000, 0, false, false); // clear
-                            } else {
-                                context.getSource().getServer().overworld().setWeatherParameters(0, 6000, true, false);// rain
-                            }
-                            return Command.SINGLE_SUCCESS;
-                        })
-                )
-                .then(literal("day")
-                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
-                        .executes(context -> {
-                            for (var world : context.getSource().getServer().getAllLevels()) {
-                                world.setDayTime(6000L);
-                            }
-                            context.getSource().getServer().forceTimeSynchronization();
-                            return Command.SINGLE_SUCCESS;
-                        })
-                )
-                .then(literal("night")
-                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
-                        .executes(context -> {
-                            for (var world : context.getSource().getServer().getAllLevels()) {
-                                world.setDayTime(18000L);
-                            }
-                            context.getSource().getServer().forceTimeSynchronization();
                             return Command.SINGLE_SUCCESS;
                         })
                 )

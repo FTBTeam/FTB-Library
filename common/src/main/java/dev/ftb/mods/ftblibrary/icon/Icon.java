@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.icon;
 
+import dev.ftb.mods.ftblibrary.client.config.editable.EditableImageResource;
+import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import dev.ftb.mods.ftblibrary.client.config.editable.EditableImageResource;
-import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
@@ -193,8 +193,6 @@ public abstract class Icon<T extends Icon<T>> {
                     return ItemIcon.parse(ida[1]);
                 case "bullet":
                     return new BulletIcon().withColor(Color4I.parse(ida[1]));
-                case "http":
-                case "https":
                 case "file":
                     try {
                         return new URLImageIcon(new URI(id));

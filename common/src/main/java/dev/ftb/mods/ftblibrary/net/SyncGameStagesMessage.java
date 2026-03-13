@@ -34,7 +34,7 @@ public record SyncGameStagesMessage(Collection<String> stages, Operation op) imp
     }
 
     public static SyncGameStagesMessage fullSync(Player player) {
-        return new SyncGameStagesMessage(player.getTags(), Operation.REPLACE);
+        return new SyncGameStagesMessage(player.entityTags(), Operation.REPLACE);
     }
 
     @Override
@@ -45,11 +45,11 @@ public record SyncGameStagesMessage(Collection<String> stages, Operation op) imp
     public static void handle(SyncGameStagesMessage message, PacketContext context) {
         context.enqueue(() -> {
             switch (message.op) {
-                case ADD -> context.player().getTags().addAll(message.stages);
-                case REMOVE -> context.player().getTags().removeAll(message.stages);
+                case ADD -> context.player().entityTags().addAll(message.stages);
+                case REMOVE -> context.player().entityTags().removeAll(message.stages);
                 case REPLACE -> {
-                    context.player().getTags().clear();
-                    context.player().getTags().addAll(message.stages);
+                    context.player().entityTags().clear();
+                    context.player().entityTags().addAll(message.stages);
                 }
             }
         });
