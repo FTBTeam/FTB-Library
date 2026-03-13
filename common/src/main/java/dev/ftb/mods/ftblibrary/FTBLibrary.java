@@ -10,6 +10,7 @@ import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.platform.Env;
+import dev.ftb.mods.ftblibrary.platform.registry.XRegistryRef;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
@@ -58,7 +59,7 @@ public class FTBLibrary {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
-    public static DeferredSupplier<CreativeModeTab> getCreativeModeTab() {
+    public static XRegistryRef<CreativeModeTab> getCreativeModeTab() {
         return ModItems.FTB_LIBRARY_TAB;
     }
 

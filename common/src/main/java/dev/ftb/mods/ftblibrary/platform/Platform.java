@@ -1,6 +1,10 @@
 package dev.ftb.mods.ftblibrary.platform;
 
 import dev.ftb.mods.ftblibrary.platform.network.NetworkingShim;
+import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
+
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -21,11 +25,7 @@ public interface Platform {
 
     boolean isNeoForge();
 
-    Mod getMod(String modId);
-
-    default Optional<Mod> getModOptional(String modId) {
-        return Optional.ofNullable(get().getMod(modId));
-    }
+    Optional<Mod> getMod(String modId);
 
     boolean isModLoaded(String modId);
 
@@ -36,4 +36,6 @@ public interface Platform {
     Paths paths();
 
     NetworkingShim networking();
+
+    <T> XRegistry<T> createRegistry(String modId, ResourceKey<Registry<T>> registryKey);
 }

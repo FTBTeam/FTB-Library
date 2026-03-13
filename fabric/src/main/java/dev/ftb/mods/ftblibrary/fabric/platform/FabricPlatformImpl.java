@@ -1,12 +1,18 @@
 package dev.ftb.mods.ftblibrary.fabric.platform;
 
+import dev.ftb.mods.ftblibrary.fabric.platform.registry.XRegistryFabric;
 import dev.ftb.mods.ftblibrary.platform.*;
 import dev.ftb.mods.ftblibrary.platform.network.NetworkingShim;
+import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class FabricPlatformImpl implements Platform {
     private final Paths paths = new FabricPathsImpl();
@@ -38,8 +44,10 @@ public class FabricPlatformImpl implements Platform {
     }
 
     @Override
-    public Mod getMod(String modId) {
-        return null;
+    public Optional<Mod> getMod(String modId) {
+        return Optional.ofNullable(FabricLoader.getInstance().getModContainer(modId)
+                .map(FabricModImpl::of)
+                .orElse(null));
     }
 
     @Override
@@ -49,7 +57,10 @@ public class FabricPlatformImpl implements Platform {
 
     @Override
     public Collection<Mod> getMods() {
-        return List.of();
+        return FabricLoader.getInstance().getAllMods()
+                .stream()
+                .map(FabricModImpl::of)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
@@ -65,5 +76,10 @@ public class FabricPlatformImpl implements Platform {
     @Override
     public NetworkingShim networking() {
         return networking;
+    }
+
+    @Override
+    public <T> XRegistry<T> createRegistry(String modId, ResourceKey<Registry<T>> registryKey) {
+        return new XRegistryFabric<>(modId, registryKey);
     }
 }
