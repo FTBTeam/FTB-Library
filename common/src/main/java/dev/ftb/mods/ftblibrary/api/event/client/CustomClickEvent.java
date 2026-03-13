@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.api.event;
+package dev.ftb.mods.ftblibrary.api.event.client;
 
 import net.minecraft.resources.Identifier;
 

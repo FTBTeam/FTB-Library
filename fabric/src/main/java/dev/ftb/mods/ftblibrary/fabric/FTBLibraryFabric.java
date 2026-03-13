@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.fabric;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
-import dev.ftb.mods.ftblibrary.api.event.CustomClickEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
 import net.fabricmc.api.ModInitializer;

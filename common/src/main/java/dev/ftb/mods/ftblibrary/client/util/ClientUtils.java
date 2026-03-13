@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.util;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.api.event.CustomClickEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
@@ -119,7 +119,6 @@ public class ClientUtils {
         try {
             Identifier rl = Identifier.parse(name);
             return EventPostingHandler.INSTANCE.postEventWithResult(new CustomClickEvent.Data(rl));
-//            return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent();
         } catch (IdentifierException ex) {
             logHandleClickFailure("custom", name, ex);
             return false;
