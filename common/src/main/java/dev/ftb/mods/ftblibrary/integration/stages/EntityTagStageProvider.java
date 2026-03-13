@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.integration.stages;
 
 import dev.ftb.mods.ftblibrary.net.SyncGameStagesMessage;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
-import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
