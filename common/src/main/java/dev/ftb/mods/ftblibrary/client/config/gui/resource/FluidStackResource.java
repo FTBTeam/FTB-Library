@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.TextureAtlasSpriteIcon;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +32,7 @@ public record FluidStackResource(FluidStack resource) implements SelectableResou
     public Icon<?> getIcon() {
         return isEmpty() ?
                 Icon.empty() :
-                Icon.getIcon(ClientUtils.getStillTexture(resource)).withTint(Color4I.rgb(ClientUtils.getFluidColor(resource)));
+                new TextureAtlasSpriteIcon(ClientUtils.getStillTexture(resource)).withTint(Color4I.rgb(ClientUtils.getFluidColor(resource)));
     }
 
     @Override

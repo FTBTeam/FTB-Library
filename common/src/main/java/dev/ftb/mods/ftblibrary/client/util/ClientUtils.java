@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
@@ -131,9 +132,10 @@ public class ClientUtils {
         return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
     }
 
-    public static Identifier getStillTexture(FluidStack stack) {
-        // TODO: This might be wrong
-        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState()).stillMaterial().sprite().atlasLocation();
+    public static TextureAtlasSprite getStillTexture(FluidStack stack) {
+        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState())
+                .stillMaterial()
+                .sprite();
     }
 
     public static int getFluidColor(FluidStack stack) {
