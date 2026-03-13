@@ -8,7 +8,6 @@ import dev.ftb.mods.ftblibrary.items.ModItems;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
-import dev.ftb.mods.ftblibrary.platform.Env;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistryRef;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
@@ -45,7 +44,6 @@ public class FTBLibrary {
         FTBLibraryNet.register();
         ModItems.init();
 
-        Env.runInEnv(Env.CLIENT, () -> FTBLibraryClient::onModConstruct);
         ExtendableTextColor.addCustomColor("ftb:rainbow", RainbowTextColor.INSTANCE);
     }
 

@@ -19,3 +19,5 @@ extendable class net/minecraft/client/StringSplitter$WidthLimitedCharSink
 
 mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageWidth I
 mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I
+
+accessible method net/minecraft/client/gui/screens/Screen addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
