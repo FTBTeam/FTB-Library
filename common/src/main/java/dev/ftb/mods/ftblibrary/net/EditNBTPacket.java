@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
+import dev.ftb.mods.ftblibrary.platform.network.PacketContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -18,8 +18,8 @@ public record EditNBTPacket(CompoundTag info, CompoundTag tag) implements Custom
             EditNBTPacket::new
     );
 
-    public static void handle(EditNBTPacket packet, NetworkManager.PacketContext context) {
-        context.queue(() -> NBTEditorScreen.openEditor(packet.info, packet.tag));
+    public static void handle(EditNBTPacket packet, PacketContext context) {
+        context.enqueue(() -> NBTEditorScreen.openEditor(packet.info, packet.tag));
     }
 
     @Override

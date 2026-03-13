@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.platform.network.PacketContext;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -23,7 +23,7 @@ public record SidebarButtonVisibilityPacket(Identifier id, boolean visible) impl
         return TYPE;
     }
 
-    public static void handle(SidebarButtonVisibilityPacket packet, NetworkManager.PacketContext ignoredPacketContext) {
+    public static void handle(SidebarButtonVisibilityPacket packet, PacketContext ignoredPacketContext) {
         SidebarButtonManager.INSTANCE.getButton(packet.id).ifPresent(button -> button.setForceHidden(!packet.visible));
     }
 }

@@ -5,4 +5,6 @@ import net.minecraft.server.level.ServerPlayer;
 
 public interface Networking {
     void sendToPlayer(ServerPlayer player, CustomPacketPayload payload);
+
+    NetworkRegistry registry();
 }
