@@ -34,6 +34,6 @@ public enum ItemIconRenderer implements IconRenderer<ItemIcon> {
 
     public static void drawItem3D(GuiGraphicsExtractor graphics, ItemStack stack) {
         // TODO maybe this can just go...
-        graphics.renderItem(stack, 0, 0);
+        graphics.item(stack, 0, 0);
     }
 }

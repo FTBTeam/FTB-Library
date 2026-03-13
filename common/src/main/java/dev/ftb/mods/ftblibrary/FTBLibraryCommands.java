@@ -5,18 +5,17 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
-import dev.architectury.networking.NetworkManager;
-import dev.architectury.platform.Mod;
-import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.net.OpenTestScreenPacket;
+import dev.ftb.mods.ftblibrary.platform.Mod;
 import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.RegistryHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -173,11 +172,11 @@ public class FTBLibraryCommands {
                 .ifSuccess(res -> {
                     if (res instanceof CompoundTag t) tag.merge(t);
                 });
-        var key = RegistrarManager.getId(stack.getItem(), Registries.ITEM);
+        var key = RegistryHelper.getIdentifier(stack.getItem(), Registries.ITEM);
         info.put("text", InfoBuilder.create(context)
                 .add("Class", Component.literal(stack.getItem().getClass().getName()))
                 .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getModOptional(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
                 .build());
     }
 
@@ -214,11 +213,11 @@ public class FTBLibraryCommands {
         entity.save(output);
         tag.merge(output.buildResult());
 
-        var key = RegistrarManager.getId(entity.getType(), Registries.ENTITY_TYPE);
+        var key = RegistryHelper.getIdentifier(entity.getType(), Registries.ENTITY_TYPE);
         info.put("text", InfoBuilder.create(context)
                 .add("Class", Component.literal(entity.getClass().getName()))
                 .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getModOptional(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
                 .build());
 
         String name = entity.getDisplayName() == null ? "?" : entity.getDisplayName().getString();
@@ -244,14 +243,14 @@ public class FTBLibraryCommands {
         info.putString("id", tag.getString("id").orElseThrow());
         tag.remove("id");
 
-        var key = RegistrarManager.getId(blockEntity.getType(), Registries.BLOCK_ENTITY_TYPE);
+        var key = RegistryHelper.getIdentifier(blockEntity.getType(), Registries.BLOCK_ENTITY_TYPE);
         info.put("text", InfoBuilder.create(context)
                 .add("Class", Component.literal(blockEntity.getClass().getName()))
                 .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Block", Component.literal(String.valueOf(RegistrarManager.getId(blockEntity.getBlockState().getBlock(), Registries.BLOCK))))
+                .add("Block", Component.literal(String.valueOf(RegistryHelper.getIdentifier(blockEntity.getBlockState().getBlock(), Registries.BLOCK))))
                 .add("Block Class", Component.literal(blockEntity.getBlockState().getBlock().getClass().getName()))
                 .add("Position", Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
                 .add("Ticking", Component.literal(isTicking(blockEntity) ? "true" : "false"))
                 .build());
 

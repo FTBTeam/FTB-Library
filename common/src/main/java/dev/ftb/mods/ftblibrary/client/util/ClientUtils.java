@@ -133,7 +133,8 @@ public class ClientUtils {
     }
 
     public static Identifier getStillTexture(FluidStack stack) {
-        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState()).stillMaterial();
+        // TODO: This might be wrong
+        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState()).stillMaterial().sprite().atlasLocation();
     }
 
     public static int getFluidColor(FluidStack stack) {

@@ -37,7 +37,7 @@ public enum BulletIconRenderer implements IconRenderer<BulletIcon> {
         }
 
         boolean inverse = icon.isInverse();
-        graphics.guiRenderState.submitGuiElement(new ArbitraryVertexRenderState(
+        graphics.guiRenderState.addGuiElement(new ArbitraryVertexRenderState(
                 RenderPipelines.GUI,
                 TextureSetup.noTexture(),
                 graphics.pose(),

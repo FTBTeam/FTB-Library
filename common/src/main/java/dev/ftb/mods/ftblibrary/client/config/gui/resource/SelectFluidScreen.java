@@ -6,6 +6,7 @@ import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.RegistryHelper;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
@@ -51,19 +52,19 @@ public class SelectFluidScreen extends ResourceSelectorScreen<FluidStack> {
 
         @Override
         public boolean shouldAdd(SearchTerms searchTerms) {
-            Identifier resourceId = RegistrarManager.getId(getResource().getFluid(), Registries.FLUID);
+            Identifier resourceId = RegistryHelper.getIdentifier(getResource().fluid(), Registries.FLUID);
             return resourceId != null && searchTerms.match(resourceId,
-                    getResource().getName().getString(),
-                    id -> getResource().getFluid().builtInRegistryHolder().is(TagKey.create(Registries.FLUID, id))
+                    getResource().name().getString(),
+                    id -> getResource().fluid().builtInRegistryHolder().is(TagKey.create(Registries.FLUID, id))
             );
         }
 
         @Override
         public void addMouseOverText(TooltipList list) {
             if (!getResource().isEmpty()) {
-                list.add(getResource().getName());
+                list.add(getResource().name());
                 if (FTBLibraryClientConfig.FLUID_MODNAME.get()) {
-                    ModUtils.getModName(getResource().getFluid())
+                    ModUtils.getModName(getResource().fluid())
                             .ifPresent(name -> list.add(Component.literal(name).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)));
                 }
             }

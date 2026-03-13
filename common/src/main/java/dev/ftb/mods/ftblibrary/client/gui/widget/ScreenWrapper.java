@@ -105,7 +105,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         wrappedGui.updateGui(mouseX, mouseY, partialTicks);
         var x = wrappedGui.getX();
         var y = wrappedGui.getY();
@@ -136,16 +136,16 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     }
 
     @Override
-    public void renderBackground(GuiGraphicsExtractor matrixStack, int x, int y, float partialTicks) {
+    public void extractBackground(GuiGraphicsExtractor matrixStack, int x, int y, float partialTicks) {
         if (wrappedGui.drawDefaultBackground(matrixStack)) {
-            super.renderBackground(matrixStack, x, y, partialTicks);
+            super.extractBackground(matrixStack, x, y, partialTicks);
         }
     }
 
     @Override
-    protected void renderBlurredBackground(GuiGraphicsExtractor guiGraphics) {
+    protected void extractBlurredBackground(GuiGraphicsExtractor guiGraphics) {
         if (wrappedGui.shouldRenderBlur()) {
-            super.renderBlurredBackground(guiGraphics);
+            super.extractBlurredBackground(guiGraphics);
         }
     }
 

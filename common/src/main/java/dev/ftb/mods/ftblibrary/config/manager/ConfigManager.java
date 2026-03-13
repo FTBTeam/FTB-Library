@@ -44,9 +44,6 @@ public enum ConfigManager {
             throw new IllegalStateException("already initialised!");
         }
 
-        LifecycleEvent.SERVER_BEFORE_START.register(this::onServerStarting);
-        PlayerEvent.PLAYER_JOIN.register(this::onPlayerLogin);
-
         inited = true;
     }
 
@@ -171,14 +168,14 @@ public enum ConfigManager {
         }
     }
 
-    private void onServerStarting(MinecraftServer server) {
+    public void onServerStarting(MinecraftServer server) {
         pendingServer.forEach((key, config) ->
                 findAndLoad(key, config, fileName -> server.getWorldPath(ConfigUtil.SERVER_CONFIG_DIR).resolve(fileName))
         );
         pendingServer.clear();
     }
 
-    private void onPlayerLogin(ServerPlayer serverPlayer) {
+    public void onPlayerLogin(ServerPlayer serverPlayer) {
         trackedConfigs.forEach((name, tc) -> {
             if (tc.synced) {
                 NetworkHelper.sendTo(serverPlayer, SyncConfigFromServerPacket.create(tc.config));

@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary;
 
-import dev.ftb.mods.ftblibrary.api.color.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryStartupConfig;
@@ -17,22 +16,17 @@ import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import dev.ftb.mods.ftblibrary.util.text.ExtendableTextColor;
 import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
 import com.mojang.brigadier.CommandDispatcher;
-import dev.architectury.registry.registries.DeferredSupplier;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class FTBLibrary {
     public static final String MOD_ID = "ftblibrary";

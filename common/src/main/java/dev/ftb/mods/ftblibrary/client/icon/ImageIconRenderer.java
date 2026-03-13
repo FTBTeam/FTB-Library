@@ -22,7 +22,7 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
         AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(icon.texture);
 
         if (icon.tileSize <= 0D) {
-            graphics.guiRenderState.submitGuiElement(new BlitRenderState(
+            graphics.guiRenderState.addBlitToCurrentLayer(new BlitRenderState(
                     RenderPipelines.GUI_TEXTURED,
                     TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler()),
                     new Matrix3x2f(graphics.pose()),
@@ -32,7 +32,7 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
                     graphics.scissorStack.peek()
             ));
         } else {
-            graphics.guiRenderState.submitGuiElement(new TiledBlitRenderState(
+            graphics.guiRenderState.addGuiElement(new TiledBlitRenderState(
                     RenderPipelines.GUI_TEXTURED,
                     TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler()),
                     new Matrix3x2f(graphics.pose()),

@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import dev.ftb.mods.ftblibrary.client.icon.ItemIconRenderer;
 import dev.ftb.mods.ftblibrary.util.Lazy;
+import dev.ftb.mods.ftblibrary.util.RegistryHelper;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -124,7 +124,7 @@ public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
     public String toString() {
         var stack = getStack();
         var builder = new StringBuilder("item:");
-        builder.append(RegistrarManager.getId(stack.getItem(), Registries.ITEM));
+        builder.append(RegistryHelper.getIdentifier(stack.getItem(), Registries.ITEM));
         var count = stack.getCount();
         var damage = stack.getDamageValue();
         var nbt = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()

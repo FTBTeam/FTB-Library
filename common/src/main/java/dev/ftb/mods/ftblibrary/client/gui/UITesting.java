@@ -32,7 +32,7 @@ import java.util.List;
 public class UITesting {
     public static void openTestScreen() {
         var group = new EditableConfigGroup("test", accepted ->
-                ClientUtils.getClientPlayer().displayClientMessage(Component.literal("Accepted: " + accepted), false));
+                ClientUtils.getClientPlayer().sendSystemMessage(Component.literal("Accepted: " + accepted)));
         group.add("image", new EditableImageResource(), EditableImageResource.NONE, UITesting::onChanged, EditableImageResource.NONE);
 
         group.addItemStack("itemstack", ItemStack.EMPTY, UITesting::onChanged, ItemStack.EMPTY, false, true);

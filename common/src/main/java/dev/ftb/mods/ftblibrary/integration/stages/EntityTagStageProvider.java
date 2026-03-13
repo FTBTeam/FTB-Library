@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.integration.stages;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.net.SyncGameStagesMessage;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;

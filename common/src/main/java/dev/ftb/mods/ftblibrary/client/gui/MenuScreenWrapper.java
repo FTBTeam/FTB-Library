@@ -106,9 +106,11 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor graphics, float f, int mx, int my) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mx, int my, float f) {
         var theme = wrappedGui.getTheme();
-        renderBackground(graphics, mx, my, f);
+        if (wrappedGui.drawDefaultBackground(graphics)) {
+            super.extractBackground(graphics, mx, my, f);
+        }
         wrappedGui.draw(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
         if (drawSlots) {
@@ -119,7 +121,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     }
 
     @Override
-    protected void renderLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         graphics.pose().pushMatrix();
         graphics.pose().translate(-leftPos, -topPos);
 
@@ -149,17 +151,10 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     }
 
     @Override
-    public void renderBackground(GuiGraphicsExtractor graphics, int x, int y, float partialTicks) {
-        if (wrappedGui.drawDefaultBackground(graphics)) {
-            super.renderBackground(graphics, x, y, partialTicks);
-        }
-    }
-
-    @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics, mouseX, mouseY, partialTicks);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        extractBackground(graphics, mouseX, mouseY, partialTicks);
         wrappedGui.updateGui(mouseX, mouseY, partialTicks);
-        super.render(graphics, mouseX, mouseY, partialTicks);
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
