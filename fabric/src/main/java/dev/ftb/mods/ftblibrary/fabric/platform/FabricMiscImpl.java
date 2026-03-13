@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.core.mixin.fabric.KeyMappingAccessor;
 import dev.ftb.mods.ftblibrary.fabric.PlayerDisplayNameCache;
 import dev.ftb.mods.ftblibrary.platform.Misc;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +27,7 @@ public class FabricMiscImpl implements Misc {
 
     @Override
     public long bucketFluidAmount() {
-        return 81000;// TODO: What does this value mean.
+        // why 81000?  see https://github.com/FabricMC/fabric-api/issues/1166
+        return FluidConstants.BUCKET;
     }
 }
