@@ -105,11 +105,24 @@ subprojects {
 
         inputs.property "version", project.version
 
+        def fixedMcVersion = project.minecraft_version
+        if (fixedMcVersion.contains("-")) {
+            def hyphenParts = fixedMcVersion.split("-")
+            fixedMcVersion = ""
+            for (int i = 0; i < hyphenParts.size(); i++) {
+                if (i < 2) {
+                    fixedMcVersion = fixedMcVersion + (i > 0 ? "-" : "") + hyphenParts[i]
+                } else {
+                    fixedMcVersion = fixedMcVersion + "." + hyphenParts[i]
+                }
+            }
+        }
+
         filesMatching(["META-INF/neoforge.mods.toml", "fabric.mod.json"]) {
             expand "version": project.version,
                     "neoforgeversionrange": project.neoforge_version_range,
                     "neoforgeloaderversion": project.neoforge_loader_version,
-                    "mcversion": project.minecraft_version,
+                    "mcversion": fixedMcVersion,
                     "fabricapiversionrange": project.fabric_api_version_range
         }
     }
