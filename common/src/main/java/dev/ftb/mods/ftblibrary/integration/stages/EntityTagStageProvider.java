@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 public class EntityTagStageProvider implements StageProvider {
     @Override
     public boolean has(Player player, String stage) {
-        return player.getTags().contains(stage);
+        return player.entityTags().contains(stage);
     }
 
     @Override
