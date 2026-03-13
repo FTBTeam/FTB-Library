@@ -1,8 +1,9 @@
 package dev.ftb.mods.ftblibrary.client.util;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.client.gui.CustomClickEvent;
+import dev.ftb.mods.ftblibrary.api.event.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientChatEvent;
@@ -117,7 +118,8 @@ public class ClientUtils {
     private static boolean trySendCustomClickEvent(String name) {
         try {
             Identifier rl = Identifier.parse(name);
-            return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent();
+            return EventPostingHandler.INSTANCE.postEventWithResult(new CustomClickEvent.Data(rl));
+//            return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent();
         } catch (IdentifierException ex) {
             logHandleClickFailure("custom", name, ex);
             return false;

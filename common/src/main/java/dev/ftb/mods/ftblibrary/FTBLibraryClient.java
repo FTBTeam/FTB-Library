@@ -1,21 +1,28 @@
 package dev.ftb.mods.ftblibrary;
 
 import dev.ftb.mods.ftblibrary.api.client.FTBLibraryClientApi;
+import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
+import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
+import dev.ftb.mods.ftblibrary.util.text.ExtendableTextColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FTBLibraryClient {
     public static final Identifier SIDEBAR_LISTENER = FTBLibrary.rl("sidebar");
@@ -33,6 +40,16 @@ public class FTBLibraryClient {
 //        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE, FTBLibrary.rl("sidebar"));
 //        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageResourceScreen.ResourceListener.INSTANCE, FTBLibrary.rl("image_select"));
 //        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new EntityIconLoader(), FTBLibrary.rl("entity_icons"));
+    }
+
+    public void onClientStarted(Minecraft minecraft) {
+        ConfigManagerClient.onClientStarted(minecraft);
+
+        Map<String, TextColor> customColors = new HashMap<>();
+        EventPostingHandler.INSTANCE.postEvent(new RegisterCustomColorEvent.Data(customColors));
+
+        customColors.forEach(ExtendableTextColor::addCustomColor);
+//        RegisterCustomColorEvent.EVENT.invoker().accept(new RegisterCustomColorEvent(customColors));
     }
 
     public void guiInit(Screen screen) {
