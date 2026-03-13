@@ -298,8 +298,8 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public final void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-        super.extract(graphics, theme, x, y, w, h);
+    public final void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+        super.draw(graphics, theme, x, y, w, h);
 
         if (!modalPanels.isEmpty()) {
             // allow modal panels to draw outside scissor area if needed
@@ -316,7 +316,7 @@ public abstract class BaseScreen extends Panel {
                     // dim the rest of the gui so the top modal panel is effectively highlighted
                     IconHelper.renderIcon(Color4I.rgba(0xA0202020), graphics, 0, 0, getWindow().getGuiScaledWidth(), getWindow().getGuiScaledHeight());
                 }
-                p.extract(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
+                p.draw(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
             }
             graphics.pose().popMatrix();
 
@@ -378,16 +378,16 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
     }
 
 
-    public boolean extractDefaultBackground(GuiGraphicsExtractor graphics) {
+    public boolean drawDefaultBackground(GuiGraphicsExtractor graphics) {
         return true;
     }
 
-    public void extractForeground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawForeground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
     private Panel getDoubleClickTarget() {

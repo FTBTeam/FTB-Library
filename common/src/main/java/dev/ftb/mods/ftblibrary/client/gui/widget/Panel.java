@@ -194,10 +194,10 @@ public abstract class Panel extends Widget {
     }
 
     @Override
-    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         var renderInside = getOnlyRenderWidgetsInside();
 
-        extractBackground(graphics, theme, x, y, w, h);
+        drawBackground(graphics, theme, x, y, w, h);
 
         if (renderInside) {
             graphics.enableScissor(x, y, x + w, y + h);
@@ -208,12 +208,12 @@ public abstract class Panel extends Widget {
                     .collect(Collectors.groupingBy(Widget::getDrawLayer, () -> new EnumMap<>(DrawLayer.class), Collectors.toList()));
 
             byLayer.getOrDefault(DrawLayer.BACKGROUND, List.of())
-                    .forEach(widget -> extractWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
+                    .forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
 
-            extractOffsetBackground(graphics, theme, x + offsetX, y + offsetY, w, h);
+            drawOffsetBackground(graphics, theme, x + offsetX, y + offsetY, w, h);
 
             byLayer.getOrDefault(DrawLayer.FOREGROUND, List.of())
-                    .forEach(widget -> extractWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
+                    .forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
         });
 
         if (renderInside) {
@@ -221,19 +221,19 @@ public abstract class Panel extends Widget {
         }
     }
 
-    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
-    public void extractOffsetBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawOffsetBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
-    public void extractWidget(GuiGraphicsExtractor graphics, Theme theme, Widget widget, int x, int y, int w, int h) {
+    public void drawWidget(GuiGraphicsExtractor graphics, Theme theme, Widget widget, int x, int y, int w, int h) {
         var wx = widget.getX();
         var wy = widget.getY();
         var ww = widget.width;
         var wh = widget.height;
 
-        widget.extract(graphics, theme, wx, wy, ww, wh);
+        widget.draw(graphics, theme, wx, wy, ww, wh);
 
         if (Theme.renderDebugBoxes) {
             var col = Color4I.rgb(Color4I.HSBtoRGB((widget.hashCode() & 255) / 255F, 1F, 1F));

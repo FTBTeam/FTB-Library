@@ -101,7 +101,7 @@ public class ScrollBar extends Widget {
     }
 
     @Override
-    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         var scrollBarSize = getScrollBarSize();
 
         if (scrollBarSize > 0) {

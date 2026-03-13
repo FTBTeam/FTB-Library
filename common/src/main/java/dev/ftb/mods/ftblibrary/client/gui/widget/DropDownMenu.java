@@ -74,15 +74,15 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
 
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawContextMenuBackground(graphics, x, y, w, h);
     }
 
     @Override
-    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         graphics.pose().pushMatrix();
         IconHelper.renderIcon(Color4I.BLACK.withAlpha(45), graphics, x + 3, y + 3, w, h);
-        super.extract(graphics, theme, x, y, w, h);
+        super.draw(graphics, theme, x, y, w, h);
         graphics.pose().popMatrix();
     }
 

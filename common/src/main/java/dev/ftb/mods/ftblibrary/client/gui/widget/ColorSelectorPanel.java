@@ -1,19 +1,19 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import com.google.common.primitives.Ints;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableColor;
 import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
-import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import com.google.common.primitives.Ints;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
@@ -159,14 +159,14 @@ public class ColorSelectorPanel extends ModalPanel {
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawContextMenuBackground(graphics, x - 1, y - 1, w + 2, h + 2);
 
         IconHelper.renderIcon(Color4I.GRAY.withAlpha(40), graphics, x + 130, y + 43, 50, 50);
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         super.draw(graphics, theme, x, y, w, h);
 
         theme.drawString(graphics, allowAlphaEdit ? ARGB : RGB, x + 157 - theme.getStringWidth(ARGB), y + 9);
@@ -217,14 +217,14 @@ public class ColorSelectorPanel extends ModalPanel {
         }
 
         @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             Color4I bg = Color4I.rgb(Color4I.HSBtoRGB(hsb[0], hsb[1], 1f));
             GuiHelper.drawGradientRect(graphics, x, y, w, h, bg, Color4I.BLACK);
             GuiHelper.drawHollowRect(graphics, x, y, w, h, Color4I.BLACK, false);
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             super.draw(graphics, theme, x, y, w, h);
             int yVal = (int) (y + h * (1f - hsb[2]));
             IconHelper.renderIcon(Color4I.BLACK, graphics, x - 2, yVal, width + 4, 3);
@@ -268,12 +268,12 @@ public class ColorSelectorPanel extends ModalPanel {
         }
 
         @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             IconHelper.renderIcon(WHEEL, graphics, x, y, w, h);
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             super.draw(graphics, theme, x, y, w, h);
 
             int xc = getWidth() / 2;
@@ -334,7 +334,7 @@ public class ColorSelectorPanel extends ModalPanel {
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             GuiHelper.drawHollowRect(graphics, x, y, w, h, Color4I.BLACK, false);
 
             if (allowAlphaEdit) {
@@ -442,7 +442,7 @@ public class ColorSelectorPanel extends ModalPanel {
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             if (icon instanceof Color4I col && !col.isEmpty()) {
                 IconHelper.renderIcon(col, graphics, x, y, w, h);
                 Color4I shade = col.addBrightness(-0.15f);

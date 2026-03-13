@@ -193,7 +193,7 @@ public class EditConfigListScreen<E, CV extends EditableConfigValue<E>> extends 
         }
 
         @Override
-        public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             var mouseOver = getMouseY() >= 20 && isMouseOver();
 
             var textCol = listConfig.getType().getColor(localValues.get(index), theme).mutable();
@@ -306,8 +306,8 @@ public class EditConfigListScreen<E, CV extends EditableConfigValue<E>> extends 
         }
 
         @Override
-        public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-            super.extract(graphics, theme, x, y, w, h);
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+            super.draw(graphics, theme, x, y, w, h);
 
             theme.drawString(graphics, getGui().getTitle(), x + 6, y + 6, Theme.SHADOW);
         }

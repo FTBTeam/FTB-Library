@@ -87,7 +87,7 @@ public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
     }
 
 //    @Override
-//    public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
+//    public void draw(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
 //        var poseStack = graphics.pose();
 //        poseStack.pushMatrix();
 //        poseStack.translate(x + w / 2F, y + h / 2F);
@@ -102,7 +102,7 @@ public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
 //    }
 //
 //    @Override
-//    public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
+//    public void drawStatic(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
 //        var poseStack = graphics.pose();
 //        poseStack.pushMatrix();
 //        poseStack.translate(x + w / 2F, y + h / 2F);
@@ -117,7 +117,7 @@ public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
 //    }
 //
 //    @Override
-//    public void draw3D(GuiGraphics graphics) {
+//    public void draw3D(GuiGraphicsExtractor graphics) {
 //        drawItem3D(graphics, getStack());
 //    }
 

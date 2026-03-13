@@ -4,7 +4,7 @@ import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.widget.BaseScreen;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -106,7 +106,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float f, int mx, int my) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float f, int mx, int my) {
         var theme = wrappedGui.getTheme();
         renderBackground(graphics, mx, my, f);
         wrappedGui.draw(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
@@ -119,12 +119,12 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         graphics.pose().pushMatrix();
         graphics.pose().translate(-leftPos, -topPos);
 
         var theme = wrappedGui.getTheme();
-        wrappedGui.extractForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
+        wrappedGui.drawForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
         wrappedGui.addMouseOverText(tooltipList);
 
@@ -149,14 +149,14 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int x, int y, float partialTicks) {
-        if (wrappedGui.extractDefaultBackground(graphics)) {
+    public void renderBackground(GuiGraphicsExtractor graphics, int x, int y, float partialTicks) {
+        if (wrappedGui.drawDefaultBackground(graphics)) {
             super.renderBackground(graphics, x, y, partialTicks);
         }
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         renderBackground(graphics, mouseX, mouseY, partialTicks);
         wrappedGui.updateGui(mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);

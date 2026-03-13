@@ -52,7 +52,7 @@ public class ChooseConfigScreen extends BaseScreen {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
     private static class TextButton extends SimpleTextButton {

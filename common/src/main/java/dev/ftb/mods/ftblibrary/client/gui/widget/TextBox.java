@@ -430,7 +430,7 @@ public class TextBox extends Widget implements IFocusableWidget {
     }
 
     @Override
-    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         drawTextBox(graphics, theme, x, y, w, h);
         var drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
         var textToDraw = getFormattedText();

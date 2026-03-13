@@ -182,7 +182,7 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
         return isEnabled() && isMouseOver();
     }
 
-    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
     public boolean mousePressed(MouseButton button) {

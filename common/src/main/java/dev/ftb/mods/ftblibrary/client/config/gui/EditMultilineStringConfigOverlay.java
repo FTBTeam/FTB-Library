@@ -2,13 +2,13 @@ package dev.ftb.mods.ftblibrary.client.config.gui;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableString;
-import dev.ftb.mods.ftblibrary.client.gui.*;
+import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.*;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class EditMultilineStringConfigOverlay extends ModalPanel {
@@ -69,7 +69,7 @@ public class EditMultilineStringConfigOverlay extends ModalPanel {
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawWidget(graphics, x, y, w, h, WidgetType.NORMAL);
     }
 
@@ -101,7 +101,7 @@ public class EditMultilineStringConfigOverlay extends ModalPanel {
         }
 
         @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawSlot(graphics, x, y, w, h, WidgetType.NORMAL);
         }
     }

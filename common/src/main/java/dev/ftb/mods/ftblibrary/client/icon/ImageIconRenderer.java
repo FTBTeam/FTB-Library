@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.client.icon;
 import dev.ftb.mods.ftblibrary.icon.ImageIcon;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.state.gui.BlitRenderState;
@@ -18,7 +18,7 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
     INSTANCE;
 
     @Override
-    public void render(ImageIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(ImageIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(icon.texture);
 
         if (icon.tileSize <= 0D) {

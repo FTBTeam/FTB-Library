@@ -224,7 +224,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             }
         }) {
             @Override
-            public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+            public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
                 IconHelper.renderIcon(BorderedIcon.BUTTON_ROUND_GRAY, graphics, x, y, w, h);
             }
         };
@@ -268,13 +268,13 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             if (isSelected()) {
                 IconHelper.renderIcon(Color4I.WHITE.withAlpha(64), graphics, x, y, w, h);
             }
 
             IconHelper.renderIcon(BorderedIcon.BUTTON_ROUND_GRAY, graphics, x + 1, y + 1, 8, 8);
-            extractIcon(graphics, theme, x + 1, y + 1, 8, 8);
+            drawIcon(graphics, theme, x + 1, y + 1, 8, 8);
             theme.drawString(graphics, getTitle(), x + 11, y + 1);
         }
 
@@ -521,8 +521,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-            super.extract(graphics, theme, x, y, w, h);
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+            super.draw(graphics, theme, x, y, w, h);
 
             if (!hoverIcon.isEmpty()) {
                 IconHelper.renderIcon(hoverIcon, graphics, x + 12 + theme.getStringWidth(getTitle()), y + 1, 8, 8);
@@ -756,8 +756,8 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-            super.extract(graphics, theme, x, y, w, h);
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+            super.draw(graphics, theme, x, y, w, h);
         }
 
         @Override

@@ -3,13 +3,13 @@ package dev.ftb.mods.ftblibrary.client.icon;
 import dev.ftb.mods.ftblibrary.icon.RainbowIcon;
 import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public enum RainbowIconRenderer implements IconRenderer<RainbowIcon> {
     INSTANCE;
 
     @Override
-    public void render(RainbowIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(RainbowIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         if (w <= 0 || h <= 0) {
             return;
         }

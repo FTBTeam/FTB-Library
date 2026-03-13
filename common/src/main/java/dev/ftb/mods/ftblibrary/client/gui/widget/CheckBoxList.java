@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +25,14 @@ public class CheckBoxList extends Button {
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
-    public void drawCheckboxBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawCheckboxBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawCheckboxBackground(graphics, x, y, w, h, radioButtonBehaviour);
     }
 
-    public void getCheckboxIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h, int index, int value) {
+    public void getCheckboxIcon(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h, int index, int value) {
         theme.drawCheckbox(graphics, x, y, w, h, WidgetType.mouseOver(isMouseOver()), value != 0, radioButtonBehaviour);
     }
 
@@ -68,7 +68,7 @@ public class CheckBoxList extends Button {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         drawBackground(graphics, theme, x, y, w, h);
 
         for (var i = 0; i < entries.size(); i++) {

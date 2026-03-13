@@ -48,22 +48,22 @@ public abstract class Button extends Widget {
         return this;
     }
 
-    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawButton(graphics, x, y, w, h, getWidgetType());
     }
 
-    public void extractIcon(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawIcon(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         IconHelper.renderIcon(icon, graphics, x, y, w, h);
     }
 
     @Override
-    public void extract(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-        extractBackground(graphics, theme, x, y, w, h);
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+        drawBackground(graphics, theme, x, y, w, h);
         if (forceButtonSize) {
             var s = h >= 16 ? 16 : 8;
-            extractIcon(graphics, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
+            drawIcon(graphics, theme, x + (w - s) / 2, y + (h - s) / 2, s, s);
         }else {
-            extractIcon(graphics, theme, x, y, w, h);
+            drawIcon(graphics, theme, x, y, w, h);
         }
     }
 

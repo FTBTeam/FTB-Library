@@ -51,19 +51,7 @@ public class FTBLibrary {
         ModItems.init();
 
         Env.runInEnv(Env.CLIENT, () -> FTBLibraryClient::onModConstruct);
-        RegisterCustomColorEvent.EVENT.register((event) -> {
-            event.register("ftb:rainbow", RainbowTextColor.INSTANCE);
-        });
-
-        // TODO: Missing on fabric atm
-//        LifecycleEvent.SETUP.register(this::onSetup);
-    }
-
-    public void onSetup() {
-        Map<String, TextColor> customColors = new HashMap<>();
-        RegisterCustomColorEvent.EVENT.invoker().accept(new RegisterCustomColorEvent(customColors));
-
-        customColors.forEach(ExtendableTextColor::addCustomColor);
+        ExtendableTextColor.addCustomColor("ftb:rainbow", RainbowTextColor.INSTANCE);
     }
 
     public static Identifier rl(String path) {

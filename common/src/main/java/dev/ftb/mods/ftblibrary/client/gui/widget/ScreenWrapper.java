@@ -5,7 +5,7 @@ import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -105,7 +105,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         wrappedGui.updateGui(mouseX, mouseY, partialTicks);
         var x = wrappedGui.getX();
         var y = wrappedGui.getY();
@@ -114,7 +114,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
         var theme = wrappedGui.getTheme();
 
         wrappedGui.draw(graphics, theme, x, y, w, h);
-        wrappedGui.extractForeground(graphics, theme, x, y, w, h);
+        wrappedGui.drawForeground(graphics, theme, x, y, w, h);
         wrappedGui.addMouseOverText(tooltipList);
 
         graphics.pose().pushMatrix();
@@ -136,14 +136,14 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
     }
 
     @Override
-    public void renderBackground(GuiGraphics matrixStack, int x, int y, float partialTicks) {
-        if (wrappedGui.extractDefaultBackground(matrixStack)) {
+    public void renderBackground(GuiGraphicsExtractor matrixStack, int x, int y, float partialTicks) {
+        if (wrappedGui.drawDefaultBackground(matrixStack)) {
             super.renderBackground(matrixStack, x, y, partialTicks);
         }
     }
 
     @Override
-    protected void renderBlurredBackground(GuiGraphics guiGraphics) {
+    protected void renderBlurredBackground(GuiGraphicsExtractor guiGraphics) {
         if (wrappedGui.shouldRenderBlur()) {
             super.renderBlurredBackground(guiGraphics);
         }

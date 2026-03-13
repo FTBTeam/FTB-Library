@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.client.icon;
 
 import dev.ftb.mods.ftblibrary.icon.AtlasSpriteIcon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.data.AtlasIds;
@@ -11,7 +11,7 @@ public enum AtlasSpriteIconRenderer implements IconRenderer<AtlasSpriteIcon> {
     INSTANCE;
 
     @Override
-    public void render(AtlasSpriteIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(AtlasSpriteIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getSprite(icon), x, y, w, h, icon.getColor().rgba());
     }
 
