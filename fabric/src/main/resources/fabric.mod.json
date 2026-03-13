@@ -37,8 +37,7 @@
   "accessWidener": "ftblibrary.accesswidener",
   "depends": {
     "fabric": "${fabricapiversionrange}",
-    "minecraft": "~${mcversion}",
-    "architectury": ">=${archversion}"
+    "minecraft": "~${mcversion}"
   },
   "accessWidener" : "ftblibrary.accesswidener"
 }
