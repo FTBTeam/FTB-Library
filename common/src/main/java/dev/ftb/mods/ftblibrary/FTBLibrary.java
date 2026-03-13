@@ -9,10 +9,10 @@ import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
 import dev.ftb.mods.ftblibrary.platform.Env;
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistryRef;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
-import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import dev.ftb.mods.ftblibrary.util.text.ExtendableTextColor;
 import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
 import com.mojang.brigadier.CommandDispatcher;
@@ -75,7 +75,7 @@ public class FTBLibrary {
         server.schedule(server.wrapRunnable(() -> {
             if (KnownServerRegistries.server != null) {
                 // can be null, e.g. https://github.com/FTBTeam/FTB-Mods-Issues/issues/1387
-                NetworkHelper.sendTo(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
+                Server2PlayNetworking.send(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
             }
         }));
     }

@@ -15,13 +15,13 @@ public class EntityTagStageProvider implements StageProvider {
     @Override
     public void add(ServerPlayer player, String stage) {
         player.addTag(stage);
-        NetworkHelper.sendTo(player, SyncGameStagesMessage.add(stage));
+        Server2PlayNetworking.send(player, SyncGameStagesMessage.add(stage));
     }
 
     @Override
     public void remove(ServerPlayer player, String stage) {
         player.removeTag(stage);
-        NetworkHelper.sendTo(player, SyncGameStagesMessage.remove(stage));
+        Server2PlayNetworking.send(player, SyncGameStagesMessage.remove(stage));
     }
 
     @Override

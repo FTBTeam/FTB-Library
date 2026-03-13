@@ -10,6 +10,13 @@ public interface Misc {
 
     Component componentWithLinks(String message);
 
+    /**
+     * Platform-independent method to clear a player's cached display name, which may have been modified by either
+     * the Forge {@code PlayerEvent.NameFormat} event, or our own Fabric {@code PlayerDisplayNameCallback} event.
+     * Call this whenever the data required by any handlers for these events changes.
+     *
+     * @param player the player in question
+     */
     void refreshDisplayName(Player player);
 
     long bucketFluidAmount();

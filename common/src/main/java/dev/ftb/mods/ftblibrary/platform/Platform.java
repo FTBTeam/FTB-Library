@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.platform;
 
-import dev.ftb.mods.ftblibrary.platform.network.NetworkingShim;
+import dev.ftb.mods.ftblibrary.platform.network.Networking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
 
 import net.minecraft.core.Registry;
@@ -35,7 +35,7 @@ public interface Platform {
 
     Paths paths();
 
-    NetworkingShim networking();
+    Networking networking();
 
     <T> XRegistry<T> createRegistry(String modId, ResourceKey<Registry<T>> registryKey);
 }

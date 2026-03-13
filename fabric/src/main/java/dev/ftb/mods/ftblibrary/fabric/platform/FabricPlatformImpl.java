@@ -2,7 +2,7 @@ package dev.ftb.mods.ftblibrary.fabric.platform;
 
 import dev.ftb.mods.ftblibrary.fabric.platform.registry.XRegistryFabric;
 import dev.ftb.mods.ftblibrary.platform.*;
-import dev.ftb.mods.ftblibrary.platform.network.NetworkingShim;
+import dev.ftb.mods.ftblibrary.platform.network.Networking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class FabricPlatformImpl implements Platform {
     private final Paths paths = new FabricPathsImpl();
     private final Misc misc = new FabricMiscImpl();
-    private final NetworkingShim networking = new FabricNetworkingImpl();
+    private final Networking networking = new FabricNetworkingImpl();
 
     @Override
     public Env env() {
@@ -74,7 +74,7 @@ public class FabricPlatformImpl implements Platform {
     }
 
     @Override
-    public NetworkingShim networking() {
+    public Networking networking() {
         return networking;
     }
 

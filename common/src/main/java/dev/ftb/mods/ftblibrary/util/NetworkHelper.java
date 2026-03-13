@@ -20,26 +20,6 @@ public class NetworkHelper {
 //            NetworkManager.registerS2CPayloadType(type, codec);
 //        }
 //    }
-//
-//    @ExpectPlatform
-//    public static void sendToAll(CustomPacketPayload.Type<?> type, MinecraftServer server, Packet<?> packet) {
-//        throw new AssertionError();
-//    }
-//
-//    @ExpectPlatform
-//    public static void sendTo(CustomPacketPayload.Type<?> type, ServerPlayer player, Packet<?> packet) {
-//        throw new AssertionError();
-//    }
-//
-//    @ExpectPlatform
-//    public static <T extends CustomPacketPayload> void sendToAll(MinecraftServer server, T packet) {
-//        throw new AssertionError();
-//    }
-//
-//    @ExpectPlatform
-//    public static <T extends CustomPacketPayload> void sendTo(ServerPlayer player, T packet) {
-//        throw new AssertionError();
-//    }
 
     public static <B extends FriendlyByteBuf, V extends Enum<V>> StreamCodec<B, V> enumStreamCodec(Class<V> enumClass) {
         return new StreamCodec<>() {
