@@ -33,7 +33,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public interface ResourceSearchMode<T> {
-    ResourceSearchMode<ItemStack> ALL_ITEMS = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.all"), Icons.COMPASS) {
+    ResourceSearchMode<ItemStack> ALL_ITEMS = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.all"), () -> Icons.COMPASS) {
         @Nullable
         private List<SelectableResource<ItemStack>> allItemsCache = null;
 
@@ -48,7 +48,7 @@ public interface ResourceSearchMode<T> {
             return allItemsCache;
         }
     };
-    ResourceSearchMode<ItemStack> INVENTORY = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.inv"), ItemIcon.ofItem(Items.CHEST)) {
+    ResourceSearchMode<ItemStack> INVENTORY = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.inv"), () -> ItemIcon.ofItem(Items.CHEST)) {
         @Override
         public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
             Player player = Minecraft.getInstance().player;
@@ -67,7 +67,7 @@ public interface ResourceSearchMode<T> {
             return items;
         }
     };
-    ResourceSearchMode<FluidStack> ALL_FLUIDS = new SearchMode<>(Component.translatable("ftblibrary.select_fluid.list_mode.all"), ItemIcon.ofItem(Items.COMPASS)) {
+    ResourceSearchMode<FluidStack> ALL_FLUIDS = new SearchMode<>(Component.translatable("ftblibrary.select_fluid.list_mode.all"), () -> ItemIcon.ofItem(Items.COMPASS)) {
         @Nullable
         private List<SelectableResource<FluidStack>> allFluidsCache = null;
 
@@ -94,7 +94,7 @@ public interface ResourceSearchMode<T> {
     ResourceSearchMode<EntityType<?>> ANIMALS = entitySearchMode(e -> e instanceof Animal,
             "animals", () -> EntityIconLoader.getIcon(EntityType.SHEEP));
 
-    ResourceSearchMode<Identifier> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), Icons.ART) {
+    ResourceSearchMode<Identifier> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), () -> Icons.ART) {
         @Nullable
         private List<ImageResource> cachedImages = null;
 
@@ -170,9 +170,9 @@ public interface ResourceSearchMode<T> {
             this.icon = icon;
         }
 
-        protected SearchMode(Component name, Icon<?> icon) {
-            this(name, () -> icon);
-        }
+//        protected SearchMode(Component name, Icon<?> icon) {
+//            this(name, () -> icon);
+//        }
 
         @Override
         public Component getDisplayName() {

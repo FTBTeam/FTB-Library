@@ -25,6 +25,8 @@ dependencies {
 //    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
 
     api("de.marhali:json5-java:${json5_version}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
 //    modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.21.1:api"
 }
 
