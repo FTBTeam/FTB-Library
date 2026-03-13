@@ -19,7 +19,7 @@ public record EditNBTPacket(CompoundTag info, CompoundTag tag) implements Custom
     );
 
     public static void handle(EditNBTPacket packet, PacketContext context) {
-        context.enqueue(() -> NBTEditorScreen.openEditor(packet.info, packet.tag));
+        NBTEditorScreen.openEditor(packet.info, packet.tag);
     }
 
     @Override

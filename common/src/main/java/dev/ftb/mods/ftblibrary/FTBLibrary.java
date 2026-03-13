@@ -58,7 +58,7 @@ public class FTBLibrary {
     public void serverStarted(MinecraftServer server) {
         KnownServerRegistries.server = KnownServerRegistries.create(server);
 
-        NBTEditResponseHandlers.registerBuiltinHandlers();
+        NBTEditResponseHandlers.registerBuiltinHandlers(server.registryAccess());
     }
 
     public void serverStopped(MinecraftServer server) {
