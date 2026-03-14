@@ -1,7 +1,5 @@
 //package dev.ftb.mods.ftblibrary.integration;
 //
-//import dev.architectury.injectables.annotations.ExpectPlatform;
-//import dev.architectury.platform.Platform;
 //import dev.ftb.mods.ftblibrary.FTBLibrary;
 //import dev.ftb.mods.ftblibrary.FTBLibraryClient;
 //import dev.ftb.mods.ftblibrary.client.config.gui.resource.ResourceSearchMode;

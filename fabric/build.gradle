@@ -9,12 +9,6 @@ loom {
         configureEach {
             ideConfigGenerated = true
         }
-//        client {
-//            source = sourceSets.main
-//            ideConfigGenerated = true
-//            client()
-//        }
-        // TODO: Tell loom to generate runs for all things
     }
 
     mods {
@@ -41,7 +35,6 @@ dependencies {
 //    modCompileOnlyApi("mezz.jei:jei-1.21.1-fabric-api:${jei_version}")
 
     include(implementation("de.marhali:json5-java:${json5_version}"))
-//    modRuntimeOnly "curse.maven:atlasviewer-633577:6347925"
 }
 
 publishing {

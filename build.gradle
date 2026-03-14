@@ -164,7 +164,6 @@ publishMods {
     curseforge("curseforgeFabric") {
         from(curseForgeOptions, fabricOptions)
         projectId = curseforge_id_fabric
-        requires('architectury-api')
         requires('fabric-api')
         optional('jei')
         optional('roughly-enough-items')
@@ -173,7 +172,6 @@ publishMods {
     curseforge("curseforgeNeoForge") {
         from(curseForgeOptions, neoForgeOptions)
         projectId = curseforge_id_forge
-        requires("architectury-api")
         optional('jei')
         optional('roughly-enough-items')
     }
