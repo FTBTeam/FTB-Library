@@ -32,6 +32,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Nameable;
@@ -62,6 +63,14 @@ public class FTBLibraryCommands {
                                 context.getSource().getPlayerOrException().setGameMode(GameType.SURVIVAL);
                             }
 
+                            return Command.SINGLE_SUCCESS;
+                        })
+                )
+                .then(literal("rain")
+                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+                        .executes(context -> {
+                            ServerLevel level = context.getSource().getLevel();
+                            level.setRainLevel(level.isRaining() ? 0F : 1F);
                             return Command.SINGLE_SUCCESS;
                         })
                 )

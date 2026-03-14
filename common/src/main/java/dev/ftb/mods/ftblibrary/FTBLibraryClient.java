@@ -8,6 +8,7 @@ import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
+import dev.ftb.mods.ftblibrary.sidebar.RegisteredSidebarButton;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
@@ -16,8 +17,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,6 +31,9 @@ public class FTBLibraryClient {
     public static final Identifier SIDEBAR_LISTENER = FTBLibrary.rl("sidebar");
     public static final Identifier IMAGE_SELECT_LISTENER = FTBLibrary.rl("image_select");
     public static final Identifier ENTITY_ICON_LISTENER = FTBLibrary.rl("entity_icons");
+
+    public static final Identifier DAY_BUTTON = FTBLibrary.rl("toggle/day");
+    public static final Identifier NIGHT_BUTTON = FTBLibrary.rl("toggle/night");
 
     @Nullable
     public static CursorType lastCursorType = null;
@@ -90,5 +96,20 @@ public class FTBLibraryClient {
         return gui instanceof AbstractContainerScreen &&
                 !SidebarButtonManager.INSTANCE.getButtons().isEmpty()
                 && !FTBLibraryClientApi.get().isSidebarScreenBlacklisted(gui);
+    }
+
+    public void addVisibilityConditionToSidebarButton(RegisteredSidebarButton button) {
+        var id = button.getId();
+        if (id.equals(DAY_BUTTON) && id.equals(NIGHT_BUTTON)) {
+            button.addVisibilityCondition(() -> {
+                if (Minecraft.getInstance().level == null) {
+                    return false;
+                }
+
+                var level = Minecraft.getInstance().level;
+                var levelWorldKey = level.registryAccess().get(ResourceKey.create(Registries.WORLD_CLOCK, level.dimension().identifier()));
+                return levelWorldKey.isPresent();
+            });
+        }
     }
 }

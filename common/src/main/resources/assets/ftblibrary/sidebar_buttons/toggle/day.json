@@ -4,10 +4,7 @@
   ],
   "sort_index": 200,
   "click": [
-    "command:/ftblibrary day"
-  ],
-  "required_mods": [
-    "ftblibrary"
+    "command:/time set minecraft:day"
   ],
   "requires_op": true
 }

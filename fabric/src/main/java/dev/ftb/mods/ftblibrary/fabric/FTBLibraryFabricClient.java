@@ -30,5 +30,7 @@ public class FTBLibraryFabricClient implements ClientModInitializer {
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(FTBLibraryClient.SIDEBAR_LISTENER, SidebarButtonManager.INSTANCE);
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(FTBLibraryClient.IMAGE_SELECT_LISTENER, SelectImageResourceScreen.ResourceListener.INSTANCE);
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(FTBLibraryClient.ENTITY_ICON_LISTENER, new EntityIconLoader());
+
+        FTBLibraryFabricEvents.SIDEBAR_BUTTON_CREATED.register(data -> client.addVisibilityConditionToSidebarButton(data.button()));
     }
 }
