@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.core.mixin.common;
+package dev.ftb.mods.ftblibrary.mixin.common;
 
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;

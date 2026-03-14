@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.core.mixin.common;
+package dev.ftb.mods.ftblibrary.mixin.common;
 
 import net.minecraft.client.gui.components.MultilineTextField;
 import org.spongepowered.asm.mixin.Mixin;

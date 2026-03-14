@@ -1,5 +1,6 @@
-package dev.ftb.mods.ftblibrary;
+package dev.ftb.mods.ftblibrary.client;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.client.FTBLibraryClientApi;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;

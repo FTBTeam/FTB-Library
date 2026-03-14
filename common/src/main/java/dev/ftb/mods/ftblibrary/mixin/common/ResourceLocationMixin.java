@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.core.mixin.common;
+package dev.ftb.mods.ftblibrary.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.ftb.mods.ftblibrary.util.StringUtils;

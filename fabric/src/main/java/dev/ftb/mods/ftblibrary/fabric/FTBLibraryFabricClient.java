@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.fabric;
 
-import dev.ftb.mods.ftblibrary.FTBLibraryClient;
+import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
