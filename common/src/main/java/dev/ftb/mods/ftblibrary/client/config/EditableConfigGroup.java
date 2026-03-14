@@ -1,12 +1,12 @@
 package dev.ftb.mods.ftblibrary.client.config;
 
-import dev.architectury.fluid.FluidStack;
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.client.config.editable.*;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
+import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.net.SyncConfigToServerPacket;
-import dev.ftb.mods.ftblibrary.config.value.Config;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
+import dev.ftb.mods.ftblibrary.platform.network.Play2ServerNetworking;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -74,7 +74,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
         return new EditableConfigGroup(groupName, accepted -> {
             if (accepted) {
                 if (serverConfig) {
-                    NetworkManager.sendToServer(SyncConfigToServerPacket.create(config));
+                    Play2ServerNetworking.send(SyncConfigToServerPacket.create(config));
                 } else {
                     ConfigManager.getInstance().editedOnClient(config.getKey());
                     ConfigManager.getInstance().save(config.getKey());

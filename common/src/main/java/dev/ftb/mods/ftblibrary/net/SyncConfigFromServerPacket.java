@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
-import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
+import dev.ftb.mods.ftblibrary.config.value.Config;
+import dev.ftb.mods.ftblibrary.platform.network.PacketContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -29,8 +29,8 @@ public record SyncConfigFromServerPacket(String configName, CompoundTag config) 
         return TYPE;
     }
 
-    public static void handle(SyncConfigFromServerPacket message, NetworkManager.PacketContext context) {
-        context.queue(() -> {
+    public static void handle(SyncConfigFromServerPacket message, PacketContext context) {
+        context.enqueue(() -> {
             ConfigManager.getInstance().syncFromServer(message.configName, message.config);
         });
     }

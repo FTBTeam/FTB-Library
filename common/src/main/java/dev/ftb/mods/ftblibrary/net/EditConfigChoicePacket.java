@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.gui.ChooseConfigScreen;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
+import dev.ftb.mods.ftblibrary.platform.network.PacketContext;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -41,16 +41,16 @@ public record EditConfigChoicePacket(ConfigType configType, String clientConfig,
         return new EditConfigChoicePacket(ConfigType.SERVER, "", serverConfig, Component.empty());
     }
 
-    public static void handle(EditConfigChoicePacket message, NetworkManager.PacketContext context) {
+    public static void handle(EditConfigChoicePacket message, PacketContext context) {
         switch (message.configType) {
             case CLIENT -> ConfigManagerClient.editConfig(message.clientConfig);
             case SERVER -> {
-                if (context.getPlayer().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+                if (context.player().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                     ConfigManagerClient.editConfig(message.serverConfig());
                 }
             }
             case CHOOSE -> {
-                if (context.getPlayer().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+                if (context.player().permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                     ChooseConfigScreen.open(message);
                 } else {
                     ConfigManagerClient.editConfig(message.clientConfig());

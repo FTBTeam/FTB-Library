@@ -32,7 +32,7 @@ public record XZ(int x, int z) {
     }
 
     public static XZ of(ChunkPos pos) {
-        return of(pos.x, pos.z);
+        return of(pos.x(), pos.z());
     }
 
     public static XZ chunkFromBlock(int x, int z) {
@@ -48,7 +48,7 @@ public record XZ(int x, int z) {
     }
 
     public static XZ regionFromChunk(ChunkPos p) {
-        return of(p.x >> 5, p.z >> 5);
+        return of(p.x() >> 5, p.z() >> 5);
     }
 
     public static XZ regionFromBlock(int x, int z) {
@@ -72,7 +72,7 @@ public record XZ(int x, int z) {
     }
 
     public long toLong() {
-        return ChunkPos.asLong(x, z);
+        return ChunkPos.pack(x, z);
     }
 
     public String toRegionString() {

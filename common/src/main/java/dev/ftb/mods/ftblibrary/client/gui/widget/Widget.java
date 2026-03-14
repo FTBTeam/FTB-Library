@@ -1,14 +1,17 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import com.mojang.blaze3d.platform.Window;
-import dev.ftb.mods.ftblibrary.client.gui.*;
+import dev.ftb.mods.ftblibrary.client.gui.CursorType;
+import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
+import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.PlainTextContents;
@@ -179,7 +182,7 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
         return isEnabled() && isMouseOver();
     }
 
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
     public boolean mousePressed(MouseButton button) {

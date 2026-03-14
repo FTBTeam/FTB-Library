@@ -1,16 +1,14 @@
 package dev.ftb.mods.ftblibrary.config.manager;
 
-import dev.architectury.event.events.common.LifecycleEvent;
-import dev.architectury.event.events.common.PlayerEvent;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
-import dev.ftb.mods.ftblibrary.config.serializer.Json5ConfigSerializer;
-import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
-import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.config.ConfigUtil;
+import dev.ftb.mods.ftblibrary.config.serializer.Json5ConfigSerializer;
 import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
-import dev.ftb.mods.ftblibrary.util.NetworkHelper;
+import dev.ftb.mods.ftblibrary.config.value.Config;
+import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
+import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
@@ -43,9 +41,6 @@ public enum ConfigManager {
         if (inited) {
             throw new IllegalStateException("already initialised!");
         }
-
-        LifecycleEvent.SERVER_BEFORE_START.register(this::onServerStarting);
-        PlayerEvent.PLAYER_JOIN.register(this::onPlayerLogin);
 
         inited = true;
     }
@@ -171,17 +166,17 @@ public enum ConfigManager {
         }
     }
 
-    private void onServerStarting(MinecraftServer server) {
+    public void onServerStarting(MinecraftServer server) {
         pendingServer.forEach((key, config) ->
                 findAndLoad(key, config, fileName -> server.getWorldPath(ConfigUtil.SERVER_CONFIG_DIR).resolve(fileName))
         );
         pendingServer.clear();
     }
 
-    private void onPlayerLogin(ServerPlayer serverPlayer) {
+    public void onPlayerLogin(ServerPlayer serverPlayer) {
         trackedConfigs.forEach((name, tc) -> {
             if (tc.synced) {
-                NetworkHelper.sendTo(serverPlayer, SyncConfigFromServerPacket.create(tc.config));
+                Server2PlayNetworking.send(serverPlayer, SyncConfigFromServerPacket.create(tc.config));
             }
         });
     }

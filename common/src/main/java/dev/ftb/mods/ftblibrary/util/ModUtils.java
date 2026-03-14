@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import dev.architectury.platform.Platform;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
@@ -14,7 +14,7 @@ public class ModUtils {
 
     public static Optional<String> getModName(String modId) {
         if (modId2Name.isEmpty()) {
-            Platform.getMods().forEach(mod -> modId2Name.put(mod.getModId(), mod.getName()));
+            Platform.get().getMods().forEach(mod -> modId2Name.put(mod.modId(), mod.name()));
         }
 
         return Optional.ofNullable(modId2Name.get(modId));
@@ -29,6 +29,6 @@ public class ModUtils {
     }
 
     public static boolean isDevMode() {
-        return Platform.isDevelopmentEnvironment() || System.getenv().containsKey("FTB_DEVMODE");
+        return Platform.get().isDev() || System.getenv().containsKey("FTB_DEVMODE");
     }
 }

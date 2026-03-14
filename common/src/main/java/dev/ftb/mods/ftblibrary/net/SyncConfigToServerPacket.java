@@ -1,10 +1,11 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
-import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
+import dev.ftb.mods.ftblibrary.config.value.Config;
+import dev.ftb.mods.ftblibrary.platform.network.PacketContext;
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -32,9 +33,9 @@ public record SyncConfigToServerPacket(String configName, CompoundTag config) im
         return TYPE;
     }
 
-    public static void handle(SyncConfigToServerPacket message, NetworkManager.PacketContext context) {
-        if (context.getPlayer() instanceof ServerPlayer sp && sp.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
-            context.queue(() -> {
+    public static void handle(SyncConfigToServerPacket message, PacketContext context) {
+        if (context.player() instanceof ServerPlayer sp && sp.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+            context.enqueue(() -> {
                 MinecraftServer server = sp.level().getServer();
 
                 ConfigManager.getInstance().syncFromClient(message.configName, message.config, sp.getGameProfile().name());
@@ -42,7 +43,7 @@ public record SyncConfigToServerPacket(String configName, CompoundTag config) im
                 // send the updated config to all other players
                 for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                     if (!sp.getUUID().equals(player.getUUID())) {
-                        NetworkManager.sendToPlayer(player, new SyncConfigFromServerPacket(message.configName, message.config));
+                        Server2PlayNetworking.send(player, new SyncConfigFromServerPacket(message.configName, message.config));
                     }
                 }
             });

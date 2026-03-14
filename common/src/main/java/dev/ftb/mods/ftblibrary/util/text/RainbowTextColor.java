@@ -1,8 +1,7 @@
 package dev.ftb.mods.ftblibrary.util.text;
 
-import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.util.Lazy;
 import net.minecraft.client.Minecraft;
 
@@ -27,7 +26,7 @@ public class RainbowTextColor extends CustomTextColor {
 
     @Override
     public int getValue() {
-        if (Platform.getEnvironment() != Env.CLIENT) {
+        if (!Platform.get().env().isClient()) {
             return super.getValue();
         }
 

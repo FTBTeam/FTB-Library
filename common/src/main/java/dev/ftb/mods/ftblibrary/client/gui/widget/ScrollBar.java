@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.math.MathUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.util.Mth;
 
@@ -101,7 +101,7 @@ public class ScrollBar extends Widget {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         var scrollBarSize = getScrollBarSize();
 
         if (scrollBarSize > 0) {
@@ -122,7 +122,7 @@ public class ScrollBar extends Widget {
             setValue(v);
         }
 
-        drawBackground(graphics, theme, x, y, width, height);
+        extractBackground(graphics, theme, x, y, width, height);
 
         if (scrollBarSize > 0) {
             if (plane.isVertical) {
@@ -133,11 +133,11 @@ public class ScrollBar extends Widget {
         }
     }
 
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void extractBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawScrollBarBackground(graphics, x, y, w, h - 1, getWidgetType());
     }
 
-    public void drawScrollBar(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawScrollBar(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawScrollBar(graphics, x, y, w, h, WidgetType.mouseOver(grab != -10000), plane.isVertical);
     }
 

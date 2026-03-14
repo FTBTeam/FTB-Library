@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.client.gui.widget.BaseScreen;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 
@@ -31,7 +31,7 @@ public class LoadingScreen extends BaseScreen {
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         if (!startedLoading) {
             startLoading();
             startedLoading = true;

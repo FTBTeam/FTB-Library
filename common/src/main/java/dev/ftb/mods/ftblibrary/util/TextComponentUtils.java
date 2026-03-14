@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -8,9 +8,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 public class TextComponentUtils {
-    @ExpectPlatform
     public static Component withLinks(String message) {
-        throw new AssertionError();
+        return Platform.get().misc().componentWithLinks(message);
     }
 
     public static Component hotkeyTooltip(String txt) {

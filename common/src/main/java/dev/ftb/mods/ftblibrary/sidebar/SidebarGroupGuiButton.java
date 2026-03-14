@@ -7,7 +7,7 @@ import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
@@ -55,7 +55,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
         ensureGridAlignment();
     }
 
-    private static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacingWidth, int spacingHeight, Color4I backgroundColor, Color4I gridColor) {
+    private static void drawGrid(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int spacingWidth, int spacingHeight, Color4I backgroundColor, Color4I gridColor) {
         IconHelper.renderIcon(backgroundColor, graphics, x, y, width * spacingWidth, height * spacingHeight);
 
         for (var i = 0; i < width + 1; i++) {
@@ -67,11 +67,11 @@ public class SidebarGroupGuiButton extends AbstractButton {
         }
     }
 
-    public static void drawGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor) {
+    public static void drawGrid(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor) {
         drawGrid(graphics, x, y, width, height, spacing, spacing, backgroundColor, gridColor);
     }
 
-    private static void drawHoveredGrid(GuiGraphics graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor, int mx, int my, boolean gridStartBottom, boolean gridStartRight) {
+    private static void drawHoveredGrid(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int spacing, Color4I backgroundColor, Color4I gridColor, int mx, int my, boolean gridStartBottom, boolean gridStartRight) {
         drawGrid(graphics, x, y, width, height, spacing, backgroundColor, gridColor);
 
         int adjustedMx = gridStartRight ? x + width * spacing - (mx - x) : mx;
@@ -94,9 +94,9 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     @Override
-    public void renderContents(GuiGraphics graphics, int mx, int my, float partialTicks) {
-        currentMouseX = mx;
-        currentMouseY = my;
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        currentMouseX = mouseX;
+        currentMouseY = mouseY;
         mouseOver = null;
         isMouseOverAdd = false;
         mouseOverSettingsIcon = false;
@@ -111,15 +111,13 @@ public class SidebarGroupGuiButton extends AbstractButton {
         }
 
         if (isEditMode) {
-            renderEditMode(graphics, mx, my);
+            extractEditMode(graphics, mouseX, mouseY);
         }
 
-        renderSidebarButtons(graphics, mx, my);
-
-//        graphics.pose().popPose();
+        extractSidebarButtons(graphics, mouseX, mouseY);
     }
 
-    private void renderSidebarButtons(GuiGraphics graphics, int mx, int my) {
+    private void extractSidebarButtons(GuiGraphicsExtractor graphics, int mx, int my) {
         var font = Minecraft.getInstance().font;
 
         Matrix3x2fStack pose = graphics.pose();
@@ -182,7 +180,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
         }
     }
 
-    private void renderEditMode(GuiGraphics graphics, int mx, int my) {
+    private void extractEditMode(GuiGraphicsExtractor graphics, int mx, int my) {
         drawHoveredGrid(graphics, xRenderStart, yRenderStart, currentGirdWidth, currentGridHeight, BUTTON_SPACING, Color4I.GRAY.withAlpha(70), Color4I.BLACK.withAlpha(90), mx, my, gridStartBottom, gridStartRight);
 
         List<SidebarGuiButton> disabledButtonList = SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode);
@@ -237,7 +235,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
 
                     String langText = I18n.get(button.getSidebarButton().getLangKey());
                     int textXPos = gridStartRight ? addIconX - Minecraft.getInstance().font.width(langText) - 2 : gridX + BUTTON_SPACING + 3;
-                    graphics.drawString(Minecraft.getInstance().font, langText, textXPos, buttonY + 5, 0xFFFFFFFF);
+                    graphics.text(Minecraft.getInstance().font, langText, textXPos, buttonY + 5, 0xFFFFFFFF);
                 }
                 graphics.pose().popMatrix();
 

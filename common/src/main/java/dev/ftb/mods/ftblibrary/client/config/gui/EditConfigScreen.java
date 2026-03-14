@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.config.gui;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
@@ -13,8 +12,9 @@ import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -244,7 +244,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawWidget(graphics, x, y, w, h, getWidgetType());
             theme.drawString(graphics, getTitle(), x + 3, y + 3);
             if (isMouseOver()) {
@@ -283,7 +283,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             IconHelper.renderIcon(Icons.COLOR_BLANK.withColor(Color4I.GRAY), graphics, x, y + 1, 10, 10);
             IconHelper.renderIcon(Icons.INFO, graphics, x + 1, y + 2, 8, 8);
 

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.gui.input;
 
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
@@ -58,8 +58,7 @@ public record Key(KeyEvent event) {
         return new KeyModifiers(event.modifiers());
     }
 
-    @ExpectPlatform
     private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
-        throw new AssertionError();
+        return Platform.get().misc().matchesWithoutConflicts(keyBinding, keyCode);
     }
 }

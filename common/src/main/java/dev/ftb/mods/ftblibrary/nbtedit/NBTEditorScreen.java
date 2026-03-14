@@ -1,15 +1,13 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.editable.*;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditStringConfigOverlay;
+import dev.ftb.mods.ftblibrary.client.gui.SimpleToast;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.layout.WidgetLayout;
 import dev.ftb.mods.ftblibrary.client.gui.screens.AbstractThreePanelScreen;
-import dev.ftb.mods.ftblibrary.client.gui.SimpleToast;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.*;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
@@ -17,15 +15,17 @@ import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.icon.*;
 import dev.ftb.mods.ftblibrary.net.EditNBTResponsePacket;
+import dev.ftb.mods.ftblibrary.platform.network.Play2ServerNetworking;
 import dev.ftb.mods.ftblibrary.util.NBTUtils;
 import dev.ftb.mods.ftblibrary.util.SerializationUtil;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.InputConstants;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
@@ -91,7 +91,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
                 if (NBTUtils.getSizeInBytes(responseTag, false) >= 30000L) {
                     FTBLibrary.LOGGER.error("NBT too large to send!");
                 } else {
-                    NetworkManager.sendToServer(new EditNBTResponsePacket(info, responseTag));
+                    Play2ServerNetworking.send(new EditNBTResponsePacket(info, responseTag));
                 }
             }
         }).openGui();
@@ -224,7 +224,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             }
         }) {
             @Override
-            public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+            public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
                 IconHelper.renderIcon(BorderedIcon.BUTTON_ROUND_GRAY, graphics, x, y, w, h);
             }
         };
@@ -268,7 +268,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             if (isSelected()) {
                 IconHelper.renderIcon(Color4I.WHITE.withAlpha(64), graphics, x, y, w, h);
             }
@@ -521,7 +521,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             super.draw(graphics, theme, x, y, w, h);
 
             if (!hoverIcon.isEmpty()) {
@@ -756,7 +756,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             super.draw(graphics, theme, x, y, w, h);
         }
 

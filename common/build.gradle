@@ -1,41 +1,37 @@
-dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+plugins {
+    id 'net.fabricmc.fabric-loom'
+}
 
-    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+loom {
+    accessWidenerPath = project(":common").file("src/main/resources/${project.mod_id}.accesswidener")
 
-    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
-        exclude group: "dev.architectury"
+    mixin {
+        useLegacyMixinAp = false
     }
+}
 
-//    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
-//        exclude group: "dev.architectury"
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+
+//    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
 //    }
 
-    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+//    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
+//    }
+
+//    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+//    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
 
     api("de.marhali:json5-java:${json5_version}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
 //    modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.21.1:api"
 }
 
 test {
     useJUnitPlatform()
-}
-
-architectury {
-    common(/*"forge",*/ "fabric", "neoforge")
-}
-
-loom {
-    accessWidenerPath = file("src/main/resources/ftblibrary.accesswidener")
-}
-
-configurations {
-    dev
-}
-
-artifacts {
-    dev(jar)
 }
 
 publishing {

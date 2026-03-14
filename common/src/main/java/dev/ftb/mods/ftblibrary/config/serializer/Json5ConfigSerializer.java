@@ -35,6 +35,7 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
     }
 
     public static void writeToFile(Config config, Path path) throws IOException {
+        Files.createDirectories(path.getParent());
         Files.writeString(path, new Json5().serialize(serialize(config)));
     }
 

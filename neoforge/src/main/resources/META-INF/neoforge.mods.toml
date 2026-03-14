@@ -28,10 +28,3 @@ type = "required"
 versionRange = "[${mcversion},)"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies.ftblibrary]]
-modId = "architectury"
-type = "required"
-versionRange = "[${archversion},)"
-ordering = "AFTER"
-side = "BOTH"

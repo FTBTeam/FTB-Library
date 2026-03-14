@@ -10,7 +10,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -430,7 +430,7 @@ public class TextBox extends Widget implements IFocusableWidget {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         drawTextBox(graphics, theme, x, y, w, h);
         var drawGhostText = !isFocused() && text.isEmpty() && !ghostText.isEmpty();
         var textToDraw = getFormattedText();
@@ -489,7 +489,7 @@ public class TextBox extends Widget implements IFocusableWidget {
         }
     }
 
-    public void drawTextBox(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawTextBox(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawTextBox(graphics, x, y, w, h);
 
         if (label != null) {

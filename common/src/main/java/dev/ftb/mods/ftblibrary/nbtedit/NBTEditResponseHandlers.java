@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -26,9 +27,9 @@ public enum NBTEditResponseHandlers {
 
     private final Map<String, NBTResponseHandler> MAP = new ConcurrentHashMap<>();
 
-    public static void registerBuiltinHandlers() {
+    public static void registerBuiltinHandlers(HolderLookup.Provider registryAccess) {
         INSTANCE.registerHandler(ITEM, (player, info, data) ->
-                ItemStack.CODEC.parse(NbtOps.INSTANCE, data)
+                ItemStack.CODEC.parse(registryAccess.createSerializationContext(NbtOps.INSTANCE), data)
                         .ifSuccess(stack -> player.setItemInHand(InteractionHand.MAIN_HAND, stack))
         );
 

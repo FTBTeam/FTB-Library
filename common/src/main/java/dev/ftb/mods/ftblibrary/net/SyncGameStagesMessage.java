@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.platform.network.PacketContext;
 import dev.ftb.mods.ftblibrary.util.NetworkHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -34,7 +34,7 @@ public record SyncGameStagesMessage(Collection<String> stages, Operation op) imp
     }
 
     public static SyncGameStagesMessage fullSync(Player player) {
-        return new SyncGameStagesMessage(player.getTags(), Operation.REPLACE);
+        return new SyncGameStagesMessage(player.entityTags(), Operation.REPLACE);
     }
 
     @Override
@@ -42,14 +42,14 @@ public record SyncGameStagesMessage(Collection<String> stages, Operation op) imp
         return TYPE;
     }
 
-    public static void handle(SyncGameStagesMessage message, NetworkManager.PacketContext context) {
-        context.queue(() -> {
+    public static void handle(SyncGameStagesMessage message, PacketContext context) {
+        context.enqueue(() -> {
             switch (message.op) {
-                case ADD -> context.getPlayer().getTags().addAll(message.stages);
-                case REMOVE -> context.getPlayer().getTags().removeAll(message.stages);
+                case ADD -> context.player().entityTags().addAll(message.stages);
+                case REMOVE -> context.player().entityTags().removeAll(message.stages);
                 case REPLACE -> {
-                    context.getPlayer().getTags().clear();
-                    context.getPlayer().getTags().addAll(message.stages);
+                    context.player().entityTags().clear();
+                    context.player().entityTags().addAll(message.stages);
                 }
             }
         });

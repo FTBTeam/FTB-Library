@@ -9,7 +9,7 @@ import dev.ftb.mods.ftblibrary.client.gui.widget.*;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -93,14 +93,14 @@ public class KeyReferenceScreen extends BaseScreen {
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
 
         int w1 = theme.getStringWidth(getTitle());
         theme.drawString(graphics, getTitle(), x + (w - w1) / 2, y - theme.getFontHeight() - 2, Color4I.rgb(0x00FFFF), Theme.SHADOW);
     }
 
-    protected void drawTextBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    protected void drawTextBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawPanelBackground(graphics, x, y, w, h);
     }
 
@@ -152,7 +152,7 @@ public class KeyReferenceScreen extends BaseScreen {
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             int yPos = y;
 
             for (var entry : reflowed) {
@@ -191,7 +191,7 @@ public class KeyReferenceScreen extends BaseScreen {
         }
 
         @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             drawTextBackground(graphics, theme, x, y, w, h);
         }
     }

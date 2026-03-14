@@ -17,6 +17,9 @@
     "main": [
       "dev.ftb.mods.ftblibrary.fabric.FTBLibraryFabric"
     ],
+    "client": [
+      "dev.ftb.mods.ftblibrary.fabric.FTBLibraryFabricClient"
+    ],
     "rei_client": [
       "dev.ftb.mods.ftblibrary.integration.REIIntegration"
     ],
@@ -33,9 +36,8 @@
   ],
   "accessWidener": "ftblibrary.accesswidener",
   "depends": {
-    "fabric": "${fabricapiversionrange}",
-    "minecraft": "~${mcversion}",
-    "architectury": ">=${archversion}"
+    "fabric-api": "${fabricapiversionrange}",
+    "minecraft": "~${mcversion}"
   },
   "accessWidener" : "ftblibrary.accesswidener"
 }

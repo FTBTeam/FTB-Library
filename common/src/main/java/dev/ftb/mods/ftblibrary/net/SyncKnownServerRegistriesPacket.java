@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.platform.network.PacketContext;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,8 +15,8 @@ public record SyncKnownServerRegistriesPacket(KnownServerRegistries registries) 
             SyncKnownServerRegistriesPacket::new
     );
 
-    public static void handle(SyncKnownServerRegistriesPacket packet, NetworkManager.PacketContext context) {
-        context.queue(() -> KnownServerRegistries.client = packet.registries);
+    public static void handle(SyncKnownServerRegistriesPacket packet, PacketContext context) {
+        context.enqueue(() -> KnownServerRegistries.client = packet.registries);
     }
 
     @Override

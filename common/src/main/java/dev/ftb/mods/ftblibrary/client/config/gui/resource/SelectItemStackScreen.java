@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
-import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableItemStack;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
@@ -18,8 +17,6 @@ import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-
-import java.util.Objects;
 
 public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
     public static final SearchModeIndex<ResourceSearchMode<ItemStack>> KNOWN_MODES = Util.make(
@@ -61,7 +58,8 @@ public class SelectItemStackScreen extends ResourceSelectorScreen<ItemStack> {
 
         @Override
         public boolean shouldAdd(SearchTerms searchTerms) {
-            Identifier resourceId = RegistrarManager.getId(getResource().getItem(), Registries.ITEM);
+            // TODO: Validate
+            Identifier resourceId = getResource().getItem().builtInRegistryHolder().key().identifier();
             return resourceId != null && searchTerms.match(resourceId,
                     getResource().getHoverName().getString(),
                     id -> getResource().is(TagKey.create(Registries.ITEM, id))

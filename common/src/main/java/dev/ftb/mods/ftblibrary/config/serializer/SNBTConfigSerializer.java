@@ -31,6 +31,7 @@ public record SNBTConfigSerializer(SNBTCompoundTag configTag) implements ConfigS
     }
 
     public static void writeToFile(Config config, Path path) throws IOException {
+        Files.createDirectories(path.getParent());
         SNBT.tryWrite(path, serialize(config));
     }
 
