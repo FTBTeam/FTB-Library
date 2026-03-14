@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
@@ -19,6 +20,7 @@ import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
@@ -139,9 +141,21 @@ public class ClientUtils {
     }
 
     public static int getFluidColor(FluidStack stack) {
+        return getFluidColor(stack, null, null);
+    }
+
+    public static int getFluidColor(FluidStack stack, @Nullable Level level, @Nullable BlockPos pos) {
         FluidModel fluidModel = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState());
         if (fluidModel.tintSource() == null) {
             return -1;
+        }
+
+        if (stack.fluid().isSame(Fluids.WATER)) {
+            if (level != null && pos != null) {
+                return level.getBiome(pos).value().getWaterColor();
+            }
+
+            return 0x3F76E4; // default water color, used when not in world or biome is missing
         }
 
         return fluidModel.tintSource().color(Blocks.AIR.defaultBlockState());

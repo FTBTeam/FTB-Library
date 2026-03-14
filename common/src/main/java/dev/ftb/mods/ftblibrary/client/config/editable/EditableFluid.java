@@ -5,6 +5,7 @@ import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectFluidScreen;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectableResource;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import net.minecraft.network.chat.Component;
 
@@ -42,7 +43,9 @@ public class EditableFluid extends EditableResource<FluidStack> {
         if (value.isEmpty()) {
             return Component.translatable("gui.none");
         }
-        return showAmount ? Component.literal(value.amount() + "mB ").append(value.name()) : value.name();
+
+        // TODO: Figure out if "droplets" is the preferred term for fabric.
+        return showAmount ? Component.literal(value.amount() + (Platform.get().isFabric() ? " droplets " :"mB ")).append(value.name()) : value.name();
     }
 
     @Override

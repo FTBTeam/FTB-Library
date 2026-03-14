@@ -7,6 +7,8 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
@@ -14,6 +16,7 @@ import java.util.function.Predicate;
 
 public class FluidStack implements DataComponentHolder {
     private final Holder<Fluid> fluid;
+
     private long amount;
     private final PatchedDataComponentMap components;
 
@@ -46,19 +49,34 @@ public class FluidStack implements DataComponentHolder {
     }
 
     public Component name() {
-        return Component.literal("");
+        Item bucket = this.fluid().getBucket();
+        return bucket.getName(new ItemStack(bucket));
     }
 
     public long amount() {
         return this.amount;
     }
 
+    /**
+     * Helper: Returns the amount of fluid in the stack represented in buckets, rounding down.
+     */
+    public long amountAsBucket() {
+        return this.amount / bucketFluidAmount();
+    }
+
     public void setAmount(long amount) {
         this.amount = amount;
     }
 
+    /**
+     * Helper: Sets the amount of fluid in the stack based on the given bucket count.
+     */
+    public void setAmountByBucketCount(long buckets) {
+        this.amount = buckets * bucketFluidAmount();
+    }
+
     public Fluid fluid() {
-        return this.fluid.unwrap().right().orElse(Fluids.EMPTY);
+        return this.fluid.value();
     }
 
     public FluidStack copyWithAmount(long amount) {
