@@ -4,37 +4,37 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/// An extended version of ActionResult that can hold a failure or success value.
+/// An extended version of {@link Outcome} that can hold a failure or success value.
 /// Success & failures *can*, but are not required to, hold a value. PASS results should not hold a value.
-public class HolderActionResult<T> {
+public class DataOutcome<T> {
     private final @Nullable T data;
     private final boolean isFail;
     private final boolean isPass;
 
-    private HolderActionResult(@Nullable T data, boolean isFail, boolean isPass) {
+    private DataOutcome(@Nullable T data, boolean isFail, boolean isPass) {
         this.data = data;
         this.isFail = isFail;
         this.isPass = isPass;
     }
 
-    public static <T> HolderActionResult<T> success(@Nullable T data) {
-        return new HolderActionResult<>(data, false, false);
+    public static <T> DataOutcome<T> success(@Nullable T data) {
+        return new DataOutcome<>(data, false, false);
     }
 
-    public static <T> HolderActionResult<T> success() {
-        return new HolderActionResult<>(null, false, false);
+    public static <T> DataOutcome<T> success() {
+        return new DataOutcome<>(null, false, false);
     }
 
-    public static <T> HolderActionResult<T> fail(T data) {
-        return new HolderActionResult<>(data, true, false);
+    public static <T> DataOutcome<T> fail(T data) {
+        return new DataOutcome<>(data, true, false);
     }
 
-    public static <T> HolderActionResult<T> fail() {
-        return new HolderActionResult<>(null, true, false);
+    public static <T> DataOutcome<T> fail() {
+        return new DataOutcome<>(null, true, false);
     }
 
-    public static <T> HolderActionResult<T> pass() {
-        return new HolderActionResult<>(null, false, true);
+    public static <T> DataOutcome<T> pass() {
+        return new DataOutcome<>(null, false, true);
     }
 
     public boolean isSuccess() {

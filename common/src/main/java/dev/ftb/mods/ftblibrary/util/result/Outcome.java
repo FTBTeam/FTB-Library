@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.util.result;
 
 /// InteractionResult inspired result type that can either be SUCCESS, FAIL, or PASS.
-public enum ActionResult {
+public enum Outcome {
     SUCCESS,
     FAIL,
     PASS;
