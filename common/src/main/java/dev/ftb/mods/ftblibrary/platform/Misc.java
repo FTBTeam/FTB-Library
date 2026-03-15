@@ -20,4 +20,6 @@ public interface Misc {
     void refreshDisplayName(Player player);
 
     long bucketFluidAmount();
+
+    boolean isFakePlayer(Player player);
 }
