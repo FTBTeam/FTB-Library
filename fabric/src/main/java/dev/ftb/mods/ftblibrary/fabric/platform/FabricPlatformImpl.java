@@ -1,9 +1,11 @@
 package dev.ftb.mods.ftblibrary.fabric.platform;
 
 import dev.ftb.mods.ftblibrary.fabric.platform.registry.XRegistryFabric;
+import dev.ftb.mods.ftblibrary.fabric.platform.transfer.FabricTransferImpl;
 import dev.ftb.mods.ftblibrary.platform.*;
 import dev.ftb.mods.ftblibrary.platform.network.Networking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
+import dev.ftb.mods.ftblibrary.platform.transfer.Transfer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
@@ -18,6 +20,7 @@ public class FabricPlatformImpl implements Platform {
     private final Paths paths = new FabricPathsImpl();
     private final Misc misc = new FabricMiscImpl();
     private final Networking networking = new FabricNetworkingImpl();
+    private final Transfer transfer = new FabricTransferImpl();
 
     @Override
     public Env env() {
@@ -76,6 +79,11 @@ public class FabricPlatformImpl implements Platform {
     @Override
     public Networking networking() {
         return networking;
+    }
+
+    @Override
+    public Transfer transfer() {
+        return transfer;
     }
 
     @Override

@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.platform;
 
 import dev.ftb.mods.ftblibrary.platform.network.Networking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
+import dev.ftb.mods.ftblibrary.platform.transfer.Transfer;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -36,6 +37,8 @@ public interface Platform {
     Paths paths();
 
     Networking networking();
+
+    Transfer transfer();
 
     <T> XRegistry<T> createRegistry(String modId, ResourceKey<Registry<T>> registryKey);
 }
