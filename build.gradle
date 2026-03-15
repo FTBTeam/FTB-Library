@@ -105,6 +105,7 @@ subprojects {
 
         inputs.property "version", project.version
 
+        // TODO: Fabric is working on resolving this: https://github.com/FabricMC/fabric-loader/pull/1101
         def fixedMcVersion = project.minecraft_version
         if (fixedMcVersion.contains("-")) {
             def hyphenParts = fixedMcVersion.split("-")
