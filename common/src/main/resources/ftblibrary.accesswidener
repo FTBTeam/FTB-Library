@@ -1,8 +1,10 @@
 accessWidener	v2	official
 
 accessible  class   net/minecraft/client/gui/components/MultilineTextField$StringView
-transitive-extendable  class   net/minecraft/nbt/CompoundTag
-transitive-accessible method net/minecraft/nbt/CompoundTag <init> (Ljava/util/Map;)V
+
+#transitive-extendable  class   net/minecraft/nbt/CompoundTag
+#transitive-accessible method net/minecraft/nbt/CompoundTag <init> (Ljava/util/Map;)V
+
 accessible  method  net/minecraft/client/renderer/texture/SpriteContents getFrameCount ()I
 
 accessible field net/minecraft/client/gui/GuiGraphicsExtractor guiRenderState Lnet/minecraft/client/renderer/state/gui/GuiRenderState;

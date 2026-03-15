@@ -75,6 +75,7 @@ subprojects {
             url "https://maven.fabricmc.net/"
             content {
                 includeGroup "net.fabricmc"
+                includeGroup "org.spongepowered"
             }
         }
 
@@ -107,7 +108,7 @@ subprojects {
 
         // TODO: Fabric is working on resolving this: https://github.com/FabricMC/fabric-loader/pull/1101
         def fixedMcVersion = project.minecraft_version
-        if (fixedMcVersion.contains("-")) {
+        if (fixedMcVersion.contains("-") && project.name == "fabric") {
             def hyphenParts = fixedMcVersion.split("-")
             fixedMcVersion = ""
             for (int i = 0; i < hyphenParts.size(); i++) {

@@ -8,6 +8,6 @@ pluginManagement {
     }
 }
 
-include "common", "fabric"//, "neoforge"
+include "common", "fabric", "neoforge"
 
 rootProject.name = 'FTB-Library-26.1'

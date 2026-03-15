@@ -4,13 +4,11 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.config.ConfigUtil;
 import dev.ftb.mods.ftblibrary.config.serializer.Json5ConfigSerializer;
-import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
 import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
-import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
+import de.marhali.json5.Json5;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -134,12 +132,12 @@ public enum ConfigManager {
      * Called when a server config is sync'd to the client on player login.
      *
      * @param serverConfigName name of the server config, expected to be registered on client
-     * @param tag the config settings
+     * @param configData the config settings
      */
-    public void syncFromServer(String serverConfigName, CompoundTag tag) {
+    public void syncFromServer(String serverConfigName, String configData) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(new SNBTConfigSerializer(SNBTCompoundTag.of(tag)));
+            tc.config.read(new Json5ConfigSerializer(new Json5().parse(configData).getAsJson5Object()));
             tc.onEdited.accept(false);
             FTBLibrary.LOGGER.info("received server config settings for config: {}", serverConfigName);
         } else {
@@ -151,13 +149,13 @@ public enum ConfigManager {
      * Called when a player applies changes to a server config via GUI.
      *
      * @param serverConfigName name of the server config, expected to be registered on server
-     * @param tag the config settings
+     * @param configData the config settings
      * @param playerName player who made the changes
      */
-    public void syncFromClient(String serverConfigName, CompoundTag tag, String playerName) {
+    public void syncFromClient(String serverConfigName, String configData, String playerName) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(new SNBTConfigSerializer(SNBTCompoundTag.of(tag)));
+            tc.config.read(new Json5ConfigSerializer(new Json5().parse(configData).getAsJson5Object()));
             tc.onEdited.accept(true);
             save(serverConfigName);
             FTBLibrary.LOGGER.info("received client config settings from {} for config: {}", playerName, serverConfigName);

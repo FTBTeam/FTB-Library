@@ -1,14 +1,19 @@
 package dev.ftb.mods.ftblibrary.neoforge;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.neoforge.platform.networking.NeoNetworkRegistryImpl;
+import dev.ftb.mods.ftblibrary.platform.Platform;
+import dev.ftb.mods.ftblibrary.platform.network.Networking;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 @Mod(FTBLibrary.MOD_ID)
 public class FTBLibraryNeoForge {
@@ -17,7 +22,6 @@ public class FTBLibraryNeoForge {
     public FTBLibraryNeoForge(IEventBus modEventBus) {
         this.library = new FTBLibrary();
 
-        modEventBus.addListener(FMLCommonSetupEvent.class, (_) -> this.library.onSetup());
         NeoForge.EVENT_BUS.addListener(ServerStartedEvent.class, (event) -> this.library.serverStarted(event.getServer()));
         NeoForge.EVENT_BUS.addListener(ServerStartedEvent.class, (event) -> this.library.serverStarted(event.getServer()));
         NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, (event) -> this.library.registerCommands(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection()));
@@ -26,5 +30,14 @@ public class FTBLibraryNeoForge {
                 this.library.playerJoined(serverPlayer);
             }
         });
+
+        modEventBus.register(this);
+    }
+
+    @SubscribeEvent // on the mod event bus
+    public void register(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
+        Networking networking = Platform.get().networking();
+        ((NeoNetworkRegistryImpl) networking.registry()).collectPackets(registrar);
     }
 }

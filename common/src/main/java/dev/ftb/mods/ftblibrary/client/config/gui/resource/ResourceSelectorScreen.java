@@ -19,8 +19,6 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
-import dev.ftb.mods.ftblibrary.snbt.SNBT;
-import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.SNBTSyntaxException;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -304,9 +302,10 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             CompoundTag toEdit = Objects.requireNonNullElse(selectedStack.getComponentsTag(), new CompoundTag());
             if (button.isLeft()) {
                 EditableString config = new EditableString();
-                SNBTCompoundTag snbt = SNBTCompoundTag.of(toEdit);
-                snbt.singleLine();
-                config.updateValue(String.join(",", SNBT.writeLines(snbt)));
+                // TODO: What is this doing.
+//                SNBTCompoundTag snbt = SNBTCompoundTag.of(toEdit);
+//                snbt.singleLine();
+//                config.updateValue(String.join(",", SNBT.writeLines(snbt)));
                 getGui().pushModalPanel(makeMultilineEditPanel(config));
             } else if (button.isRight()) {
                 CompoundTag info = Util.make(new CompoundTag(), tag -> tag.putString("type", "item"));
@@ -324,7 +323,8 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             var panel = new EditMultilineStringConfigOverlay(ResourceSelectorScreen.this, config, accepted -> {
                 if (accepted) {
                     try {
-                        selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
+                        // TODO: What is this doing
+//                        selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
                     } catch (SNBTSyntaxException e) {
                         SimpleToast.error(Component.translatable("ftblibrary.gui.error"), Component.literal(e.getMessage()));
                     }
