@@ -4,20 +4,29 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/// An extended version of ActionResult that also carry a success data of type T when the result is SUCCESS. FAIL and PASS results will not carry any data.
+/// An extended version of ActionResult that can hold a failure or success value.
+/// Success & failures *can*, but are not required to, hold a value. PASS results should not hold a value.
 public class HolderActionResult<T> {
-    private final @Nullable T successData;
+    private final @Nullable T data;
     private final boolean isFail;
     private final boolean isPass;
 
-    private HolderActionResult(@Nullable T successData, boolean isFail, boolean isPass) {
-        this.successData = successData;
+    private HolderActionResult(@Nullable T data, boolean isFail, boolean isPass) {
+        this.data = data;
         this.isFail = isFail;
         this.isPass = isPass;
     }
 
-    public static <T> HolderActionResult<T> success(T data) {
+    public static <T> HolderActionResult<T> success(@Nullable T data) {
         return new HolderActionResult<>(data, false, false);
+    }
+
+    public static <T> HolderActionResult<T> success() {
+        return new HolderActionResult<>(null, false, false);
+    }
+
+    public static <T> HolderActionResult<T> fail(T data) {
+        return new HolderActionResult<>(data, true, false);
     }
 
     public static <T> HolderActionResult<T> fail() {
@@ -29,7 +38,7 @@ public class HolderActionResult<T> {
     }
 
     public boolean isSuccess() {
-        return successData != null;
+        return !isFail && !isPass;
     }
 
     public boolean isFail() {
@@ -40,15 +49,15 @@ public class HolderActionResult<T> {
         return isPass;
     }
 
-    public void ifSuccess(Consumer<T> consumer) {
-        if (successData != null) {
-            consumer.accept(successData);
+    public void ifSuccess(Consumer<@Nullable T> consumer) {
+        if (data != null) {
+            consumer.accept(data);
         }
     }
 
-    public void ifFail(Runnable runnable) {
+    public void ifFail(Consumer<@Nullable T> consumer) {
         if (isFail) {
-            runnable.run();
+            consumer.accept(data);
         }
     }
 
@@ -56,5 +65,14 @@ public class HolderActionResult<T> {
         if (isPass) {
             runnable.run();
         }
+    }
+
+    /// Gets the data held by this result. Will throw if this is a PASS result, as PASS results should not have data.
+    public T data() {
+        if (isPass) {
+            throw new IllegalStateException("Cannot get data from a PASS result");
+        }
+
+        return data;
     }
 }
