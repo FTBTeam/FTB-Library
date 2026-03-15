@@ -1,16 +1,43 @@
 package dev.ftb.mods.ftblibrary.neoforge;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
+import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
+import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
+import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
+import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.lifecycle.ClientStartedEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(value = FTBLibrary.MOD_ID, dist = Dist.CLIENT)
 public class FTBLibraryNeoForgeClient {
     public FTBLibraryNeoForgeClient(IEventBus modEventBus) {
         var client = new FTBLibraryClient();
 
-        // TODO: Events
+        NeoForge.EVENT_BUS.addListener(ClientStartedEvent.class, event -> client.onClientStarted(event.getClient()));
+        NeoForge.EVENT_BUS.addListener(ScreenEvent.Init.Post.class, event -> client.guiInit(event.getScreen()));
+        NeoForge.EVENT_BUS.addListener(ClientTickEvent.Post.class, ignored -> client.clientTick());
+        NeoForge.EVENT_BUS.addListener(ClientPlayerNetworkEvent.LoggingOut.class, event -> client.onPlayerLogout(event.getPlayer()));
+
+        // TODO: Shim this.
+        modEventBus.addListener(AddClientReloadListenersEvent.class, event -> {
+            event.addListener(FTBLibraryClient.SIDEBAR_LISTENER, SidebarButtonManager.INSTANCE);
+            event.addListener(FTBLibraryClient.IMAGE_SELECT_LISTENER, SelectImageResourceScreen.ResourceListener.INSTANCE);
+            event.addListener(FTBLibraryClient.ENTITY_ICON_LISTENER, new EntityIconLoader());
+        });
+
+        EventPostingHandler.INSTANCE.registerEvent(SidebarButtonCreatedEvent.Data.class,
+                data -> NeoForge.EVENT_BUS.post(new FTBLibraryNeoForgeEvents.SidebarButtonCreatedEvent(data.button())));
+        EventPostingHandler.INSTANCE.registerEventWithResult(AllowChatCommandEvent.Data.class, data -> NeoForge.EVENT_BUS.post(new ClientChatEvent(data.message())).isCanceled());
+
+        NeoForge.EVENT_BUS.addListener(FTBLibraryNeoForgeEvents.SidebarButtonCreatedEvent.class, event -> {
+            client.addVisibilityConditionToSidebarButton(event.button);
+        });
     }
 }

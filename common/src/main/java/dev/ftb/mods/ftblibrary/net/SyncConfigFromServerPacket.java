@@ -20,7 +20,7 @@ public record SyncConfigFromServerPacket(String configName, String config) imple
     );
 
     public static SyncConfigFromServerPacket create(Config config) {
-        return new SyncConfigFromServerPacket(config.getKey(), Json5ConfigSerializer.serialize(config).getAsString());
+        return new SyncConfigFromServerPacket(config.getKey(), Json5ConfigSerializer.serialize(config).toString());
     }
 
     @Override

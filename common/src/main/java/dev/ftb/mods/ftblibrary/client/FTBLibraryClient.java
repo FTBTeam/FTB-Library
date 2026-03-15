@@ -65,7 +65,8 @@ public class FTBLibraryClient {
         }
     }
 
-    public void clientTick(Minecraft client) {
+    public void clientTick() {
+        var client = Minecraft.getInstance();
         var cursorType = client.screen instanceof IScreenWrapper w ? w.getGui().getCursor() : null;
         if (lastCursorType != cursorType) {
             lastCursorType = cursorType;
@@ -101,7 +102,7 @@ public class FTBLibraryClient {
 
     public void addVisibilityConditionToSidebarButton(RegisteredSidebarButton button) {
         var id = button.getId();
-        if (id.equals(DAY_BUTTON) && id.equals(NIGHT_BUTTON)) {
+        if (id.equals(DAY_BUTTON) || id.equals(NIGHT_BUTTON)) {
             button.addVisibilityCondition(() -> {
                 if (Minecraft.getInstance().level == null) {
                     return false;
