@@ -6,13 +6,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class NeoNetworkRegistryImpl implements NetworkRegistry {
     private boolean packetsCollected = false;
-    private List<PacketHolder<?>> s2cPackets = new ArrayList<>();
-    private List<PacketHolder<?>> c2sPackets = new ArrayList<>();
+    private Queue<PacketHolder<?>> s2cPackets = new ConcurrentLinkedQueue<>();
+    private Queue<PacketHolder<?>> c2sPackets = new ConcurrentLinkedQueue<>();
 
     @Override
     public <T extends CustomPacketPayload> void serverToClient(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<T> handler) {
@@ -67,5 +67,9 @@ public class NeoNetworkRegistryImpl implements NetworkRegistry {
         });
     }
 
-    record PacketHolder<T extends CustomPacketPayload>(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<T> handler) {}
+    record PacketHolder<T extends CustomPacketPayload>(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            PacketHandler<T> handler
+    ) {}
 }
