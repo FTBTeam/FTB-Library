@@ -24,7 +24,7 @@ public record SyncConfigToServerPacket(String configName, String config) impleme
     );
 
     public static SyncConfigToServerPacket create(Config config) {
-        return new SyncConfigToServerPacket(config.getKey(), Json5ConfigSerializer.serialize(config).getAsString());
+        return new SyncConfigToServerPacket(config.getKey(), Json5ConfigSerializer.serialize(config).toString());
     }
 
     @Override
