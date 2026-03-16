@@ -3,11 +3,14 @@ package dev.ftb.mods.ftblibrary.client;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.client.FTBLibraryClientApi;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
+import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
+import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
+import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
 import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
 import dev.ftb.mods.ftblibrary.sidebar.RegisteredSidebarButton;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
@@ -44,9 +47,11 @@ public class FTBLibraryClient {
 //        ClientTickEvent.CLIENT_POST.register(FTBLibraryClient::clientTick);
 //        ClientPlayerEvent.CLIENT_PLAYER_QUIT.register(FTBLibraryClient::onPlayerLogout);
 
-//        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE, FTBLibrary.rl("sidebar"));
-//        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageResourceScreen.ResourceListener.INSTANCE, FTBLibrary.rl("image_select"));
-//        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new EntityIconLoader(), FTBLibrary.rl("entity_icons"));
+        PlatformClient.get().addResourcePackReloadListeners(FTBLibrary.MOD_ID, Map.of(
+                FTBLibraryClient.SIDEBAR_LISTENER, SidebarButtonManager.INSTANCE,
+                FTBLibraryClient.IMAGE_SELECT_LISTENER, SelectImageResourceScreen.ResourceListener.INSTANCE,
+                FTBLibraryClient.ENTITY_ICON_LISTENER, EntityIconLoader.INSTANCE
+        ));
     }
 
     public void onClientStarted(Minecraft minecraft) {
@@ -54,9 +59,7 @@ public class FTBLibraryClient {
 
         Map<String, TextColor> customColors = new HashMap<>();
         EventPostingHandler.INSTANCE.postEvent(new RegisterCustomColorEvent.Data(customColors));
-
         customColors.forEach(ExtendableTextColor::addCustomColor);
-//        RegisterCustomColorEvent.EVENT.invoker().accept(new RegisterCustomColorEvent(customColors));
     }
 
     public void guiInit(Screen screen) {

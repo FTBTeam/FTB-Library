@@ -34,12 +34,8 @@ public class FTBLibraryFabricClient implements ClientModInitializer {
 
         EventPostingHandler.INSTANCE.registerEvent(SidebarButtonCreatedEvent.Data.class,
                 data -> FTBLibraryFabricEvents.SIDEBAR_BUTTON_CREATED.invoker().buttonCreated(data));
-        EventPostingHandler.INSTANCE.registerEventWithResult(AllowChatCommandEvent.Data.class, data -> ClientSendMessageEvents.ALLOW_COMMAND.invoker().allowSendCommandMessage(data.message()));
-
-        // TODO: Shim this.
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(FTBLibraryClient.SIDEBAR_LISTENER, SidebarButtonManager.INSTANCE);
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(FTBLibraryClient.IMAGE_SELECT_LISTENER, SelectImageResourceScreen.ResourceListener.INSTANCE);
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(FTBLibraryClient.ENTITY_ICON_LISTENER, new EntityIconLoader());
+        EventPostingHandler.INSTANCE.registerEventWithResult(AllowChatCommandEvent.Data.class,
+                data -> ClientSendMessageEvents.ALLOW_COMMAND.invoker().allowSendCommandMessage(data.message()));
 
         FTBLibraryFabricEvents.SIDEBAR_BUTTON_CREATED.register(data -> client.addVisibilityConditionToSidebarButton(data.button()));
     }

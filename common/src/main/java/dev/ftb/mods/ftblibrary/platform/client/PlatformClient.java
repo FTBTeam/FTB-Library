@@ -1,7 +1,10 @@
 package dev.ftb.mods.ftblibrary.platform.client;
 
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 
+import java.util.Map;
 import java.util.ServiceLoader;
 
 public interface PlatformClient {
@@ -12,4 +15,10 @@ public interface PlatformClient {
     }
 
     void sendToServer(CustomPacketPayload payload);
+
+    void addResourcePackReloadListeners(String modId, Map<Identifier, PreparableReloadListener> listeners);
+
+    default void addResourcePackReloadListener(String modId, Identifier id, PreparableReloadListener listener) {
+        addResourcePackReloadListeners(modId, Map.of(id, listener));
+    }
 }

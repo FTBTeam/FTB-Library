@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.RegistryHelper;
 import com.google.gson.Gson;
@@ -50,6 +51,11 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
     private static final Map<EntityType<?>, Map<Identifier, Icon<?>>> ICON_CACHE = new HashMap<>();
     private static final Map<EntityType<?>, EntityIconSettings> ENTITY_SETTINGS = new HashMap<>();
     private static final Set<EntityType<?>> DYNAMIC_JSON_TEXTURES = new HashSet<>();
+
+    public static final EntityIconLoader INSTANCE = new EntityIconLoader();
+
+    private EntityIconLoader() {
+    }
 
     @Override
     protected Map<EntityType<?>, EntityIconSettings> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {

@@ -28,7 +28,7 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonE
     private final Map<Identifier, RegisteredSidebarButton> buttons = new HashMap<>();
     private final List<SidebarGuiButton> buttonList = new ArrayList<>();
 
-    public SidebarButtonManager() {
+    private SidebarButtonManager() {
         super(ExtraCodecs.JSON, FileToIdConverter.json("sidebar_buttons"));
     }
 

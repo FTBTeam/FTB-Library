@@ -7,12 +7,17 @@ import dev.ftb.mods.ftblibrary.platform.network.Networking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
 import dev.ftb.mods.ftblibrary.platform.transfer.Transfer;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -84,6 +89,12 @@ public class FabricPlatformImpl implements Platform {
     @Override
     public Transfer transfer() {
         return transfer;
+    }
+
+    @Override
+    public void addDataPackReloadListeners(String modId, Map<Identifier, PreparableReloadListener> listeners) {
+        listeners.forEach((id, listener) ->
+                ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(id, listener));
     }
 
     @Override

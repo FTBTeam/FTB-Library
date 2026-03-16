@@ -7,12 +7,18 @@ import dev.ftb.mods.ftblibrary.platform.network.Networking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
 import dev.ftb.mods.ftblibrary.platform.transfer.Transfer;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -82,6 +88,14 @@ public class NeoPlatformImpl implements Platform {
     @Override
     public Transfer transfer() {
         return transfer;
+    }
+
+    @Override
+    public void addDataPackReloadListeners(String modId, Map<Identifier, PreparableReloadListener> listeners) {
+        var modBus = ModList.get().getModContainerById(modId)
+                .map(ModContainer::getEventBus)
+                .orElseThrow();
+        modBus.addListener(AddServerReloadListenersEvent.class, event -> listeners.forEach(event::addListener));
     }
 
     @Override

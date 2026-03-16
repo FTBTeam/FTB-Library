@@ -25,16 +25,10 @@ public class FTBLibraryNeoForgeClient {
         NeoForge.EVENT_BUS.addListener(ClientTickEvent.Post.class, ignored -> client.clientTick());
         NeoForge.EVENT_BUS.addListener(ClientPlayerNetworkEvent.LoggingOut.class, event -> client.onPlayerLogout(event.getPlayer()));
 
-        // TODO: Shim this.
-        modEventBus.addListener(AddClientReloadListenersEvent.class, event -> {
-            event.addListener(FTBLibraryClient.SIDEBAR_LISTENER, SidebarButtonManager.INSTANCE);
-            event.addListener(FTBLibraryClient.IMAGE_SELECT_LISTENER, SelectImageResourceScreen.ResourceListener.INSTANCE);
-            event.addListener(FTBLibraryClient.ENTITY_ICON_LISTENER, new EntityIconLoader());
-        });
-
         EventPostingHandler.INSTANCE.registerEvent(SidebarButtonCreatedEvent.Data.class,
                 data -> NeoForge.EVENT_BUS.post(new FTBLibraryNeoForgeEvents.SidebarButtonCreatedEvent(data.button())));
-        EventPostingHandler.INSTANCE.registerEventWithResult(AllowChatCommandEvent.Data.class, data -> NeoForge.EVENT_BUS.post(new ClientChatEvent(data.message())).isCanceled());
+        EventPostingHandler.INSTANCE.registerEventWithResult(AllowChatCommandEvent.Data.class,
+                data -> NeoForge.EVENT_BUS.post(new ClientChatEvent(data.message())).isCanceled());
 
         NeoForge.EVENT_BUS.addListener(FTBLibraryNeoForgeEvents.SidebarButtonCreatedEvent.class, event -> {
             client.addVisibilityConditionToSidebarButton(event.button);
