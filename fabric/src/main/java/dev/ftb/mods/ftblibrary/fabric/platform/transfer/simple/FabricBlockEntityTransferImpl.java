@@ -45,7 +45,7 @@ public class FabricBlockEntityTransferImpl implements BlockEntityTransfer {
         try (Transaction tx = Transaction.openOuter()) {
             int ok = 0;
             for (ItemStack stack : items) {
-                if (storage.insert(ItemVariant.of(stack), Integer.MAX_VALUE, tx) == stack.getCount()) {
+                if (storage.insert(ItemVariant.of(stack), stack.getCount(), tx) == stack.getCount()) {
                     ok++;
                 } else {
                     break;
