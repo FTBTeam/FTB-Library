@@ -1,16 +1,15 @@
 package dev.ftb.mods.ftblibrary.neoforge;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.neoforge.FTBLibraryEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
-import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
-import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
 import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
-import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.lifecycle.ClientStartedEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -26,12 +25,11 @@ public class FTBLibraryNeoForgeClient {
         NeoForge.EVENT_BUS.addListener(ClientPlayerNetworkEvent.LoggingOut.class, event -> client.onPlayerLogout(event.getPlayer()));
 
         EventPostingHandler.INSTANCE.registerEvent(SidebarButtonCreatedEvent.Data.class,
-                data -> NeoForge.EVENT_BUS.post(new FTBLibraryNeoForgeEvents.SidebarButtonCreatedEvent(data.button())));
+                data -> NeoForge.EVENT_BUS.post(new FTBLibraryEvent.SidebarButtonCreated(data)));
         EventPostingHandler.INSTANCE.registerEventWithResult(AllowChatCommandEvent.Data.class,
-                data -> NeoForge.EVENT_BUS.post(new ClientChatEvent(data.message())).isCanceled());
+                data -> !ClientHooks.onClientSendMessage(data.message()).isEmpty());
 
-        NeoForge.EVENT_BUS.addListener(FTBLibraryNeoForgeEvents.SidebarButtonCreatedEvent.class, event -> {
-            client.addVisibilityConditionToSidebarButton(event.button);
-        });
+        NeoForge.EVENT_BUS.addListener(FTBLibraryEvent.SidebarButtonCreated.class, event ->
+                client.addVisibilityConditionToSidebarButton(event.getButton()));
     }
 }

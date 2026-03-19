@@ -4,11 +4,10 @@ import net.minecraft.network.chat.TextColor;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @FunctionalInterface
-public interface RegisterCustomColorEvent {
-    void register(RegisterCustomColorEvent.Data data);
-
+public interface RegisterCustomColorEvent extends Consumer<RegisterCustomColorEvent.Data> {
     record Data(Map<String, TextColor> colors) {
         public void addColor(String id, TextColor color) {
             colors.put(id, color);

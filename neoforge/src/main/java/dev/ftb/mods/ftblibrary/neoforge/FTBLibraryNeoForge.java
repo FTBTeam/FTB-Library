@@ -1,13 +1,14 @@
 package dev.ftb.mods.ftblibrary.neoforge;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.neoforge.FTBLibraryEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.neoforge.platform.networking.NeoNetworkRegistryImpl;
 import dev.ftb.mods.ftblibrary.platform.Platform;
-import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
 import dev.ftb.mods.ftblibrary.platform.network.Networking;
+import dev.ftb.mods.ftblibrary.util.neoforge.NeoEventHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,20 +29,21 @@ public class FTBLibraryNeoForge {
     public FTBLibraryNeoForge(IEventBus modEventBus) {
         this.library = new FTBLibrary();
 
-        NeoForge.EVENT_BUS.addListener(ServerStartedEvent.class, (event) -> this.library.serverStarted(event.getServer()));
-        NeoForge.EVENT_BUS.addListener(ServerStartingEvent.class, (event) -> ConfigManager.getInstance().onServerStarting(event.getServer()));
-        NeoForge.EVENT_BUS.addListener(ServerStoppedEvent.class, (event) -> this.library.serverStopped(event.getServer()));
+        IEventBus bus = NeoForge.EVENT_BUS;
 
-        NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, (event) -> this.library.registerCommands(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection()));
-        NeoForge.EVENT_BUS.addListener(PlayerEvent.PlayerLoggedInEvent.class, (event) -> {
+        bus.addListener(ServerStartedEvent.class, (event) -> this.library.serverStarted(event.getServer()));
+        bus.addListener(ServerStartingEvent.class, (event) -> ConfigManager.getInstance().onServerStarting(event.getServer()));
+        bus.addListener(ServerStoppedEvent.class, (event) -> this.library.serverStopped(event.getServer()));
+
+        bus.addListener(RegisterCommandsEvent.class, (event) -> this.library.registerCommands(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection()));
+        bus.addListener(PlayerEvent.PlayerLoggedInEvent.class, (event) -> {
             if (event.getEntity() instanceof ServerPlayer serverPlayer) {
                 this.library.playerJoined(serverPlayer);
-                ConfigManager.getInstance().onPlayerLogin(serverPlayer);
             }
         });
 
-        EventPostingHandler.INSTANCE.registerEventWithResult(CustomClickEvent.Data.class, data -> NeoForge.EVENT_BUS.post(new FTBLibraryNeoForgeEvents.CustomClickEvent(data.id())).isCanceled());
-        EventPostingHandler.INSTANCE.registerEvent(RegisterCustomColorEvent.Data.class, data -> NeoForge.EVENT_BUS.post(new FTBLibraryNeoForgeEvents.RegisterCustomColorEvent(data.colors())));
+        NeoEventHelper.registerNeoEventPoster(bus, CustomClickEvent.Data.class, FTBLibraryEvent.CustomClick::new);
+        NeoEventHelper.registerNeoEventPoster(bus, RegisterCustomColorEvent.Data.class, FTBLibraryEvent.RegisterCustomColor::new);
 
         modEventBus.register(this);
     }
@@ -52,4 +54,5 @@ public class FTBLibraryNeoForge {
         Networking networking = Platform.get().networking();
         ((NeoNetworkRegistryImpl) networking.registry()).collectPackets(registrar);
     }
+
 }

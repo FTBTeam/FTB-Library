@@ -14,25 +14,34 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Json5Util {
+    public static final String FILE_EXT = ".json5";
+
     public static Optional<String> getString(Json5Object json, String field) {
-        return getSomethingOr(json, field, Json5Primitive::isString, Json5Primitive::getAsString);
+        return getSomething(json, field, Json5Primitive::isString, Json5Primitive::getAsString);
     }
 
     public static Optional<Integer> getInt(Json5Object json, String field) {
-        return getSomethingOr(json, field, Json5Primitive::isNumber, Json5Primitive::getAsInt);
+        return getSomething(json, field, Json5Primitive::isNumber, Json5Primitive::getAsInt);
+    }
+
+    public static Optional<Long> getLong(Json5Object json, String field) {
+        return getSomething(json, field, Json5Primitive::isNumber, Json5Primitive::getAsLong);
+    }
+
+    public static Optional<Double> getDouble(Json5Object json, String field) {
+        return getSomething(json, field, Json5Primitive::isNumber, Json5Primitive::getAsDouble);
     }
 
     public static Optional<Boolean> getBoolean(Json5Object json, String field) {
-        return getSomethingOr(json, field, Json5Primitive::isBoolean, Json5Primitive::getAsBoolean);
+        return getSomething(json, field, Json5Primitive::isBoolean, Json5Primitive::getAsBoolean);
     }
 
-    private static <T> Optional<T> getSomethingOr(Json5Object json, String field, Predicate<Json5Primitive> pred, Function<Json5Primitive,T> mapper) {
+    private static <T> Optional<T> getSomething(Json5Object json, String field, Predicate<Json5Primitive> pred, Function<Json5Primitive,T> mapper) {
         return json.get(field) instanceof Json5Primitive p && pred.test(p) ? Optional.of(mapper.apply(p)) : Optional.empty();
     }
 
     public static Optional<Json5Object> getJson5Object(Json5Object json, String field) {
-        Json5Element el = json.get(field);
-        return el != null && el.isJson5Object() ? Optional.of(el.getAsJson5Object()) : Optional.empty();
+        return json.get(field) instanceof Json5Object o ? Optional.of(o) : Optional.empty();
     }
 
     public static Json5Object tryRead(Path inputFile) throws IOException {

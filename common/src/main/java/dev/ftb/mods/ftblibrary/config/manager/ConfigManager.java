@@ -8,6 +8,7 @@ import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import de.marhali.json5.Json5;
+import dev.ftb.mods.ftblibrary.util.Json5Util;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -180,8 +181,7 @@ public enum ConfigManager {
     }
 
     void findAndLoad(String key, TrackedConfig protoTc, Function<String, Path> overridePathSupplier) {
-//        String fileName = key + ".snbt";
-        String fileName = key + ".json5";
+        String fileName = key + Json5Util.FILE_EXT;
 
         Path primaryPath = ConfigUtil.CONFIG_DIR.resolve(fileName);
         Path overridePath = overridePathSupplier.apply(fileName);

@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.api.event.client;
 
-@FunctionalInterface
-public interface AllowChatCommandEvent {
-    void send(Data data);
+import java.util.function.Consumer;
 
+@FunctionalInterface
+public interface AllowChatCommandEvent extends Consumer<CustomClickEvent.Data> {
     record Data(String message) {
     }
 }

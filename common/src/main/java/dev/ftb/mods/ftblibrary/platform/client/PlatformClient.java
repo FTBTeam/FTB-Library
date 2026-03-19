@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.platform.client;
 
+import net.minecraft.client.KeyMapping;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -21,4 +22,6 @@ public interface PlatformClient {
     default void addResourcePackReloadListener(String modId, Identifier id, PreparableReloadListener listener) {
         addResourcePackReloadListeners(modId, Map.of(id, listener));
     }
+
+    void registerKeyMapping(String modId, KeyMapping... keyMappings);
 }

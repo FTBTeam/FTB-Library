@@ -33,7 +33,7 @@ public class FTBLibraryFabricClient implements ClientModInitializer {
         });
 
         EventPostingHandler.INSTANCE.registerEvent(SidebarButtonCreatedEvent.Data.class,
-                data -> FTBLibraryFabricEvents.SIDEBAR_BUTTON_CREATED.invoker().buttonCreated(data));
+                data -> FTBLibraryFabricEvents.SIDEBAR_BUTTON_CREATED.invoker().accept(data));
         EventPostingHandler.INSTANCE.registerEventWithResult(AllowChatCommandEvent.Data.class,
                 data -> ClientSendMessageEvents.ALLOW_COMMAND.invoker().allowSendCommandMessage(data.message()));
 

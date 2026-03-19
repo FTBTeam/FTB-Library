@@ -19,16 +19,13 @@ public class FTBLibraryFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(ConfigManager.getInstance()::onServerStarting);
         ServerLifecycleEvents.SERVER_STARTED.register(library::serverStarted);
         ServerLifecycleEvents.SERVER_STOPPED.register(library::serverStopped);
-        ServerPlayerEvents.JOIN.register((player) -> {
-            library.playerJoined(player);
-            ConfigManager.getInstance().onPlayerLogin(player);
-        });
+        ServerPlayerEvents.JOIN.register(library::playerJoined);
 
         CommandRegistrationCallback.EVENT.register(library::registerCommands);
 
         EventPostingHandler.INSTANCE.registerEventWithResult(CustomClickEvent.Data.class,
-                data -> FTBLibraryFabricEvents.CUSTOM_CLICK.invoker().onClicked(data));
+                data -> FTBLibraryFabricEvents.CUSTOM_CLICK.invoker().test(data));
         EventPostingHandler.INSTANCE.registerEvent(RegisterCustomColorEvent.Data.class,
-                data -> FTBLibraryFabricEvents.REGISTER_CUSTOM_COLOR.invoker().register(data));
+                data -> FTBLibraryFabricEvents.REGISTER_CUSTOM_COLOR.invoker().accept(data));
     }
 }

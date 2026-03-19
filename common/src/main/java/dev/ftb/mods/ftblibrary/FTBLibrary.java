@@ -8,6 +8,7 @@ import dev.ftb.mods.ftblibrary.items.ModItems;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.FTBLibraryNet;
 import dev.ftb.mods.ftblibrary.net.SyncKnownServerRegistriesPacket;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistryRef;
 import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
@@ -66,7 +67,9 @@ public class FTBLibrary {
     }
 
     public void playerJoined(ServerPlayer player) {
-        player.sendSystemMessage(Component.literal("Hello from FTB Library!").withStyle(Style.EMPTY.withColor(RainbowTextColor.INSTANCE)));
+        if (Platform.INSTANCE.isDev()) {
+            player.sendSystemMessage(Component.literal("Hello from FTB Library!").withStyle(Style.EMPTY.withColor(RainbowTextColor.INSTANCE)));
+        }
 
         // scheduling this to run a bit later should avoid issues with KnownServerRegistries.server not been init'd yet
         MinecraftServer server = player.level().getServer();
@@ -76,6 +79,8 @@ public class FTBLibrary {
                 Server2PlayNetworking.send(player, new SyncKnownServerRegistriesPacket(KnownServerRegistries.server));
             }
         }));
+
+        ConfigManager.getInstance().onPlayerLogin(player);
     }
 
     public void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {

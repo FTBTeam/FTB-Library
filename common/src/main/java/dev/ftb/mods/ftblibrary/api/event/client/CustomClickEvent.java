@@ -2,10 +2,10 @@ package dev.ftb.mods.ftblibrary.api.event.client;
 
 import net.minecraft.resources.Identifier;
 
-@FunctionalInterface
-public interface CustomClickEvent {
-    boolean onClicked(Data data);
+import java.util.function.Predicate;
 
+@FunctionalInterface
+public interface CustomClickEvent extends Predicate<CustomClickEvent.Data> {
     record Data(Identifier id) {
     }
 }
