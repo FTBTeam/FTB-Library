@@ -3,18 +3,14 @@ package dev.ftb.mods.ftblibrary.fabric;
 import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
-import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
-import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
 import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
-import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
+import dev.ftb.mods.ftblibrary.util.fabric.FabricEventHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
-import net.minecraft.server.packs.PackType;
 
 public class FTBLibraryFabricClient implements ClientModInitializer {
     @Override
@@ -32,8 +28,8 @@ public class FTBLibraryFabricClient implements ClientModInitializer {
             client.onPlayerLogout(mc.player);
         });
 
-        EventPostingHandler.INSTANCE.registerEvent(SidebarButtonCreatedEvent.Data.class,
-                data -> FTBLibraryFabricEvents.SIDEBAR_BUTTON_CREATED.invoker().accept(data));
+        FabricEventHelper.registerFabricEventPoster(SidebarButtonCreatedEvent.Data.class, FTBLibraryFabricEvents.SIDEBAR_BUTTON_CREATED);
+
         EventPostingHandler.INSTANCE.registerEventWithResult(AllowChatCommandEvent.Data.class,
                 data -> ClientSendMessageEvents.ALLOW_COMMAND.invoker().allowSendCommandMessage(data.message()));
 

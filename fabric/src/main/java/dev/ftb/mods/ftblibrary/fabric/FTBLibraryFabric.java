@@ -4,7 +4,7 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
-import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
+import dev.ftb.mods.ftblibrary.util.fabric.FabricEventHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -23,9 +23,7 @@ public class FTBLibraryFabric implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(library::registerCommands);
 
-        EventPostingHandler.INSTANCE.registerEventWithResult(CustomClickEvent.Data.class,
-                data -> FTBLibraryFabricEvents.CUSTOM_CLICK.invoker().test(data));
-        EventPostingHandler.INSTANCE.registerEvent(RegisterCustomColorEvent.Data.class,
-                data -> FTBLibraryFabricEvents.REGISTER_CUSTOM_COLOR.invoker().accept(data));
+        FabricEventHelper.registerFabricEventPosterPredicate(CustomClickEvent.Data.class, FTBLibraryFabricEvents.CUSTOM_CLICK);
+        FabricEventHelper.registerFabricEventPoster(RegisterCustomColorEvent.Data.class, FTBLibraryFabricEvents.REGISTER_CUSTOM_COLOR);
     }
 }
