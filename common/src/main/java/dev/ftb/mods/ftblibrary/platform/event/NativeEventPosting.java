@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public enum EventPostingHandler {
+public enum NativeEventPosting {
     INSTANCE;
 
     private final Map<Class<?>, Consumer<?>> consumers = new ConcurrentHashMap<>();
@@ -15,28 +15,27 @@ public enum EventPostingHandler {
         consumers.put(dataClass, dataHandler);
     }
 
-    public <T,R> void registerEventWithResult(Class<T> dataClass, Function<T,R> dataHandler) {
-        functions.put(dataClass, dataHandler);
+    public <T,R> void registerEventWithResult(TypedEvent<T, R> typedEvent, Function<T,R> mapper) {
+        functions.put(typedEvent.dataClass(), mapper);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> void postEvent(T data) {
         if (consumers.get(data.getClass()) instanceof Consumer<?> c) {
             // safe because all additions to the map are via registerEvent()
             //noinspection unchecked
             ((Consumer<T>) c).accept(data);
         } else {
-            throw new IllegalArgumentException("unregistered data object: " + data.getClass().getName());
+            throw new IllegalArgumentException("unregistered event data object: " + data.getClass().getName());
         }
     }
 
-    public <T,R> R postEventWithResult(T data) {
-        if (functions.get(data.getClass()) instanceof Function<?,?> f) {
+    public <T,R> R postEventWithResult(TypedEvent<T,R> event, T data) {
+        if (functions.get(event.dataClass()) instanceof Function<?,?> f) {
             // safe because all additions to the map are via registerEventWithResult()
             //noinspection unchecked
             return ((Function<T,R>) f).apply(data);
         } else {
-            throw new IllegalArgumentException("unregistered data object: " + data.getClass().getName());
+            throw new IllegalArgumentException("unregistered event data object: " + data.getClass().getName());
         }
     }
 }

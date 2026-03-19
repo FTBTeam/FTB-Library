@@ -7,7 +7,7 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.value.StringSidebarMapValue.SideButtonInfo;
-import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
+import dev.ftb.mods.ftblibrary.platform.event.NativeEventPosting;
 import dev.ftb.mods.ftblibrary.util.MapUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -63,7 +63,7 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonE
         }
 
         for (RegisteredSidebarButton value : buttons.values()) {
-            EventPostingHandler.INSTANCE.postEvent(new SidebarButtonCreatedEvent.Data(value));
+            NativeEventPosting.INSTANCE.postEvent(new SidebarButtonCreatedEvent.Data(value));
         }
 
         if (!prevConfig.equals(buttonConfig)) {

@@ -2,6 +2,8 @@ package dev.ftb.mods.ftblibrary.client;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.client.FTBLibraryClientApi;
+import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
@@ -11,7 +13,8 @@ import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
 import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
-import dev.ftb.mods.ftblibrary.platform.event.EventPostingHandler;
+import dev.ftb.mods.ftblibrary.platform.event.NativeEventPosting;
+import dev.ftb.mods.ftblibrary.platform.event.TypedEvent;
 import dev.ftb.mods.ftblibrary.sidebar.RegisteredSidebarButton;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -42,11 +45,12 @@ public class FTBLibraryClient {
     @Nullable
     public static CursorType lastCursorType = null;
 
-    public FTBLibraryClient() {
-//        ClientGuiEvent.INIT_POST.register(FTBLibraryClient::guiInit);
-//        ClientTickEvent.CLIENT_POST.register(FTBLibraryClient::clientTick);
-//        ClientPlayerEvent.CLIENT_PLAYER_QUIT.register(FTBLibraryClient::onPlayerLogout);
+    public static final TypedEvent<CustomClickEvent.Data, Boolean> CUSTOM_CLICK_TYPE
+            = TypedEvent.ofBoolean(CustomClickEvent.Data.class);
+    public static final TypedEvent<AllowChatCommandEvent.Data, Boolean> SEND_CHAT_TYPE
+            = TypedEvent.ofBoolean(AllowChatCommandEvent.Data.class);
 
+    public FTBLibraryClient() {
         PlatformClient.get().addResourcePackReloadListeners(FTBLibrary.MOD_ID, Map.of(
                 FTBLibraryClient.SIDEBAR_LISTENER, SidebarButtonManager.INSTANCE,
                 FTBLibraryClient.IMAGE_SELECT_LISTENER, SelectImageResourceScreen.ResourceListener.INSTANCE,
@@ -58,7 +62,7 @@ public class FTBLibraryClient {
         ConfigManagerClient.onClientStarted(minecraft);
 
         Map<String, TextColor> customColors = new HashMap<>();
-        EventPostingHandler.INSTANCE.postEvent(new RegisterCustomColorEvent.Data(customColors));
+        NativeEventPosting.INSTANCE.postEvent(new RegisterCustomColorEvent.Data(customColors));
         customColors.forEach(ExtendableTextColor::addCustomColor);
     }
 
@@ -85,7 +89,7 @@ public class FTBLibraryClient {
         }
     }
 
-    public void onPlayerLogout(@Nullable LocalPlayer localPlayer) {
+    public void onPlayerLogout(@Nullable LocalPlayer ignored) {
         KnownServerRegistries.client = null;
     }
 

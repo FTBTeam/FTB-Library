@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.neoforge;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.neoforge.FTBLibraryEvent;
-import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
 import dev.ftb.mods.ftblibrary.neoforge.platform.networking.NeoNetworkRegistryImpl;
@@ -42,7 +41,11 @@ public class FTBLibraryNeoForge {
             }
         });
 
-        NeoEventHelper.registerNeoEventPoster(bus, CustomClickEvent.Data.class, FTBLibraryEvent.CustomClick::new);
+//        NeoEventHelper.registerNeoEventPosterWithResult(bus, CustomClickEvent.Data.class, data -> {
+//            FTBLibraryEvent.CustomClick event = new FTBLibraryEvent.CustomClick(data);
+//            bus.post(event);
+//            return !event.isCanceled();
+//        });
         NeoEventHelper.registerNeoEventPoster(bus, RegisterCustomColorEvent.Data.class, FTBLibraryEvent.RegisterCustomColor::new);
 
         modEventBus.register(this);

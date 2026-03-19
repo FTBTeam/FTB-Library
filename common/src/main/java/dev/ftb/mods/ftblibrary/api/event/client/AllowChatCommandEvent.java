@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.api.event.client;
 
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @FunctionalInterface
-public interface AllowChatCommandEvent extends Consumer<CustomClickEvent.Data> {
+public interface AllowChatCommandEvent extends Predicate<CustomClickEvent.Data> {
     record Data(String message) {
     }
 }

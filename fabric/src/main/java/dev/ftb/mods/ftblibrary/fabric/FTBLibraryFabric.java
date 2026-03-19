@@ -23,7 +23,6 @@ public class FTBLibraryFabric implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(library::registerCommands);
 
-        FabricEventHelper.registerFabricEventPosterPredicate(CustomClickEvent.Data.class, FTBLibraryFabricEvents.CUSTOM_CLICK);
         FabricEventHelper.registerFabricEventPoster(RegisterCustomColorEvent.Data.class, FTBLibraryFabricEvents.REGISTER_CUSTOM_COLOR);
     }
 }

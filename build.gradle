@@ -160,7 +160,7 @@ publishMods {
     def curseForgeOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_KEY")
         minecraftVersions.add("${minecraft_version}")
-        javaVersions.add(JavaVersion.VERSION_21)
+        javaVersions.add(JavaVersion.VERSION_25)
     }
 
     curseforge("curseforgeFabric") {
