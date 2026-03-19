@@ -13,7 +13,9 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.NonNull;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class NeoPlatformClientImpl implements PlatformClient {
     @Override
@@ -30,9 +32,12 @@ public class NeoPlatformClientImpl implements PlatformClient {
     @Override
     public void registerKeyMapping(String modId, KeyMapping... keyMappings) {
         getModBusOrThrow(modId).addListener(RegisterKeyMappingsEvent.class, event -> {
+            Set<KeyMapping.Category> cats = new HashSet<>();
             for (var k : keyMappings) {
+                cats.add(k.getCategory());
                 event.register(k);
             }
+            cats.forEach(event::registerCategory);
         });
     }
 
