@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.client.util;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
-import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import net.minecraft.IdentifierException;
@@ -37,7 +36,7 @@ public class ClientUtils {
 
     public static void execClientCommand(String command, boolean printChat) {
         if (!command.isEmpty() && Minecraft.getInstance().player != null) {
-            if (FTBLibraryClient.SEND_CHAT_TYPE.post(new AllowChatCommandEvent.Data(command))) {
+            if (AllowChatCommandEvent.TYPE.post(new AllowChatCommandEvent.Data(command))) {
                 if (printChat) {
                     Minecraft.getInstance().gui.getChat().addRecentChat(command);
                 }
@@ -117,7 +116,7 @@ public class ClientUtils {
 
     private static boolean trySendCustomClickEvent(String name) {
         try {
-            return FTBLibraryClient.CUSTOM_CLICK_TYPE.post(new CustomClickEvent.Data(Identifier.parse(name)));
+            return CustomClickEvent.TYPE.post(new CustomClickEvent.Data(Identifier.parse(name)));
         } catch (IdentifierException ex) {
             logHandleClickFailure("custom", name, ex);
             return false;

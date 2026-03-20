@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.fabric;
 
+import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.platform.event.NativeEventPosting;
@@ -36,10 +38,10 @@ public class FTBLibraryFabricClient implements ClientModInitializer {
     private static void registerFabricEventPosters() {
         FabricEventHelper.registerFabricEventPoster(SidebarButtonCreatedEvent.Data.class, FTBLibraryFabricEvents.SIDEBAR_BUTTON_CREATED);
 
-        FabricEventHelper.registerFabricEventPosterPredicate(FTBLibraryClient.CUSTOM_CLICK_TYPE, FTBLibraryFabricEvents.CUSTOM_CLICK);
+        FabricEventHelper.registerFabricEventPosterPredicate(CustomClickEvent.TYPE, FTBLibraryFabricEvents.CUSTOM_CLICK);
 
         NativeEventPosting.INSTANCE.registerEventWithResult(
-                FTBLibraryClient.SEND_CHAT_TYPE,
+                AllowChatCommandEvent.TYPE,
                 data -> ClientSendMessageEvents.ALLOW_COMMAND.invoker().allowSendCommandMessage(data.message())
         );
     }
