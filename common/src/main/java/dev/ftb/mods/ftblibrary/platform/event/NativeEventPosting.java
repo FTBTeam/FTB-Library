@@ -8,28 +8,27 @@ import java.util.function.Function;
 public enum NativeEventPosting {
     INSTANCE;
 
-    private final Map<TypedEvent<?,?>, Consumer<?>> consumers = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Consumer<?>> consumers = new ConcurrentHashMap<>();
     private final Map<TypedEvent<?,?>, Function<?,?>> functions = new ConcurrentHashMap<>();
 
-    public <T> void registerEvent(Class<T> dataClass, Consumer<T> dataHandler) {
-        // Internal anonymous TypedEvent just for keying
-        registerEvent(new TypedEvent<>(dataClass), dataHandler);
+    public static NativeEventPosting get() {
+        return INSTANCE;
     }
 
-    public <T> void registerEvent(TypedEvent<T, Void> event, Consumer<T> dataHandler) {
-        consumers.put(event, dataHandler);
+    public <T> void registerEvent(Class<T> cls, Consumer<T> dataHandler) {
+        consumers.put(cls, dataHandler);
     }
 
     public <T, R> void registerEventWithResult(TypedEvent<T, R> event, Function<T, R> mapper) {
         functions.put(event, mapper);
     }
 
-    public <T> void postEvent(TypedEvent<T, Void> event, T data) {
-        if (consumers.get(event) instanceof Consumer<?> c) {
+    public <T> void postEvent(T data) {
+        if (consumers.get(data.getClass()) instanceof Consumer<?> c) {
             //noinspection unchecked
             ((Consumer<T>) c).accept(data);
         } else {
-            throw new IllegalArgumentException("unregistered event: " + event);
+            throw new IllegalArgumentException("unregistered event: " + data.getClass().getName());
         }
     }
 

@@ -1,6 +1,8 @@
 package dev.ftb.mods.ftblibrary.neoforge;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.api.neoforge.FTBLibraryEvent;
 import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
@@ -37,13 +39,13 @@ public class FTBLibraryNeoForgeClient {
         NativeEventPosting.INSTANCE.registerEvent(SidebarButtonCreatedEvent.Data.class,
                 data -> bus.post(new FTBLibraryEvent.SidebarButtonCreated(data)));
 
-        NativeEventPosting.INSTANCE.registerEventWithResult(FTBLibraryClient.CUSTOM_CLICK_TYPE, data -> {
+        NativeEventPosting.INSTANCE.registerEventWithResult(CustomClickEvent.TYPE, data -> {
             FTBLibraryEvent.CustomClick event = new FTBLibraryEvent.CustomClick(data);
             bus.post(event);
             return !event.isCanceled();
         });
 
-        NativeEventPosting.INSTANCE.registerEventWithResult(FTBLibraryClient.SEND_CHAT_TYPE, data ->
+        NativeEventPosting.INSTANCE.registerEventWithResult(AllowChatCommandEvent.TYPE, data ->
                 !ClientHooks.onClientSendMessage(data.message()).isEmpty());
     }
 }

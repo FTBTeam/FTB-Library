@@ -2,10 +2,7 @@ package dev.ftb.mods.ftblibrary.client;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.client.FTBLibraryClientApi;
-import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
-import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
-import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
@@ -14,7 +11,7 @@ import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
 import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
-import dev.ftb.mods.ftblibrary.platform.event.TypedEvent;
+import dev.ftb.mods.ftblibrary.platform.event.NativeEventPosting;
 import dev.ftb.mods.ftblibrary.sidebar.RegisteredSidebarButton;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -45,18 +42,6 @@ public class FTBLibraryClient {
     @Nullable
     public static CursorType lastCursorType = null;
 
-    public static final TypedEvent<CustomClickEvent.Data, Boolean> CUSTOM_CLICK_TYPE
-            = TypedEvent.ofBoolean(CustomClickEvent.Data.class);
-
-    public static final TypedEvent<AllowChatCommandEvent.Data, Boolean> SEND_CHAT_TYPE
-            = TypedEvent.ofBoolean(AllowChatCommandEvent.Data.class);
-
-    public static final TypedEvent<RegisterCustomColorEvent.Data, Void> REGISTER_CUSTOM_COLOR_TYPE
-            = TypedEvent.noReturn(RegisterCustomColorEvent.Data.class);
-
-    public static final TypedEvent<SidebarButtonCreatedEvent.Data, Void> SIDEBAR_BUTTON_CREATED_TYPE
-            = TypedEvent.noReturn(SidebarButtonCreatedEvent.Data.class);
-
     public FTBLibraryClient() {
         PlatformClient.get().addResourcePackReloadListeners(FTBLibrary.MOD_ID, Map.of(
                 FTBLibraryClient.SIDEBAR_LISTENER, SidebarButtonManager.INSTANCE,
@@ -70,7 +55,7 @@ public class FTBLibraryClient {
 
         Map<String, TextColor> customColors = new HashMap<>();
 
-        REGISTER_CUSTOM_COLOR_TYPE.post(new RegisterCustomColorEvent.Data(customColors));
+        NativeEventPosting.get().postEvent(new RegisterCustomColorEvent.Data(customColors));
         customColors.forEach(ExtendableTextColor::addCustomColor);
     }
 
