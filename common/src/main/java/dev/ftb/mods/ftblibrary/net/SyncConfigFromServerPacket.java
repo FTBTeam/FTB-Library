@@ -11,7 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public record SyncConfigFromServerPacket(String configName, String config) implements CustomPacketPayload {
-    public static final Type<SyncConfigFromServerPacket> TYPE = new Type<>(FTBLibrary.rl("sync_config_from_server_packet"));
+    public static final Type<SyncConfigFromServerPacket> TYPE = new Type<>(FTBLibrary.id("sync_config_from_server_packet"));
 
     public static final StreamCodec<FriendlyByteBuf, SyncConfigFromServerPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, SyncConfigFromServerPacket::configName,

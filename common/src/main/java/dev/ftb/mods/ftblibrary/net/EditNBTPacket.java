@@ -10,7 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public record EditNBTPacket(CompoundTag info, CompoundTag tag) implements CustomPacketPayload {
-    public static final Type<EditNBTPacket> TYPE = new Type<>(FTBLibrary.rl("edit_nbt"));
+    public static final Type<EditNBTPacket> TYPE = new Type<>(FTBLibrary.id("edit_nbt"));
 
     public static StreamCodec<FriendlyByteBuf, EditNBTPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.COMPOUND_TAG, EditNBTPacket::info,
@@ -18,7 +18,7 @@ public record EditNBTPacket(CompoundTag info, CompoundTag tag) implements Custom
             EditNBTPacket::new
     );
 
-    public static void handle(EditNBTPacket packet, PacketContext context) {
+    public static void handle(EditNBTPacket packet, PacketContext ignored) {
         NBTEditorScreen.openEditor(packet.info, packet.tag);
     }
 

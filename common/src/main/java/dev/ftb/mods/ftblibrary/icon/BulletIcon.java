@@ -9,7 +9,7 @@ import net.minecraft.resources.Identifier;
 
 
 public class BulletIcon extends Icon<BulletIcon> {
-    public static final Identifier TYPE = FTBLibrary.rl("bullet");
+    public static final Identifier TYPE = FTBLibrary.id("bullet");
 
     private Color4I color, brightColor, darkColor;
     private boolean inverse;

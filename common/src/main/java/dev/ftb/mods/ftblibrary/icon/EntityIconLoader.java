@@ -2,7 +2,6 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
-import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.RegistryHelper;
 import com.google.gson.Gson;
@@ -74,7 +73,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
 
             String basePath = getBasePath(id);
 
-            Identifier invisible = FTBLibrary.rl(basePath + ".invisible");
+            Identifier invisible = FTBLibrary.id(basePath + ".invisible");
 
             EntityIconSettings entityIconSettings = null;
 
@@ -83,12 +82,12 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
                 entityIconSettings = EntityIconSettings.legacy();
             }
 
-            Optional<Resource> resource = resourceManager.getResource(FTBLibrary.rl(basePath + ".json"));
+            Optional<Resource> resource = resourceManager.getResource(FTBLibrary.id(basePath + ".json"));
             if (resource.isPresent()) {
                 entityIconSettings = loadEntitySetting(id, resource.get());
                 DYNAMIC_JSON_TEXTURES.add(entityType);
             } else {
-                Identifier imgLoc = FTBLibrary.rl(basePath + ".png");
+                Identifier imgLoc = FTBLibrary.id(basePath + ".png");
                 if (resourceManager.getResource(imgLoc).isPresent()) {
                     entityIconSettings = EntityIconSettings.forImage(imgLoc);
                 }

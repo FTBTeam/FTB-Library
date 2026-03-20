@@ -6,7 +6,7 @@ import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import net.minecraft.resources.Identifier;
 
 public class AtlasSpriteIcon extends Icon<AtlasSpriteIcon> implements IResourceIcon {
-    public static final Identifier TYPE = FTBLibrary.rl("atlas_sprite");
+    public static final Identifier TYPE = FTBLibrary.id("atlas_sprite");
 
     private final Identifier spriteId;
     private final Color4I color;

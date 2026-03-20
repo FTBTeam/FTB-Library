@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 
 public record SyncConfigToServerPacket(String configName, String config) implements CustomPacketPayload {
-    public static final Type<SyncConfigToServerPacket> TYPE = new Type<>(FTBLibrary.rl("sync_config_to_server_packet"));
+    public static final Type<SyncConfigToServerPacket> TYPE = new Type<>(FTBLibrary.id("sync_config_to_server_packet"));
 
     public static final StreamCodec<FriendlyByteBuf, SyncConfigToServerPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, SyncConfigToServerPacket::configName,

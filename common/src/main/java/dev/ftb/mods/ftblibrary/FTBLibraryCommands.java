@@ -160,7 +160,7 @@ public class FTBLibraryCommands {
     private static void editPlayerNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
         var player = EntityArgument.getPlayer(context, "player");
 
-        info.putString("type", NBTEditResponseHandlers.PLAYER);
+        info.putString("type", NBTEditResponseHandlers.PLAYER.toString());
         info.store("id", UUIDUtil.CODEC, player.getUUID());
 
         TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, player.level().registryAccess());
@@ -183,7 +183,7 @@ public class FTBLibraryCommands {
             return;
         }
 
-        info.putString("type", NBTEditResponseHandlers.ENTITY);
+        info.putString("type", NBTEditResponseHandlers.ENTITY.toString());
         info.putInt("id", entity.getId());
 
         TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, entity.registryAccess());
@@ -211,7 +211,7 @@ public class FTBLibraryCommands {
             return;
         }
 
-        info.putString("type", NBTEditResponseHandlers.BLOCK);
+        info.putString("type", NBTEditResponseHandlers.BLOCK.toString());
         BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, pos).ifSuccess(nbt -> info.put("pos", nbt));
         tag.merge(blockEntity.saveWithFullMetadata(context.getSource().getLevel().registryAccess()));
         tag.remove("x");

@@ -35,12 +35,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FTBLibraryClient {
-    public static final Identifier SIDEBAR_LISTENER = FTBLibrary.rl("sidebar");
-    public static final Identifier IMAGE_SELECT_LISTENER = FTBLibrary.rl("image_select");
-    public static final Identifier ENTITY_ICON_LISTENER = FTBLibrary.rl("entity_icons");
+    public static final Identifier SIDEBAR_LISTENER = FTBLibrary.id("sidebar");
+    public static final Identifier IMAGE_SELECT_LISTENER = FTBLibrary.id("image_select");
+    public static final Identifier ENTITY_ICON_LISTENER = FTBLibrary.id("entity_icons");
 
-    public static final Identifier DAY_BUTTON = FTBLibrary.rl("toggle/day");
-    public static final Identifier NIGHT_BUTTON = FTBLibrary.rl("toggle/night");
+    public static final Identifier DAY_BUTTON = FTBLibrary.id("toggle/day");
+    public static final Identifier NIGHT_BUTTON = FTBLibrary.id("toggle/night");
 
     @Nullable
     public static CursorType lastCursorType = null;

@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 public record SyncGameStagesMessage(Collection<String> stages, Operation op) implements CustomPacketPayload {
-    public static final Type<SyncGameStagesMessage> TYPE = new Type<>(FTBLibrary.rl("sync_game_stage"));
+    public static final Type<SyncGameStagesMessage> TYPE = new Type<>(FTBLibrary.id("sync_game_stage"));
     public static final StreamCodec<FriendlyByteBuf, SyncGameStagesMessage> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.collection(ArrayList::new)), SyncGameStagesMessage::stages,
             NetworkHelper.enumStreamCodec(Operation.class), SyncGameStagesMessage::op,

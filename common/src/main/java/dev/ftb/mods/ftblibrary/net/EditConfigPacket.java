@@ -9,7 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public record EditConfigPacket(String configName) implements CustomPacketPayload {
-    public static final Type<EditConfigPacket> TYPE = new Type<>(FTBLibrary.rl("edit_config"));
+    public static final Type<EditConfigPacket> TYPE = new Type<>(FTBLibrary.id("edit_config"));
 
     public static final StreamCodec<FriendlyByteBuf, EditConfigPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, EditConfigPacket::configName,

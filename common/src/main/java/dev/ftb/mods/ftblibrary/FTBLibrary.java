@@ -48,7 +48,7 @@ public class FTBLibrary {
         ExtendableTextColor.addCustomColor("ftb:rainbow", RainbowTextColor.INSTANCE);
     }
 
-    public static Identifier rl(String path) {
+    public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 

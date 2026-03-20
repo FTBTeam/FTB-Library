@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
 public class ColorSelectorPanel extends ModalPanel {
-    private static final Icon<?> WHEEL = Icon.getIcon(FTBLibrary.rl("textures/gui/rgbcolorwheel.png"));
+    private static final Icon<?> WHEEL = Icon.getIcon(FTBLibrary.id("textures/gui/rgbcolorwheel.png"));
     private static final MutableComponent ARGB = Component.literal("ARGB");
     private static final MutableComponent RGB = Component.literal("RGB");
     private static final Map<String, List<Integer>> PRESETS = Util.make(new LinkedHashMap<>(), ColorSelectorPanel::setupPalettes);

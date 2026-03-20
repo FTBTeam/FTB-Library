@@ -14,7 +14,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.permissions.Permissions;
 
 public record EditConfigChoicePacket(ConfigType configType, String clientConfig, String serverConfig, Component title) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<EditConfigChoicePacket> TYPE = new CustomPacketPayload.Type<>(FTBLibrary.rl("edit_config_choice_packet"));
+    public static final CustomPacketPayload.Type<EditConfigChoicePacket> TYPE = new CustomPacketPayload.Type<>(FTBLibrary.id("edit_config_choice_packet"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EditConfigChoicePacket> STREAM_CODEC = StreamCodec.composite(
             NetworkHelper.enumStreamCodec(ConfigType.class), EditConfigChoicePacket::configType,

@@ -8,8 +8,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 public interface PlayerDisplayNameCallback {
-    Identifier EARLY = FTBLibrary.rl("early");
-    Identifier LATE = FTBLibrary.rl("late");
+    Identifier EARLY = FTBLibrary.id("early");
+    Identifier LATE = FTBLibrary.id("late");
 
     Event<PlayerDisplayNameCallback> EVENT = EventFactory.createWithPhases(PlayerDisplayNameCallback.class,
             (listeners) -> ((player, originalName) -> {
