@@ -8,7 +8,7 @@ import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
 import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import de.marhali.json5.Json5;
-import dev.ftb.mods.ftblibrary.util.Json5Util;
+import dev.ftb.mods.ftblibrary.json5.Json5Util;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
