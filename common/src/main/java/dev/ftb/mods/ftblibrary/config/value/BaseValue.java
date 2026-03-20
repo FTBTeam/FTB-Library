@@ -4,7 +4,7 @@ import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
 import dev.ftb.mods.ftblibrary.snbt.SNBTUtils;
-import dev.ftb.mods.ftblibrary.util.Json5Util;
+import dev.ftb.mods.ftblibrary.json5.Json5Util;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.util;
+package dev.ftb.mods.ftblibrary.json5;
 
 import com.mojang.serialization.Codec;
 import de.marhali.json5.Json5;

@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
-package dev.ftb.mods.ftblibrary.util;
+package dev.ftb.mods.ftblibrary.json5;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
