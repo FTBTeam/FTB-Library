@@ -8,34 +8,37 @@ import java.util.function.Function;
 public enum NativeEventPosting {
     INSTANCE;
 
-    private final Map<Class<?>, Consumer<?>> consumers = new ConcurrentHashMap<>();
-    private final Map<Class<?>, Function<?,?>> functions = new ConcurrentHashMap<>();
+    private final Map<TypedEvent<?,?>, Consumer<?>> consumers = new ConcurrentHashMap<>();
+    private final Map<TypedEvent<?,?>, Function<?,?>> functions = new ConcurrentHashMap<>();
 
     public <T> void registerEvent(Class<T> dataClass, Consumer<T> dataHandler) {
-        consumers.put(dataClass, dataHandler);
+        // Internal anonymous TypedEvent just for keying
+        registerEvent(new TypedEvent<>(dataClass), dataHandler);
     }
 
-    public <T,R> void registerEventWithResult(TypedEvent<T, R> typedEvent, Function<T,R> mapper) {
-        functions.put(typedEvent.dataClass(), mapper);
+    public <T> void registerEvent(TypedEvent<T, Void> event, Consumer<T> dataHandler) {
+        consumers.put(event, dataHandler);
     }
 
-    public <T> void postEvent(T data) {
-        if (consumers.get(data.getClass()) instanceof Consumer<?> c) {
-            // safe because all additions to the map are via registerEvent()
+    public <T, R> void registerEventWithResult(TypedEvent<T, R> event, Function<T, R> mapper) {
+        functions.put(event, mapper);
+    }
+
+    public <T> void postEvent(TypedEvent<T, Void> event, T data) {
+        if (consumers.get(event) instanceof Consumer<?> c) {
             //noinspection unchecked
             ((Consumer<T>) c).accept(data);
         } else {
-            throw new IllegalArgumentException("unregistered event data object: " + data.getClass().getName());
+            throw new IllegalArgumentException("unregistered event: " + event);
         }
     }
 
-    public <T,R> R postEventWithResult(TypedEvent<T,R> event, T data) {
-        if (functions.get(event.dataClass()) instanceof Function<?,?> f) {
-            // safe because all additions to the map are via registerEventWithResult()
+    public <T, R> R postEventWithResult(TypedEvent<T, R> event, T data) {
+        if (functions.get(event) instanceof Function<?,?> f) {
             //noinspection unchecked
-            return ((Function<T,R>) f).apply(data);
+            return ((Function<T, R>) f).apply(data);
         } else {
-            throw new IllegalArgumentException("unregistered event data object: " + data.getClass().getName());
+            throw new IllegalArgumentException("unregistered event: " + event);
         }
     }
 }

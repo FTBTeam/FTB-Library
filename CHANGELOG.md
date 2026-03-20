@@ -6,10 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [26.1.0.1]
 
-### Breaking
-
-- Removed `RegisterCustomColorEvent` in preference for use of the `ExtendableTextColor.addCustomColor` method.
-
 ## [2111.1.1]
 
 ### Added

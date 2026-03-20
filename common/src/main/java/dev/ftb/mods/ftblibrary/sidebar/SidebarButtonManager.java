@@ -1,14 +1,14 @@
 package dev.ftb.mods.ftblibrary.sidebar;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
+import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.value.StringSidebarMapValue.SideButtonInfo;
+import dev.ftb.mods.ftblibrary.util.MapUtils;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
-import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
-import dev.ftb.mods.ftblibrary.config.value.StringSidebarMapValue.SideButtonInfo;
-import dev.ftb.mods.ftblibrary.platform.event.NativeEventPosting;
-import dev.ftb.mods.ftblibrary.util.MapUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.resources.FileToIdConverter;
@@ -63,7 +63,7 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonE
         }
 
         for (RegisteredSidebarButton value : buttons.values()) {
-            NativeEventPosting.INSTANCE.postEvent(new SidebarButtonCreatedEvent.Data(value));
+            FTBLibraryClient.SIDEBAR_BUTTON_CREATED_TYPE.post(new SidebarButtonCreatedEvent.Data(value));
         }
 
         if (!prevConfig.equals(buttonConfig)) {
