@@ -9,6 +9,8 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.Block;
 
 public class FabricMiscImpl implements Misc {
     @Override
@@ -39,5 +41,10 @@ public class FabricMiscImpl implements Misc {
         // as they will typically extend ServerPlayer but not be exactly an instance of ServerPlayer.
         // Credit to Architectury for this approach:
         return player instanceof ServerPlayer && player.getClass() != ServerPlayer.class;
+    }
+
+    @Override
+    public boolean isRailBlock(Block block) {
+        return block instanceof BaseRailBlock;
     }
 }

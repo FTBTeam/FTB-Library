@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 
 public interface Misc {
     boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode);
@@ -22,4 +23,6 @@ public interface Misc {
     long bucketFluidAmount();
 
     boolean isFakePlayer(Player player);
+
+    boolean isRailBlock(Block block);
 }

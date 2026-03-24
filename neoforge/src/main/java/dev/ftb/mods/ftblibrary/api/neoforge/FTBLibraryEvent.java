@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.sidebar.RegisteredSidebarButton;
 import net.minecraft.network.chat.TextColor;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 
 public class FTBLibraryEvent {

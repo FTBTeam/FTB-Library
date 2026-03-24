@@ -10,15 +10,29 @@ import java.util.Arrays;
 
 public class FTBLibraryFabricEvents {
     public static Event<CustomClickEvent> CUSTOM_CLICK = EventFactory.createArrayBacked(CustomClickEvent.class,
-            callbacks -> data ->
-                    Arrays.stream(callbacks).anyMatch(event -> event.test(data))
+            callbacks -> data -> {
+                for (var event : callbacks) {
+                    if (event.test(data)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
     );
 
     public static Event<RegisterCustomColorEvent> REGISTER_CUSTOM_COLOR = EventFactory.createArrayBacked(RegisterCustomColorEvent.class,
-            callbacks -> data -> Arrays.stream(callbacks).forEach(c -> c.accept(data))
+            callbacks -> data -> {
+                for (var c : callbacks) {
+                    c.accept(data);
+                }
+            }
     );
 
     public static Event<SidebarButtonCreatedEvent> SIDEBAR_BUTTON_CREATED = EventFactory.createArrayBacked(SidebarButtonCreatedEvent.class,
-            callbacks -> data -> Arrays.stream(callbacks).forEach(c -> c.accept(data))
+            callbacks -> data -> {
+                for (var c : callbacks) {
+                    c.accept(data);
+                }
+            }
     );
 }

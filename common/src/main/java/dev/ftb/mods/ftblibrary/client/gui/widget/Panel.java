@@ -204,7 +204,7 @@ public abstract class Panel extends Widget {
         }
 
         doWithScrollOffset(() -> {
-            var byLayer = widgets.stream()
+            var byLayer = widgets.stream().filter(Widget::shouldDraw)
                     .collect(Collectors.groupingBy(Widget::getDrawLayer, () -> new EnumMap<>(DrawLayer.class), Collectors.toList()));
 
             byLayer.getOrDefault(DrawLayer.BACKGROUND, List.of())

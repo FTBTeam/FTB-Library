@@ -6,7 +6,9 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.extensions.IBaseRailBlockExtension;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 public class NeoMiscImpl implements Misc {
@@ -33,5 +35,10 @@ public class NeoMiscImpl implements Misc {
     @Override
     public boolean isFakePlayer(Player player) {
         return player instanceof FakePlayer || (player instanceof ServerPlayer && player.getClass() != ServerPlayer.class);
+    }
+
+    @Override
+    public boolean isRailBlock(Block block) {
+        return block instanceof IBaseRailBlockExtension;
     }
 }
