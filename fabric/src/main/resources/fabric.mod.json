@@ -38,6 +38,5 @@
   "depends": {
     "fabric-api": "${fabricapiversionrange}",
     "minecraft": "~${mcversion}"
-  },
-  "accessWidener" : "ftblibrary.accesswidener"
+  }
 }
