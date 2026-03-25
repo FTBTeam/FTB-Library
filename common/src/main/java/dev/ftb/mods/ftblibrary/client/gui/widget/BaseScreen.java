@@ -234,10 +234,6 @@ public abstract class BaseScreen extends Panel {
 
         if (mc.player != null) {
             mc.player.closeContainer();
-
-            if (mc.screen == null) {
-                mc.setWindowActive(true);
-            }
         }
 
         if (usePreviousScreenOnBack()) {
