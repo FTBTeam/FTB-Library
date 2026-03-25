@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.api.neoforge.FTBLibraryEvent;
 import dev.ftb.mods.ftblibrary.client.FTBLibraryClient;
 import dev.ftb.mods.ftblibrary.platform.event.NativeEventPosting;
+import dev.ftb.mods.ftblibrary.util.neoforge.NeoEventHelper;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -36,14 +37,9 @@ public class FTBLibraryNeoForgeClient {
     }
 
     private static void registerNeoEventPosters(IEventBus bus) {
-        NativeEventPosting.INSTANCE.registerEvent(SidebarButtonCreatedEvent.Data.class,
-                data -> bus.post(new FTBLibraryEvent.SidebarButtonCreated(data)));
+        NeoEventHelper.registerNeoEventPoster(bus, SidebarButtonCreatedEvent.Data.class, FTBLibraryEvent.SidebarButtonCreated::new);
 
-        NativeEventPosting.INSTANCE.registerEventWithResult(CustomClickEvent.TYPE, data -> {
-            FTBLibraryEvent.CustomClick event = new FTBLibraryEvent.CustomClick(data);
-            bus.post(event);
-            return !event.isCanceled();
-        });
+        NeoEventHelper.registerCancellableNeoEventPoster(bus, CustomClickEvent.TYPE, FTBLibraryEvent.CustomClick::new);
 
         NativeEventPosting.INSTANCE.registerEventWithResult(AllowChatCommandEvent.TYPE, data ->
                 !ClientHooks.onClientSendMessage(data.message()).isEmpty());
