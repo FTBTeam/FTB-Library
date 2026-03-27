@@ -17,7 +17,9 @@ public class CombinedIcon extends Icon<CombinedIcon> {
         list = new ArrayList<>(icons.size());
 
         for (var icon : icons) {
-            if (!icon.isEmpty()) {
+            // not necessarily safe to query a LazyIcon at this point
+            // e.g. combined icon containing a lazy item icon loaded from a sidebar json would cause a crash
+            if (icon instanceof LazyIcon || !icon.isEmpty()) {
                 list.add(icon);
             }
         }
@@ -31,7 +33,8 @@ public class CombinedIcon extends Icon<CombinedIcon> {
         List<Icon<?>> list = new ArrayList<>(icons.size());
 
         for (var icon : icons) {
-            if (!icon.isEmpty()) {
+            // see above
+            if (icon instanceof LazyIcon || !icon.isEmpty()) {
                 list.add(icon);
             }
         }
