@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.platform;
 import dev.ftb.mods.ftblibrary.platform.network.Networking;
 import dev.ftb.mods.ftblibrary.platform.registry.XRegistry;
 import dev.ftb.mods.ftblibrary.platform.transfer.Transfer;
-
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;

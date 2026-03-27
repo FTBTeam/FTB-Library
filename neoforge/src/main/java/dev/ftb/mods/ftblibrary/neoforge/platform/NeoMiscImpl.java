@@ -3,11 +3,15 @@ package dev.ftb.mods.ftblibrary.neoforge.platform;
 import dev.ftb.mods.ftblibrary.platform.Misc;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.extensions.IBaseRailBlockExtension;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
@@ -40,5 +44,25 @@ public class NeoMiscImpl implements Misc {
     @Override
     public boolean isRailBlock(Block block) {
         return block instanceof IBaseRailBlockExtension;
+    }
+
+    @Override
+    public boolean playerHasCorrectTool(Player player, BlockPos pos, BlockState state) {
+        return player.hasCorrectToolForDrops(state, player.level(), pos);
+    }
+
+    @Override
+    public boolean canAxeStrip(ItemStack stack) {
+        return stack.getItem().canPerformAction(stack, ItemAbilities.AXE_STRIP);
+    }
+
+    @Override
+    public boolean canTillSoil(ItemStack stack) {
+        return stack.getItem().canPerformAction(stack, ItemAbilities.HOE_TILL);
+    }
+
+    @Override
+    public boolean canFlattenPath(ItemStack stack) {
+        return stack.getItem().canPerformAction(stack, ItemAbilities.SHOVEL_FLATTEN);
     }
 }

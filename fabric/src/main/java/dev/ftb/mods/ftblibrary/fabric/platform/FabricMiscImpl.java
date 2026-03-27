@@ -6,11 +6,17 @@ import dev.ftb.mods.ftblibrary.platform.Misc;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class FabricMiscImpl implements Misc {
     @Override
@@ -46,5 +52,25 @@ public class FabricMiscImpl implements Misc {
     @Override
     public boolean isRailBlock(Block block) {
         return block instanceof BaseRailBlock;
+    }
+
+    @Override
+    public boolean playerHasCorrectTool(Player player, BlockPos pos, BlockState state) {
+        return player.hasCorrectToolForDrops(state);
+    }
+
+    @Override
+    public boolean canAxeStrip(ItemStack stack) {
+        return stack.getItem() instanceof AxeItem;
+    }
+
+    @Override
+    public boolean canTillSoil(ItemStack stack) {
+        return stack.getItem() instanceof HoeItem;
+    }
+
+    @Override
+    public boolean canFlattenPath(ItemStack stack) {
+        return stack.getItem() instanceof ShovelItem;
     }
 }

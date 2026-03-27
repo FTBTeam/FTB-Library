@@ -15,15 +15,6 @@ public class LazyIcon extends Icon<LazyIcon> {
 
     public Icon<?> getDelegate() {
         return iconSupplier.get();
-//        if (cachedIcon == null) {
-//            cachedIcon = iconSupplier.get();
-//
-//            if (cachedIcon == null || cachedIcon.isEmpty()) {
-//                cachedIcon = Icon.empty();
-//            }
-//        }
-//
-//        return cachedIcon;
     }
 
     @Override
@@ -40,21 +31,6 @@ public class LazyIcon extends Icon<LazyIcon> {
     public JsonElement getJson() {
         return getDelegate().getJson();
     }
-
-//    @Override
-//    public Icon<?> withColor(Color4I color) {
-//        return getDelegate().withColor(color);
-//    }
-
-//    @Override
-//    public Icon<?> withTint(Color4I color) {
-//        return getDelegate().withTint(color);
-//    }
-//
-//    @Override
-//    public Icon<?> withUV(float u0, float v0, float u1, float v1) {
-//        return getDelegate().withUV(u0, v0, u1, v1);
-//    }
 
     public int hashCode() {
         return getJson().hashCode();

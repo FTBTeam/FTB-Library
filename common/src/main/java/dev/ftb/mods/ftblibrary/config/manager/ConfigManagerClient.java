@@ -15,7 +15,7 @@ public class ConfigManagerClient {
         // all synced server configs are also registered on the client (but not saved there!)
         mgr.pendingServer.forEach((key, config) -> {
             if (config.synced()) {
-                mgr.track(key, config.clientMirrorOfServerConfig());
+                mgr.startTracking(key, config.clientMirrorOfServerConfig());
             }
         });
     }

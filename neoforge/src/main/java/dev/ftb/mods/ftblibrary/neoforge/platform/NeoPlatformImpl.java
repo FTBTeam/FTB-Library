@@ -10,10 +10,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 
 import java.util.ArrayList;
@@ -92,10 +91,7 @@ public class NeoPlatformImpl implements Platform {
 
     @Override
     public void addDataPackReloadListeners(String modId, Map<Identifier, PreparableReloadListener> listeners) {
-        var modBus = ModList.get().getModContainerById(modId)
-                .map(ModContainer::getEventBus)
-                .orElseThrow();
-        modBus.addListener(AddServerReloadListenersEvent.class, event -> listeners.forEach(event::addListener));
+        NeoForge.EVENT_BUS.addListener(AddServerReloadListenersEvent.class, event -> listeners.forEach(event::addListener));
     }
 
     @Override
