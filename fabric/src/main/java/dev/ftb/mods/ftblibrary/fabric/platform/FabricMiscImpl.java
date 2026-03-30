@@ -1,12 +1,14 @@
 package dev.ftb.mods.ftblibrary.fabric.platform;
 
-import dev.ftb.mods.ftblibrary.core.mixin.fabric.KeyMappingAccessor;
+import dev.ftb.mods.ftblibrary.core.mixin.fabric.KeyMappingAccess;
+import dev.ftb.mods.ftblibrary.core.mixin.fabric.PatchedDataComponentMapAccess;
 import dev.ftb.mods.ftblibrary.fabric.PlayerDisplayNameCache;
 import dev.ftb.mods.ftblibrary.platform.Misc;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class FabricMiscImpl implements Misc {
     @Override
     public boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
-        return keyCode != InputConstants.UNKNOWN && keyCode.equals(((KeyMappingAccessor) keyBinding).getKey());
+        return keyCode != InputConstants.UNKNOWN && keyCode.equals(((KeyMappingAccess) keyBinding).getKey());
     }
 
     @Override
@@ -31,7 +33,7 @@ public class FabricMiscImpl implements Misc {
 
     @Override
     public void refreshDisplayName(Player player) {
-        ((PlayerDisplayNameCache) player).clearCachedDisplayName();
+        ((PlayerDisplayNameCache) player).ftbLib$clearCachedDisplayName();
     }
 
     @Override
@@ -72,5 +74,11 @@ public class FabricMiscImpl implements Misc {
     @Override
     public boolean canFlattenPath(ItemStack stack) {
         return stack.getItem() instanceof ShovelItem;
+    }
+
+    @Override
+    public boolean hasComponentPatch(ItemStack stack) {
+        return stack.getComponents() instanceof PatchedDataComponentMap &&
+                !((PatchedDataComponentMapAccess) stack.getComponents()).getPatch().isEmpty();
     }
 }

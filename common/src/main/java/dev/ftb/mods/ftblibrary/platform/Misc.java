@@ -36,4 +36,6 @@ public interface Misc {
     boolean canTillSoil(ItemStack stack);
 
     boolean canFlattenPath(ItemStack stack);
+
+    boolean hasComponentPatch(ItemStack stack);
 }

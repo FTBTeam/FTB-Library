@@ -65,4 +65,9 @@ public class NeoMiscImpl implements Misc {
     public boolean canFlattenPath(ItemStack stack) {
         return stack.getItem().canPerformAction(stack, ItemAbilities.SHOVEL_FLATTEN);
     }
+
+    @Override
+    public boolean hasComponentPatch(ItemStack stack) {
+        return !stack.isComponentsPatchEmpty();
+    }
 }
