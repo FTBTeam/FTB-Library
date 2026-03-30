@@ -28,7 +28,7 @@ public enum ItemIconRenderer implements IconRenderer<ItemIcon> {
             poseStack.scale(scale, scale);
         }
 
-        GuiHelper.drawItem(graphics, icon.getStack(), overlay, null);
+        GuiHelper.drawItem(graphics, icon.getStack().create(), overlay, null);
         poseStack.popMatrix();
     }
 

@@ -8,7 +8,7 @@ import dev.ftb.mods.ftblibrary.client.icon.PaddedIconRenderer;
 public class PaddedIcon extends IconWithParent<PaddedIcon> {
     private final int padding;
 
-    public PaddedIcon(Icon parent, int padding) {
+    public PaddedIcon(Icon<?> parent, int padding) {
         super(parent);
 
         this.padding = padding;
