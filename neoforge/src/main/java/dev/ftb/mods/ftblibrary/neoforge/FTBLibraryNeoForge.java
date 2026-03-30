@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.neoforge.FTBLibraryEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManager;
+import dev.ftb.mods.ftblibrary.items.ModItems;
 import dev.ftb.mods.ftblibrary.neoforge.platform.networking.NeoNetworkRegistryImpl;
 import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.platform.network.Networking;
@@ -13,6 +14,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -41,11 +43,12 @@ public class FTBLibraryNeoForge {
             }
         });
 
-//        NeoEventHelper.registerNeoEventPosterWithResult(bus, CustomClickEvent.Data.class, data -> {
-//            FTBLibraryEvent.CustomClick event = new FTBLibraryEvent.CustomClick(data);
-//            bus.post(event);
-//            return !event.isCanceled();
-//        });
+        modEventBus.addListener(BuildCreativeModeTabContentsEvent.class, event -> {
+            if (event.getTab() == FTBLibrary.getCreativeModeTab().get()) {
+                event.accept(ModItems.ICON_ITEM.get());
+            }
+        });
+
         NeoEventHelper.registerNeoEventPoster(bus, RegisterCustomColorEvent.Data.class, FTBLibraryEvent.RegisterCustomColor::new);
 
         modEventBus.register(this);
