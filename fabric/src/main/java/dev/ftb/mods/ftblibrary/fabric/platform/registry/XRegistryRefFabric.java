@@ -7,15 +7,17 @@ import net.minecraft.resources.ResourceKey;
 
 import java.util.function.Supplier;
 
-public class XRegistryRefFabric<T> implements XRegistryRef<T> {
+public class XRegistryRefFabric<R, T extends R> implements XRegistryRef<T> {
     private final ResourceKey<T> resourceKey;
     private final Identifier identifier;
     private final Supplier<T> supplier;
     private T cachedValue;
     private boolean initialized;
 
-    public XRegistryRefFabric(ResourceKey<? extends Registry<T>> key, Identifier identifier, Supplier<T> supplier) {
-        this.resourceKey = ResourceKey.create(key, identifier);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public XRegistryRefFabric(ResourceKey<? extends Registry<R>> key, Identifier identifier, Supplier<T> supplier) {
+        // This appears to have no nice way around it. We can trust the input so this is acceptable.
+        this.resourceKey = ResourceKey.create((ResourceKey) key, identifier);
         this.identifier = identifier;
         this.supplier = supplier;
         this.initialized = false;

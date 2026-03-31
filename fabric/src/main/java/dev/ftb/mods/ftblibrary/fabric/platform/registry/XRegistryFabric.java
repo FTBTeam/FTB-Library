@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -16,7 +16,7 @@ public class XRegistryFabric<T> implements XRegistry<T> {
     private final String modId;
 
     private final Holder.Reference<Registry<T>> backingRegistry;
-    private final List<XRegistryRef<T>> entries = new LinkedList<>();
+    private final List<XRegistryRefFabric<T, ? extends T>> entries = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     public XRegistryFabric(String modId, ResourceKey<Registry<T>> backingRegistry) {
@@ -26,13 +26,13 @@ public class XRegistryFabric<T> implements XRegistry<T> {
 
     @Override
     public void init() {
-        for (XRegistryRef<T> entry : entries) {
+        for (XRegistryRefFabric<T, ? extends T> entry : entries) {
             Registry.register(backingRegistry.value(), entry.identifier(), entry.get());
         }
     }
 
     @Override
-    public XRegistryRef<T> register(String id, Supplier<T> value) {
+    public <I extends T> XRegistryRef<I> register(String id, Supplier<I> value) {
         var identifier = Identifier.fromNamespaceAndPath(this.modId, id);
         var entry = new XRegistryRefFabric<>(this.backingRegistry.key(), identifier, value);
         entries.add(entry);

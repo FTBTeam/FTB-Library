@@ -29,23 +29,24 @@ public class XRegistryNeo<T> implements XRegistry<T> {
     }
 
     @Override
-    public XRegistryRef<T> register(String id, Supplier<T> value) {
+    public <I extends T> XRegistryRef<I> register(String id, Supplier<I> value) {
         var identifier = Identifier.fromNamespaceAndPath(this.modId, id);
         var entry = backingRegistry.register(id, value);
 
-        return new XRegistryRef<T>() {
+        return new XRegistryRef<I>() {
             @Override
             public Identifier identifier() {
                 return identifier;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
-            public ResourceKey<T> resourceKey() {
-                return entry.getKey();
+            public ResourceKey<I> resourceKey() {
+                return (ResourceKey<I>) entry.getKey();
             }
 
             @Override
-            public T get() {
+            public I get() {
                 return entry.get();
             }
         };

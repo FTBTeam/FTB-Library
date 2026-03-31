@@ -30,5 +30,5 @@ public interface XRegistry<T> {
     /// @param id the registry ID of your object (automatically namespaced with the ID passed to [#create(String, ResourceKey)]
     /// @param value supplier of the object being registered
     /// @return a registry reference (in effect an object supplier)
-    XRegistryRef<T> register(String id, Supplier<T> value);
+    <I extends T> XRegistryRef<I> register(String id, Supplier<I> value);
 }
