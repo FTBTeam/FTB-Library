@@ -30,6 +30,10 @@ public class Json5Util {
         return getSomething(json, field, Json5Primitive::isNumber, Json5Primitive::getAsLong);
     }
 
+    public static Optional<Float> getFloat(Json5Object json, String field) {
+        return getSomething(json, field, Json5Primitive::isNumber, Json5Primitive::getAsFloat);
+    }
+
     public static Optional<Double> getDouble(Json5Object json, String field) {
         return getSomething(json, field, Json5Primitive::isNumber, Json5Primitive::getAsDouble);
     }
