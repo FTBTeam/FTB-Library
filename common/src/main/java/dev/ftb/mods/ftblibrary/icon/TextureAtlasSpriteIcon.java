@@ -2,23 +2,23 @@ package dev.ftb.mods.ftblibrary.icon;
 
 import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import dev.ftb.mods.ftblibrary.client.icon.TextureAtlasSpriteIconRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import dev.ftb.mods.ftblibrary.client.util.TextureAtlasSpriteRef;
 
 public class TextureAtlasSpriteIcon extends Icon<TextureAtlasSpriteIcon> {
-    private final TextureAtlasSprite sprite;
+    private final TextureAtlasSpriteRef spriteRef;
     private final Color4I color;
 
-    public TextureAtlasSpriteIcon(TextureAtlasSprite sprite) {
-        this(sprite, Color4I.WHITE);
+    public TextureAtlasSpriteIcon(TextureAtlasSpriteRef spriteRef) {
+        this(spriteRef, Color4I.WHITE);
     }
 
-    public TextureAtlasSpriteIcon(TextureAtlasSprite sprite, Color4I color) {
-        this.sprite = sprite;
+    public TextureAtlasSpriteIcon(TextureAtlasSpriteRef spriteRef, Color4I color) {
+        this.spriteRef = spriteRef;
         this.color = color;
     }
 
-    public TextureAtlasSprite getSprite() {
-        return sprite;
+    public TextureAtlasSpriteRef getSpriteRef() {
+        return spriteRef;
     }
 
     public Color4I getColor() {
@@ -27,12 +27,12 @@ public class TextureAtlasSpriteIcon extends Icon<TextureAtlasSpriteIcon> {
 
     @Override
     public TextureAtlasSpriteIcon copy() {
-        return new TextureAtlasSpriteIcon(sprite);
+        return new TextureAtlasSpriteIcon(spriteRef);
     }
 
     @Override
     public TextureAtlasSpriteIcon withColor(Color4I color) {
-        return new TextureAtlasSpriteIcon(sprite, color);
+        return new TextureAtlasSpriteIcon(spriteRef, color);
     }
 
     @Override

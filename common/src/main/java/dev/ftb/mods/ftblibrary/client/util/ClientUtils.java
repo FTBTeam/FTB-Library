@@ -18,7 +18,8 @@ import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import org.jspecify.annotations.Nullable;
 
@@ -26,6 +27,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
@@ -131,10 +133,14 @@ public class ClientUtils {
         return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
     }
 
-    public static TextureAtlasSprite getStillTexture(FluidStack stack) {
-        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState())
+    public static TextureAtlasSprite getStillTexture(Fluid fluid) {
+        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.defaultFluidState())
                 .stillMaterial()
                 .sprite();
+    }
+
+    public static TextureAtlasSprite getStillTexture(FluidStack stack) {
+        return getStillTexture(stack.fluid());
     }
 
     public static int getFluidColor(FluidStack stack) {
@@ -142,12 +148,17 @@ public class ClientUtils {
     }
 
     public static int getFluidColor(FluidStack stack, @Nullable Level level, @Nullable BlockPos pos) {
-        FluidModel fluidModel = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(stack.fluid().defaultFluidState());
+        return getFluidColor(stack.fluid(), level, pos);
+    }
+
+    public static int getFluidColor(Fluid fluid, @Nullable Level level, @Nullable BlockPos pos) {
+        FluidState state = fluid.defaultFluidState();
+        FluidModel fluidModel = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(state);
         if (fluidModel.tintSource() == null) {
-            return -1;
+            return 0xFFFFFFFF;
         }
 
-        if (stack.fluid().isSame(Fluids.WATER)) {
+        if (fluid.isSame(Fluids.WATER)) {
             if (level != null && pos != null) {
                 return level.getBiome(pos).value().getWaterColor();
             }
@@ -155,7 +166,7 @@ public class ClientUtils {
             return 0x3F76E4; // default water color, used when not in world or biome is missing
         }
 
-        return fluidModel.tintSource().color(Blocks.AIR.defaultBlockState());
+        return fluidModel.tintSource().color(state.createLegacyBlock());
     }
 
     public static Level getClientLevel() {
@@ -164,5 +175,13 @@ public class ClientUtils {
 
     public static Player getClientPlayer() {
         return Objects.requireNonNull(Minecraft.getInstance().player);
+    }
+
+    public static Optional<Player> getOptionalClientPlayer() {
+        return Optional.ofNullable(Minecraft.getInstance().player);
+    }
+
+    public static String getCurrentLanguageCode() {
+        return Minecraft.getInstance().options.languageCode;
     }
 }

@@ -9,6 +9,6 @@ public enum TextureAtlasSpriteIconRenderer implements IconRenderer<TextureAtlasS
 
     @Override
     public void render(TextureAtlasSpriteIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon.getSprite(), x, y, w, h, icon.getColor().rgba());
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon.getSpriteRef().sprite(), x, y, w, h, icon.getColor().rgba());
     }
 }
