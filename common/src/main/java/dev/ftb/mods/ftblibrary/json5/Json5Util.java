@@ -82,7 +82,7 @@ public class Json5Util {
         }
     }
 
-    public static void tryWrite(Path outputFile, Json5Object json) throws IOException {
+    public static void tryWrite(Path outputFile, Json5Element json) throws IOException {
         Files.createDirectories(outputFile.getParent());
         Files.writeString(outputFile, new Json5().serialize(json));
     }
