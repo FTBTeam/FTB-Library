@@ -1,10 +1,7 @@
 package dev.ftb.mods.ftblibrary.json5;
 
 import com.mojang.serialization.Codec;
-import de.marhali.json5.Json5;
-import de.marhali.json5.Json5Array;
-import de.marhali.json5.Json5Object;
-import de.marhali.json5.Json5Primitive;
+import de.marhali.json5.*;
 import net.minecraft.core.HolderLookup;
 
 import java.io.FileInputStream;
@@ -71,12 +68,16 @@ public class Json5Util {
     }
 
     public static Json5Object tryRead(Path inputFile) throws IOException {
+        return tryRead(inputFile, Json5Object.class);
+    }
+
+    public static <T extends Json5Element> T tryRead(Path inputFile, Class<T> jsonCls) throws IOException {
         try (FileInputStream stream = new FileInputStream(inputFile.toFile())) {
             var json = new Json5().parse(stream);
-            if (json instanceof Json5Object o) {
-                return o;
+            if (jsonCls.isAssignableFrom(json.getClass())) {
+                return jsonCls.cast(json);
             } else {
-                throw new IOException("expected Json5 object");
+                throw new IOException("expected object of type " + jsonCls.getName());
             }
         }
     }
