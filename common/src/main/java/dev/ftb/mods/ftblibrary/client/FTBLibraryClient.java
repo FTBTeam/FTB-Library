@@ -86,7 +86,7 @@ public class FTBLibraryClient {
         KnownServerRegistries.client = null;
     }
 
-    public boolean areButtonsVisible(@Nullable Screen gui) {
+    public static boolean areButtonsVisible(@Nullable Screen gui) {
         if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
             return false;
         }

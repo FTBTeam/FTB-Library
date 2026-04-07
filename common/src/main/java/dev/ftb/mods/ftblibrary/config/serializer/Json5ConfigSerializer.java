@@ -157,11 +157,10 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
 
     @Override
     public <T> void putMap(String key, AbstractMapValue<T> val, Codec<T> codec) {
-        configJson.add(key, Util.make(new Json5Object(), o -> val.get().forEach((k, v) -> {
-                    o.setComment(val.getCommentString());
-                    codec.encodeStart(Json5Ops.INSTANCE, v).ifSuccess(el -> o.add(k, el));
-                }))
-        );
+        configJson.add(key, Util.make(new Json5Object(), o -> {
+            o.setComment(val.getCommentString());
+            val.get().forEach((k, v) -> codec.encodeStart(Json5Ops.INSTANCE, v).ifSuccess(el -> o.add(k, el)));
+        }));
     }
 
     @Override

@@ -22,8 +22,8 @@ dependencies {
 //    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
 //    }
 
-//    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-//    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
 
     api("de.marhali:json5-java:${json5_version}")
 

@@ -41,9 +41,8 @@ repositories {
 apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
 
 dependencies {
-    // modCompileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rootProject.rei_version}"
-    //modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
-    // modCompileOnly("mezz.jei:jei-1.21.1-neoforge-api:${jei_version}")
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
     jarJar(implementation("de.marhali:json5-java:${json5_version}"))
 }
