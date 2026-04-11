@@ -44,7 +44,7 @@ dependencies {
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
     runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
-    jarJar(implementation("de.marhali:json5-java:${json5_version}"))
+    jarJar(api("de.marhali:json5-java:${json5_version}"))
 }
 
 jar {
