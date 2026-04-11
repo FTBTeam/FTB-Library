@@ -9,7 +9,7 @@ import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
-import dev.ftb.mods.ftblibrary.integration.platform.PlatformIntegrations;
+import dev.ftb.mods.ftblibrary.integration.platform.JeiShim;
 import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
@@ -35,9 +35,15 @@ import net.minecraft.world.level.material.Fluid;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.ServiceLoader;
 
 @JeiPlugin
 public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
+    // Only loads if the plugin is loaded meaning JEI is in-scope
+    private final JeiShim xmod = ServiceLoader.load(JeiShim.class)
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("No platform integrations found!"));
+
     public static IJeiRuntime runtime = null;
     private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
         @Override
@@ -114,7 +120,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
                 }
             } else {
                 // Allow us to fallback onto Fluid handlers for the native implementations
-                return PlatformIntegrations.INSTANCE.jei().getClickableIngredientUnderMouse(runtime, underMouse);
+                return xmod.getClickableIngredientUnderMouse(runtime, underMouse);
             }
         }
 

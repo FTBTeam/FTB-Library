@@ -86,4 +86,11 @@ public class Json5Util {
         Files.createDirectories(outputFile.getParent());
         Files.writeString(outputFile, new Json5().serialize(json));
     }
+
+    /// This method shouldn't be used and instead the above should be used
+    @Deprecated(forRemoval = true, since = "26.1.2.1")
+    public static void tryWrite(Path outputFile, Json5Object json) throws IOException {
+        Files.createDirectories(outputFile.getParent());
+        Files.writeString(outputFile, new Json5().serialize(json));
+    }
 }

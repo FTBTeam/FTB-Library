@@ -40,9 +40,13 @@ repositories {
 
 apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
 
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
 dependencies {
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
-    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
     jarJar(api("de.marhali:json5-java:${json5_version}"))
 }
