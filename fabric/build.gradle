@@ -31,7 +31,7 @@ dependencies {
     api "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     api "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
-    compileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
+    compileOnly("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
     localRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
 
     include(api("de.marhali:json5-java:${json5_version}"))
