@@ -124,6 +124,8 @@ subprojects {
             expand "version": project.version,
                     "neoforgeversionrange": project.neoforge_version_range,
                     "neoforgeloaderversion": project.neoforge_loader_version,
+                    "minecraft_version_range_maven": minecraft_version_range_maven,
+                    "minecraft_version_range_semver": minecraft_version_range_semver,
                     "mcversion": fixedMcVersion,
                     "fabricapiversionrange": project.fabric_api_version_range
         }
