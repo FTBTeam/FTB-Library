@@ -14,11 +14,10 @@ jobs:
   build:
     if: |
       !contains(github.event.head_commit.message, '[ciskip]')
-    uses: FTBTeam/mods-meta/.github/workflows/standard-release.yml@main
+    uses: FTBTeam/mods-meta/.github/workflows/standard-release.yml@v1
     with:
       curse-publish-task: ""
       maven-snapshots: true
       java-version: 25
     secrets:
       ftb-maven-token: ${{ secrets.FTB_MAVEN_TOKEN }}
-      saps-token: ${{ secrets.SAPS_TOKEN }}
