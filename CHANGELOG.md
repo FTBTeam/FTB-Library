@@ -4,7 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [26.1.0.1]
+## [26.1.1.1-beta]
+
+### ⚠️ Breaking ⚠️
+* FTB Library, and all mods utilizing FTB Library for 26.1+ **no longer** rely on Architectury!
+  * This means that our internal `Events` API's have changed
+* Configs are no longer `SNBT` and are now `JSON5` instead.
+* Anything previously using our `SNBT` format has now been moved to either `json` or in most cases `json5`.
+* Our `Icon` class has been reworked and rendering of icons has moved to a client only helper `IconHelper`
+
+Things are likely broken! We're releasing in a `beta` state.
 
 ## [2111.1.1]
 
