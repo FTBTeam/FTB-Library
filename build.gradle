@@ -9,24 +9,22 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/changelog.gradle'
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/maven.gradle'
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/publishing-2.gradle'
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/utils.gradle'
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/changelog.gradle'
 
 allprojects {
     apply plugin: 'idea'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
 
-    apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/git-md-changelog.gradle"
-
-    version = project.mod_version
+    version = createModVersion(project)
     group = project.maven_group
 
     base {
-        archivesName = "${project.archives_base_name}-${project.name}"
+        archivesName = project.archives_base_name
     }
-
-    // needs to be done AFTER version is set
-    apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/publishing.gradle"
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
@@ -39,20 +37,6 @@ allprojects {
 
     java {
         withSourcesJar()
-    }
-
-    publishing {
-        repositories {
-            if (ftbPublishing.ftbToken) {
-                maven {
-                    url ftbPublishing.ftbURL
-                    credentials {
-                        username = ftbPublishing.ftbUser
-                        password = ftbPublishing.ftbToken
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -70,6 +54,7 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        commonMavenRepos(repositories)
 
         maven {
             url "https://maven.fabricmc.net/"
@@ -80,24 +65,11 @@ subprojects {
         }
 
         maven {
-            url "https://www.cursemaven.com"
-            content {
-                includeGroup "curse.maven"
-            }
-        }
-
-        maven {
             name "ModMaven (JEI)"
             url "https://modmaven.dev/"
             content {
                 includeGroup "mezz.jei"
             }
-        }
-
-        maven {
-            // Emi
-            name = "TerraformersMC"
-            url = "https://maven.terraformersmc.com/"
         }
     }
 
@@ -106,27 +78,12 @@ subprojects {
 
         inputs.property "version", project.version
 
-        // TODO: Fabric is working on resolving this: https://github.com/FabricMC/fabric-loader/pull/1101
-        def fixedMcVersion = project.minecraft_version
-        if (fixedMcVersion.contains("-") && project.name == "fabric") {
-            def hyphenParts = fixedMcVersion.split("-")
-            fixedMcVersion = ""
-            for (int i = 0; i < hyphenParts.size(); i++) {
-                if (i < 2) {
-                    fixedMcVersion = fixedMcVersion + (i > 0 ? "-" : "") + hyphenParts[i]
-                } else {
-                    fixedMcVersion = fixedMcVersion + "." + hyphenParts[i]
-                }
-            }
-        }
-
         filesMatching(["META-INF/neoforge.mods.toml", "fabric.mod.json"]) {
             expand "version": project.version,
                     "neoforgeversionrange": project.neoforge_version_range,
                     "neoforgeloaderversion": project.neoforge_loader_version,
                     "minecraft_version_range_maven": minecraft_version_range_maven,
                     "minecraft_version_range_semver": minecraft_version_range_semver,
-                    "mcversion": fixedMcVersion,
                     "fabricapiversionrange": project.fabric_api_version_range
         }
     }
@@ -139,19 +96,18 @@ idea {
     }
 }
 
+createMavenPublishingBlock(project)
+
 publishMods {
     dryRun = providers.environmentVariable("CURSEFORGE_KEY").getOrNull() == null
     changelog = createChangelog(project)
     version = mod_version
-
-    // TODO: Migrate to something else
-    def tag = providers.environmentVariable("TAG").getOrElse("release")
-    type = tag.endsWith("-beta") ? BETA : (tag.endsWith("-alpha") ? ALPHA : STABLE)
+    type = createReleaseType(project)
 
     def createOptions = (String projectName) -> {
         publishOptions {
             file = project.provider { project(":$projectName").tasks.jar }.flatMap { it.archiveFile }
-            displayName = "[${projectName.toUpperCase()}][${minecraft_version}] ${readable_name} ${mod_version}"
+            displayName = "${readable_name} ${projectName.capitalize()} ${mod_version}"
             modLoaders.add(projectName.toLowerCase())
         }
     }
@@ -161,7 +117,9 @@ publishMods {
 
     def curseForgeOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_KEY")
-        minecraftVersions.add("${minecraft_version}")
+        supported_minecraft_versions.split(",").each {
+            minecraftVersions.add(it.trim())
+        }
         javaVersions.add(JavaVersion.VERSION_25)
     }
 
@@ -170,13 +128,11 @@ publishMods {
         projectId = curseforge_id_fabric
         requires('fabric-api')
         optional('jei')
-        optional('roughly-enough-items')
     }
 
     curseforge("curseforgeNeoForge") {
         from(curseForgeOptions, neoForgeOptions)
         projectId = curseforge_id_forge
         optional('jei')
-        optional('roughly-enough-items')
     }
 }

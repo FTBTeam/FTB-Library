@@ -16,13 +16,6 @@ dependencies {
     compileOnly group: 'net.fabricmc', name: 'sponge-mixin', version: '0.17.0+mixin.0.8.7'
     compileOnly "io.github.llamalad7:mixinextras-fabric:0.5.0"
 
-//    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
-//    }
-
-//    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
-//    }
-
-    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
 
     api("de.marhali:json5-java:${json5_version}")
@@ -30,19 +23,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-//    modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.21.1:api"
 }
 
 test {
     useJUnitPlatform()
-}
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = "${rootProject.archives_base_name}"
-            version ftbPublishing.mavenVersion
-            from components.java
-        }
-    }
 }

@@ -37,13 +37,3 @@ dependencies {
 
     include(api("de.marhali:json5-java:${json5_version}"))
 }
-
-publishing {
-    publications {
-        mavenFabric(MavenPublication) {
-            artifactId = "${rootProject.archives_base_name}-${project.name}"
-            version ftbPublishing.mavenVersion
-            from components.java
-        }
-    }
-}
