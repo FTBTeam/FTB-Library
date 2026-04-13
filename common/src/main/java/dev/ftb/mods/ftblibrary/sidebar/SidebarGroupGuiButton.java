@@ -141,6 +141,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
                         button.y = my - mouseOffsetY;
                     } else {
                         if (realGridLocation == null) {
+                            // Make sure we pop the matric if the button is not enabled and not selected
+                            pose.popMatrix();
                             continue;
                         }
 
