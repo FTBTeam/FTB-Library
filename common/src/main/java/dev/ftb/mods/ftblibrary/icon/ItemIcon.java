@@ -1,28 +1,31 @@
 package dev.ftb.mods.ftblibrary.icon;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import dev.ftb.mods.ftblibrary.client.icon.ItemIconRenderer;
 import dev.ftb.mods.ftblibrary.util.Lazy;
-import net.minecraft.core.component.DataComponentMap;
+import dev.ftb.mods.ftblibrary.util.RegistryHelper;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import org.jspecify.annotations.Nullable;
 
 public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
-    private final ItemStack stack;
+    // important to an ItemStackTemplate here; a full ItemStack will cause problems for early-loading
+    // e.g. sidebar Json loading
+    private final ItemStackTemplate stack;
 
-    private ItemIcon(ItemStack is) {
+    private ItemIcon(ItemStackTemplate is) {
         stack = is;
     }
 
@@ -33,11 +36,11 @@ public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
             return c.getCustomIcon(stack);
         }
 
-        return new ItemIcon(stack);
+        return new ItemIcon(ItemStackTemplate.fromNonEmptyStack(stack));
     }
 
     public static Icon<?> ofItem(Item item) {
-        return item == Items.AIR ? empty() : ofItemStack(item.getDefaultInstance());
+        return item == Items.AIR ? empty() : new ItemIcon(new ItemStackTemplate(item));
     }
 
     public static Icon<?> parse(String lazyStackString) {
@@ -46,34 +49,26 @@ public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
         }
 
         return new LazyIcon(Lazy.of(() -> {
-            var s = lazyStackString.split(" ", 4);
-            var stack = new ItemStack(BuiltInRegistries.ITEM.get(Identifier.parse(s[0])).get());
+            var fields = lazyStackString.split(" ", 4);
+            var item = BuiltInRegistries.ITEM.get(Identifier.parse(fields[0])).orElse(Items.BARRIER.builtInRegistryHolder());
+            int count = fields.length >= 2 && !fields[1].equals("1") ? Integer.parseInt(fields[1]) : 1;
 
-            if (s.length >= 2 && !s[1].equals("1")) {
-                stack.setCount(Integer.parseInt(s[1]));
-            }
-
-            if (s.length >= 3 && !s[2].equals("0")) {
-                stack.setDamageValue(Integer.parseInt(s[2]));
-            }
-
-            if (s.length >= 4 && !s[3].equals("null")) {
+            DataComponentPatch patch = DataComponentPatch.EMPTY;
+            if (fields.length >= 4 && !fields[3].equals("null")) {
                 try {
-                    DataComponentMap.CODEC.parse(NbtOps.INSTANCE, TagParser.parseCompoundFully(s[3]))
-                            .resultOrPartial(err -> FTBLibrary.LOGGER.error("can't parse data component map for {}: {}", s[3], err))
-                            .ifPresent(stack::applyComponents);
+                    CompoundTag tag = TagParser.parseCompoundFully(fields[3]);
+                    tag.putInt("minecraft:damage", Integer.parseInt(fields[2]));
+                    patch = DataComponentPatch.CODEC.parse(NbtOps.INSTANCE, tag)
+                            .resultOrPartial(err -> FTBLibrary.LOGGER.error("can't parse data component patch for {}: {}", fields[3], err))
+                            .orElse(DataComponentPatch.EMPTY);
                 } catch (CommandSyntaxException ex) {
                     FTBLibrary.LOGGER.error("can't parse data component tag for item icon: {} ({})", lazyStackString, ex.getMessage());
                 }
+            } else if (fields.length >= 3 && !fields[2].equals("0")) {
+                patch = DataComponentPatch.builder().set(DataComponents.DAMAGE, Integer.parseInt(fields[2])).build();
             }
 
-            if (stack.isEmpty()) {
-                ItemStack fallback = new ItemStack(Items.BARRIER);
-                fallback.set(DataComponents.CUSTOM_NAME, Component.literal(lazyStackString));
-                return ofItemStack(fallback);
-            }
-
-            return ofItemStack(stack);
+            return new ItemIcon(new ItemStackTemplate(item, count, patch));
         })) {
             @Override
             public String toString() {
@@ -82,84 +77,44 @@ public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
         };
     }
 
-    public ItemStack getStack() {
+    public ItemStackTemplate getStack() {
         return stack;
     }
-
-//    @Override
-//    public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-//        var poseStack = graphics.pose();
-//        poseStack.pushMatrix();
-//        poseStack.translate(x + w / 2F, y + h / 2F);
-//
-//        if (w != 16 || h != 16) {
-//            float s = Math.min(w, h) / 16F;
-//            poseStack.scale(s, s);
-//        }
-//
-//        GuiHelper.drawItem(graphics, getStack(), true, null);
-//        poseStack.popMatrix();
-//    }
-//
-//    @Override
-//    public void drawStatic(GuiGraphics graphics, int x, int y, int w, int h) {
-//        var poseStack = graphics.pose();
-//        poseStack.pushMatrix();
-//        poseStack.translate(x + w / 2F, y + h / 2F);
-//
-//        if (w != 16 || h != 16) {
-//            float s = Math.min(w, h) / 16F;
-//            poseStack.scale(s, s);
-//        }
-//
-//        GuiHelper.drawItem(graphics, getStack(), false, null);
-//        poseStack.popMatrix();
-//    }
-//
-//    @Override
-//    public void draw3D(GuiGraphics graphics) {
-//        drawItem3D(graphics, getStack());
-//    }
 
     public String toString() {
         var stack = getStack();
         var builder = new StringBuilder("item:");
-        builder.append(RegistrarManager.getId(stack.getItem(), Registries.ITEM));
-        var count = stack.getCount();
-        var damage = stack.getDamageValue();
-        var nbt = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, stack.getComponents()).result()
+        builder.append(RegistryHelper.getIdentifier(stack.item().value(), Registries.ITEM));
+        var count = stack.count();
+        var nbt = DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, stack.components()).result()
                 .orElse(null);
+        var damage = nbt instanceof CompoundTag c ? c.getIntOr("minecraft:damage", 0) : 0;
 
         if (count > 1 || damage > 0 || nbt != null) {
-            builder.append(' ');
-            builder.append(count);
+            builder.append(' ').append(count);
         }
-
         if (damage > 0 || nbt != null) {
-            builder.append(' ');
-            builder.append(damage);
+            builder.append(' ').append(damage);
         }
-
         if (nbt != null) {
-            builder.append(' ');
-            builder.append(nbt);
+            builder.append(' ').append(nbt);
         }
 
         return builder.toString();
     }
 
     public int hashCode() {
-        return ItemStack.hashItemAndComponents(getStack());
+        return getStack().hashCode();
     }
 
     public boolean equals(Object o) {
-        return o == this || o instanceof ItemIcon && ItemStack.matches(getStack(), ((ItemIcon) o).getStack());
+        return o == this || o instanceof ItemIcon && getStack().equals(((ItemIcon) o).getStack());
     }
 
     @Override
     @Nullable
     public Object getIngredient() {
-        return getStack();
+        return getStack().create();
     }
 
     @Override
@@ -169,6 +124,6 @@ public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
 
     @Override
     public Identifier getResourceId() {
-        return BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return BuiltInRegistries.ITEM.getKey(stack.item().value());
     }
 }

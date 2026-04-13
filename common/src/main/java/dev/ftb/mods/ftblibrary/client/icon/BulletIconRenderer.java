@@ -1,15 +1,15 @@
 package dev.ftb.mods.ftblibrary.client.icon;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.ftb.mods.ftblibrary.icon.BulletIcon;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.MutableColor4I;
-import net.minecraft.client.gui.GuiGraphics;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.state.GuiElementRenderState;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import org.joml.Matrix3x2f;
 import org.jspecify.annotations.Nullable;
 
@@ -23,7 +23,7 @@ public enum BulletIconRenderer implements IconRenderer<BulletIcon> {
     private static final MutableColor4I DEFAULT_DARK_COLOR = Color4I.rgb(0xDDDDDD).mutable();
 
     @Override
-    public void render(BulletIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(BulletIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         int col, bright, dark;
 
         if (icon.getColor().isEmpty()) {
@@ -37,7 +37,7 @@ public enum BulletIconRenderer implements IconRenderer<BulletIcon> {
         }
 
         boolean inverse = icon.isInverse();
-        graphics.guiRenderState.submitGuiElement(new ArbitraryVertexRenderState(
+        graphics.guiRenderState.addGuiElement(new ArbitraryVertexRenderState(
                 RenderPipelines.GUI,
                 TextureSetup.noTexture(),
                 graphics.pose(),

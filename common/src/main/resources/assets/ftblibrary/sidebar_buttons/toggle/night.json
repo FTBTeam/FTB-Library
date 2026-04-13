@@ -4,10 +4,7 @@
   ],
   "sort_index": 300,
   "click": [
-    "command:/ftblibrary night"
-  ],
-  "required_mods": [
-    "ftblibrary"
+    "command:/time set minecraft:night"
   ],
   "requires_op": true
 }

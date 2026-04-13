@@ -1,13 +1,13 @@
 pluginManagement {
     repositories {
-        maven { url "https://maven.architectury.dev/" }
-        maven { url "https://maven.creeperhost.net/" }
-        maven { url "https://maven.neoforged.net/releases/" }
-        maven { url "https://maven.fabricmc.net/" }
+        mavenLocal()
         gradlePluginPortal()
+
+        maven { url = 'https://maven.fabricmc.net' }
+        maven { url = 'https://maven.neoforged.net/releases' }
     }
 }
 
-include "common", "fabric", "neoforge" // , "forge"
+include "common", "fabric", "neoforge"
 
-rootProject.name = 'FTB-Library-1.21.11'
+rootProject.name = 'FTB-Library-26.1'

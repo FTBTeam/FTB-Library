@@ -1,10 +1,12 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
-import dev.architectury.fluid.FluidStack;
-import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
-import dev.ftb.mods.ftblibrary.icon.*;
+import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
+import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.icon.ItemIcon;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -31,7 +33,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public interface ResourceSearchMode<T> {
-    ResourceSearchMode<ItemStack> ALL_ITEMS = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.all"), Icons.COMPASS) {
+    ResourceSearchMode<ItemStack> ALL_ITEMS = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.all"), () -> Icons.COMPASS) {
         @Nullable
         private List<SelectableResource<ItemStack>> allItemsCache = null;
 
@@ -46,7 +48,7 @@ public interface ResourceSearchMode<T> {
             return allItemsCache;
         }
     };
-    ResourceSearchMode<ItemStack> INVENTORY = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.inv"), ItemIcon.ofItem(Items.CHEST)) {
+    ResourceSearchMode<ItemStack> INVENTORY = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.inv"), () -> ItemIcon.ofItem(Items.CHEST)) {
         @Override
         public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
             Player player = Minecraft.getInstance().player;
@@ -65,7 +67,7 @@ public interface ResourceSearchMode<T> {
             return items;
         }
     };
-    ResourceSearchMode<FluidStack> ALL_FLUIDS = new SearchMode<>(Component.translatable("ftblibrary.select_fluid.list_mode.all"), ItemIcon.ofItem(Items.COMPASS)) {
+    ResourceSearchMode<FluidStack> ALL_FLUIDS = new SearchMode<>(Component.translatable("ftblibrary.select_fluid.list_mode.all"), () -> ItemIcon.ofItem(Items.COMPASS)) {
         @Nullable
         private List<SelectableResource<FluidStack>> allFluidsCache = null;
 
@@ -75,7 +77,7 @@ public interface ResourceSearchMode<T> {
                 List<SelectableResource<FluidStack>> fluidstacks = new ArrayList<>();
                 BuiltInRegistries.FLUID.forEach(f -> {
                     if (f.isSource(f.defaultFluidState())) {
-                        fluidstacks.add(SelectableResource.fluid(FluidStack.create(f, FluidStackHooks.bucketAmount())));
+                        fluidstacks.add(SelectableResource.fluid(new FluidStack(f, FluidStack.bucketFluidAmount())));
                     }
                 });
                 allFluidsCache = List.copyOf(fluidstacks);
@@ -92,7 +94,7 @@ public interface ResourceSearchMode<T> {
     ResourceSearchMode<EntityType<?>> ANIMALS = entitySearchMode(e -> e instanceof Animal,
             "animals", () -> EntityIconLoader.getIcon(EntityType.SHEEP));
 
-    ResourceSearchMode<Identifier> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), Icons.ART) {
+    ResourceSearchMode<Identifier> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), () -> Icons.ART) {
         @Nullable
         private List<ImageResource> cachedImages = null;
 
@@ -168,9 +170,9 @@ public interface ResourceSearchMode<T> {
             this.icon = icon;
         }
 
-        protected SearchMode(Component name, Icon<?> icon) {
-            this(name, () -> icon);
-        }
+//        protected SearchMode(Component name, Icon<?> icon) {
+//            this(name, () -> icon);
+//        }
 
         @Override
         public Component getDisplayName() {

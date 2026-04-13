@@ -3,11 +3,11 @@ package dev.ftb.mods.ftblibrary.client.icon;
 import dev.ftb.mods.ftblibrary.icon.ImageIcon;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.state.BlitRenderState;
-import net.minecraft.client.gui.render.state.TiledBlitRenderState;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.state.gui.BlitRenderState;
+import net.minecraft.client.renderer.state.gui.TiledBlitRenderState;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import org.joml.Matrix3x2f;
 import org.jspecify.annotations.Nullable;
@@ -18,11 +18,11 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
     INSTANCE;
 
     @Override
-    public void render(ImageIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(ImageIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(icon.texture);
 
         if (icon.tileSize <= 0D) {
-            graphics.guiRenderState.submitGuiElement(new BlitRenderState(
+            graphics.guiRenderState.addBlitToCurrentLayer(new BlitRenderState(
                     RenderPipelines.GUI_TEXTURED,
                     TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler()),
                     new Matrix3x2f(graphics.pose()),
@@ -32,7 +32,7 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
                     graphics.scissorStack.peek()
             ));
         } else {
-            graphics.guiRenderState.submitGuiElement(new TiledBlitRenderState(
+            graphics.guiRenderState.addGuiElement(new TiledBlitRenderState(
                     RenderPipelines.GUI_TEXTURED,
                     TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler()),
                     new Matrix3x2f(graphics.pose()),

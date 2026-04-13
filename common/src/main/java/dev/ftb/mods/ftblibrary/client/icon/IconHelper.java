@@ -2,17 +2,17 @@ package dev.ftb.mods.ftblibrary.client.icon;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.Nullable;
 
 public class IconHelper {
-    public static <T extends Icon<T>> void renderIcon(@Nullable Icon<T> icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public static <T extends Icon<T>> void renderIcon(@Nullable Icon<T> icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         if (icon != null) {
             icon.getRenderer().render(icon.self(), graphics, x, y, w, h);
         }
     }
 
-    public static <T extends Icon<T>> void renderIconStatic(@Nullable Icon<T> icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public static <T extends Icon<T>> void renderIconStatic(@Nullable Icon<T> icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         if (icon != null) {
             icon.getRenderer().renderStatic(icon.self(), graphics, x, y, w, h);
         }

@@ -1,49 +1,30 @@
-dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+plugins {
+    id 'net.fabricmc.fabric-loom'
+}
 
-    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+loom {
+    accessWidenerPath = project(":common").file("src/main/resources/${project.mod_id}.accesswidener")
 
-    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
-        exclude group: "dev.architectury"
+    mixin {
+        useLegacyMixinAp = false
     }
+}
 
-//    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}") {
-//        exclude group: "dev.architectury"
-//    }
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
-    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly group: 'net.fabricmc', name: 'sponge-mixin', version: '0.17.0+mixin.0.8.7'
+    compileOnly "io.github.llamalad7:mixinextras-fabric:0.5.0"
+
+    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
 
     api("de.marhali:json5-java:${json5_version}")
-//    modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}+1.21.1:api"
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
     useJUnitPlatform()
-}
-
-architectury {
-    common(/*"forge",*/ "fabric", "neoforge")
-}
-
-loom {
-    accessWidenerPath = file("src/main/resources/ftblibrary.accesswidener")
-}
-
-configurations {
-    dev
-}
-
-artifacts {
-    dev(jar)
-}
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = "${rootProject.archives_base_name}"
-            version ftbPublishing.mavenVersion
-            from components.java
-        }
-    }
 }

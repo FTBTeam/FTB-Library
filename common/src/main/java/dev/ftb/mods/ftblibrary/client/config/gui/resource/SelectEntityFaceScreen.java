@@ -60,7 +60,7 @@ public class SelectEntityFaceScreen extends ResourceSelectorScreen<EntityType<?>
                 return true;
             }
             return selectable instanceof EntityFaceResource r
-                    && searchTerms.match(r.getLocation(), r.getLocation().toString(), key -> getResource().is(TagKey.create(Registries.ENTITY_TYPE, key)));
+                    && searchTerms.match(r.getLocation(), r.getLocation().toString(), key -> getResource().builtInRegistryHolder().is(TagKey.create(Registries.ENTITY_TYPE, key)));
         }
 
         @Override

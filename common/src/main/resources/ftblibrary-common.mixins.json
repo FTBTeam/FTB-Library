@@ -1,9 +1,8 @@
 {
   "required": true,
-  "package": "dev.ftb.mods.ftblibrary.core.mixin.common",
+  "package": "dev.ftb.mods.ftblibrary.mixin.common",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ItemMixin",
     "ResourceLocationMixin",
     "TextColorMixin"
   ],

@@ -1,13 +1,15 @@
-accessWidener	v2	named
+accessWidener	v2	official
 
 accessible  class   net/minecraft/client/gui/components/MultilineTextField$StringView
-transitive-extendable  class   net/minecraft/nbt/CompoundTag
-transitive-accessible method net/minecraft/nbt/CompoundTag <init> (Ljava/util/Map;)V
+
+#transitive-extendable  class   net/minecraft/nbt/CompoundTag
+#transitive-accessible method net/minecraft/nbt/CompoundTag <init> (Ljava/util/Map;)V
+
 accessible  method  net/minecraft/client/renderer/texture/SpriteContents getFrameCount ()I
 
-accessible field net/minecraft/client/gui/GuiGraphics guiRenderState Lnet/minecraft/client/gui/render/state/GuiRenderState;
-accessible field net/minecraft/client/gui/GuiGraphics scissorStack Lnet/minecraft/client/gui/GuiGraphics$ScissorStack;
-accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
+accessible field net/minecraft/client/gui/GuiGraphicsExtractor guiRenderState Lnet/minecraft/client/renderer/state/gui/GuiRenderState;
+accessible field net/minecraft/client/gui/GuiGraphicsExtractor scissorStack Lnet/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack;
+accessible class net/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack
 
 extendable class net/minecraft/network/chat/TextColor
 accessible method net/minecraft/network/chat/TextColor <init> (ILjava/lang/String;)V
@@ -16,3 +18,8 @@ mutable field net/minecraft/network/chat/TextColor NAMED_COLORS Ljava/util/Map;
 accessible field net/minecraft/network/chat/TextColor NAMED_COLORS Ljava/util/Map;
 
 extendable class net/minecraft/client/StringSplitter$WidthLimitedCharSink
+
+mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageWidth I
+mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I
+
+accessible method net/minecraft/client/gui/screens/Screen addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;

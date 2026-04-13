@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.math;
 
-import io.netty.buffer.ByteBuf;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
@@ -12,15 +12,14 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 public record ChunkDimPos(ResourceKey<Level> dimension, ChunkPos chunkPos) implements Comparable<ChunkDimPos> {
-    private static final StreamCodec<ByteBuf, ChunkPos> CHUNK_POS_STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, cp -> cp.x,
-            ByteBufCodecs.INT, cp -> cp.z,
-            ChunkPos::new
-    );
+    public static final Codec<ChunkDimPos> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+            ResourceKey.codec(Registries.DIMENSION).fieldOf("dimension").forGetter(ChunkDimPos::dimension),
+            ChunkPos.CODEC.fieldOf("pos").forGetter(ChunkDimPos::chunkPos)
+    ).apply(builder, ChunkDimPos::new));
 
     public static StreamCodec<FriendlyByteBuf, ChunkDimPos> STREAM_CODEC = StreamCodec.composite(
             ResourceKey.streamCodec(Registries.DIMENSION), ChunkDimPos::dimension,
-            CHUNK_POS_STREAM_CODEC, ChunkDimPos::chunkPos,
+            ChunkPos.STREAM_CODEC, ChunkDimPos::chunkPos,
             ChunkDimPos::new
     );
 
@@ -37,11 +36,11 @@ public record ChunkDimPos(ResourceKey<Level> dimension, ChunkPos chunkPos) imple
     }
 
     public int x() {
-        return chunkPos.x;
+        return chunkPos.x();
     }
 
     public int z() {
-        return chunkPos.z;
+        return chunkPos.z();
     }
 
     public ResourceKey<Level> dimension() {
@@ -51,7 +50,7 @@ public record ChunkDimPos(ResourceKey<Level> dimension, ChunkPos chunkPos) imple
     @Override
     public int compareTo(ChunkDimPos o) {
         var i = dimension.identifier().compareTo(o.dimension.identifier());
-        return i == 0 ? Long.compare(chunkPos.toLong(), o.chunkPos.toLong()) : i;
+        return i == 0 ? Long.compare(chunkPos.pack(), o.chunkPos.pack()) : i;
     }
 
     public ChunkDimPos offset(int ox, int oz) {

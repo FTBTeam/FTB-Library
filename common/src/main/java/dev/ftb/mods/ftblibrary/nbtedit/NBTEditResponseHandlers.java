@@ -1,9 +1,12 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
@@ -19,16 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum NBTEditResponseHandlers {
     INSTANCE;
 
-    public static final String ITEM = "item";
-    public static final String BLOCK = "block";
-    public static final String PLAYER = "player";
-    public static final String ENTITY = "entity";
+    public static final Identifier ITEM = FTBLibrary.id("item");
+    public static final Identifier BLOCK = FTBLibrary.id("block");
+    public static final Identifier PLAYER = FTBLibrary.id("player");
+    public static final Identifier ENTITY = FTBLibrary.id("entity");
 
-    private final Map<String, NBTResponseHandler> MAP = new ConcurrentHashMap<>();
+    private final Map<Identifier, NBTResponseHandler> MAP = new ConcurrentHashMap<>();
 
-    public static void registerBuiltinHandlers() {
+    public static void registerBuiltinHandlers(HolderLookup.Provider registryAccess) {
         INSTANCE.registerHandler(ITEM, (player, info, data) ->
-                ItemStack.CODEC.parse(NbtOps.INSTANCE, data)
+                ItemStack.CODEC.parse(registryAccess.createSerializationContext(NbtOps.INSTANCE), data)
                         .ifSuccess(stack -> player.setItemInHand(InteractionHand.MAIN_HAND, stack))
         );
 
@@ -71,11 +74,11 @@ public enum NBTEditResponseHandlers {
         });
     }
 
-    public void registerHandler(String name, NBTResponseHandler handler) {
+    public void registerHandler(Identifier name, NBTResponseHandler handler) {
         MAP.put(name, handler);
     }
 
-    public void handleResponse(String name, ServerPlayer player, CompoundTag info, CompoundTag data) {
+    public void handleResponse(Identifier name, ServerPlayer player, CompoundTag info, CompoundTag data) {
         MAP.getOrDefault(name, NBTResponseHandler.NONE).handleResponse(player, info, data);
     }
 

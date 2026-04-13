@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.config.gui;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableList;
@@ -17,8 +16,9 @@ import dev.ftb.mods.ftblibrary.client.icon.Color4IRenderer;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -193,7 +193,7 @@ public class EditConfigListScreen<E, CV extends EditableConfigValue<E>> extends 
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             var mouseOver = getMouseY() >= 20 && isMouseOver();
 
             var textCol = listConfig.getType().getColor(localValues.get(index), theme).mutable();
@@ -306,7 +306,7 @@ public class EditConfigListScreen<E, CV extends EditableConfigValue<E>> extends 
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             super.draw(graphics, theme, x, y, w, h);
 
             theme.drawString(graphics, getGui().getTitle(), x + 6, y + 6, Theme.SHADOW);

@@ -18,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class Color4I extends Icon<Color4I> {
-    public static final Identifier TYPE = FTBLibrary.rl("color4i");
+    public static final Identifier TYPE = FTBLibrary.id("color4i");
 
     static final Color4I EMPTY_ICON = new Color4I(255, 255, 255, 255) {
         @Override

@@ -4,7 +4,7 @@ import dev.ftb.mods.ftblibrary.icon.FaceIcon;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ImageIcon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 
 public enum FaceIconRenderer implements IconRenderer<FaceIcon> {
@@ -28,7 +28,7 @@ public enum FaceIconRenderer implements IconRenderer<FaceIcon> {
     }
 
     @Override
-    public void render(FaceIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(FaceIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         IconHelper.renderIcon(icon.getHead(), graphics, x, y, w, h);
         IconHelper.renderIcon(icon.getHat(), graphics, x, y, w, h);
     }

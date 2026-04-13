@@ -1,14 +1,16 @@
 package dev.ftb.mods.ftblibrary.config.serializer;
 
-import com.mojang.serialization.Codec;
-import de.marhali.json5.*;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.value.*;
-import dev.ftb.mods.ftblibrary.util.Json5Ops;
+import dev.ftb.mods.ftblibrary.json5.Json5Ops;
 import dev.ftb.mods.ftblibrary.util.NameMap;
+import com.mojang.serialization.Codec;
+import de.marhali.json5.*;
 import net.minecraft.util.Util;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -35,6 +37,7 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
     }
 
     public static void writeToFile(Config config, Path path) throws IOException {
+        Files.createDirectories(path.getParent());
         Files.writeString(path, new Json5().serialize(serialize(config)));
     }
 
@@ -154,11 +157,10 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
 
     @Override
     public <T> void putMap(String key, AbstractMapValue<T> val, Codec<T> codec) {
-        configJson.add(key, Util.make(new Json5Object(), o -> val.get().forEach((k, v) -> {
-                    o.setComment(val.getCommentString());
-                    codec.encodeStart(Json5Ops.INSTANCE, v).ifSuccess(el -> o.add(k, el));
-                }))
-        );
+        configJson.add(key, Util.make(new Json5Object(), o -> {
+            o.setComment(val.getCommentString());
+            val.get().forEach((k, v) -> codec.encodeStart(Json5Ops.INSTANCE, v).ifSuccess(el -> o.add(k, el)));
+        }));
     }
 
     @Override

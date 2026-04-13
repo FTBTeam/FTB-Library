@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
-import dev.architectury.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;

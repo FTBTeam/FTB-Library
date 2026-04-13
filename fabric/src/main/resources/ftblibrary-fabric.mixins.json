@@ -3,10 +3,11 @@
   "package": "dev.ftb.mods.ftblibrary.core.mixin.fabric",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "PlayerMixin"
+    "PlayerMixin",
+    "PatchedDataComponentMapAccess"
   ],
   "client": [
-    "KeyMappingAccessor"
+    "KeyMappingAccess"
   ],
   "injectors": {
     "defaultRequire": 1

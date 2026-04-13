@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -74,12 +74,12 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
 
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawContextMenuBackground(graphics, x, y, w, h);
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         graphics.pose().pushMatrix();
         IconHelper.renderIcon(Color4I.BLACK.withAlpha(45), graphics, x + 3, y + 3, w, h);
         super.draw(graphics, theme, x, y, w, h);

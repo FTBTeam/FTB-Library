@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config;
 
+import de.marhali.json5.Json5Object;
+import de.marhali.json5.Json5Primitive;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
@@ -33,6 +35,12 @@ public enum Tristate {
         this.colorLo = colorLo;
         this.opposite = opposite;
         this.icon = icon;
+    }
+
+    public static Tristate read(Json5Object json, String key) {
+        return json.get(key) instanceof Json5Primitive p && p.isBoolean() ?
+                Tristate.ofBoolean(p.getAsBoolean()) :
+                DEFAULT;
     }
 
     public static Tristate read(CompoundTag nbt, String key) {
@@ -69,6 +77,12 @@ public enum Tristate {
 
     public String toString() {
         return name;
+    }
+
+    public void write(Json5Object json, String key) {
+        if (!isDefault()) {
+            json.addProperty(key, isTrue());
+        }
     }
 
     public void write(CompoundTag nbt, String key) {

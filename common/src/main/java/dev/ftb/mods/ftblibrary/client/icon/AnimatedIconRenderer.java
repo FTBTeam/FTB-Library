@@ -2,13 +2,13 @@ package dev.ftb.mods.ftblibrary.client.icon;
 
 import dev.ftb.mods.ftblibrary.icon.AnimatedIcon;
 import dev.ftb.mods.ftblibrary.icon.Icon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public enum AnimatedIconRenderer implements IconRenderer<AnimatedIcon> {
     INSTANCE;
 
     @Override
-    public void render(AnimatedIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(AnimatedIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         if (!icon.getList().isEmpty()) {
             Icon<?> subIcon = icon.getList().get((int) ((System.currentTimeMillis() / 1000L) % icon.getList().size()));
             IconHelper.renderIcon(subIcon, graphics, x, y, w, h);
@@ -16,7 +16,7 @@ public enum AnimatedIconRenderer implements IconRenderer<AnimatedIcon> {
     }
 
     @Override
-    public void renderStatic(AnimatedIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void renderStatic(AnimatedIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         if (!icon.getList().isEmpty()) {
             Icon<?> subIcon = icon.getList().get((int) ((System.currentTimeMillis() / 1000L) % icon.getList().size()));
             IconHelper.renderIconStatic(subIcon, graphics, x, y, w, h);

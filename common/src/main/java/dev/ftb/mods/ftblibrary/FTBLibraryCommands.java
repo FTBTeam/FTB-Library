@@ -1,21 +1,21 @@
 package dev.ftb.mods.ftblibrary;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.JsonOps;
-import dev.architectury.networking.NetworkManager;
-import dev.architectury.platform.Mod;
-import dev.architectury.platform.Platform;
-import dev.architectury.registry.registries.RegistrarManager;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
 import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.net.OpenTestScreenPacket;
+import dev.ftb.mods.ftblibrary.platform.Mod;
+import dev.ftb.mods.ftblibrary.platform.Platform;
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.RegistryHelper;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -32,6 +32,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Nameable;
@@ -68,32 +69,8 @@ public class FTBLibraryCommands {
                 .then(literal("rain")
                         .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                         .executes(context -> {
-                            //Use overworld as that controls the weather for the whole server
-                            if (context.getSource().getServer().overworld().isRaining()) {
-                                context.getSource().getServer().overworld().setWeatherParameters(6000, 0, false, false); // clear
-                            } else {
-                                context.getSource().getServer().overworld().setWeatherParameters(0, 6000, true, false);// rain
-                            }
-                            return Command.SINGLE_SUCCESS;
-                        })
-                )
-                .then(literal("day")
-                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
-                        .executes(context -> {
-                            for (var world : context.getSource().getServer().getAllLevels()) {
-                                world.setDayTime(6000L);
-                            }
-                            context.getSource().getServer().forceTimeSynchronization();
-                            return Command.SINGLE_SUCCESS;
-                        })
-                )
-                .then(literal("night")
-                        .requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
-                        .executes(context -> {
-                            for (var world : context.getSource().getServer().getAllLevels()) {
-                                world.setDayTime(18000L);
-                            }
-                            context.getSource().getServer().forceTimeSynchronization();
+                            ServerLevel level = context.getSource().getLevel();
+                            level.setRainLevel(level.isRaining() ? 0F : 1F);
                             return Command.SINGLE_SUCCESS;
                         })
                 )
@@ -121,7 +98,7 @@ public class FTBLibraryCommands {
                 .then(literal("clientconfig")
                         .requires(CommandSourceStack::isPlayer)
                         .executes(context -> {
-                            NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryClientConfig.KEY));
+                            Server2PlayNetworking.send(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryClientConfig.KEY));
                             return Command.SINGLE_SUCCESS;
                         })
                 );
@@ -129,14 +106,14 @@ public class FTBLibraryCommands {
         if (ModUtils.isDevMode()) {
             command.then(literal("test_screen")
                     .executes(context -> {
-                        NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), OpenTestScreenPacket.INSTANCE);
+                        Server2PlayNetworking.send(context.getSource().getPlayerOrException(), OpenTestScreenPacket.INSTANCE);
                         return Command.SINGLE_SUCCESS;
                     })
             );
             command.then(literal("serverconfig")
                     .requires(cs -> cs.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                     .executes(context -> {
-                        NetworkManager.sendToPlayer(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryServerConfig.KEY));
+                        Server2PlayNetworking.send(context.getSource().getPlayerOrException(), new EditConfigPacket(FTBLibraryServerConfig.KEY));
                         return Command.SINGLE_SUCCESS;
                     })
             );
@@ -153,7 +130,7 @@ public class FTBLibraryCommands {
 
         if (!info.isEmpty()) {
             EDITING_NBT.put(player.getUUID(), info);
-            NetworkManager.sendToPlayer(player, new EditNBTPacket(info, tag));
+            Server2PlayNetworking.send(player, new EditNBTPacket(info, tag));
             return Command.SINGLE_SUCCESS;
         }
 
@@ -172,18 +149,18 @@ public class FTBLibraryCommands {
                 .ifSuccess(res -> {
                     if (res instanceof CompoundTag t) tag.merge(t);
                 });
-        var key = RegistrarManager.getId(stack.getItem(), Registries.ITEM);
+        var key = RegistryHelper.getIdentifier(stack.getItem(), Registries.ITEM);
         info.put("text", InfoBuilder.create(context)
                 .add("Class", Component.literal(stack.getItem().getClass().getName()))
                 .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
                 .build());
     }
 
     private static void editPlayerNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
         var player = EntityArgument.getPlayer(context, "player");
 
-        info.putString("type", NBTEditResponseHandlers.PLAYER);
+        info.putString("type", NBTEditResponseHandlers.PLAYER.toString());
         info.store("id", UUIDUtil.CODEC, player.getUUID());
 
         TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, player.level().registryAccess());
@@ -206,18 +183,18 @@ public class FTBLibraryCommands {
             return;
         }
 
-        info.putString("type", NBTEditResponseHandlers.ENTITY);
+        info.putString("type", NBTEditResponseHandlers.ENTITY.toString());
         info.putInt("id", entity.getId());
 
         TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, entity.registryAccess());
         entity.save(output);
         tag.merge(output.buildResult());
 
-        var key = RegistrarManager.getId(entity.getType(), Registries.ENTITY_TYPE);
+        var key = RegistryHelper.getIdentifier(entity.getType(), Registries.ENTITY_TYPE);
         info.put("text", InfoBuilder.create(context)
                 .add("Class", Component.literal(entity.getClass().getName()))
                 .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
                 .build());
 
         String name = entity.getDisplayName() == null ? "?" : entity.getDisplayName().getString();
@@ -234,7 +211,7 @@ public class FTBLibraryCommands {
             return;
         }
 
-        info.putString("type", NBTEditResponseHandlers.BLOCK);
+        info.putString("type", NBTEditResponseHandlers.BLOCK.toString());
         BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, pos).ifSuccess(nbt -> info.put("pos", nbt));
         tag.merge(blockEntity.saveWithFullMetadata(context.getSource().getLevel().registryAccess()));
         tag.remove("x");
@@ -243,14 +220,14 @@ public class FTBLibraryCommands {
         info.putString("id", tag.getString("id").orElseThrow());
         tag.remove("id");
 
-        var key = RegistrarManager.getId(blockEntity.getType(), Registries.BLOCK_ENTITY_TYPE);
+        var key = RegistryHelper.getIdentifier(blockEntity.getType(), Registries.BLOCK_ENTITY_TYPE);
         info.put("text", InfoBuilder.create(context)
                 .add("Class", Component.literal(blockEntity.getClass().getName()))
                 .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Block", Component.literal(String.valueOf(RegistrarManager.getId(blockEntity.getBlockState().getBlock(), Registries.BLOCK))))
+                .add("Block", Component.literal(String.valueOf(RegistryHelper.getIdentifier(blockEntity.getBlockState().getBlock(), Registries.BLOCK))))
                 .add("Block Class", Component.literal(blockEntity.getBlockState().getBlock().getClass().getName()))
                 .add("Position", Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.getOptionalMod(key.getNamespace()).map(Mod::getName).orElse("Unknown")))
+                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
                 .add("Ticking", Component.literal(isTicking(blockEntity) ? "true" : "false"))
                 .build());
 

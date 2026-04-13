@@ -2,13 +2,13 @@ package dev.ftb.mods.ftblibrary.client.icon;
 
 import dev.ftb.mods.ftblibrary.icon.EntityImageIcon;
 import dev.ftb.mods.ftblibrary.icon.Icon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public enum EntityImageIconRenderer implements IconRenderer<EntityImageIcon> {
     INSTANCE;
 
     @Override
-    public void render(EntityImageIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(EntityImageIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         var pose = graphics.pose();
 
         float drawWidth = icon.getDrawWidth(w);

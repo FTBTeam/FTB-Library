@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
-import com.google.common.base.Stopwatch;
-import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
@@ -21,14 +19,14 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
-import dev.ftb.mods.ftblibrary.snbt.SNBT;
-import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.SNBTSyntaxException;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.google.common.base.Stopwatch;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -145,7 +143,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         super.drawBackground(graphics, theme, x, y, w, h);
 
         if (Util.getMillis() >= update) {
@@ -156,7 +154,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     }
 
     @Override
-    public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawForeground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         if (!selectedStack.isEmpty()) {
             IconHelper.renderIcon(selectedStack.getIcon(), graphics, getX() + 6, getY() + 17, 30, 30);
             if (countBox.shouldDraw()) {
@@ -251,7 +249,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         }
 
         @Override
-        public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             super.draw(graphics, theme, x, y, w, h);
 
             GuiHelper.drawHollowRect(graphics, x - 1, y - 1, w + 2, h + 2, Color4I.rgb(0x101010), false);
@@ -266,7 +264,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         }
 
         @Override
-        public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawIcon(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             getActiveSearchMode().ifPresent(mode -> IconHelper.renderIcon(mode.getIcon(), graphics, x + 4, y + 4, w - 8, h - 8));
         }
 
@@ -304,9 +302,10 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             CompoundTag toEdit = Objects.requireNonNullElse(selectedStack.getComponentsTag(), new CompoundTag());
             if (button.isLeft()) {
                 EditableString config = new EditableString();
-                SNBTCompoundTag snbt = SNBTCompoundTag.of(toEdit);
-                snbt.singleLine();
-                config.updateValue(String.join(",", SNBT.writeLines(snbt)));
+                // TODO: What is this doing.
+//                SNBTCompoundTag snbt = SNBTCompoundTag.of(toEdit);
+//                snbt.singleLine();
+//                config.updateValue(String.join(",", SNBT.writeLines(snbt)));
                 getGui().pushModalPanel(makeMultilineEditPanel(config));
             } else if (button.isRight()) {
                 CompoundTag info = Util.make(new CompoundTag(), tag -> tag.putString("type", "item"));
@@ -324,7 +323,8 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             var panel = new EditMultilineStringConfigOverlay(ResourceSelectorScreen.this, config, accepted -> {
                 if (accepted) {
                     try {
-                        selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
+                        // TODO: What is this doing
+//                        selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
                     } catch (SNBTSyntaxException e) {
                         SimpleToast.error(Component.translatable("ftblibrary.gui.error"), Component.literal(e.getMessage()));
                     }
@@ -425,7 +425,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         }
 
         @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawSlot(graphics, x, y, w, h, WidgetType.NORMAL);
             if (isMouseOver) {
                 Color4IRenderer.INSTANCE.render(Color4I.WHITE.withAlpha(30), graphics, x + 1, y + 1, w - 2, h - 2);
@@ -433,7 +433,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         }
 
         @Override
-        public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawIcon(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             super.drawIcon(graphics, theme, x + 1, y + 1, w - 2, h - 2);
         }
 
@@ -517,7 +517,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         }
 
         @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             super.drawBackground(graphics, theme, x, y, w, h);
 
             if (!selectedStack.isEmpty()) {

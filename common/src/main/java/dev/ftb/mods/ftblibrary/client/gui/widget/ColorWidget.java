@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.client.gui.widget;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.Nullable;
 
 
@@ -18,7 +18,7 @@ public class ColorWidget extends Widget {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         IconHelper.renderIcon(((mouseOverColor != null && isMouseOver()) ? mouseOverColor : color), graphics, x, y, w, h);
     }
 }

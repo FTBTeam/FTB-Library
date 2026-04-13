@@ -1,5 +1,9 @@
 package dev.ftb.mods.ftblibrary.icon;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
+import dev.ftb.mods.ftblibrary.util.ModUtils;
+import dev.ftb.mods.ftblibrary.util.RegistryHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -8,15 +12,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.architectury.registry.registries.RegistrarManager;
-import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
-import dev.ftb.mods.ftblibrary.util.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -36,8 +37,10 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.util.*;
 
-// Handles loading of Entity Icon<?> Json or Image files
-// Loads all entity types except for MISC, which only show on the map if a json / image exists
+/**
+ * Handles loading of Entity {@link Icon} Json or Image files
+ * Loads all entity types except for MISC, which only show on the map if a json / image exists
+ */
 public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityType<?>, EntityIconLoader.EntityIconSettings>> {
     public static final Icon<?> NORMAL = Icon.getIcon("ftblibrary:textures/faces/normal.png");
     public static final Icon<?> HOSTILE = Icon.getIcon("ftblibrary:textures/faces/hostile.png");
@@ -48,18 +51,29 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
     private static final Map<EntityType<?>, EntityIconSettings> ENTITY_SETTINGS = new HashMap<>();
     private static final Set<EntityType<?>> DYNAMIC_JSON_TEXTURES = new HashSet<>();
 
+    public static final EntityIconLoader INSTANCE = new EntityIconLoader();
+
+    private EntityIconLoader() {
+    }
+
     @Override
     protected Map<EntityType<?>, EntityIconSettings> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<EntityType<?>, EntityIconSettings> map = new HashMap<>();
 
         DYNAMIC_JSON_TEXTURES.clear();
-        for (Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : RegistrarManager.get(FTBLibrary.MOD_ID).get(Registries.ENTITY_TYPE).entrySet()) {
+        Registry<EntityType<?>> registry = RegistryHelper.getRegistry(Registries.ENTITY_TYPE);
+        if (registry == null) {
+            LOGGER.error("Failed to get EntityType registry, skipping loading entity icons");
+            return map;
+        }
+
+        for (Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : registry.entrySet()) {
             Identifier id = entry.getKey().identifier();
             EntityType<?> entityType = entry.getValue();
 
             String basePath = getBasePath(id);
 
-            Identifier invisible = FTBLibrary.rl(basePath + ".invisible");
+            Identifier invisible = FTBLibrary.id(basePath + ".invisible");
 
             EntityIconSettings entityIconSettings = null;
 
@@ -68,12 +82,12 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
                 entityIconSettings = EntityIconSettings.legacy();
             }
 
-            Optional<Resource> resource = resourceManager.getResource(FTBLibrary.rl(basePath + ".json"));
+            Optional<Resource> resource = resourceManager.getResource(FTBLibrary.id(basePath + ".json"));
             if (resource.isPresent()) {
                 entityIconSettings = loadEntitySetting(id, resource.get());
                 DYNAMIC_JSON_TEXTURES.add(entityType);
             } else {
-                Identifier imgLoc = FTBLibrary.rl(basePath + ".png");
+                Identifier imgLoc = FTBLibrary.id(basePath + ".png");
                 if (resourceManager.getResource(imgLoc).isPresent()) {
                     entityIconSettings = EntityIconSettings.forImage(imgLoc);
                 }
@@ -124,6 +138,7 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         return null;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T extends Entity> Optional<Icon<?>> getIconCache(T entity) {
         EntityRenderer<? super T, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
         EntityRenderState state = renderer.createRenderState(entity, 0f);

@@ -10,7 +10,7 @@ import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
@@ -194,7 +194,7 @@ public abstract class Panel extends Widget {
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         var renderInside = getOnlyRenderWidgetsInside();
 
         drawBackground(graphics, theme, x, y, w, h);
@@ -204,7 +204,7 @@ public abstract class Panel extends Widget {
         }
 
         doWithScrollOffset(() -> {
-            var byLayer = widgets.stream()
+            var byLayer = widgets.stream().filter(Widget::shouldDraw)
                     .collect(Collectors.groupingBy(Widget::getDrawLayer, () -> new EnumMap<>(DrawLayer.class), Collectors.toList()));
 
             byLayer.getOrDefault(DrawLayer.BACKGROUND, List.of())
@@ -221,13 +221,13 @@ public abstract class Panel extends Widget {
         }
     }
 
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
-    public void drawOffsetBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawOffsetBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
-    public void drawWidget(GuiGraphics graphics, Theme theme, Widget widget, int x, int y, int w, int h) {
+    public void drawWidget(GuiGraphicsExtractor graphics, Theme theme, Widget widget, int x, int y, int w, int h) {
         var wx = widget.getX();
         var wy = widget.getY();
         var ww = widget.width;

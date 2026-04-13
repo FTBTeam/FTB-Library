@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
 import dev.ftb.mods.ftblibrary.snbt.SNBTUtils;
+import dev.ftb.mods.ftblibrary.json5.Json5Util;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
      * @return the value itself, for fluency
      */
     public <E extends BaseValue<T>> E standardTopLevelComment(String modName, String key, boolean forClient, String... extraLines) {
-        String filename = key + ".json5";
+        String filename = key + Json5Util.FILE_EXT;
         List<String> txt = forClient ?
                 List.of(
                         "Client-specific configuration for " + modName,

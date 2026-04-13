@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
@@ -13,9 +11,11 @@ import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -234,10 +234,6 @@ public abstract class BaseScreen extends Panel {
 
         if (mc.player != null) {
             mc.player.closeContainer();
-
-            if (mc.screen == null) {
-                mc.setWindowActive(true);
-            }
         }
 
         if (usePreviousScreenOnBack()) {
@@ -298,7 +294,7 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public final void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public final void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         super.draw(graphics, theme, x, y, w, h);
 
         if (!modalPanels.isEmpty()) {
@@ -378,16 +374,16 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         theme.drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
     }
 
 
-    public boolean drawDefaultBackground(GuiGraphics graphics) {
+    public boolean drawDefaultBackground(GuiGraphicsExtractor graphics) {
         return true;
     }
 
-    public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawForeground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
     }
 
     private Panel getDoubleClickTarget() {

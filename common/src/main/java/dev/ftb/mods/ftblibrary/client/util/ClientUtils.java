@@ -1,28 +1,33 @@
 package dev.ftb.mods.ftblibrary.client.util;
 
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientChatEvent;
-import dev.architectury.fluid.FluidStack;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.client.gui.CustomClickEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 public class ClientUtils {
@@ -33,9 +38,7 @@ public class ClientUtils {
 
     public static void execClientCommand(String command, boolean printChat) {
         if (!command.isEmpty() && Minecraft.getInstance().player != null) {
-            EventResult res = ClientChatEvent.SEND.invoker().send(command, null);
-
-            if (!res.interruptsFurtherEvaluation()) {
+            if (AllowChatCommandEvent.TYPE.post(new AllowChatCommandEvent.Data(command))) {
                 if (printChat) {
                     Minecraft.getInstance().gui.getChat().addRecentChat(command);
                 }
@@ -115,8 +118,7 @@ public class ClientUtils {
 
     private static boolean trySendCustomClickEvent(String name) {
         try {
-            Identifier rl = Identifier.parse(name);
-            return CustomClickEvent.EVENT.invoker().act(new CustomClickEvent(rl)).isPresent();
+            return CustomClickEvent.TYPE.post(new CustomClickEvent.Data(Identifier.parse(name)));
         } catch (IdentifierException ex) {
             logHandleClickFailure("custom", name, ex);
             return false;
@@ -131,14 +133,40 @@ public class ClientUtils {
         return Objects.requireNonNull(Minecraft.getInstance().level).registryAccess();
     }
 
-    @ExpectPlatform
-    public static Identifier getStillTexture(FluidStack stack) {
-        throw new AssertionError();
+    public static TextureAtlasSprite getStillTexture(Fluid fluid) {
+        return Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.defaultFluidState())
+                .stillMaterial()
+                .sprite();
     }
 
-    @ExpectPlatform
+    public static TextureAtlasSprite getStillTexture(FluidStack stack) {
+        return getStillTexture(stack.fluid());
+    }
+
     public static int getFluidColor(FluidStack stack) {
-        throw new AssertionError();
+        return getFluidColor(stack, null, null);
+    }
+
+    public static int getFluidColor(FluidStack stack, @Nullable Level level, @Nullable BlockPos pos) {
+        return getFluidColor(stack.fluid(), level, pos);
+    }
+
+    public static int getFluidColor(Fluid fluid, @Nullable Level level, @Nullable BlockPos pos) {
+        FluidState state = fluid.defaultFluidState();
+        FluidModel fluidModel = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(state);
+        if (fluidModel.tintSource() == null) {
+            return 0xFFFFFFFF;
+        }
+
+        if (fluid.isSame(Fluids.WATER)) {
+            if (level != null && pos != null) {
+                return level.getBiome(pos).value().getWaterColor();
+            }
+
+            return 0x3F76E4; // default water color, used when not in world or biome is missing
+        }
+
+        return fluidModel.tintSource().color(state.createLegacyBlock());
     }
 
     public static Level getClientLevel() {
@@ -147,5 +175,13 @@ public class ClientUtils {
 
     public static Player getClientPlayer() {
         return Objects.requireNonNull(Minecraft.getInstance().player);
+    }
+
+    public static Optional<Player> getOptionalClientPlayer() {
+        return Optional.ofNullable(Minecraft.getInstance().player);
+    }
+
+    public static String getCurrentLanguageCode() {
+        return Minecraft.getInstance().options.languageCode;
     }
 }

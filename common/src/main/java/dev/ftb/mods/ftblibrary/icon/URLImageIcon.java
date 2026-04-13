@@ -5,6 +5,7 @@ import net.minecraft.resources.Identifier;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -17,6 +18,10 @@ public class URLImageIcon extends ImageIcon {
 
         this.uri = uri;
         url = this.uri.toString();
+
+        if (!Objects.equals(this.uri.getScheme(), "file")) {
+            throw new IllegalArgumentException("Only file:// URIs are supported for URLImageIcon");
+        }
     }
 
     public URLImageIcon(URI uri) {

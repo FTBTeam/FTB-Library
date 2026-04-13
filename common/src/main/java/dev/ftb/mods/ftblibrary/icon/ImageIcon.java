@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 import java.net.URI;
 
 public class ImageIcon extends Icon<ImageIcon> implements IResourceIcon {
-    public static final Identifier MISSING_IMAGE = FTBLibrary.rl("textures/gui/missing_image.png");
+    public static final Identifier MISSING_IMAGE = FTBLibrary.id("textures/gui/missing_image.png");
 
     public final Identifier texture;
     public float minU, minV, maxU, maxV;

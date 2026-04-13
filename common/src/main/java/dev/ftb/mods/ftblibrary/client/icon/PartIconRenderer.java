@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.icon;
 
 import dev.ftb.mods.ftblibrary.icon.PartIcon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import static dev.ftb.mods.ftblibrary.client.icon.IconHelper.renderIcon;
 
@@ -9,7 +9,7 @@ public enum PartIconRenderer implements IconRenderer<PartIcon> {
     INSTANCE;
 
     @Override
-    public void render(PartIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(PartIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         if (w == icon.subWidth && h == icon.subHeight) {
             renderIcon(icon.all, graphics, x, y, w, h);
             return;

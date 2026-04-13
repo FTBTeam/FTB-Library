@@ -1,67 +1,66 @@
 plugins {
-    id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.13-SNAPSHOT" apply false
+    id 'java-library'
+    id 'net.fabricmc.fabric-loom' version '1.15.2' apply(false)
+    id 'net.neoforged.moddev' version '2.0.140' apply(false)
     id "me.modmuss50.mod-publish-plugin" version "1.1.0"
 }
 
-apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/changelog.gradle'
-
-architectury {
-    minecraft = rootProject.minecraft_version
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
 }
 
-subprojects {
-    apply plugin: "dev.architectury.loom"
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/maven.gradle'
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/publishing-2.gradle'
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/utils.gradle'
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/changelog.gradle'
 
-    loom {
-        silentMojangMappingsLicense()
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+
+    version = createModVersion(project)
+    group = project.maven_group
+
+    base {
+        archivesName = project.archives_base_name
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release = 25
     }
 
     dependencies {
-        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-        mappings loom.officialMojangMappings()
+//        testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0-M1'
+    }
+
+    java {
+        withSourcesJar()
     }
 }
 
-allprojects {
-    apply plugin: "java"
-    apply plugin: "architectury-plugin"
-    apply plugin: "maven-publish"
-    apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/git-md-changelog.gradle"
+subprojects {
+    if (project.name != "common") {
+        dependencies {
+            api project(":common")
+        }
 
-    version = project.mod_version
-    group = project.maven_group
-    archivesBaseName = project.archives_base_name
-
-    // needs to be done AFTER version is set
-    apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/publishing.gradle"
-
-    sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = 21
-
-    compileJava {
-        options.encoding = "UTF-8"
+        jar {
+            from project(":common").sourceSets.main.output
+        }
     }
 
     repositories {
         mavenCentral()
         mavenLocal()
+        commonMavenRepos(repositories)
 
         maven {
-            url "https://maven.architectury.dev/"
-        }
-
-        maven {
-            url "https://www.cursemaven.com"
+            url "https://maven.fabricmc.net/"
             content {
-                includeGroup "curse.maven"
-            }
-        }
-
-        maven {
-            url "https://maven.saps.dev/minecraft"
-            content {
-                includeGroup "dev.latvian.mods"
-                includeGroup "dev.ftb.mods"
+                includeGroup "net.fabricmc"
+                includeGroup "org.spongepowered"
             }
         }
 
@@ -72,50 +71,43 @@ allprojects {
                 includeGroup "mezz.jei"
             }
         }
-
-        maven {
-            // Emi
-            name = "TerraformersMC"
-            url = "https://maven.terraformersmc.com/"
-        }
     }
 
-    dependencies {
-        testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0-M1'
-    }
+    processResources {
+        exclude '.cache'
 
-    java {
-        withSourcesJar()
-    }
+        inputs.property "version", project.version
 
-    publishing {
-        repositories {
-            if (ftbPublishing.ftbToken) {
-                maven {
-                    url ftbPublishing.ftbURL
-                    credentials {
-                        username = ftbPublishing.ftbUser
-                        password = ftbPublishing.ftbToken
-                    }
-                }
-            }
+        filesMatching(["META-INF/neoforge.mods.toml", "fabric.mod.json"]) {
+            expand "version": project.version,
+                    "neoforgeversionrange": project.neoforge_version_range,
+                    "neoforgeloaderversion": project.neoforge_loader_version,
+                    "minecraft_version_range_maven": minecraft_version_range_maven,
+                    "minecraft_version_range_semver": minecraft_version_range_semver,
+                    "fabricapiversionrange": project.fabric_api_version_range
         }
     }
 }
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+createMavenPublishingBlock(project)
 
 publishMods {
     dryRun = providers.environmentVariable("CURSEFORGE_KEY").getOrNull() == null
     changelog = createChangelog(project)
     version = mod_version
-
-    // TODO: Migrate to something else
-    def tag = providers.environmentVariable("TAG").getOrElse("release")
-    type = tag.endsWith("-beta") ? BETA : (tag.endsWith("-alpha") ? ALPHA : STABLE)
+    type = createReleaseType(project)
 
     def createOptions = (String projectName) -> {
         publishOptions {
-            file = project.provider { project(":$projectName").tasks.remapJar }.flatMap { it.archiveFile }
-            displayName = "[${projectName.toUpperCase()}][${minecraft_version}] ${readable_name} ${mod_version}"
+            file = project.provider { project(":$projectName").tasks.jar }.flatMap { it.archiveFile }
+            displayName = "${readable_name} ${projectName.capitalize()} ${mod_version}"
             modLoaders.add(projectName.toLowerCase())
         }
     }
@@ -125,24 +117,22 @@ publishMods {
 
     def curseForgeOptions = curseforgeOptions {
         accessToken = providers.environmentVariable("CURSEFORGE_KEY")
-        minecraftVersions.add("${minecraft_version}")
-        javaVersions.add(JavaVersion.VERSION_21)
+        supported_minecraft_versions.split(",").each {
+            minecraftVersions.add(it.trim())
+        }
+        javaVersions.add(JavaVersion.VERSION_25)
     }
 
     curseforge("curseforgeFabric") {
         from(curseForgeOptions, fabricOptions)
         projectId = curseforge_id_fabric
-        requires('architectury-api')
         requires('fabric-api')
         optional('jei')
-        optional('roughly-enough-items')
     }
 
     curseforge("curseforgeNeoForge") {
         from(curseForgeOptions, neoForgeOptions)
         projectId = curseforge_id_forge
-        requires("architectury-api")
         optional('jei')
-        optional('roughly-enough-items')
     }
 }

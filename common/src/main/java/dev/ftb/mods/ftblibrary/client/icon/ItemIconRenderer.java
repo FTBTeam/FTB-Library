@@ -2,23 +2,23 @@ package dev.ftb.mods.ftblibrary.client.icon;
 
 import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 
 public enum ItemIconRenderer implements IconRenderer<ItemIcon> {
     INSTANCE;
 
     @Override
-    public void render(ItemIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void render(ItemIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         doRender(icon, graphics, x, y, w, h, true);
     }
 
     @Override
-    public void renderStatic(ItemIcon icon, GuiGraphics graphics, int x, int y, int w, int h) {
+    public void renderStatic(ItemIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         doRender(icon, graphics, x, y, w, h, false);
     }
 
-    private static void doRender(ItemIcon icon, GuiGraphics graphics, int x, int y, int w, int h, boolean overlay) {
+    private static void doRender(ItemIcon icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h, boolean overlay) {
         var poseStack = graphics.pose();
         poseStack.pushMatrix();
         poseStack.translate(x + w / 2F, y + h / 2F);
@@ -28,12 +28,12 @@ public enum ItemIconRenderer implements IconRenderer<ItemIcon> {
             poseStack.scale(scale, scale);
         }
 
-        GuiHelper.drawItem(graphics, icon.getStack(), overlay, null);
+        GuiHelper.drawItem(graphics, icon.getStack().create(), overlay, null);
         poseStack.popMatrix();
     }
 
-    public static void drawItem3D(GuiGraphics graphics, ItemStack stack) {
+    public static void drawItem3D(GuiGraphicsExtractor graphics, ItemStack stack) {
         // TODO maybe this can just go...
-        graphics.renderItem(stack, 0, 0);
+        graphics.item(stack, 0, 0);
     }
 }

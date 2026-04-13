@@ -4,9 +4,10 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.api.sidebar.SidebarButtonCreatedEvent;
+import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.value.StringSidebarMapValue.SideButtonInfo;
+import dev.ftb.mods.ftblibrary.platform.event.NativeEventPosting;
 import dev.ftb.mods.ftblibrary.util.MapUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -27,7 +28,7 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonE
     private final Map<Identifier, RegisteredSidebarButton> buttons = new HashMap<>();
     private final List<SidebarGuiButton> buttonList = new ArrayList<>();
 
-    public SidebarButtonManager() {
+    private SidebarButtonManager() {
         super(ExtraCodecs.JSON, FileToIdConverter.json("sidebar_buttons"));
     }
 
@@ -62,7 +63,7 @@ public class SidebarButtonManager extends SimpleJsonResourceReloadListener<JsonE
         }
 
         for (RegisteredSidebarButton value : buttons.values()) {
-            SidebarButtonCreatedEvent.EVENT.invoker().accept(new SidebarButtonCreatedEvent(value));
+            NativeEventPosting.get().postEvent(new SidebarButtonCreatedEvent.Data(value));
         }
 
         if (!prevConfig.equals(buttonConfig)) {

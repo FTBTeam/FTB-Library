@@ -11,7 +11,7 @@ import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import it.unimi.dsi.fastutil.booleans.BooleanStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -77,64 +77,64 @@ public class Theme {
         return CONTENT_COLOR_DARK;
     }
 
-    public void drawGui(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+    public void drawGui(GuiGraphicsExtractor graphics, int x, int y, int w, int h, WidgetType type) {
         Icon<?> icon = type == WidgetType.MOUSE_OVER ? GUI_MOUSE_OVER : GUI;
         renderIcon(icon, graphics, x - 3, y - 3, w + 6, h + 6);
     }
 
-    public void drawWidget(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+    public void drawWidget(GuiGraphicsExtractor graphics, int x, int y, int w, int h, WidgetType type) {
         Icon<?> icon = type == WidgetType.MOUSE_OVER ? WIDGET_MOUSE_OVER : type == WidgetType.DISABLED ? WIDGET_DISABLED : WIDGET;
         renderIcon(icon, graphics, x, y, w, h);
     }
 
-    public void drawSlot(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+    public void drawSlot(GuiGraphicsExtractor graphics, int x, int y, int w, int h, WidgetType type) {
         Icon<?> icon = type == WidgetType.MOUSE_OVER ? SLOT_MOUSE_OVER : SLOT;
         renderIcon(icon, graphics, x, y, w, h);
     }
 
-    public void drawContainerSlot(GuiGraphics graphics, int x, int y, int w, int h) {
+    public void drawContainerSlot(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         renderIcon(SLOT, graphics, x - 1, y - 1, w + 2, h + 2);
     }
 
-    public void drawButton(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+    public void drawButton(GuiGraphicsExtractor graphics, int x, int y, int w, int h, WidgetType type) {
         Icon<?> icon = type == WidgetType.MOUSE_OVER ? BUTTON_MOUSE_OVER : type == WidgetType.DISABLED ? BUTTON_DISABLED : BUTTON;
         renderIcon(icon, graphics, x, y, w, h);
     }
 
-    public void drawScrollBarBackground(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type) {
+    public void drawScrollBarBackground(GuiGraphicsExtractor graphics, int x, int y, int w, int h, WidgetType type) {
         Icon<?> icon = type == WidgetType.DISABLED ? SCROLL_BAR_BG_DISABLED : SCROLL_BAR_BG;
         renderIcon(icon, graphics, x, y, w, h);
     }
 
-    public void drawScrollBar(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean vertical) {
+    public void drawScrollBar(GuiGraphicsExtractor graphics, int x, int y, int w, int h, WidgetType type, boolean vertical) {
         Icon<?> icon = type == WidgetType.MOUSE_OVER ? SCROLLER_MOUSE_OVER : SCROLLER;
         renderIcon(icon, graphics, x + 1, y + 1, w - 2, h - 2);
     }
 
-    public void drawTextBox(GuiGraphics graphics, int x, int y, int w, int h) {
+    public void drawTextBox(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         renderIcon(TEXT_BOX, graphics, x, y, w, h);
     }
 
-    public void drawCheckboxBackground(GuiGraphics graphics, int x, int y, int w, int h, boolean radioButton) {
+    public void drawCheckboxBackground(GuiGraphicsExtractor graphics, int x, int y, int w, int h, boolean radioButton) {
         drawSlot(graphics, x, y, w, h, WidgetType.NORMAL);
     }
 
-    public void drawCheckbox(GuiGraphics graphics, int x, int y, int w, int h, WidgetType type, boolean selected, boolean radioButton) {
+    public void drawCheckbox(GuiGraphicsExtractor graphics, int x, int y, int w, int h, WidgetType type, boolean selected, boolean radioButton) {
         if (selected) {
             drawWidget(graphics, x, y, w, h, type);
         }
     }
 
-    public void drawPanelBackground(GuiGraphics graphics, int x, int y, int w, int h) {
+    public void drawPanelBackground(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         renderIcon(Color4I.rgb(0x8B8B8B), graphics, x, y, w, h);
     }
 
-    public void drawHorizontalTab(GuiGraphics graphics, int x, int y, int w, int h, boolean selected) {
+    public void drawHorizontalTab(GuiGraphicsExtractor graphics, int x, int y, int w, int h, boolean selected) {
         Icon<?> icon = selected ? TAB_H_SELECTED : TAB_H_UNSELECTED;
         renderIcon(icon, graphics, x, y, w, h);
     }
 
-    public void drawContextMenuBackground(GuiGraphics graphics, int x, int y, int w, int h) {
+    public void drawContextMenuBackground(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         drawGui(graphics, x, y, w, h, WidgetType.NORMAL);
         renderIcon(Color4I.BLACK.withAlpha(90), graphics, x, y, w, h);
     }
@@ -179,7 +179,7 @@ public class Theme {
         return getFont().getSplitter().splitLines(text, width, Style.EMPTY);
     }
 
-    public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y, Color4I color, int flags) {
+    public final int drawString(GuiGraphicsExtractor graphics, @Nullable Object text, int x, int y, Color4I color, int flags) {
         if (text == null || text == FormattedCharSequence.EMPTY || text == Component.EMPTY || (text instanceof String s && s.isEmpty()) || color.isEmpty()) {
             return x;
         }
@@ -189,14 +189,14 @@ public class Theme {
                 if (Bits.getFlag(flags, CENTERED)) {
                     x -= getStringWidth(fcs) / 2;
                 }
-                graphics.drawString(getFont(), fcs, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
+                graphics.text(getFont(), fcs, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
                 return x + getStringWidth(fcs);
             }
             case Component comp -> {
                 if (Bits.getFlag(flags, CENTERED)) {
                     x -= getStringWidth(comp) / 2;
                 }
-                graphics.drawString(getFont(), comp, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
+                graphics.text(getFont(), comp, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
                 return x + getStringWidth(comp);
             }
             case FormattedText formattedText -> {
@@ -207,21 +207,21 @@ public class Theme {
                 if (Bits.getFlag(flags, CENTERED)) {
                     x -= getStringWidth(s) / 2;
                 }
-                graphics.drawString(getFont(), s, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
+                graphics.text(getFont(), s, x, y, color.rgba(), Bits.getFlag(flags, SHADOW));
                 return x + getStringWidth(s);
             }
         }
     }
 
-    public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y, int flags) {
+    public final int drawString(GuiGraphicsExtractor graphics, @Nullable Object text, int x, int y, int flags) {
         return drawString(graphics, text, x, y, getContentColor(WidgetType.mouseOver(Bits.getFlag(flags, MOUSE_OVER))), flags);
     }
 
-    public final int drawString(GuiGraphics graphics, @Nullable Object text, int x, int y) {
+    public final int drawString(GuiGraphicsExtractor graphics, @Nullable Object text, int x, int y) {
         return drawString(graphics, text, x, y, getContentColor(WidgetType.NORMAL), 0);
     }
 
-    public final int drawStringOnBackground(GuiGraphics graphics, @Nullable Object text, int x, int y) {
+    public final int drawStringOnBackground(GuiGraphicsExtractor graphics, @Nullable Object text, int x, int y) {
         return drawString(graphics, text, x, y, hasDarkBackground() ? getContentColor(WidgetType.NORMAL) : getInvertedContentColor(), 0);
     }
 

@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
@@ -62,7 +62,7 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
     public void addMouseOverText(TooltipList list) {
     }
 
-    public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawIcon(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         IconHelper.renderIcon(getIcon(), graphics, x, y, w, h);
     }
 

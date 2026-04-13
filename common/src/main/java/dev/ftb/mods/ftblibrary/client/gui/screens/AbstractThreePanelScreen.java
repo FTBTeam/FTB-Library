@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.gui.screens;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.theme.ThemeManager;
@@ -9,7 +7,9 @@ import dev.ftb.mods.ftblibrary.client.gui.widget.*;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import net.minecraft.client.gui.GuiGraphics;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
@@ -169,7 +169,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         }
 
         @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawPanelBackground(graphics, x, y, w, h);
             IconHelper.renderIcon(Color4I.BLACK.withAlpha(80), graphics, x, y + h - 1, w, 1);
         }
@@ -198,7 +198,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         }
 
         @Override
-        public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawPanelBackground(graphics, x, y, w, h);
             IconHelper.renderIcon(Color4I.GRAY.withAlpha(64), graphics, x, y, w, 1);
         }

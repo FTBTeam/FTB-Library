@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class ContextButton extends Button {
@@ -33,12 +33,12 @@ public class ContextButton extends Button {
     }
 
     @Override
-    public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void drawIcon(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         item.drawIcon(graphics, theme, x, y, w, h);
     }
 
     @Override
-    public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    public void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
         if (hasIcons) {
             drawIcon(graphics, theme, x + 1, y + 2, 8, 8);
             theme.drawString(graphics, getTitle(), x + 11, y + 2, theme.getContentColor(getWidgetType()), Theme.SHADOW);

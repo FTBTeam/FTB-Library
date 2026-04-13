@@ -1,20 +1,18 @@
 package dev.ftb.mods.ftblibrary.config.manager;
 
-import dev.architectury.event.events.common.LifecycleEvent;
-import dev.architectury.event.events.common.PlayerEvent;
+import de.marhali.json5.Json5;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
-import dev.ftb.mods.ftblibrary.config.serializer.Json5ConfigSerializer;
-import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
-import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
-import dev.ftb.mods.ftblibrary.config.value.Config;
 import dev.ftb.mods.ftblibrary.config.ConfigUtil;
-import dev.ftb.mods.ftblibrary.config.serializer.SNBTConfigSerializer;
-import dev.ftb.mods.ftblibrary.util.NetworkHelper;
+import dev.ftb.mods.ftblibrary.config.serializer.Json5ConfigSerializer;
+import dev.ftb.mods.ftblibrary.config.value.Config;
+import dev.ftb.mods.ftblibrary.json5.Json5Util;
+import dev.ftb.mods.ftblibrary.net.SyncConfigFromServerPacket;
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,9 +41,6 @@ public enum ConfigManager {
         if (inited) {
             throw new IllegalStateException("already initialised!");
         }
-
-        LifecycleEvent.SERVER_BEFORE_START.register(this::onServerStarting);
-        PlayerEvent.PLAYER_JOIN.register(this::onPlayerLogin);
 
         inited = true;
     }
@@ -125,9 +120,11 @@ public enum ConfigManager {
         if (tc == null) {
             throw new IllegalArgumentException("Unknown tracked config: " + key);
         }
+        if (tc.loadedFrom == null) {
+            throw new IllegalArgumentException("Tracked config " + key + " not fully initialised (trying to save before tracking?)");
+        }
 
         try {
-//            SNBTConfigSerializer.writeToFile(tc.config, tc.loadedFrom);
             Json5ConfigSerializer.writeToFile(tc.config, tc.loadedFrom);
             FTBLibrary.LOGGER.debug("saved config name={} path={}", key, tc.loadedFrom);
         } catch (IOException e) {
@@ -139,12 +136,12 @@ public enum ConfigManager {
      * Called when a server config is sync'd to the client on player login.
      *
      * @param serverConfigName name of the server config, expected to be registered on client
-     * @param tag the config settings
+     * @param configData the config settings
      */
-    public void syncFromServer(String serverConfigName, CompoundTag tag) {
+    public void syncFromServer(String serverConfigName, String configData) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(new SNBTConfigSerializer(SNBTCompoundTag.of(tag)));
+            tc.config.read(new Json5ConfigSerializer(new Json5().parse(configData).getAsJson5Object()));
             tc.onEdited.accept(false);
             FTBLibrary.LOGGER.info("received server config settings for config: {}", serverConfigName);
         } else {
@@ -156,13 +153,13 @@ public enum ConfigManager {
      * Called when a player applies changes to a server config via GUI.
      *
      * @param serverConfigName name of the server config, expected to be registered on server
-     * @param tag the config settings
+     * @param configData the config settings
      * @param playerName player who made the changes
      */
-    public void syncFromClient(String serverConfigName, CompoundTag tag, String playerName) {
+    public void syncFromClient(String serverConfigName, String configData, String playerName) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(new SNBTConfigSerializer(SNBTCompoundTag.of(tag)));
+            tc.config.read(new Json5ConfigSerializer(new Json5().parse(configData).getAsJson5Object()));
             tc.onEdited.accept(true);
             save(serverConfigName);
             FTBLibrary.LOGGER.info("received client config settings from {} for config: {}", playerName, serverConfigName);
@@ -171,24 +168,23 @@ public enum ConfigManager {
         }
     }
 
-    private void onServerStarting(MinecraftServer server) {
+    public void onServerStarting(MinecraftServer server) {
         pendingServer.forEach((key, config) ->
                 findAndLoad(key, config, fileName -> server.getWorldPath(ConfigUtil.SERVER_CONFIG_DIR).resolve(fileName))
         );
         pendingServer.clear();
     }
 
-    private void onPlayerLogin(ServerPlayer serverPlayer) {
-        trackedConfigs.forEach((name, tc) -> {
+    public void onPlayerLogin(ServerPlayer serverPlayer) {
+        trackedConfigs.values().forEach(tc -> {
             if (tc.synced) {
-                NetworkHelper.sendTo(serverPlayer, SyncConfigFromServerPacket.create(tc.config));
+                Server2PlayNetworking.send(serverPlayer, SyncConfigFromServerPacket.create(tc.config));
             }
         });
     }
 
     void findAndLoad(String key, TrackedConfig protoTc, Function<String, Path> overridePathSupplier) {
-//        String fileName = key + ".snbt";
-        String fileName = key + ".json5";
+        String fileName = key + Json5Util.FILE_EXT;
 
         Path primaryPath = ConfigUtil.CONFIG_DIR.resolve(fileName);
         Path overridePath = overridePathSupplier.apply(fileName);
@@ -204,15 +200,14 @@ public enum ConfigManager {
 
     private void loadAndTrack(String key, TrackedConfig protoTc, Path path) {
         try {
-//            SNBTConfigSerializer.readFromFile(protoTc.config, path);
             Json5ConfigSerializer.readFromFile(protoTc.config, path);
-            track(key, protoTc.promoteToFull(path));
+            startTracking(key, protoTc.promoteToFull(path));
         } catch (IOException e) {
             FTBLibrary.LOGGER.error("can't read config {} from {}: {}/{}", key, path, e.getClass().getName(), e.getMessage());
         }
     }
 
-    void track(String key, TrackedConfig trackedConfig) {
+    void startTracking(String key, TrackedConfig trackedConfig) {
         trackedConfigs.put(key, trackedConfig);
         FTBLibrary.LOGGER.debug("tracking config {}, loaded from {}", key, trackedConfig.loadedFrom);
     }
@@ -247,7 +242,7 @@ public enum ConfigManager {
      *                   receives true if server-side (i.e. config received from client after GUI editing),
      *                   false if client-side (i.e. config has just been edited via GUI)
      */
-    record TrackedConfig(Path loadedFrom, ConfigType configType, Config config, boolean synced, BooleanConsumer onEdited, String groupPrefix) {
+    record TrackedConfig(@Nullable Path loadedFrom, ConfigType configType, Config config, boolean synced, BooleanConsumer onEdited, String groupPrefix) {
         static final BooleanConsumer NO_ACTION = isServer -> {};
 
         /**

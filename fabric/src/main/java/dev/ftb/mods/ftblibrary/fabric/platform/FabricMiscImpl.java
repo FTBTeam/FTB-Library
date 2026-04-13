@@ -1,0 +1,84 @@
+package dev.ftb.mods.ftblibrary.fabric.platform;
+
+import dev.ftb.mods.ftblibrary.core.mixin.fabric.KeyMappingAccess;
+import dev.ftb.mods.ftblibrary.core.mixin.fabric.PatchedDataComponentMapAccess;
+import dev.ftb.mods.ftblibrary.fabric.PlayerDisplayNameCache;
+import dev.ftb.mods.ftblibrary.platform.Misc;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class FabricMiscImpl implements Misc {
+    @Override
+    public boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
+        return keyCode != InputConstants.UNKNOWN && keyCode.equals(((KeyMappingAccess) keyBinding).getKey());
+    }
+
+    @Override
+    public Component componentWithLinks(String message) {
+        return Component.literal(message);
+    }
+
+    @Override
+    public void refreshDisplayName(Player player) {
+        ((PlayerDisplayNameCache) player).ftbLib$clearCachedDisplayName();
+    }
+
+    @Override
+    public long bucketFluidAmount() {
+        // 81000? see https://github.com/FabricMC/fabric-api/issues/1166
+        // TODO: Helper methods to do something like what TechReborn supports https://github.com/TechReborn/TechReborn/blob/79d0b16b15bac13f1fefcdbdab044a65d06297c2/RebornCore/src/main/java/reborncore/common/util/FluidTextHelper.java
+        return FluidConstants.BUCKET;
+    }
+
+    @Override
+    public boolean isFakePlayer(Player player) {
+        // This is kinda meh but it's a relatively sane approach to detecting fake players
+        // as they will typically extend ServerPlayer but not be exactly an instance of ServerPlayer.
+        // Credit to Architectury for this approach:
+        return player instanceof ServerPlayer && player.getClass() != ServerPlayer.class;
+    }
+
+    @Override
+    public boolean isRailBlock(Block block) {
+        return block instanceof BaseRailBlock;
+    }
+
+    @Override
+    public boolean playerHasCorrectTool(Player player, BlockPos pos, BlockState state) {
+        return player.hasCorrectToolForDrops(state);
+    }
+
+    @Override
+    public boolean canAxeStrip(ItemStack stack) {
+        return stack.getItem() instanceof AxeItem;
+    }
+
+    @Override
+    public boolean canTillSoil(ItemStack stack) {
+        return stack.getItem() instanceof HoeItem;
+    }
+
+    @Override
+    public boolean canFlattenPath(ItemStack stack) {
+        return stack.getItem() instanceof ShovelItem;
+    }
+
+    @Override
+    public boolean hasComponentPatch(ItemStack stack) {
+        return stack.getComponents() instanceof PatchedDataComponentMap &&
+                !((PatchedDataComponentMapAccess) stack.getComponents()).getPatch().isEmpty();
+    }
+}

@@ -5,7 +5,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastManager;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -65,7 +65,7 @@ public class SimpleToast implements Toast {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Font font, long delta) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, Font font, long delta) {
         var mc = Minecraft.getInstance();
 
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, 0, 0, 160, 32);
@@ -74,18 +74,18 @@ public class SimpleToast implements Toast {
         var i = isImportant() ? 0x00FF88FF : 0x00FFFF00;
 
         if (list.size() == 1) {
-            graphics.drawString(mc.font, getTitle(), 30, 7, i | 0xFF000000, true);
-            graphics.drawString(mc.font, list.getFirst(), 30, 18, -1);
+            graphics.text(mc.font, getTitle(), 30, 7, i | 0xFF000000, true);
+            graphics.text(mc.font, list.getFirst(), 30, 18, -1);
         } else {
             if (delta < 1500L) {
                 var k = Mth.floor(Mth.clamp((float) (1500L - delta) / 300F, 0F, 1F) * 255F) << 24 | 67108864;
-                graphics.drawString(mc.font, getTitle(), 30, 11, i | k, true);
+                graphics.text(mc.font, getTitle(), 30, 11, i | k, true);
             } else {
                 var i1 = Mth.floor(Mth.clamp((float) (delta - 1500L) / 300F, 0F, 1F) * 252F) << 24 | 67108864;
                 var l = 16 - list.size() * mc.font.lineHeight / 2;
 
                 for (var s : list) {
-                    graphics.drawString(mc.font, s, 30, l, 0x00FFFFFF | i1, true);
+                    graphics.text(mc.font, s, 30, l, 0x00FFFFFF | i1, true);
                     l += mc.font.lineHeight;
                 }
             }
