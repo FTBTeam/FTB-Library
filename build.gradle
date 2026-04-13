@@ -10,7 +10,7 @@ tasks.named('wrapper', Wrapper).configure {
 }
 
 apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/maven.gradle'
-apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/publishing-2.gradle'
+apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/publishing-2.gradle?v9'
 apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/utils.gradle'
 apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/v1/gradle/changelog.gradle'
 
@@ -87,6 +87,8 @@ subprojects {
                     "fabricapiversionrange": project.fabric_api_version_range
         }
     }
+
+    createMavenPublishingBlock(project)
 }
 
 idea {
@@ -96,10 +98,8 @@ idea {
     }
 }
 
-createMavenPublishingBlock(project)
-
 publishMods {
-    dryRun = providers.environmentVariable("CURSEFORGE_KEY").getOrNull() == null
+    dryRun = providers.environmentVariable("CURSEFORGE_KEY").getOrNull() == null || providers.environmentVariable("SKIP_CURSEFORGE").getOrNull() == null
     changelog = createChangelog(project)
     version = project.version
     type = createReleaseType(project)
