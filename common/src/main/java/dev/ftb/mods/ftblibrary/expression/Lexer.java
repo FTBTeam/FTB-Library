@@ -103,7 +103,7 @@ public class Lexer {
     /// Attempts to read a numeric token, classifying it by suffix (case-insensitive) to match Java literal conventions:
     ///
     /// We support:
-    /// - Nothing for a noraml integer,
+    /// - Nothing for a normal integer,
     /// - d/D for double,
     /// - f/F for float,
     /// - l/L for long
