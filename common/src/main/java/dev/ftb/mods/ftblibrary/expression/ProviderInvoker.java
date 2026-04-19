@@ -42,6 +42,8 @@ class ProviderInvoker {
             throw new ExpressionEvalException("Error invoking '" + provider.name() + "." + method + "': " + cause.getMessage(), cause);
         } catch (IllegalAccessException e) {
             throw new ExpressionEvalException("Cannot access method '" + provider.name() + "." + method + "': " + e.getMessage(), e);
+        } catch (IllegalArgumentException e) {
+            throw new ExpressionEvalException("Invalid arguments for method '" + provider.name() + "." + method + "': " + e.getMessage(), e);
         }
     }
 
