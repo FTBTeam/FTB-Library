@@ -367,7 +367,7 @@ public class ExpressionEngineTest {
         @Test
         void wrongArgTypeThrowsEvalException() {
             var invoker = new ProviderInvoker(new TestContextProvider());
-            assertThrows(ExpressionEvalException.class, () -> invoker.invoke("test.add", List.of("notANumber", "notANumber")));
+            assertThrows(ExpressionEvalException.class, () -> invoker.invoke("add", List.of("notANumber", "notANumber")));
         }
     }
 
