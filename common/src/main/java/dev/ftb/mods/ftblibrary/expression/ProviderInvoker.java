@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.expression;
 
+import dev.ftb.mods.ftblibrary.expression.exceptions.DuplicateMethodException;
 import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionEvalException;
 import dev.ftb.mods.ftblibrary.expression.provider.ContextProvider;
 import org.jspecify.annotations.Nullable;
@@ -54,6 +55,15 @@ class ProviderInvoker {
                 continue;
             }
 
+            // Exclude methods declared on Object itself (equals, hashCode, toString, wait, etc.)
+            if (m.getDeclaringClass() == Object.class || m.getDeclaringClass() == ContextProvider.class) {
+                continue;
+            }
+
+            if (cache.containsKey(m.getName())) {
+                throw new DuplicateMethodException("Provider '" + provider.name() + "' has duplicate public method name '" + m.getName() + "'. Overloaded methods are not supported in expression providers.");
+            }
+
             m.setAccessible(true);
             cache.put(m.getName(), m);
         }
@@ -89,7 +99,7 @@ class ProviderInvoker {
                 if (target == long.class || target == Long.class) return bi.longValueExact();
                 if (target == int.class || target == Integer.class) return bi.intValueExact();
             } catch (ArithmeticException e) {
-                throw new ExpressionEvalException("Cannot coerce value '" + value + "' (" + value.getClass().getSimpleName() + ") to " + target.getSimpleName() + " for " + context, e);
+                throw ExpressionEvalException.coerceIssue(value, target, context);
             }
         }
 
@@ -111,6 +121,6 @@ class ProviderInvoker {
             return b;
         }
 
-        throw new ExpressionEvalException("Cannot coerce value '" + value + "' (" + value.getClass().getSimpleName() + ") to " + target.getSimpleName() + " for " + context);
+        throw ExpressionEvalException.coerceIssue(value, target, context);
     }
 }

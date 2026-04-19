@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.expression;
 
+import dev.ftb.mods.ftblibrary.expression.exceptions.DuplicateMethodException;
 import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionEvalException;
 import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionParseException;
 import dev.ftb.mods.ftblibrary.expression.provider.ContextProvider;
@@ -14,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /// Testing for the expression language
+/// TODO: Maybe split this up into test classes?
 public class ExpressionEngineTest {
     FakeStdProvider std;
     FakeLevelProvider level;
@@ -368,6 +370,69 @@ public class ExpressionEngineTest {
         void wrongArgTypeThrowsEvalException() {
             var invoker = new ProviderInvoker(new TestContextProvider());
             assertThrows(ExpressionEvalException.class, () -> invoker.invoke("add", List.of("notANumber", "notANumber")));
+        }
+
+        @Test
+        void objectMethodsExcludedFromAvailableMethods() {
+            var methods = new ProviderInvoker(level).availableMethods();
+
+            // Ensure an objects native / inherited methods are not included as available methods on the provider
+            assertFalse(methods.contains("equals"), "equals() from Object should be excluded");
+            assertFalse(methods.contains("hashCode"), "hashCode() from Object should be excluded");
+            assertFalse(methods.contains("toString"), "toString() from Object should be excluded");
+            assertFalse(methods.contains("wait"), "wait() from Object should be excluded");
+            assertFalse(methods.contains("notify"), "notify() from Object should be excluded");
+            assertFalse(methods.contains("notifyAll"), "notifyAll() from Object should be excluded");
+            assertFalse(methods.contains("getClass"), "getClass() from Object should be excluded");
+        }
+
+        @Test
+        void contextProviderNameMethodExcluded() {
+            // The context provider provides a name method for its own namespace and this should be excluded
+            var methods = new ProviderInvoker(level).availableMethods();
+            assertFalse(methods.contains("name"), "name() from ContextProvider should be excluded");
+        }
+
+        @Test
+        void overloadedMethodThrowsDuplicateMethodException() {
+            assertThrows(DuplicateMethodException.class, () -> new ProviderInvoker(new OverloadedProvider()));
+        }
+
+        @Test
+        void customEqualsWithDifferentArityIsAllowed() {
+            // A provider that declares its own equals(String, String) — 2-arg, nothing to do with
+            // Object.equals — should not be filtered and should not throw.
+            var invoker = new ProviderInvoker(new CustomEqualsProvider());
+            assertTrue(invoker.availableMethods().contains("equals"));
+            assertEquals(true, invoker.invoke("equals", List.of("hello", "hello")));
+        }
+    }
+
+    /// Provider with two methods sharing the same name — should fail at construction time.
+    @SuppressWarnings("unused")
+    static class OverloadedProvider extends ContextProvider {
+        OverloadedProvider() {
+            super("overloaded");
+        }
+
+        public boolean check(String value) {
+            return true;
+        }
+
+        public boolean check(int value) {
+            return true;
+        }
+    }
+
+    /// Provider with a custom 2-arg equals — must not be confused with Object.equals.
+    @SuppressWarnings("unused")
+    static class CustomEqualsProvider extends ContextProvider {
+        CustomEqualsProvider() {
+            super("custom");
+        }
+
+        public boolean equals(String a, String b) {
+            return a.equals(b);
         }
     }
 
