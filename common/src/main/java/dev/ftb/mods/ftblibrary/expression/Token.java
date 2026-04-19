@@ -7,7 +7,8 @@ public record Token(TokenType type, String value, int pos) {
     public enum TokenType {
         STRING,         // 'hello'
         INTEGER,        // 42, -7
-        FLOAT,          // 3.14, -0.5
+        FLOAT,          // 3.14, -0.5, 3.14d, 3.14D
+        FLOAT32,        // 3.14f, 3.14F
         TRUE,           // true
         FALSE,          // false
 

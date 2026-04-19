@@ -92,6 +92,10 @@ public class ExpressionParser {
                 advance();
                 yield parseFloat(token);
             }
+            case FLOAT32 -> {
+                advance();
+                yield parseFloat32(token);
+            }
             case IDENTIFIER -> {
                 advance();
                 String firstName = token.value();
@@ -104,9 +108,7 @@ public class ExpressionParser {
                     expect(Token.TokenType.RPAREN);
                     yield new Node.ProviderCall(firstName, method.value(), args);
                 } else {
-                    throw new ExpressionParseException(
-                            "Unexpected bare identifier '" + firstName + "' at position " + token.pos()
-                                    + ". All calls must be namespaced: '" + firstName + ".method()'.");
+                    throw new ExpressionParseException("Unexpected bare identifier '" + firstName + "' at position " + token.pos() + ". All calls must be namespaced: '" + firstName + ".method()'.");
                 }
             }
             default -> throw new ExpressionParseException(
@@ -144,6 +146,14 @@ public class ExpressionParser {
     private Node.FloatLiteral parseFloat(Token t) {
         try {
             return new Node.FloatLiteral(Double.parseDouble(t.value()));
+        } catch (NumberFormatException e) {
+            throw new ExpressionParseException("Invalid float literal '" + t.value() + "' at position " + t.pos());
+        }
+    }
+
+    private Node.Float32Literal parseFloat32(Token t) {
+        try {
+            return new Node.Float32Literal(Float.parseFloat(t.value()));
         } catch (NumberFormatException e) {
             throw new ExpressionParseException("Invalid float literal '" + t.value() + "' at position " + t.pos());
         }

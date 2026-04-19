@@ -100,7 +100,13 @@ public class Lexer {
         return new Token(Token.TokenType.STRING, sb.toString(), start);
     }
 
-    /// Attempts to read a "number" then breaking it down on if it's a "float" or an "int"
+    /// Attempts to read a "number" then breaking it down into INTEGER, FLOAT (double), or FLOAT32 (float).
+    ///
+    /// Suffix rules (case-insensitive, mimicking Java):
+    /// - {@code f} / {@code F} → FLOAT32 (32-bit float precision)
+    /// - {@code d} / {@code D} → FLOAT (64-bit double precision, explicit)
+    /// - No suffix + {@code .} present → FLOAT
+    /// - No suffix + no {@code .} → INTEGER
     private Token readNumber() {
         int start = pos;
         StringBuilder builder = new StringBuilder();
@@ -118,6 +124,19 @@ public class Lexer {
             builder.append(src.charAt(pos));
             pos++;
         }
+
+        // Check for optional type suffix: f/F → FLOAT32, d/D → FLOAT (double)
+        if (pos < src.length()) {
+            char suffix = src.charAt(pos);
+            if (suffix == 'f' || suffix == 'F') {
+                pos++;
+                return new Token(Token.TokenType.FLOAT32, builder.toString(), start);
+            } else if (suffix == 'd' || suffix == 'D') {
+                pos++;
+                return new Token(Token.TokenType.FLOAT, builder.toString(), start);
+            }
+        }
+
         Token.TokenType type = isFloat ? Token.TokenType.FLOAT : Token.TokenType.INTEGER;
         return new Token(type, builder.toString(), start);
     }

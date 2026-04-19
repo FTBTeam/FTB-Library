@@ -175,10 +175,6 @@ public class ExpressionEngineTest {
         }
     }
 
-    // =========================================================================
-    // Comparison operators
-    // =========================================================================
-
     @Nested
     class Comparisons {
         @Test
@@ -239,7 +235,24 @@ public class ExpressionEngineTest {
         void floatComparison() {
             assertTrue(engine.eval("test.floatNumber() > 3.0"));
             assertFalse(engine.eval("test.floatNumber() < 1"));
-            assertTrue(engine.eval("test.floatNumber() == 3.141"));
+            assertTrue(engine.eval("test.floatNumber() == 3.141f"));
+        }
+
+        @Test
+        void floatSuffixComparesAtFloatPrecision() {
+            assertTrue(engine.eval("test.floatNumber() == 3.141f"));
+            assertFalse(engine.eval("test.floatNumber() == 3.141"));
+        }
+
+        @Test
+        void doubleSuffixComparesAtDoublePrecision() {
+            assertTrue(engine.eval("test.floatNumber() > 3.0d"));
+            assertFalse(engine.eval("test.floatNumber() == 3.141d"));
+        }
+
+        @Test
+        void floatArithmetic() {
+            assertTrue(engine.eval("test.addFloat(1.5f, 1.5f) == 3.0f"));
         }
     }
 

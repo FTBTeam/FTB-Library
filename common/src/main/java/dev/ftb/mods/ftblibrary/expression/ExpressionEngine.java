@@ -73,8 +73,9 @@ public class ExpressionEngine {
         return switch (node) {
             case Node.BoolLiteral b -> b.value();
             case Node.StringLiteral s -> s.value();
-            case Node.IntLiteral n -> n.value();   // long
-            case Node.FloatLiteral n -> n.value();   // double
+            case Node.IntLiteral n -> n.value();
+            case Node.FloatLiteral n -> n.value();
+            case Node.Float32Literal n -> n.value();
 
             case Node.BinaryOp bin -> evalBinaryOp(bin);
             case Node.UnaryOp un -> evalUnaryOp(un);
@@ -138,8 +139,10 @@ public class ExpressionEngine {
         throw new ExpressionEvalException("Expected a boolean value for " + context + " but got: " + (value != null ? value.getClass().getSimpleName() : "null") + " (" + value + ")");
     }
 
-    /// Compare two numeric values using Java widening rules:
-    /// long vs long stays as long, anything involving a double promotes to double.
+    /// Compare two numeric values using Java-like promotion rules:
+    /// - long vs long → compare as long
+    /// - float vs float (or float vs integral) → compare as float
+    /// - anything vs double (or double vs anything) → compare as double
     private int compareNumeric(@Nullable Object a, @Nullable Object b, String op) {
         if (!(a instanceof Number numberA)) {
             throw new ExpressionEvalException("Expected a numeric value for left of " + op + " but got: " + (a == null ? "null" : a.getClass().getSimpleName() + " (" + a + ")"));
@@ -149,17 +152,25 @@ public class ExpressionEngine {
             throw new ExpressionEvalException("Expected a numeric value for right of " + op + " but got: " + (b == null ? "null" : b.getClass().getSimpleName() + " (" + b + ")"));
         }
 
-        // If both are ints (Long, Integer, etc. — i.e. not Double/Float) compare as long
         if (isIntegral(numberA) && isIntegral(numberB)) {
             return Long.compare(numberA.longValue(), numberB.longValue());
+        }
+
+        if (!isDouble(numberA) && !isDouble(numberB)) {
+            // At least one side is float, neither is double — compare at float precision
+            return Float.compare(numberA.floatValue(), numberB.floatValue());
         }
 
         return Double.compare(numberA.doubleValue(), numberB.doubleValue());
     }
 
-    /// Test if the given number is an 'int' like value
+    /// Test if the given number is an integral (non-floating-point) value
     private static boolean isIntegral(Number n) {
         return n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte;
+    }
+
+    private static boolean isDouble(Number n) {
+        return n instanceof Double;
     }
 
     private boolean objectEquals(@Nullable Object a, @Nullable Object b) {
@@ -178,6 +189,11 @@ public class ExpressionEngine {
         if (a instanceof Number numberA && b instanceof Number numberB) {
             if (isIntegral(numberA) && isIntegral(numberB)) {
                 return numberA.longValue() == numberB.longValue();
+            }
+
+            if (!isDouble(numberA) && !isDouble(numberB)) {
+                // At least one side is float, neither is double — compare at float precision
+                return Float.compare(numberA.floatValue(), numberB.floatValue()) == 0;
             }
 
             return Double.compare(numberA.doubleValue(), numberB.doubleValue()) == 0;

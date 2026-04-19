@@ -6,8 +6,8 @@ import java.util.List;
 /// for consumption via the [ExpressionEngine]
 public sealed interface Node
         permits Node.BinaryOp, Node.UnaryOp, Node.Comparison,
-        Node.ProviderCall,
-        Node.StringLiteral, Node.IntLiteral, Node.FloatLiteral, Node.BoolLiteral {
+                Node.ProviderCall,
+                Node.StringLiteral, Node.IntLiteral, Node.FloatLiteral, Node.Float32Literal, Node.BoolLiteral {
 
     record BinaryOp(Node left, BinaryOp.Op op, Node right) implements Node {
         public enum Op {AND, OR}
@@ -48,8 +48,12 @@ public sealed interface Node
     record IntLiteral(long value) implements Node {
     }
 
-    /// A floating-point literal — stored as {@code double}.
+    /// A double-precision floating-point literal produced by bare decimals ({@code 3.14}) or the {@code d}/{@code D} suffix ({@code 3.14d}).
     record FloatLiteral(double value) implements Node {
+    }
+
+    /// A single-precision floating-point literal produced by the {@code f}/{@code F} suffix ({@code 3.14f}).
+    record Float32Literal(float value) implements Node {
     }
 
     record BoolLiteral(boolean value) implements Node {
