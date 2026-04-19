@@ -1,9 +1,9 @@
-package dev.ftb.mods.ftblibrary.condition.provider;
+package dev.ftb.mods.ftblibrary.expression.provider;
 
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.player.Player;
 
-/// Context provider for a [Player] providing support for "player." expressions
+/// Context provider for a [Player] providing support for {@code player.} expressions.
 public class PlayerContextProvider extends ContextProvider {
     private final Player player;
 
@@ -22,5 +22,9 @@ public class PlayerContextProvider extends ContextProvider {
 
     public boolean hasTag(String tag) {
         return player.entityTags().contains(tag);
+    }
+
+    public String playerName() {
+        return player.getName().getString();
     }
 }

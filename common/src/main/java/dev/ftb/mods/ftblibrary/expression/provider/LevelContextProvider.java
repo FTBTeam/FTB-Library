@@ -1,8 +1,8 @@
-package dev.ftb.mods.ftblibrary.condition.provider;
+package dev.ftb.mods.ftblibrary.expression.provider;
 
 import net.minecraft.world.level.Level;
 
-/// Context provider for a [Level] providing support for "level." expressions
+/// Context provider for a [Level] providing support for {@code level.} expressions.
 public class LevelContextProvider extends ContextProvider {
     private final Level level;
 
@@ -12,7 +12,6 @@ public class LevelContextProvider extends ContextProvider {
     }
 
     public boolean isDay() {
-        // Check if the gametime is within the day range
         return this.level.getGameTime() % 24000L < 12000L;
     }
 
