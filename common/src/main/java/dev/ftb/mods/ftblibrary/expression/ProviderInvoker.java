@@ -82,9 +82,13 @@ class ProviderInvoker {
 
         // Attempt to be more clever about how the numbers are being handled.
         if (value instanceof BigInteger bi) {
-            if (target == BigInteger.class) return bi;
-            if (target == long.class || target == Long.class) return bi.longValueExact();
-            if (target == int.class || target == Integer.class) return bi.intValueExact();
+            try {
+                if (target == BigInteger.class) return bi;
+                if (target == long.class || target == Long.class) return bi.longValueExact();
+                if (target == int.class || target == Integer.class) return bi.intValueExact();
+            } catch (ArithmeticException e) {
+                throw new ExpressionEvalException("Cannot coerce value '" + value + "' (" + value.getClass().getSimpleName() + ") to " + target.getSimpleName() + " for " + context, e);
+            }
         }
 
         if (value instanceof Number n) {
