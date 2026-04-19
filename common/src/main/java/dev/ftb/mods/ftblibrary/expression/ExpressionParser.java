@@ -117,7 +117,7 @@ public class ExpressionParser {
                     expect(Token.TokenType.RPAREN);
                     yield new Node.ProviderCall(firstName, method.value(), args);
                 } else {
-                    throw new ExpressionParseException("Unexpected bare identifier '" + firstName + "' at position " + token.pos() + ". All calls must be namespaced: '" + firstName + ".method()'.");
+                    throw new ExpressionParseException("Unexpected bare identifier '" + firstName + "' at position " + token.pos() + ". All calls must be namespaced: 'provider.method(...)'.");
                 }
             }
             default -> throw new ExpressionParseException(
