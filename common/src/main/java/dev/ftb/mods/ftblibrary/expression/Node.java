@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.expression;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /// Hierarchy of the lexical structure of the expression language — the nodes of the abstract syntax tree (AST).
@@ -7,7 +8,9 @@ import java.util.List;
 public sealed interface Node
         permits Node.BinaryOp, Node.UnaryOp, Node.Comparison,
                 Node.ProviderCall,
-                Node.StringLiteral, Node.IntLiteral, Node.FloatLiteral, Node.Float32Literal, Node.BoolLiteral {
+                Node.StringLiteral,
+                Node.IntLiteral, Node.LongLiteral, Node.FloatLiteral, Node.DoubleLiteral, Node.BigIntLiteral,
+                Node.BoolLiteral {
 
     record BinaryOp(Node left, BinaryOp.Op op, Node right) implements Node {
         public enum Op {AND, OR}
@@ -43,17 +46,24 @@ public sealed interface Node
     record StringLiteral(String value) implements Node {
     }
 
-    /// An integer literal — stored as {@code long} to cover the full 64-bit range
-    /// without the precision loss that would occur if stored as {@code double}.
-    record IntLiteral(long value) implements Node {
+    /// A bare integer literal with no suffix (e.g. {@code 42}).
+    record IntLiteral(int value) implements Node {
     }
 
-    /// A double-precision floating-point literal produced by bare decimals ({@code 3.14}) or the {@code d}/{@code D} suffix ({@code 3.14d}).
-    record FloatLiteral(double value) implements Node {
+    /// An explicit long literal with an {@code L} suffix (e.g. {@code 42L}).
+    record LongLiteral(long value) implements Node {
     }
 
-    /// A single-precision floating-point literal produced by the {@code f}/{@code F} suffix ({@code 3.14f}).
-    record Float32Literal(float value) implements Node {
+    /// A 32-bit float literal (e.g. {@code 3.14f}).
+    record FloatLiteral(float value) implements Node {
+    }
+
+    /// A 64-bit double literal — bare decimal (e.g. {@code 3.14}) or explicit suffix (e.g. {@code 3.14d}).
+    record DoubleLiteral(double value) implements Node {
+    }
+
+    /// An arbitrary-precision integer literal (e.g. {@code 12345678901234567890bi}).
+    record BigIntLiteral(BigInteger value) implements Node {
     }
 
     record BoolLiteral(boolean value) implements Node {

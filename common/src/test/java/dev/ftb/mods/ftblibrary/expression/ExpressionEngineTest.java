@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -254,6 +255,25 @@ public class ExpressionEngineTest {
         void floatArithmetic() {
             assertTrue(engine.eval("test.addFloat(1.5f, 1.5f) == 3.0f"));
         }
+
+        @Test
+        void longLiteralComparison() {
+            assertTrue(engine.eval("test.longNumber() == 42L"));
+            assertTrue(engine.eval("test.longNumber() == 42"));
+            assertFalse(engine.eval("test.longNumber() == 43L"));
+        }
+
+        @Test
+        void bigIntLiteralComparison() {
+            assertTrue(engine.eval("test.bigIntNumber() == 99999999999999999999bi"));
+            assertFalse(engine.eval("test.bigIntNumber() == 1bi"));
+        }
+
+        @Test
+        void bigIntVsIntegralComparison() {
+            assertTrue(engine.eval("test.smallBigInt() == 42"));
+            assertTrue(engine.eval("test.smallBigInt() == 42L"));
+        }
     }
 
     // More complex testing.
@@ -424,6 +444,18 @@ public class ExpressionEngineTest {
 
         public boolean alwaysFalse() {
             return false;
+        }
+
+        public long longNumber() {
+            return 42L;
+        }
+
+        public BigInteger bigIntNumber() {
+            return new BigInteger("99999999999999999999");
+        }
+
+        public BigInteger smallBigInt() {
+            return BigInteger.valueOf(42);
         }
     }
 }

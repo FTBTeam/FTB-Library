@@ -6,6 +6,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -80,7 +81,16 @@ class ProviderInvoker {
         if (target.isInstance(value)) return value;
 
         // Attempt to be more clever about how the numbers are being handled.
+        if (value instanceof BigInteger bi) {
+            if (target == BigInteger.class) return bi;
+            if (target == long.class || target == Long.class) return bi.longValueExact();
+            if (target == int.class || target == Integer.class) return bi.intValueExact();
+        }
+
         if (value instanceof Number n) {
+            // Fallback value for if a number has the target of a bigint, not that this would happen to often as it's rare
+            // methods use the raw Number call for input regardless.
+            if (target == BigInteger.class) return BigInteger.valueOf(n.longValue());
             if (target == double.class || target == Double.class) return n.doubleValue();
             if (target == float.class || target == Float.class) return n.floatValue();
             if (target == long.class || target == Long.class) return n.longValue();

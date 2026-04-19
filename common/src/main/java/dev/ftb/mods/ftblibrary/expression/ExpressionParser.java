@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.expression;
 
 import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionParseException;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,17 +85,25 @@ public class ExpressionParser {
                 advance();
                 yield new Node.StringLiteral(token.value());
             }
-            case INTEGER -> {
+            case INT -> {
                 advance();
-                yield parseInteger(token);
+                yield parseIntLiteral(token);
+            }
+            case LONG -> {
+                advance();
+                yield parseLongLiteral(token);
             }
             case FLOAT -> {
                 advance();
-                yield parseFloat(token);
+                yield parseFloatLiteral(token);
             }
-            case FLOAT32 -> {
+            case DOUBLE -> {
                 advance();
-                yield parseFloat32(token);
+                yield parseDoubleLiteral(token);
+            }
+            case BIGINT -> {
+                advance();
+                yield parseBigIntLiteral(token);
             }
             case IDENTIFIER -> {
                 advance();
@@ -135,27 +144,43 @@ public class ExpressionParser {
         };
     }
 
-    private Node.IntLiteral parseInteger(Token t) {
+    private Node.IntLiteral parseIntLiteral(Token t) {
         try {
-            return new Node.IntLiteral(Long.parseLong(t.value()));
+            return new Node.IntLiteral(Integer.parseInt(t.value()));
         } catch (NumberFormatException e) {
             throw new ExpressionParseException("Invalid integer literal '" + t.value() + "' at position " + t.pos());
         }
     }
 
-    private Node.FloatLiteral parseFloat(Token t) {
+    private Node.LongLiteral parseLongLiteral(Token t) {
         try {
-            return new Node.FloatLiteral(Double.parseDouble(t.value()));
+            return new Node.LongLiteral(Long.parseLong(t.value()));
+        } catch (NumberFormatException e) {
+            throw new ExpressionParseException("Invalid long literal '" + t.value() + "' at position " + t.pos());
+        }
+    }
+
+    private Node.FloatLiteral parseFloatLiteral(Token t) {
+        try {
+            return new Node.FloatLiteral(Float.parseFloat(t.value()));
         } catch (NumberFormatException e) {
             throw new ExpressionParseException("Invalid float literal '" + t.value() + "' at position " + t.pos());
         }
     }
 
-    private Node.Float32Literal parseFloat32(Token t) {
+    private Node.DoubleLiteral parseDoubleLiteral(Token t) {
         try {
-            return new Node.Float32Literal(Float.parseFloat(t.value()));
+            return new Node.DoubleLiteral(Double.parseDouble(t.value()));
         } catch (NumberFormatException e) {
-            throw new ExpressionParseException("Invalid float literal '" + t.value() + "' at position " + t.pos());
+            throw new ExpressionParseException("Invalid double literal '" + t.value() + "' at position " + t.pos());
+        }
+    }
+
+    private Node.BigIntLiteral parseBigIntLiteral(Token t) {
+        try {
+            return new Node.BigIntLiteral(new BigInteger(t.value()));
+        } catch (NumberFormatException e) {
+            throw new ExpressionParseException("Invalid BigInteger literal '" + t.value() + "' at position " + t.pos());
         }
     }
 

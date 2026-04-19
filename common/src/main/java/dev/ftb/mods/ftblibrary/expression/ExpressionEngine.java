@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.expression.provider.StdContextProvider;
 
 import org.jspecify.annotations.Nullable;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,8 +75,10 @@ public class ExpressionEngine {
             case Node.BoolLiteral b -> b.value();
             case Node.StringLiteral s -> s.value();
             case Node.IntLiteral n -> n.value();
+            case Node.LongLiteral n -> n.value();
             case Node.FloatLiteral n -> n.value();
-            case Node.Float32Literal n -> n.value();
+            case Node.DoubleLiteral n -> n.value();
+            case Node.BigIntLiteral n -> n.value();
 
             case Node.BinaryOp bin -> evalBinaryOp(bin);
             case Node.UnaryOp un -> evalUnaryOp(un);
@@ -140,28 +143,44 @@ public class ExpressionEngine {
     }
 
     /// Compare two numeric values using Java-like promotion rules:
+    /// - BigInteger vs integral → compare as BigInteger
+    /// - BigInteger vs float/double → runtime error
     /// - long vs long → compare as long
     /// - float vs float (or float vs integral) → compare as float
     /// - anything vs double (or double vs anything) → compare as double
     private int compareNumeric(@Nullable Object a, @Nullable Object b, String op) {
-        if (!(a instanceof Number numberA)) {
+        if (!(a instanceof Number)) {
             throw new ExpressionEvalException("Expected a numeric value for left of " + op + " but got: " + (a == null ? "null" : a.getClass().getSimpleName() + " (" + a + ")"));
         }
 
-        if (!(b instanceof Number numberB)) {
+        if (!(b instanceof Number)) {
             throw new ExpressionEvalException("Expected a numeric value for right of " + op + " but got: " + (b == null ? "null" : b.getClass().getSimpleName() + " (" + b + ")"));
         }
 
-        if (isIntegral(numberA) && isIntegral(numberB)) {
-            return Long.compare(numberA.longValue(), numberB.longValue());
+        if (a instanceof BigInteger biA) {
+            if (b instanceof BigInteger biB) return biA.compareTo(biB);
+            if (b instanceof Number nb && isIntegral(nb)) return biA.compareTo(BigInteger.valueOf(nb.longValue()));
+            throw new ExpressionEvalException("Cannot compare BigInteger with " + b.getClass().getSimpleName() + " for " + op);
+        }
+        if (b instanceof BigInteger biB) {
+            if (a instanceof Number na && isIntegral(na)) return BigInteger.valueOf(na.longValue()).compareTo(biB);
+            throw new ExpressionEvalException("Cannot compare " + a.getClass().getSimpleName() + " with BigInteger for " + op);
         }
 
-        if (!isDouble(numberA) && !isDouble(numberB)) {
+        // Both are ordinary Number from here
+        Number na = (Number) a;
+        Number nb = (Number) b;
+
+        if (isIntegral(na) && isIntegral(nb)) {
+            return Long.compare(na.longValue(), nb.longValue());
+        }
+
+        if (!isDouble(na) && !isDouble(nb)) {
             // At least one side is float, neither is double — compare at float precision
-            return Float.compare(numberA.floatValue(), numberB.floatValue());
+            return Float.compare(na.floatValue(), nb.floatValue());
         }
 
-        return Double.compare(numberA.doubleValue(), numberB.doubleValue());
+        return Double.compare(na.doubleValue(), nb.doubleValue());
     }
 
     /// Test if the given number is an integral (non-floating-point) value
@@ -184,6 +203,17 @@ public class ExpressionEngine {
 
         if (a instanceof String sa && b instanceof String stringVale) {
             return sa.equals(stringVale);
+        }
+
+        // BigInteger handling
+        if (a instanceof BigInteger biA) {
+            if (b instanceof BigInteger biB) return biA.compareTo(biB) == 0;
+            if (b instanceof Number nb && isIntegral(nb)) return biA.compareTo(BigInteger.valueOf(nb.longValue())) == 0;
+            return false;
+        }
+        if (b instanceof BigInteger biB) {
+            if (a instanceof Number na && isIntegral(na)) return BigInteger.valueOf(na.longValue()).compareTo(biB) == 0;
+            return false;
         }
 
         if (a instanceof Number numberA && b instanceof Number numberB) {

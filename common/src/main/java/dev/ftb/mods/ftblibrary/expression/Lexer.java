@@ -100,13 +100,14 @@ public class Lexer {
         return new Token(Token.TokenType.STRING, sb.toString(), start);
     }
 
-    /// Attempts to read a "number" then breaking it down into INTEGER, FLOAT (double), or FLOAT32 (float).
+    /// Attempts to read a numeric token, classifying it by suffix (case-insensitive) to match Java literal conventions:
     ///
-    /// Suffix rules (case-insensitive, mimicking Java):
-    /// - {@code f} / {@code F} → FLOAT32 (32-bit float precision)
-    /// - {@code d} / {@code D} → FLOAT (64-bit double precision, explicit)
-    /// - No suffix + {@code .} present → FLOAT
-    /// - No suffix + no {@code .} → INTEGER
+    /// We support:
+    /// - Nothing for a noraml integer,
+    /// - d/D for double,
+    /// - f/F for float,
+    /// - l/L for long
+    /// - Bi/bi for BigInts
     private Token readNumber() {
         int start = pos;
         StringBuilder builder = new StringBuilder();
@@ -115,29 +116,38 @@ public class Lexer {
             pos++;
         }
 
-        boolean isFloat = false;
+        boolean isDecimal = false;
         while (pos < src.length() && (Character.isDigit(src.charAt(pos)) || src.charAt(pos) == '.')) {
             if (src.charAt(pos) == '.') {
-                if (isFloat) break;
-                isFloat = true;
+                if (isDecimal) break;
+                isDecimal = true;
             }
             builder.append(src.charAt(pos));
             pos++;
         }
 
-        // Check for optional type suffix: f/F → FLOAT32, d/D → FLOAT (double)
+        // Check for optional type suffix
         if (pos < src.length()) {
-            char suffix = src.charAt(pos);
-            if (suffix == 'f' || suffix == 'F') {
-                pos++;
-                return new Token(Token.TokenType.FLOAT32, builder.toString(), start);
-            } else if (suffix == 'd' || suffix == 'D') {
+            char c = src.charAt(pos);
+            char next = (pos + 1 < src.length()) ? src.charAt(pos + 1) : '\0';
+
+            if (c == 'f' || c == 'F') {
                 pos++;
                 return new Token(Token.TokenType.FLOAT, builder.toString(), start);
+            } else if (c == 'd' || c == 'D') {
+                pos++;
+                return new Token(Token.TokenType.DOUBLE, builder.toString(), start);
+            } else if (c == 'l' || c == 'L') {
+                pos++;
+                return new Token(Token.TokenType.LONG, builder.toString(), start);
+            } else if ((c == 'b' || c == 'B') && (next == 'i' || next == 'I')) {
+                pos += 2;
+                return new Token(Token.TokenType.BIGINT, builder.toString(), start);
             }
         }
 
-        Token.TokenType type = isFloat ? Token.TokenType.FLOAT : Token.TokenType.INTEGER;
+        // If the f/d didn't catch then we fall back to a double.
+        Token.TokenType type = isDecimal ? Token.TokenType.DOUBLE : Token.TokenType.INT;
         return new Token(type, builder.toString(), start);
     }
 
