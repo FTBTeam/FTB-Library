@@ -86,36 +86,6 @@ public class ExpressionEngineTest {
     @Nested
     class LogicalOperators {
         @Test
-        void andBothTrue() {
-            assertTrue(engine.eval("test.alwaysTrue() and test.alwaysTrue()"));
-        }
-
-        @Test
-        void andOneFalse() {
-            assertFalse(engine.eval("test.alwaysTrue() and test.alwaysFalse()"));
-        }
-
-        @Test
-        void orOneFalse() {
-            assertTrue(engine.eval("test.alwaysFalse() or test.alwaysTrue()"));
-        }
-
-        @Test
-        void orBothFalse() {
-            assertFalse(engine.eval("test.alwaysFalse() or test.alwaysFalse()"));
-        }
-
-        @Test
-        void notTrue() {
-            assertFalse(engine.eval("not test.alwaysTrue()"));
-        }
-
-        @Test
-        void notFalse() {
-            assertTrue(engine.eval("not test.alwaysFalse()"));
-        }
-
-        @Test
         void notKeywordBang() {
             assertFalse(engine.eval("!test.alwaysTrue()"));
             assertTrue(engine.eval("!test.alwaysFalse()"));
@@ -123,18 +93,18 @@ public class ExpressionEngineTest {
 
         @Test
         void doubleNot() {
-            assertTrue(engine.eval("not not test.alwaysTrue()"));
+            assertTrue(engine.eval("!!test.alwaysTrue()"));
         }
 
         @Test
         void andHasHigherPrecedenceThanOr() {
-            assertTrue(engine.eval("test.alwaysFalse() or test.alwaysTrue() and test.alwaysTrue()"));
-            assertFalse(engine.eval("test.alwaysFalse() or test.alwaysTrue() and test.alwaysFalse()"));
+            assertTrue(engine.eval("test.alwaysFalse() || test.alwaysTrue() && test.alwaysTrue()"));
+            assertFalse(engine.eval("test.alwaysFalse() || test.alwaysTrue() && test.alwaysFalse()"));
         }
 
         @Test
         void notHasHigherPrecedenceThanAnd() {
-            assertTrue(engine.eval("not test.alwaysFalse() and test.alwaysTrue()"));
+            assertTrue(engine.eval("!test.alwaysFalse() && test.alwaysTrue()"));
         }
 
         @Test
@@ -150,7 +120,7 @@ public class ExpressionEngineTest {
 
         @Test
         void complexNestedLogic() {
-            assertTrue(engine.eval("(test.alwaysFalse() or (test.alwaysTrue() and test.alwaysTrue())) and not test.alwaysFalse()"));
+            assertTrue(engine.eval("(test.alwaysFalse() || (test.alwaysTrue() && test.alwaysTrue())) && !test.alwaysFalse()"));
         }
     }
 
@@ -287,7 +257,7 @@ public class ExpressionEngineTest {
             level.raining = true;
 
             assertTrue(engine.eval(
-                    "std.isModLoaded('ftb-stages') and (level.isDay() or (level.isNight() and level.isRaining())) and (test.alwaysFalse() or test.testString() == 'test')"
+                    "std.isModLoaded('ftb-stages') && (level.isDay() || (level.isNight() && level.isRaining())) && (test.alwaysFalse() || test.testString() == 'test')"
             ));
         }
 
@@ -297,7 +267,7 @@ public class ExpressionEngineTest {
             level.raining = true;
 
             assertFalse(engine.eval(
-                    "std.isModLoaded('other-mod') and (level.isDay() or (level.isNight() and level.isRaining())) and (test.alwaysFalse() or test.testString() == 'test')"
+                    "std.isModLoaded('other-mod') && (level.isDay() || (level.isNight() && level.isRaining())) && (test.alwaysFalse() || test.testString() == 'test')"
             ));
         }
 
@@ -312,7 +282,7 @@ public class ExpressionEngineTest {
             level.raining = false;
 
             assertTrue(engine.eval(
-                    "level.isDay() and !level.isRaining() and test.alwaysTrue() and std.isModLoaded('ftb-stages')"
+                    "level.isDay() && !level.isRaining() && test.alwaysTrue() && std.isModLoaded('ftb-stages')"
             ));
         }
 
@@ -326,7 +296,7 @@ public class ExpressionEngineTest {
         @Test
         void whitespaceVariations() {
             level.day = true;
-            assertTrue(engine.eval("level.isDay()  and  !level.isNight()"));
+            assertTrue(engine.eval("level.isDay()  &&  !level.isNight()"));
         }
     }
 

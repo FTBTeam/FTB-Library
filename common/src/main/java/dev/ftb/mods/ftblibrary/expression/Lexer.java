@@ -32,9 +32,6 @@ public class Lexer {
 
     /// Lookup table for reserved keywords
     private static final Map<String, Token.TokenType> KEYWORDS = Map.of(
-            "and", Token.TokenType.AND,
-            "or",  Token.TokenType.OR,
-            "not", Token.TokenType.NOT,
             "true", Token.TokenType.TRUE,
             "false", Token.TokenType.FALSE
     );

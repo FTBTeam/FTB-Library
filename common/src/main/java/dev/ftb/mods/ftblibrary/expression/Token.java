@@ -16,9 +16,9 @@ public record Token(TokenType type, String value, int pos) {
 
         IDENTIFIER,     // text
 
-        AND,            // and / &&
-        OR,             // or / ||
-        NOT,            // not / !
+        AND,            // &&
+        OR,             // ||
+        NOT,            // !
 
         EQ,             // ==
         NEQ,            // !=
