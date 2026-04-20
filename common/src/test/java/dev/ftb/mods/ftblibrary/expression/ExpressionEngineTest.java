@@ -119,6 +119,26 @@ public class ExpressionEngineTest {
         }
 
         @Test
+        void xorOneDifferent() {
+            assertTrue(engine.eval("test.alwaysTrue() ^ test.alwaysFalse()"));
+            assertTrue(engine.eval("test.alwaysFalse() ^ test.alwaysTrue()"));
+        }
+
+        @Test
+        void xorBothSame() {
+            assertFalse(engine.eval("test.alwaysTrue() ^ test.alwaysTrue()"));
+            assertFalse(engine.eval("test.alwaysFalse() ^ test.alwaysFalse()"));
+        }
+
+        @Test
+        void xorPrecedenceHigherThanOr() {
+            // true ^ false = true, true || true = true
+            assertTrue(engine.eval("test.alwaysTrue() || test.alwaysTrue() ^ test.alwaysFalse()"));
+            // false ^ false = false, false || false = false
+            assertFalse(engine.eval("test.alwaysFalse() || test.alwaysFalse() ^ test.alwaysFalse()"));
+        }
+
+        @Test
         void complexNestedLogic() {
             assertTrue(engine.eval("(test.alwaysFalse() || (test.alwaysTrue() && test.alwaysTrue())) && !test.alwaysFalse()"));
         }

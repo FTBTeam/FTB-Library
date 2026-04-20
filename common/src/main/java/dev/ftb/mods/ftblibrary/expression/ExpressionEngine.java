@@ -107,6 +107,7 @@ public class ExpressionEngine {
         return switch (bin.op()) {
             case AND -> toBool(evalNode(bin.left()), "left of AND") && toBool(evalNode(bin.right()), "right of AND");
             case OR -> toBool(evalNode(bin.left()), "left of OR") || toBool(evalNode(bin.right()), "right of OR");
+            case XOR -> toBool(evalNode(bin.left()), "left of XOR") ^ toBool(evalNode(bin.right()), "right of XOR");
         };
     }
 

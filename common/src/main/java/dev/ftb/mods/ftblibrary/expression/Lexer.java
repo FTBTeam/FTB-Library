@@ -13,6 +13,7 @@ public class Lexer {
             '<', Token.TokenType.LT,
             '>', Token.TokenType.GT,
             '!', Token.TokenType.NOT,
+            '^', Token.TokenType.XOR,
             '.', Token.TokenType.DOT,
             '(', Token.TokenType.LPAREN,
             ')', Token.TokenType.RPAREN,

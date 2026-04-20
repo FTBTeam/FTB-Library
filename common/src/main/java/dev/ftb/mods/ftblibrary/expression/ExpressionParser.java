@@ -24,11 +24,21 @@ public class ExpressionParser {
     }
 
     private Node parseOr() {
-        Node left = parseAnd();
+        Node left = parseXor();
         while (check(Token.TokenType.OR)) {
             advance();
-            Node right = parseAnd();
+            Node right = parseXor();
             left = new Node.BinaryOp(left, Node.BinaryOp.Op.OR, right);
+        }
+        return left;
+    }
+
+    private Node parseXor() {
+        Node left = parseAnd();
+        while (check(Token.TokenType.XOR)) {
+            advance();
+            Node right = parseAnd();
+            left = new Node.BinaryOp(left, Node.BinaryOp.Op.XOR, right);
         }
         return left;
     }

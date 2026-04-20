@@ -13,7 +13,7 @@ public sealed interface Node
                 Node.BoolLiteral {
 
     record BinaryOp(Node left, BinaryOp.Op op, Node right) implements Node {
-        public enum Op {AND, OR}
+        public enum Op {AND, OR, XOR}
     }
 
     record UnaryOp(UnaryOp.Op op, Node operand) implements Node {

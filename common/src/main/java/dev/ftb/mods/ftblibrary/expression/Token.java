@@ -18,6 +18,7 @@ public record Token(TokenType type, String value, int pos) {
 
         AND,            // &&
         OR,             // ||
+        XOR,            // ^
         NOT,            // !
 
         EQ,             // ==
