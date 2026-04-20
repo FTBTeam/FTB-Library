@@ -6,7 +6,6 @@ import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableString;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditMultilineStringConfigOverlay;
 import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
-import dev.ftb.mods.ftblibrary.client.gui.SimpleToast;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.screens.AbstractThreePanelScreen;
@@ -19,7 +18,6 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
-import dev.ftb.mods.ftblibrary.snbt.SNBTSyntaxException;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import com.google.common.base.Stopwatch;
@@ -322,12 +320,12 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         private EditMultilineStringConfigOverlay makeMultilineEditPanel(EditableString config) {
             var panel = new EditMultilineStringConfigOverlay(ResourceSelectorScreen.this, config, accepted -> {
                 if (accepted) {
-                    try {
+//                    try {
                         // TODO: What is this doing
 //                        selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
-                    } catch (SNBTSyntaxException e) {
-                        SimpleToast.error(Component.translatable("ftblibrary.gui.error"), Component.literal(e.getMessage()));
-                    }
+//                    } catch (SNBTSyntaxException e) {
+//                        SimpleToast.error(Component.translatable("ftblibrary.gui.error"), Component.literal(e.getMessage()));
+//                    }
                 }
             });
             panel.setExtraZlevel(300);  // ensure it renders over any rendered items
