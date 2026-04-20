@@ -2,15 +2,16 @@ package dev.ftb.mods.ftblibrary.expression;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 /// Hierarchy of the lexical structure of the expression language — the nodes of the abstract syntax tree (AST).
 /// for consumption via the [ExpressionEngine]
 public sealed interface Node
         permits Node.BinaryOp, Node.UnaryOp, Node.ArithmeticOp, Node.UnaryMinus, Node.Comparison,
-                Node.ProviderCall,
-                Node.StringLiteral,
-                Node.IntLiteral, Node.LongLiteral, Node.FloatLiteral, Node.DoubleLiteral, Node.BigIntLiteral,
-                Node.BoolLiteral {
+        Node.ProviderCall,
+        Node.StringLiteral,
+        Node.IntLiteral, Node.LongLiteral, Node.FloatLiteral, Node.DoubleLiteral, Node.BigIntLiteral,
+        Node.BoolLiteral {
 
     record BinaryOp(Node left, BinaryOp.Op op, Node right) implements Node {
         public enum Op {AND, OR, XOR}
@@ -18,24 +19,6 @@ public sealed interface Node
 
     record UnaryOp(UnaryOp.Op op, Node operand) implements Node {
         public enum Op {NOT}
-    }
-
-    /// A binary arithmetic operation like `a + b`, `b /a`
-    record ArithmeticOp(Node left, ArithmeticOp.Op op, Node right) implements Node {
-        public enum Op {
-            ADD, SUB, MUL, DIV, MOD;
-
-            public static Op from(Token.TokenType type) {
-                return switch (type) {
-                    case PLUS    -> ADD;
-                    case MINUS   -> SUB;
-                    case STAR    -> MUL;
-                    case SLASH   -> DIV;
-                    case PERCENT -> MOD;
-                    default -> throw new IllegalArgumentException("Not an arithmetic operator: " + type);
-                };
-            }
-        }
     }
 
     /// Unary negation like `-test.number()`.
@@ -87,5 +70,64 @@ public sealed interface Node
     }
 
     record BoolLiteral(boolean value) implements Node {
+    }
+
+    /// A binary arithmetic operation like `a + b`, `b /a`
+    record ArithmeticOp(Node left, ArithmeticOp.Op op, Node right) implements Node {
+        public enum Op {
+            ADD(Integer::sum, Double::sum, Float::sum, Long::sum, BigInteger::add),
+            SUB((a, b) -> a - b, (a, b) -> a - b, (a, b) -> a - b, (a, b) -> a - b, BigInteger::subtract),
+            MUL((a, b) -> a * b, (a, b) -> a * b, (a, b) -> a * b, (a, b) -> a * b, BigInteger::multiply),
+            DIV((a, b) -> a / b, (a, b) -> a / b, (a, b) -> a / b, (a, b) -> a / b, BigInteger::divide),
+            MOD((a, b) -> a % b, (a, b) -> a % b, (a, b) -> a % b, (a, b) -> a % b, BigInteger::remainder);
+
+            final BinaryOperator<Integer> intOp;
+            final BinaryOperator<Double> doubleOp;
+            final BinaryOperator<Float> floatOp;
+            final BinaryOperator<Long> longOp;
+            final BinaryOperator<BigInteger> bigIntOp;
+
+            Op(BinaryOperator<Integer> intOp,
+               BinaryOperator<Double> doubleOp,
+               BinaryOperator<Float> floatOp,
+               BinaryOperator<Long> longOp,
+               BinaryOperator<BigInteger> bigIntOp) {
+                this.intOp = intOp;
+                this.doubleOp = doubleOp;
+                this.floatOp = floatOp;
+                this.longOp = longOp;
+                this.bigIntOp = bigIntOp;
+            }
+
+            public static Op from(Token.TokenType type) {
+                return switch (type) {
+                    case PLUS -> ADD;
+                    case MINUS -> SUB;
+                    case STAR -> MUL;
+                    case SLASH -> DIV;
+                    case PERCENT -> MOD;
+                    default -> throw new IllegalArgumentException("Not an arithmetic operator: " + type);
+                };
+            }
+
+            public Number applyByType(Number a, Number b) {
+                if (a instanceof Double || b instanceof Double) {
+                    return doubleOp.apply(a.doubleValue(), b.doubleValue());
+                } else if (a instanceof Float || b instanceof Float) {
+                    return floatOp.apply(a.floatValue(), b.floatValue());
+                } else if (a instanceof Long || b instanceof Long) {
+                    return longOp.apply(a.longValue(), b.longValue());
+                } else if (a instanceof BigInteger || b instanceof BigInteger) {
+                    return bigIntOp.apply(toBigInt(a), toBigInt(b));
+                } else {
+                    return intOp.apply(a.intValue(), b.intValue());
+                }
+            }
+
+            private static BigInteger toBigInt(Number n) {
+                if (n instanceof BigInteger bi) return bi;
+                return BigInteger.valueOf(n.longValue());
+            }
+        }
     }
 }

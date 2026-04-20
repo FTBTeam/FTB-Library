@@ -128,81 +128,22 @@ public class ExpressionEngine {
             throw new ExpressionEvalException("Expected a numeric value on right of arithmetic but got: " + (right == null ? "null" : right.getClass().getSimpleName()));
         }
 
-        return applyArithmetic(l, r, arithmeticOp.op());
+        return arithmeticOp.op().applyByType(l, r);
     }
 
     private Number evalUnaryMinus(Node.UnaryMinus um) {
         Object val = evalNode(um.operand());
-        if (!(val instanceof Number n)) {
+        if (!(val instanceof Number number)) {
             throw new ExpressionEvalException("Expected a numeric value for unary minus but got: " + (val == null ? "null" : val.getClass().getSimpleName()));
         }
 
-        return switch (n) {
+        return switch (number) {
             case Double d -> -d;
             case Float f -> -f;
             case Long lg -> -lg;
             case BigInteger bi -> bi.negate();
-            default -> -n.intValue();
+            default -> -number.intValue();
         };
-    }
-
-    // It's essentially not possible to avoid this as we can't work with boxed methods nicely here
-    // without adding more code than this already is so it's just something we have to not be happy with.
-    @SuppressWarnings("DuplicatedCode")
-    private static Number applyArithmetic(Number a, Number b, Node.ArithmeticOp.Op op) {
-        if (a instanceof Double || b instanceof Double) {
-            double l = a.doubleValue(), r = b.doubleValue();
-            return switch (op) {
-                case ADD -> l + r;
-                case SUB -> l - r;
-                case MUL -> l * r;
-                case DIV -> l / r;
-                case MOD -> l % r;
-            };
-        }
-        if (a instanceof Float || b instanceof Float) {
-            float l = a.floatValue(), r = b.floatValue();
-            return switch (op) {
-                case ADD -> l + r;
-                case SUB -> l - r;
-                case MUL -> l * r;
-                case DIV -> l / r;
-                case MOD -> l % r;
-            };
-        }
-        if (a instanceof BigInteger || b instanceof BigInteger) {
-            BigInteger l = toBigInt(a), r = toBigInt(b);
-            return switch (op) {
-                case ADD -> l.add(r);
-                case SUB -> l.subtract(r);
-                case MUL -> l.multiply(r);
-                case DIV -> l.divide(r);
-                case MOD -> l.remainder(r);
-            };
-        }
-        if (a instanceof Long || b instanceof Long) {
-            long l = a.longValue(), r = b.longValue();
-            return switch (op) {
-                case ADD -> l + r;
-                case SUB -> l - r;
-                case MUL -> l * r;
-                case DIV -> l / r;
-                case MOD -> l % r;
-            };
-        }
-        int l = a.intValue(), r = b.intValue();
-        return switch (op) {
-            case ADD -> l + r;
-            case SUB -> l - r;
-            case MUL -> l * r;
-            case DIV -> l / r;
-            case MOD -> l % r;
-        };
-    }
-
-    private static BigInteger toBigInt(Number n) {
-        if (n instanceof BigInteger bi) return bi;
-        return BigInteger.valueOf(n.longValue());
     }
 
     private boolean evalComparison(Node.Comparison cmp) {
