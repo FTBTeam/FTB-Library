@@ -5,20 +5,45 @@ import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /// Lexer for our expression language. Takes in a user provided string and attempts to break it down into a token tree.
 public class Lexer {
-    /// Lookup table for single-character operators and punctuation
-    private static final Map<Character, Token.TokenType> SINGLE_CHAR_LOOKUP = Map.of(
-            '<', Token.TokenType.LT,
-            '>', Token.TokenType.GT,
-            '!', Token.TokenType.NOT,
-            '^', Token.TokenType.XOR,
-            '.', Token.TokenType.DOT,
+    private static final Map<Character, Token.TokenType> PUNCTUATION_LOOKUP = Map.of(
             '(', Token.TokenType.LPAREN,
             ')', Token.TokenType.RPAREN,
             ',', Token.TokenType.COMMA
     );
+
+    private static final Map<Character, Token.TokenType> ALGORITHM_LOOKUP = Map.of(
+            '+', Token.TokenType.PLUS,
+            '-', Token.TokenType.MINUS,
+            '*', Token.TokenType.STAR,
+            '/', Token.TokenType.SLASH,
+            '%', Token.TokenType.PERCENT
+    );
+
+    private static final Map<Character, Token.TokenType> COMPARISON_LOOKUP = Map.of(
+            '<', Token.TokenType.LT,
+            '>', Token.TokenType.GT,
+            '!', Token.TokenType.NOT,
+            '^', Token.TokenType.XOR
+    );
+
+    private static final Map<Character, Token.TokenType> SPECIAL_LOOKUP = Map.of(
+            '.', Token.TokenType.DOT
+    );
+
+    /// Single joined lookup of the above maps
+    private static final Map<Character, Token.TokenType> SINGLE_CHAR_LOOKUP = Stream.of(
+                    PUNCTUATION_LOOKUP,
+                    ALGORITHM_LOOKUP,
+                    COMPARISON_LOOKUP,
+                    SPECIAL_LOOKUP
+            )
+            .flatMap(map -> map.entrySet().stream())
+            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
     /// Alternative table for dual-character operators, which require lookahead to distinguish from their single-character counterparts.
     /// For example, '!' is a NOT operator, but '!=' is a NEQ operator.
@@ -56,7 +81,7 @@ public class Lexer {
 
             if (c == '\'') {
                 tokens.add(readString());
-            } else if (Character.isDigit(c) || (c == '-' && pos + 1 < src.length() && Character.isDigit(src.charAt(pos + 1)))) {
+            } else if (Character.isDigit(c)) {
                 tokens.add(readNumber());
             } else if (Character.isLetter(c) || c == '_') {
                 tokens.add(readIdentifierOrKeyword());
@@ -114,10 +139,6 @@ public class Lexer {
     private Token readNumber() {
         int start = pos;
         StringBuilder builder = new StringBuilder();
-        if (src.charAt(pos) == '-') {
-            builder.append('-');
-            pos++;
-        }
 
         boolean isDecimal = false;
         while (pos < src.length() && (Character.isDigit(src.charAt(pos)) || src.charAt(pos) == '.')) {

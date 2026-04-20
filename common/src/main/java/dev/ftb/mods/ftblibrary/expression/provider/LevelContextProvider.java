@@ -3,7 +3,7 @@ package dev.ftb.mods.ftblibrary.expression.provider;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.Level;
 
-/// Context provider for a [Level] providing support for {@code level.} expressions.
+/// Context provider for a [Level] providing support for `level.` expressions.
 public class LevelContextProvider extends ContextProvider {
     private final Level level;
 

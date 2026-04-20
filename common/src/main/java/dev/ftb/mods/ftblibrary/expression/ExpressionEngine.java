@@ -86,17 +86,19 @@ public class ExpressionEngine {
     /// Attempt to evaluate the top level expression node to a boolean, throwing an exception if it's not possible.
     private Object evalNode(Node node) {
         return switch (node) {
-            case Node.BoolLiteral b -> b.value();
-            case Node.StringLiteral s -> s.value();
-            case Node.IntLiteral n -> n.value();
-            case Node.LongLiteral n -> n.value();
-            case Node.FloatLiteral n -> n.value();
-            case Node.DoubleLiteral n -> n.value();
-            case Node.BigIntLiteral n -> n.value();
+            case Node.BoolLiteral bool -> bool.value();
+            case Node.StringLiteral str -> str.value();
+            case Node.IntLiteral intNum -> intNum.value();
+            case Node.LongLiteral longNum -> longNum.value();
+            case Node.FloatLiteral floatNum -> floatNum.value();
+            case Node.DoubleLiteral doubleNum -> doubleNum.value();
+            case Node.BigIntLiteral bigNum -> bigNum.value();
 
-            case Node.BinaryOp bin -> evalBinaryOp(bin);
-            case Node.UnaryOp un -> evalUnaryOp(un);
-            case Node.Comparison cmp -> evalComparison(cmp);
+            case Node.BinaryOp binaryOp -> evalBinaryOp(binaryOp);
+            case Node.UnaryOp unaryOp -> evalUnaryOp(unaryOp);
+            case Node.ArithmeticOp arithmeticOp -> throw new RuntimeException("TODO");//evalArithmetic(arithmeticOp);
+            case Node.UnaryMinus unaryMinus -> throw new RuntimeException("TODO"); //evalUnaryMinus(unaryMinus);
+            case Node.Comparison comparison -> evalComparison(comparison);
 
             case Node.ProviderCall call -> evalProviderCall(call);
         };

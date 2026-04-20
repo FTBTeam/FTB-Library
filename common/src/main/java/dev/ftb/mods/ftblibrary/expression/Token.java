@@ -21,6 +21,12 @@ public record Token(TokenType type, String value, int pos) {
         XOR,            // ^
         NOT,            // !
 
+        PLUS,           // +
+        MINUS,          // -
+        STAR,           // *
+        SLASH,          // /
+        PERCENT,        // %
+
         EQ,             // ==
         NEQ,            // !=
         LT,             // <

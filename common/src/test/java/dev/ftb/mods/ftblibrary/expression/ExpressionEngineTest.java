@@ -270,6 +270,93 @@ public class ExpressionEngineTest {
 
     // More complex testing.
     @Nested
+    class Arithmetic {
+        @Test
+        void intAddition() {
+            assertTrue(engine.eval("test.number() + 8 == 50"));
+        }
+
+        @Test
+        void intSubtraction() {
+            assertTrue(engine.eval("test.number() - 2 == 40"));
+        }
+
+        @Test
+        void intMultiplication() {
+            assertTrue(engine.eval("test.number() * 2 == 84"));
+        }
+
+        @Test
+        void intDivision() {
+            assertTrue(engine.eval("test.number() / 2 == 21"));
+        }
+
+        @Test
+        void intModulo() {
+            assertTrue(engine.eval("test.number() % 5 == 2"));
+        }
+
+        @Test
+        void operatorPrecedenceMulBeforeAdd() {
+            // number() = 42; 42 + 2 * 4 = 42 + 8 = 50, not (42+2)*4=176
+            assertTrue(engine.eval("test.number() + 2 * 4 == 50"));
+        }
+
+        @Test
+        void parenthesesOverridePrecedence() {
+            assertTrue(engine.eval("(test.number() + 2) * 4 == 176"));
+        }
+
+        @Test
+        void floatAddition() {
+            assertTrue(engine.eval("test.floatNumber() + 0.0f == 3.141f"));
+        }
+
+        @Test
+        void unaryMinusOnLiteral() {
+            assertTrue(engine.eval("-10 + test.number() == 32"));
+        }
+
+        @Test
+        void unaryMinusOnProviderCall() {
+            assertTrue(engine.eval("-test.number() + 84 == 42"));
+        }
+
+        @Test
+        void doubleUnaryMinus() {
+            assertTrue(engine.eval("--test.number() == 42"));
+        }
+
+        @Test
+        void arithmeticInComparison() {
+            assertTrue(engine.eval("test.number() + 10 < 100"));
+            assertFalse(engine.eval("test.number() + 10 < 50"));
+        }
+
+        @Test
+        void longArithmetic() {
+            assertTrue(engine.eval("test.longNumber() + 1L == 43L"));
+        }
+
+        @Test
+        void integerDivisionTruncates() {
+            // 42 / 5 = 8 in integer division (truncated, not 8.4)
+            assertTrue(engine.eval("test.number() / 5 == 8"));
+        }
+
+        @Test
+        void mixedIntDoublePromotesToDouble() {
+            assertTrue(engine.eval("test.number() + 0.0 == 42.0"));
+        }
+
+        @Test
+        void nonNumericArithmeticThrows() {
+            assertThrows(ExpressionEvalException.class, () -> engine.eval("test.testString() + 1 == 2"));
+        }
+    }
+
+    // More complex testing.
+    @Nested
     class ComplexExpressions {
         @Test
         void complexExample() {

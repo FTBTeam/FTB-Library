@@ -63,13 +63,42 @@ public class ExpressionParser {
     }
 
     private Node parseComparison() {
-        Node left = parseAtom();
+        Node left = parseAdditive();
         if (isComparisonOp(peek().type())) {
             Token op = advance();
-            Node right = parseAtom();
+            Node right = parseAdditive();
             return new Node.Comparison(left, Node.Comparison.Op.from(op.type()), right);
         }
         return left;
+    }
+
+    private Node parseAdditive() {
+        Node left = parseMultiplicative();
+        while (check(Token.TokenType.PLUS) || check(Token.TokenType.MINUS)) {
+            Token op = advance();
+            Node right = parseMultiplicative();
+            left = new Node.ArithmeticOp(left, Node.ArithmeticOp.Op.from(op.type()), right);
+        }
+        return left;
+    }
+
+    private Node parseMultiplicative() {
+        Node left = parseUnaryMinus();
+        while (check(Token.TokenType.STAR) || check(Token.TokenType.SLASH) || check(Token.TokenType.PERCENT)) {
+            Token op = advance();
+            Node right = parseUnaryMinus();
+            left = new Node.ArithmeticOp(left, Node.ArithmeticOp.Op.from(op.type()), right);
+        }
+        return left;
+    }
+
+    private Node parseUnaryMinus() {
+        if (check(Token.TokenType.MINUS)) {
+            advance();
+            Node operand = parseUnaryMinus();
+            return new Node.UnaryMinus(operand);
+        }
+        return parseAtom();
     }
 
     /// Parse the individual 'atom' elements of the expression: literals, parenthesized sub-expressions, and provider calls.
