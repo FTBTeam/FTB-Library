@@ -3,7 +3,9 @@ package dev.ftb.mods.ftblibrary.expression;
 import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionEvalException;
 import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionParseException;
 import dev.ftb.mods.ftblibrary.expression.provider.ContextProvider;
+import dev.ftb.mods.ftblibrary.expression.provider.MathContextProvider;
 import dev.ftb.mods.ftblibrary.expression.provider.StdContextProvider;
+import dev.ftb.mods.ftblibrary.expression.provider.StringContextProvider;
 import dev.ftb.mods.ftblibrary.util.LRUCache;
 import org.jspecify.annotations.Nullable;
 
@@ -38,6 +40,8 @@ public class ExpressionEngine {
     public ExpressionEngine(int parseCacheSize) {
         this.parseCache = new LRUCache<>(parseCacheSize);
         registerProvider(new StdContextProvider());
+        registerProvider(new MathContextProvider());
+        registerProvider(new StringContextProvider());
     }
 
     /// Register a context provider
@@ -66,20 +70,33 @@ public class ExpressionEngine {
         return this;
     }
 
-    /// Parse and evaluate an expression string.
+    /// Parse and evaluate an expression string, returning the raw result.
+    ///
+    /// The return type depends on the expression: arithmetic expressions return a number, etc.
     ///
     /// @param expression the raw expression string
-    /// @return the boolean result of the expression
+    /// @return the result of the expression as an Object
+    ///
     /// @throws ExpressionParseException if the expression cannot be parsed
     /// @throws ExpressionEvalException  if evaluation fails
-    public boolean eval(String expression) {
+    public Object evaluate(String expression) {
         Node ast = parseCache.get(expression);
         if (ast == null) {
             ast = new ExpressionParser(expression).parse();
             parseCache.put(expression, ast);
         }
-        Object result = evalNode(ast);
-        return toBool(result, "top-level expression");
+        return evalNode(ast);
+    }
+
+    /// Parse and evaluate an expression string, coercing the result to a boolean.
+    ///
+    /// @param expression the raw expression string
+    /// @return the boolean result of the expression
+    ///
+    /// @throws ExpressionParseException if the expression cannot be parsed
+    /// @throws ExpressionEvalException  if evaluation fails or the result is not a boolean
+    public boolean eval(String expression) {
+        return toBool(evaluate(expression), "top-level expression");
     }
 
     /// Attempt to evaluate the top level expression node to a boolean, throwing an exception if it's not possible.

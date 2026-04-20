@@ -485,6 +485,139 @@ public class ExpressionEngineTest {
         }
     }
 
+    @Nested
+    class Evaluate {
+        @Test
+        void returnsNumberForArithmetic() {
+            assertEquals(3, engine.evaluate("1 + 2"));
+        }
+
+        @Test
+        void returnsBooleanForComparison() {
+            assertEquals(true, engine.evaluate("1 < 2"));
+            assertEquals(false, engine.evaluate("2 < 1"));
+        }
+
+        @Test
+        void returnsBooleanForBooleanExpr() {
+            assertEquals(true, engine.evaluate("true && true"));
+            assertEquals(false, engine.evaluate("true && false"));
+        }
+
+        @Test
+        void returnsDoubleForFloatingPointArithmetic() {
+            Object result = engine.evaluate("1.0 + 2.0");
+            assertInstanceOf(Double.class, result);
+            assertEquals(3.0, (Double) result, 1e-9);
+        }
+
+        @Test
+        void evalStillReturnsBool() {
+            assertTrue(engine.eval("1 < 2"));
+            assertFalse(engine.eval("2 < 1"));
+        }
+
+        @Test
+        void evalThrowsOnNonBoolean() {
+            assertThrows(ExpressionEvalException.class, () -> engine.eval("1 + 2"));
+        }
+
+        @Test
+        void complexArithmeticExpression() {
+            // 1 + 2 / (4 * 2) = 1 + 2/8 = 1 + 0 = 1 (integer division)
+            Object result = engine.evaluate("1 + 2 / (4 * 2)");
+            assertInstanceOf(Integer.class, result);
+            assertEquals(1, result);
+        }
+
+        @Test
+        void complexFloatExpression() {
+            // 1.0 + 2.0 / (4.0 * 2.0) = 1.0 + 0.25 = 1.25
+            Object result = engine.evaluate("1.0 + 2.0 / (4.0 * 2.0)");
+            assertInstanceOf(Double.class, result);
+            assertEquals(1.25, (Double) result, 1e-9);
+        }
+    }
+
+    @Nested
+    class MathProvider {
+        ExpressionEngine mathEngine;
+
+        @BeforeEach
+        void setUp() {
+            mathEngine = new ExpressionEngine();
+        }
+
+        @Test
+        void sqrt() {
+            assertEquals(2.0, (Double) mathEngine.evaluate("math.sqrt(4.0)"), 1e-9);
+        }
+
+        @Test
+        void pow() {
+            assertEquals(8.0, (Double) mathEngine.evaluate("math.pow(2.0, 3.0)"), 1e-9);
+        }
+
+        @Test
+        void floor() {
+            assertEquals(3L, mathEngine.evaluate("math.floor(3.9)"));
+        }
+
+        @Test
+        void ceil() {
+            assertEquals(4L, mathEngine.evaluate("math.ceil(3.1)"));
+        }
+
+        @Test
+        void round() {
+            assertEquals(4L, mathEngine.evaluate("math.round(3.6)"));
+            assertEquals(3L, mathEngine.evaluate("math.round(3.4)"));
+        }
+
+        @Test
+        void absLong() {
+            assertEquals(-5L, -5L); // sanity
+            assertEquals(5L, mathEngine.evaluate("math.abs(-5)"));
+        }
+
+        @Test
+        void minMax() {
+            assertEquals(2L, mathEngine.evaluate("math.min(2, 5)"));
+            assertEquals(5L, mathEngine.evaluate("math.max(2, 5)"));
+        }
+
+        @Test
+        void clamp() {
+            assertEquals(5, mathEngine.evaluate("math.clamp(10, 0, 5)"));
+            assertEquals(0, mathEngine.evaluate("math.clamp(-3, 0, 5)"));
+            assertEquals(3, mathEngine.evaluate("math.clamp(3, 0, 5)"));
+        }
+
+        @Test
+        void log() {
+            assertEquals(Math.log(Math.E), (Double) mathEngine.evaluate("math.log(math.e())"), 1e-9);
+        }
+
+        @Test
+        void pi() {
+            assertEquals(Math.PI, (Double) mathEngine.evaluate("math.pi()"), 1e-9);
+        }
+
+        @Test
+        void composedInArithmetic() {
+            // 1.0 + 2.0 / (4.0 * math.sqrt(4.0)) = 1.0 + 2.0 / 8.0 = 1.25
+            Object result = mathEngine.evaluate("1.0 + 2.0 / (4.0 * math.sqrt(4.0))");
+            assertInstanceOf(Double.class, result);
+            assertEquals(1.25, (Double) result, 1e-9);
+        }
+
+        @Test
+        void comparisonWithMathResult() {
+            assertTrue(mathEngine.eval("math.sqrt(4.0) > 1.0"));
+            assertFalse(mathEngine.eval("math.sqrt(4.0) > 5.0"));
+        }
+    }
+
     /// Provider with two methods sharing the same name — should fail at construction time.
     @SuppressWarnings("unused")
     static class OverloadedProvider extends ContextProvider {

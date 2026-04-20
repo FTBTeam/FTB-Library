@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.function.Function;
 
-/// Context provider for a [Player] providing support for {@code player.} expressions.
+/// Context provider for a [Player] providing support for `player.` expressions.
 public class PlayerContextProvider extends ContextProvider {
     private final Player player;
 
