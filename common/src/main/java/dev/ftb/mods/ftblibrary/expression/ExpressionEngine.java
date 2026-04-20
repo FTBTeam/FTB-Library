@@ -5,7 +5,6 @@ import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionParseException;
 import dev.ftb.mods.ftblibrary.expression.provider.ContextProvider;
 import dev.ftb.mods.ftblibrary.expression.provider.StdContextProvider;
 import dev.ftb.mods.ftblibrary.util.LRUCache;
-
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
@@ -96,8 +95,8 @@ public class ExpressionEngine {
 
             case Node.BinaryOp binaryOp -> evalBinaryOp(binaryOp);
             case Node.UnaryOp unaryOp -> evalUnaryOp(unaryOp);
-            case Node.ArithmeticOp arithmeticOp -> throw new RuntimeException("TODO");//evalArithmetic(arithmeticOp);
-            case Node.UnaryMinus unaryMinus -> throw new RuntimeException("TODO"); //evalUnaryMinus(unaryMinus);
+            case Node.ArithmeticOp arithmeticOp -> evalArithmetic(arithmeticOp);
+            case Node.UnaryMinus unaryMinus -> evalUnaryMinus(unaryMinus);
             case Node.Comparison comparison -> evalComparison(comparison);
 
             case Node.ProviderCall call -> evalProviderCall(call);
@@ -115,6 +114,95 @@ public class ExpressionEngine {
 
     private boolean evalUnaryOp(Node.UnaryOp un) {
         return !toBool(evalNode(un.operand()), "operand of NOT");
+    }
+
+    /// Evaluate an arithmetic operation, coercing the left and right sides to numbers and applying Java-like standards.
+    private Number evalArithmetic(Node.ArithmeticOp arithmeticOp) {
+        Object left = evalNode(arithmeticOp.left());
+        Object right = evalNode(arithmeticOp.right());
+
+        if (!(left instanceof Number l)) {
+            throw new ExpressionEvalException("Expected a numeric value on left of arithmetic but got: " + (left == null ? "null" : left.getClass().getSimpleName()));
+        }
+        if (!(right instanceof Number r)) {
+            throw new ExpressionEvalException("Expected a numeric value on right of arithmetic but got: " + (right == null ? "null" : right.getClass().getSimpleName()));
+        }
+
+        return applyArithmetic(l, r, arithmeticOp.op());
+    }
+
+    private Number evalUnaryMinus(Node.UnaryMinus um) {
+        Object val = evalNode(um.operand());
+        if (!(val instanceof Number n)) {
+            throw new ExpressionEvalException("Expected a numeric value for unary minus but got: " + (val == null ? "null" : val.getClass().getSimpleName()));
+        }
+
+        return switch (n) {
+            case Double d -> -d;
+            case Float f -> -f;
+            case Long lg -> -lg;
+            case BigInteger bi -> bi.negate();
+            default -> -n.intValue();
+        };
+    }
+
+    // It's essentially not possible to avoid this as we can't work with boxed methods nicely here
+    // without adding more code than this already is so it's just something we have to not be happy with.
+    @SuppressWarnings("DuplicatedCode")
+    private static Number applyArithmetic(Number a, Number b, Node.ArithmeticOp.Op op) {
+        if (a instanceof Double || b instanceof Double) {
+            double l = a.doubleValue(), r = b.doubleValue();
+            return switch (op) {
+                case ADD -> l + r;
+                case SUB -> l - r;
+                case MUL -> l * r;
+                case DIV -> l / r;
+                case MOD -> l % r;
+            };
+        }
+        if (a instanceof Float || b instanceof Float) {
+            float l = a.floatValue(), r = b.floatValue();
+            return switch (op) {
+                case ADD -> l + r;
+                case SUB -> l - r;
+                case MUL -> l * r;
+                case DIV -> l / r;
+                case MOD -> l % r;
+            };
+        }
+        if (a instanceof BigInteger || b instanceof BigInteger) {
+            BigInteger l = toBigInt(a), r = toBigInt(b);
+            return switch (op) {
+                case ADD -> l.add(r);
+                case SUB -> l.subtract(r);
+                case MUL -> l.multiply(r);
+                case DIV -> l.divide(r);
+                case MOD -> l.remainder(r);
+            };
+        }
+        if (a instanceof Long || b instanceof Long) {
+            long l = a.longValue(), r = b.longValue();
+            return switch (op) {
+                case ADD -> l + r;
+                case SUB -> l - r;
+                case MUL -> l * r;
+                case DIV -> l / r;
+                case MOD -> l % r;
+            };
+        }
+        int l = a.intValue(), r = b.intValue();
+        return switch (op) {
+            case ADD -> l + r;
+            case SUB -> l - r;
+            case MUL -> l * r;
+            case DIV -> l / r;
+            case MOD -> l % r;
+        };
+    }
+
+    private static BigInteger toBigInt(Number n) {
+        if (n instanceof BigInteger bi) return bi;
+        return BigInteger.valueOf(n.longValue());
     }
 
     private boolean evalComparison(Node.Comparison cmp) {
@@ -166,11 +254,11 @@ public class ExpressionEngine {
     /// - float vs float (or float vs integral) → compare as float
     /// - anything vs double (or double vs anything) → compare as double
     private int compareNumeric(@Nullable Object a, @Nullable Object b, String op) {
-        if (!(a instanceof Number)) {
+        if (!(a instanceof Number numberA)) {
             throw new ExpressionEvalException("Expected a numeric value for left of " + op + " but got: " + (a == null ? "null" : a.getClass().getSimpleName() + " (" + a + ")"));
         }
 
-        if (!(b instanceof Number)) {
+        if (!(b instanceof Number numberB)) {
             throw new ExpressionEvalException("Expected a numeric value for right of " + op + " but got: " + (b == null ? "null" : b.getClass().getSimpleName() + " (" + b + ")"));
         }
 
@@ -184,20 +272,16 @@ public class ExpressionEngine {
             throw new ExpressionEvalException("Cannot compare " + a.getClass().getSimpleName() + " with BigInteger for " + op);
         }
 
-        // Both are ordinary Number from here
-        Number na = (Number) a;
-        Number nb = (Number) b;
-
-        if (isIntegral(na) && isIntegral(nb)) {
-            return Long.compare(na.longValue(), nb.longValue());
+        if (isIntegral(numberA) && isIntegral(numberB)) {
+            return Long.compare(numberA.longValue(), numberB.longValue());
         }
 
-        if (!isDouble(na) && !isDouble(nb)) {
+        if (isNotDouble(numberA) && isNotDouble(numberB)) {
             // At least one side is float, neither is double — compare at float precision
-            return Float.compare(na.floatValue(), nb.floatValue());
+            return Float.compare(numberA.floatValue(), numberB.floatValue());
         }
 
-        return Double.compare(na.doubleValue(), nb.doubleValue());
+        return Double.compare(numberA.doubleValue(), numberB.doubleValue());
     }
 
     /// Test if the given number is an integral (non-floating-point) value
@@ -205,8 +289,8 @@ public class ExpressionEngine {
         return n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte;
     }
 
-    private static boolean isDouble(Number n) {
-        return n instanceof Double;
+    private static boolean isNotDouble(Number n) {
+        return !(n instanceof Double);
     }
 
     private boolean objectEquals(@Nullable Object a, @Nullable Object b) {
@@ -238,7 +322,7 @@ public class ExpressionEngine {
                 return numberA.longValue() == numberB.longValue();
             }
 
-            if (!isDouble(numberA) && !isDouble(numberB)) {
+            if (isNotDouble(numberA) && isNotDouble(numberB)) {
                 // At least one side is float, neither is double — compare at float precision
                 return Float.compare(numberA.floatValue(), numberB.floatValue()) == 0;
             }
