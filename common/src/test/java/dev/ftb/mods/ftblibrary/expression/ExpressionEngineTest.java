@@ -182,20 +182,20 @@ public class ExpressionEngineTest {
     class Comparisons {
         @Test
         void stringIsCaseSensitive() {
-            assertFalse(engine.eval("test.testString() is 'TEST'"));
-            assertTrue(engine.eval("test.testString() is 'test'"));
+            assertFalse(engine.eval("test.testString() == 'TEST'"));
+            assertTrue(engine.eval("test.testString() == 'test'"));
         }
 
         @Test
         void isStringEquality() {
-            assertTrue(engine.eval("test.testString() is 'test'"));
-            assertFalse(engine.eval("test.testString() is 'other'"));
+            assertTrue(engine.eval("test.testString() == 'test'"));
+            assertFalse(engine.eval("test.testString() == 'other'"));
         }
 
         @Test
         void isNotStringEquality() {
-            assertTrue(engine.eval("test.testString() is not 'other'"));
-            assertFalse(engine.eval("test.testString() is not 'test'"));
+            assertTrue(engine.eval("test.testString() != 'other'"));
+            assertFalse(engine.eval("test.testString() != 'test'"));
         }
 
         @Test
@@ -287,7 +287,7 @@ public class ExpressionEngineTest {
             level.raining = true;
 
             assertTrue(engine.eval(
-                    "std.isModLoaded('ftb-stages') and (level.isDay() or (level.isNight() and level.isRaining())) and (test.alwaysFalse() or test.testString() is 'test')"
+                    "std.isModLoaded('ftb-stages') and (level.isDay() or (level.isNight() and level.isRaining())) and (test.alwaysFalse() or test.testString() == 'test')"
             ));
         }
 
@@ -297,7 +297,7 @@ public class ExpressionEngineTest {
             level.raining = true;
 
             assertFalse(engine.eval(
-                    "std.isModLoaded('other-mod') and (level.isDay() or (level.isNight() and level.isRaining())) and (test.alwaysFalse() or test.testString() is 'test')"
+                    "std.isModLoaded('other-mod') and (level.isDay() or (level.isNight() and level.isRaining())) and (test.alwaysFalse() or test.testString() == 'test')"
             ));
         }
 
@@ -312,21 +312,21 @@ public class ExpressionEngineTest {
             level.raining = false;
 
             assertTrue(engine.eval(
-                    "level.isDay() and not level.isRaining() and test.alwaysTrue() and std.isModLoaded('ftb-stages')"
+                    "level.isDay() and !level.isRaining() and test.alwaysTrue() and std.isModLoaded('ftb-stages')"
             ));
         }
 
         @Test
         void notOnProviderCall() {
             level.day = true;
-            assertFalse(engine.eval("not level.isDay()"));
-            assertTrue(engine.eval("not level.isNight()"));
+            assertFalse(engine.eval("!level.isDay()"));
+            assertTrue(engine.eval("!level.isNight()"));
         }
 
         @Test
         void whitespaceVariations() {
             level.day = true;
-            assertTrue(engine.eval("level.isDay()  and  not  level.isNight()"));
+            assertTrue(engine.eval("level.isDay()  and  !level.isNight()"));
         }
     }
 

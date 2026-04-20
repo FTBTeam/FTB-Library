@@ -139,7 +139,7 @@ public class ExpressionParser {
 
     private boolean isComparisonOp(Token.TokenType type) {
         return switch (type) {
-            case IS, IS_NOT, EQ, NEQ, LT, GT, LTE, GTE -> true;
+            case EQ, NEQ, LT, GT, LTE, GTE -> true;
             default -> false;
         };
     }
@@ -201,8 +201,7 @@ public class ExpressionParser {
     private Token expect(Token.TokenType type) {
         Token t = peek();
         if (t.type() != type) {
-            throw new ExpressionParseException(
-                    "Expected " + type + " but found " + t.type() + " (\"" + t.value() + "\") at position " + t.pos());
+            throw new ExpressionParseException("Expected " + type + " but found " + t.type() + " (\"" + t.value() + "\") at position " + t.pos());
         }
         return advance();
     }

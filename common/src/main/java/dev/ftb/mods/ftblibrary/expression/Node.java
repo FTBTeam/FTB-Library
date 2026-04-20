@@ -22,12 +22,10 @@ public sealed interface Node
 
     record Comparison(Node left, Comparison.Op op, Node right) implements Node {
         public enum Op {
-            IS, IS_NOT, EQ, NEQ, LT, GT, LTE, GTE;
+            EQ, NEQ, LT, GT, LTE, GTE;
 
             public static Op from(Token.TokenType type) {
                 return switch (type) {
-                    case IS -> IS;
-                    case IS_NOT -> IS_NOT;
                     case EQ -> EQ;
                     case NEQ -> NEQ;
                     case LT -> LT;

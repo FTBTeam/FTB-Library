@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionEvalException;
 import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionParseException;
 import dev.ftb.mods.ftblibrary.expression.provider.ContextProvider;
 import dev.ftb.mods.ftblibrary.expression.provider.StdContextProvider;
+import dev.ftb.mods.ftblibrary.util.LRUCache;
 
 import org.jspecify.annotations.Nullable;
 
@@ -24,10 +25,19 @@ import java.util.Map;
 ///   boolean result = engine.eval("std.isModLoaded('ftb-library') and level.isDay()");
 /// ```
 public class ExpressionEngine {
+    private static final int CACHE_SIZE = 256;
+
     private boolean allowOverriding = false;
     private final Map<String, ProviderInvoker> providers = new HashMap<>();
+    private final LRUCache<String, Node> parseCache;
 
     public ExpressionEngine() {
+        this(CACHE_SIZE);
+    }
+
+    /// Set up an expression engine with a set parse cache size.
+    public ExpressionEngine(int parseCacheSize) {
+        this.parseCache = new LRUCache<>(parseCacheSize);
         registerProvider(new StdContextProvider());
     }
 
@@ -64,7 +74,11 @@ public class ExpressionEngine {
     /// @throws ExpressionParseException if the expression cannot be parsed
     /// @throws ExpressionEvalException  if evaluation fails
     public boolean eval(String expression) {
-        Node ast = new ExpressionParser(expression).parse();
+        Node ast = parseCache.get(expression);
+        if (ast == null) {
+            ast = new ExpressionParser(expression).parse();
+            parseCache.put(expression, ast);
+        }
         Object result = evalNode(ast);
         return toBool(result, "top-level expression");
     }
@@ -105,8 +119,8 @@ public class ExpressionEngine {
         Object right = evalNode(cmp.right());
 
         return switch (cmp.op()) {
-            case IS, EQ -> objectEquals(left, right);
-            case IS_NOT, NEQ -> !objectEquals(left, right);
+            case EQ -> objectEquals(left, right);
+            case NEQ -> !objectEquals(left, right);
             case LT -> compareNumeric(left, right, "<") < 0;
             case GT -> compareNumeric(left, right, ">") > 0;
             case LTE -> compareNumeric(left, right, "<=") <= 0;

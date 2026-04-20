@@ -4,9 +4,40 @@ import dev.ftb.mods.ftblibrary.expression.exceptions.ExpressionParseException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /// Lexer for our expression language. Takes in a user provided string and attempts to break it down into a token tree.
 public class Lexer {
+    /// Lookup table for single-character operators and punctuation
+    private static final Map<Character, Token.TokenType> SINGLE_CHAR_LOOKUP = Map.of(
+            '<', Token.TokenType.LT,
+            '>', Token.TokenType.GT,
+            '!', Token.TokenType.NOT,
+            '.', Token.TokenType.DOT,
+            '(', Token.TokenType.LPAREN,
+            ')', Token.TokenType.RPAREN,
+            ',', Token.TokenType.COMMA
+    );
+
+    /// Alternative table for dual-character operators, which require lookahead to distinguish from their single-character counterparts.
+    /// For example, '!' is a NOT operator, but '!=' is a NEQ operator.
+    private static final Map<Character, Map<Character, Token.TokenType>> DUAL_CHAR_LOOKUP = Map.of(
+            '&', Map.of('&', Token.TokenType.AND),
+            '|', Map.of('|', Token.TokenType.OR),
+            '=', Map.of('=', Token.TokenType.EQ),
+            '!', Map.of('=', Token.TokenType.NEQ),
+            '<', Map.of('=', Token.TokenType.LTE),
+            '>', Map.of('=', Token.TokenType.GTE)
+    );
+
+    /// Lookup table for reserved keywords
+    private static final Map<String, Token.TokenType> KEYWORDS = Map.of(
+            "and", Token.TokenType.AND,
+            "or",  Token.TokenType.OR,
+            "not", Token.TokenType.NOT,
+            "true", Token.TokenType.TRUE,
+            "false", Token.TokenType.FALSE
+    );
 
     private final String src;
     private int pos;
@@ -31,47 +62,21 @@ public class Lexer {
                 tokens.add(readNumber());
             } else if (Character.isLetter(c) || c == '_') {
                 tokens.add(readIdentifierOrKeyword());
-            } else if (c == '&' && peek() == '&') {
-                tokens.add(token(Token.TokenType.AND, "&&"));
-                pos += 2;
-            } else if (c == '|' && peek() == '|') {
-                tokens.add(token(Token.TokenType.OR, "||"));
-                pos += 2;
-            } else if (c == '=' && peek() == '=') {
-                tokens.add(token(Token.TokenType.EQ, "=="));
-                pos += 2;
-            } else if (c == '!' && peek() == '=') {
-                tokens.add(token(Token.TokenType.NEQ, "!="));
-                pos += 2;
-            } else if (c == '<' && peek() == '=') {
-                tokens.add(token(Token.TokenType.LTE, "<="));
-                pos += 2;
-            } else if (c == '>' && peek() == '=') {
-                tokens.add(token(Token.TokenType.GTE, ">="));
-                pos += 2;
-            } else if (c == '<') {
-                tokens.add(token(Token.TokenType.LT, "<"));
-                pos++;
-            } else if (c == '>') {
-                tokens.add(token(Token.TokenType.GT, ">"));
-                pos++;
-            } else if (c == '!') {
-                tokens.add(token(Token.TokenType.NOT, "!"));
-                pos++;
-            } else if (c == '.') {
-                tokens.add(token(Token.TokenType.DOT, "."));
-                pos++;
-            } else if (c == '(') {
-                tokens.add(token(Token.TokenType.LPAREN, "("));
-                pos++;
-            } else if (c == ')') {
-                tokens.add(token(Token.TokenType.RPAREN, ")"));
-                pos++;
-            } else if (c == ',') {
-                tokens.add(token(Token.TokenType.COMMA, ","));
-                pos++;
             } else {
-                throw new ExpressionParseException("Unexpected character '" + c + "' at position " + pos);
+                var twoChar = DUAL_CHAR_LOOKUP.get(c);
+                if (twoChar != null && twoChar.containsKey(peek())) {
+                    Token.TokenType type = twoChar.get(peek());
+                    tokens.add(token(type, String.valueOf(c) + peek()));
+                    pos += 2;
+                } else {
+                    Token.TokenType single = SINGLE_CHAR_LOOKUP.get(c);
+                    if (single != null) {
+                        tokens.add(token(single, String.valueOf(c)));
+                        pos++;
+                    } else {
+                        throw new ExpressionParseException("Unexpected character '" + c + "' at position " + pos);
+                    }
+                }
             }
         }
 
@@ -167,29 +172,14 @@ public class Lexer {
         }
 
         String word = sb.toString();
-        return switch (word.toLowerCase()) {
-            case "and" -> new Token(Token.TokenType.AND, word, start);
-            case "or" -> new Token(Token.TokenType.OR, word, start);
-            case "not" -> new Token(Token.TokenType.NOT, word, start);
-            case "true" -> new Token(Token.TokenType.TRUE, word, start);
-            case "false" -> new Token(Token.TokenType.FALSE, word, start);
-            // 'is' is a little more complicated as we need to look ahead to see if we're doing an 'is' or an 'is not'
-            // expression which changes the meaning of the keyword.
-            case "is" -> {
-                int savedPos = pos;
-                skipWhitespace();
-                if (pos + 3 <= src.length() && src.substring(pos, pos + 3).equalsIgnoreCase("not")
-                        && (pos + 3 >= src.length() || !Character.isLetterOrDigit(src.charAt(pos + 3)))) {
-                    pos += 3;
-                    yield new Token(Token.TokenType.IS_NOT, "is not", start);
-                }
+        String lower = word.toLowerCase();
 
-                pos = savedPos;
-                yield new Token(Token.TokenType.IS, word, start);
-            }
-            // If we're not a keyword, we're an 'identifier'
-            default -> new Token(Token.TokenType.IDENTIFIER, word, start);
-        };
+        Token.TokenType keyword = KEYWORDS.get(lower);
+        if (keyword != null) {
+            return new Token(keyword, word, start);
+        }
+
+        return new Token(Token.TokenType.IDENTIFIER, word, start);
     }
 
     private void skipWhitespace() {

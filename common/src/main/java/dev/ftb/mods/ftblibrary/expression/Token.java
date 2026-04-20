@@ -20,8 +20,6 @@ public record Token(TokenType type, String value, int pos) {
         OR,             // or / ||
         NOT,            // not / !
 
-        IS,             // is
-        IS_NOT,         // is not
         EQ,             // ==
         NEQ,            // !=
         LT,             // <
