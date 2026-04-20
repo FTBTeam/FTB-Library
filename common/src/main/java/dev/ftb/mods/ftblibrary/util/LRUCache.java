@@ -4,7 +4,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
@@ -36,7 +35,7 @@ public class LRUCache<K, V> {
     }
 
     public boolean containsKey(K key) {
-        return Boolean.TRUE.equals(writeLockedAction(() -> map.containsKey(key)));
+        return readLockedAction(() -> map.containsKey(key));
     }
 
     public int size() {
@@ -52,7 +51,7 @@ public class LRUCache<K, V> {
 
     @Override
     public String toString() {
-        return Objects.requireNonNull(writeLockedAction(map::toString));
+        return readLockedAction(map::toString);
     }
 
     private <T> T readLockedAction(Supplier<T> action) {
