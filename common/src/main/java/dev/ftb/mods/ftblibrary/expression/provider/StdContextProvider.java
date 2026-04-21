@@ -26,7 +26,7 @@ public class StdContextProvider extends ContextProvider {
         return Platform.get().env() == Env.SERVER;
     }
 
-    public long epoc() {
+    public long epoch() {
         return System.currentTimeMillis();
     }
 }

@@ -58,7 +58,7 @@ public class PlayerContextProvider extends ContextProvider {
         return this.player.isSwimming();
     }
 
-    public boolean inContainer() {
+    public boolean hasMenuOpen() {
         return this.player.containerMenu != this.player.inventoryMenu;
     }
 
