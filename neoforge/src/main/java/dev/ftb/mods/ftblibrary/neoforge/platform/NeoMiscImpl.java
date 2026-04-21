@@ -8,8 +8,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.extensions.IBaseRailBlockExtension;
@@ -69,5 +71,10 @@ public class NeoMiscImpl implements Misc {
     @Override
     public boolean hasComponentPatch(ItemStack stack) {
         return !stack.isComponentsPatchEmpty();
+    }
+
+    @Override
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        return state.getBlock().getMapColor(state, level, pos, defaultColor);
     }
 }

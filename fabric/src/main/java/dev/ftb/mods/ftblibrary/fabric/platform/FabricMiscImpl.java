@@ -16,9 +16,11 @@ import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 
 public class FabricMiscImpl implements Misc {
     @Override
@@ -80,5 +82,10 @@ public class FabricMiscImpl implements Misc {
     public boolean hasComponentPatch(ItemStack stack) {
         return stack.getComponents() instanceof PatchedDataComponentMap &&
                 !((PatchedDataComponentMapAccess) stack.getComponents()).getPatch().isEmpty();
+    }
+
+    @Override
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        return state.getMapColor(level, pos);
     }
 }
