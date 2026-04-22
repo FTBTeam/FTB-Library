@@ -80,26 +80,21 @@ public class FluidStack implements DataComponentHolder, TypedInstance<Fluid> {
             }
     );
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public void encode(RegistryFriendlyByteBuf output, FluidStack value) {
-            if (value.isEmpty()) {
-                throw new EncoderException("Empty FluidStack not allowed");
+    public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> STREAM_CODEC = StreamCodec.of(
+            (buf, stack) -> {
+                if (stack.isEmpty()) {
+                    throw new EncoderException("Empty FluidStack not allowed");
+                }
+                FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, stack);
+            },
+            buf -> {
+                FluidStack stack = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
+                if (stack.isEmpty()) {
+                    throw new DecoderException("Empty FluidStack not allowed");
+                }
+                return stack;
             }
-
-            FluidStack.OPTIONAL_STREAM_CODEC.encode(output, value);
-        }
-
-        @Override
-        public FluidStack decode(RegistryFriendlyByteBuf input) {
-            FluidStack stack = FluidStack.OPTIONAL_STREAM_CODEC.decode(input);
-            if (stack.isEmpty()) {
-                throw new DecoderException("Empty FluidStack not allowed");
-            }
-
-            return stack;
-        }
-    };
+    );
 
     private final Holder<Fluid> fluid;
 
