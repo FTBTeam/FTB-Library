@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.platform.fluid;
 
-import dev.ftb.mods.ftblibrary.platform.Platform;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.ftb.mods.ftblibrary.platform.Platform;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.core.Holder;
@@ -35,7 +35,13 @@ import java.util.Optional;
  * TODO: Hashcode + equals
  */
 public class FluidStack implements DataComponentHolder, TypedInstance<Fluid> {
-    public static final Codec<Holder<Fluid>> FLUID_HOLDER_CODEC = BuiltInRegistries.FLUID.holderByNameCodec().validate(fluid -> fluid.is(Fluids.EMPTY.builtInRegistryHolder().key()) ? DataResult.error(() -> "Fluid cannot be empty") : DataResult.success(fluid));
+    public static FluidStack EMPTY = new FluidStack(Fluids.EMPTY, 0);
+
+    public static final Codec<Holder<Fluid>> FLUID_HOLDER_CODEC = BuiltInRegistries.FLUID.holderByNameCodec()
+            .validate(fluid -> fluid.value() == Fluids.EMPTY ?
+                    DataResult.error(() -> "Fluid cannot be empty") :
+                    DataResult.success(fluid)
+            );
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Fluid>> FLUID_HOLDER_STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.FLUID);
 
     public static final MapCodec<FluidStack> MAP_CODEC = MapCodec.recursive(
@@ -52,33 +58,29 @@ public class FluidStack implements DataComponentHolder, TypedInstance<Fluid> {
     public static final Codec<FluidStack> OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC)
             .xmap(optional -> optional.orElse(FluidStack.EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> OPTIONAL_STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public FluidStack decode(RegistryFriendlyByteBuf buf) {
-            int amount = buf.readVarInt();
-            if (amount <= 0) {
-                return FluidStack.EMPTY;
-            } else {
-                Holder<Fluid> holder = FLUID_HOLDER_STREAM_CODEC.decode(buf);
-                DataComponentPatch patch = DataComponentPatch.STREAM_CODEC.decode(buf);
-                return new FluidStack(holder, amount, patch);
+    public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> OPTIONAL_STREAM_CODEC = StreamCodec.of(
+            (buf, stack) -> {
+                if (stack.isEmpty()) {
+                    buf.writeVarLong(0L);
+                } else {
+                    buf.writeVarLong(stack.amount());
+                    FLUID_HOLDER_STREAM_CODEC.encode(buf, stack.typeHolder());
+                    DataComponentPatch.STREAM_CODEC.encode(buf, stack.components.asPatch());
+                }
+            },
+            buf -> {
+                long amount = buf.readVarLong();
+                if (amount <= 0L) {
+                    return EMPTY;
+                } else {
+                    Holder<Fluid> holder = FLUID_HOLDER_STREAM_CODEC.decode(buf);
+                    DataComponentPatch patch = DataComponentPatch.STREAM_CODEC.decode(buf);
+                    return new FluidStack(holder, amount, patch);
+                }
             }
-        }
-
-        @Override
-        public void encode(RegistryFriendlyByteBuf buf, FluidStack stack) {
-            if (stack.isEmpty()) {
-                buf.writeLong(0);
-            } else {
-                buf.writeLong(stack.amount());
-                FLUID_HOLDER_STREAM_CODEC.encode(buf, stack.typeHolder());
-                DataComponentPatch.STREAM_CODEC.encode(buf, stack.components.asPatch());
-            }
-        }
-    };
+    );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> STREAM_CODEC = new StreamCodec<>() {
-
         @Override
         public void encode(RegistryFriendlyByteBuf output, FluidStack value) {
             if (value.isEmpty()) {
@@ -103,8 +105,6 @@ public class FluidStack implements DataComponentHolder, TypedInstance<Fluid> {
 
     private long amount;
     private final PatchedDataComponentMap components;
-
-    public static FluidStack EMPTY = new FluidStack(Fluids.EMPTY, 0);
 
     public FluidStack(Fluid fluid, long amount, DataComponentPatch patch) {
         this(fluid.builtInRegistryHolder(), amount, patch);
