@@ -3,8 +3,8 @@ package dev.ftb.mods.ftblibrary.config.value;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
-import dev.ftb.mods.ftblibrary.snbt.SNBTUtils;
 import dev.ftb.mods.ftblibrary.json5.Json5Util;
+import dev.ftb.mods.ftblibrary.util.Lambdas;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     protected final String key;
     protected final T defaultValue;
     protected boolean excluded;
-    protected BooleanSupplier enabled = SNBTUtils.ALWAYS_TRUE;
+    protected BooleanSupplier enabled = Lambdas.ALWAYS_TRUE;
     protected int displayOrder = 0;
     protected List<String> comment = new ArrayList<>(0);
     private T value;

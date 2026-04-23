@@ -92,7 +92,8 @@ public class Json5Ops implements DynamicOps<Json5Element> {
             }
             if (compressed && input.getAsJson5Primitive().isString()) {
                 try {
-                    return DataResult.success(Integer.parseInt(input.getAsString()));
+                    long val = Long.parseLong(input.getAsString());
+                    return DataResult.success(val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE ? (int) val : val);
                 } catch (final NumberFormatException e) {
                     return DataResult.error(() -> "Not a number: " + e + " " + input);
                 }
@@ -326,7 +327,7 @@ public class Json5Ops implements DynamicOps<Json5Element> {
 
     @Override
     public String toString() {
-        return "JSON";
+        return "JSON5";
     }
 
     @Override
