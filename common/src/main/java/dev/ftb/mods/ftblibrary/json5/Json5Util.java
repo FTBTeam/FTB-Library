@@ -67,11 +67,11 @@ public class Json5Util {
         return codec.parse(lookup.createSerializationContext(Json5Ops.INSTANCE), json.get(field)).result();
     }
 
-    public static Json5Object tryRead(Path inputFile) throws IOException {
-        return tryRead(inputFile, Json5Object.class);
+    public static Json5Object load(Path inputFile) throws IOException {
+        return load(inputFile, Json5Object.class);
     }
 
-    public static <T extends Json5Element> T tryRead(Path inputFile, Class<T> jsonCls) throws IOException {
+    public static <T extends Json5Element> T load(Path inputFile, Class<T> jsonCls) throws IOException {
         try (FileInputStream stream = new FileInputStream(inputFile.toFile())) {
             var json = new Json5().parse(stream);
             if (jsonCls.isAssignableFrom(json.getClass())) {
@@ -82,15 +82,26 @@ public class Json5Util {
         }
     }
 
-    public static void tryWrite(Path outputFile, Json5Element json) throws IOException {
+    public static void save(Path outputFile, Json5Element json) throws IOException {
         Files.createDirectories(outputFile.getParent());
         Files.writeString(outputFile, new Json5().serialize(json));
     }
 
-    /// This method shouldn't be used and instead the above should be used
+    /// Use [#load(Path)]
+    @Deprecated(forRemoval = true, since = "26.1.2.2")
+    public static Json5Object tryRead(Path inputFile) throws IOException {
+        return load(inputFile, Json5Object.class);
+    }
+
+    /// Use [#load(Path, Class)]
+    @Deprecated(forRemoval = true, since = "26.1.2.2")
+    public static <T extends Json5Element> T tryRead(Path inputFile, Class<T> jsonCls) throws IOException {
+        return load(inputFile, jsonCls);
+    }
+
+    /// Use [#save(Path, Json5Element)]
     @Deprecated(forRemoval = true, since = "26.1.2.1")
     public static void tryWrite(Path outputFile, Json5Object json) throws IOException {
-        Files.createDirectories(outputFile.getParent());
-        Files.writeString(outputFile, new Json5().serialize(json));
+        save(outputFile, json);
     }
 }
