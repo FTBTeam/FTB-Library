@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [26.1.2.2-beta]
+
+### Added
+* Added support for parsing long integers to `Json5Ops`
+* Added expression parsing engine
+  * Initial use in sidebar config files, but likely to be extended for other uses later
+
+### Changed
+* Removed all the old `SNBT` code since Json5 is now used everywhere
+* Deprecated the `Json5Util#tryRead` & `Json5Util.tryWrite` methods in favor of `load`/`save` respectively
+
+### Fixed
+* Fixed (cross-platform) FluidStack stream codec
+
 ## [26.1.2.1-beta]
 
 ### ⚠️ Breaking ⚠️
