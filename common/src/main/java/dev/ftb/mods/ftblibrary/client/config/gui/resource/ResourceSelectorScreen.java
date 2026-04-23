@@ -1,11 +1,15 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
+import com.google.common.base.Stopwatch;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableString;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditMultilineStringConfigOverlay;
 import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
+import dev.ftb.mods.ftblibrary.client.gui.SimpleToast;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.screens.AbstractThreePanelScreen;
@@ -20,18 +24,17 @@ import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
-import com.google.common.base.Stopwatch;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.Items;
 import org.apache.commons.lang3.Validate;
-import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -300,10 +303,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             CompoundTag toEdit = Objects.requireNonNullElse(selectedStack.getComponentsTag(), new CompoundTag());
             if (button.isLeft()) {
                 EditableString config = new EditableString();
-                // TODO: What is this doing.
-//                SNBTCompoundTag snbt = SNBTCompoundTag.of(toEdit);
-//                snbt.singleLine();
-//                config.updateValue(String.join(",", SNBT.writeLines(snbt)));
+                config.updateValue(NbtUtils.prettyPrint(toEdit, true));
                 getGui().pushModalPanel(makeMultilineEditPanel(config));
             } else if (button.isRight()) {
                 CompoundTag info = Util.make(new CompoundTag(), tag -> tag.putString("type", "item"));
@@ -316,19 +316,16 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             }
         }
 
-        @NonNull
         private EditMultilineStringConfigOverlay makeMultilineEditPanel(EditableString config) {
             var panel = new EditMultilineStringConfigOverlay(ResourceSelectorScreen.this, config, accepted -> {
                 if (accepted) {
-//                    try {
-                        // TODO: What is this doing
-//                        selectedStack.applyComponentsTag(SNBT.readLines(List.of(config.getValue())));
-//                    } catch (SNBTSyntaxException e) {
-//                        SimpleToast.error(Component.translatable("ftblibrary.gui.error"), Component.literal(e.getMessage()));
-//                    }
+                    try {
+                        selectedStack.applyComponentsTag(TagParser.parseCompoundFully(config.getValue()));
+                    } catch (CommandSyntaxException e) {
+                        SimpleToast.error(Component.translatable("ftblibrary.gui.error"), Component.literal(e.getMessage()));
+                    }
                 }
             });
-            panel.setExtraZlevel(300);  // ensure it renders over any rendered items
             int w = getWindow().getGuiScaledWidth() - 10 - getX();
             panel.setPosAndSize(getPosX(), getPosY() + getHeight(), w, 50);
             return panel;
@@ -398,7 +395,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
             setSize(18, 18);
             selectable = is;
-            title = null;
+//            title = selectable.getName();
             icon = selectable.getIcon();
         }
 
@@ -410,11 +407,12 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
         @Override
         public Component getTitle() {
-            if (title == null) {
-                title = selectable.getName();
-            }
-
-            return title;
+//            if (title == null) {
+//                title = selectable.getName();
+//            }
+//
+//            return title;
+            return selectable.getName();
         }
 
         @Override

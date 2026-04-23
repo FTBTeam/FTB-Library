@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -39,7 +40,7 @@ public record ItemStackResource(ItemStack resource) implements SelectableResourc
     @Override
     @Nullable
     public CompoundTag getComponentsTag() {
-        Tag tag = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, resource.getComponents()).result()
+        Tag tag = DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, resource.getComponentsPatch()).result()
                 .orElse(new CompoundTag());
         return tag instanceof CompoundTag t ? t : null;
     }
