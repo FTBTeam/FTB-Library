@@ -39,7 +39,7 @@ public record SidebarButtonData(
     ).apply(builder, SidebarButtonData::new));
 
     @Override
-    public int compareTo(@NonNull SidebarButtonData o) {
+    public int compareTo(SidebarButtonData o) {
         return Integer.compare(sortIndex, o.sortIndex);
     }
 }

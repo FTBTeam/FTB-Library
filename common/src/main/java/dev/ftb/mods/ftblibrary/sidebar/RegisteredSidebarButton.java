@@ -6,6 +6,8 @@ import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
 import dev.ftb.mods.ftblibrary.client.gui.screens.LoadingScreen;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.platform.Platform;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -21,7 +23,7 @@ public class RegisteredSidebarButton implements SidebarButton {
     private final SidebarButtonData data;
     private final Identifier id;
     private final String langKey;
-    private final Component tooltip;
+    private @Nullable final Component tooltip;
     private final List<ButtonOverlayRender> extraRenderers;
     private @Nullable Supplier<List<Component>> tooltipOverride;
     private BooleanSupplier visible = () -> true;
@@ -31,7 +33,7 @@ public class RegisteredSidebarButton implements SidebarButton {
         this.id = id;
         this.data = data;
         this.langKey = Util.makeDescriptionId("sidebar_button", id);
-        tooltip = Component.translatable(langKey + ".tooltip");
+        tooltip = I18n.exists(langKey + ".tooltip") ? Component.translatable(langKey + ".tooltip") : null;
         if (data.requiresOp()) {
             addVisibilityCondition(ClientUtils.IS_CLIENT_OP);
         }
@@ -65,8 +67,8 @@ public class RegisteredSidebarButton implements SidebarButton {
         } else {
             List<Component> tooltips = new ArrayList<>();
             tooltips.add(Component.translatable(langKey));
-            if (shift) {
-                tooltips.add(tooltip);
+            if (tooltip != null && shift) {
+                tooltips.add(tooltip.copy().withStyle(ChatFormatting.GRAY));
             }
             Optional<List<Component>> components = shift ? data.shiftTooltip() : data.tooltip();
             components.ifPresent(tooltips::addAll);
