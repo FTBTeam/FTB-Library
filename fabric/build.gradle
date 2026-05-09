@@ -26,6 +26,16 @@ loom {
 
 apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
 
+repositories {
+    maven {
+        url = uri("https://maven.siphalor.de/")
+    }
+
+    maven {
+        url = "https://maven.terraformersmc.com/"
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
@@ -34,6 +44,11 @@ dependencies {
 
     compileOnly("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
     localRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+
+    compileOnly "de.siphalor.amecs.amecs-key-modifiers:amecs-key-modifiers-${amecs_key_modifiers_version}"
+    runtimeOnly "de.siphalor.amecs.amecs-bundle:amecs-bundle-${amecs_key_bundle_version}"
+
+    runtimeOnly "com.terraformersmc:modmenu:${modmenu_version}"
 
     include(api("de.marhali:json5-java:${json5_version}"))
 }
