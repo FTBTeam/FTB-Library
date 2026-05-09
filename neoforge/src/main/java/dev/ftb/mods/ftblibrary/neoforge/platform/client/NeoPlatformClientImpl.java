@@ -2,10 +2,8 @@ package dev.ftb.mods.ftblibrary.neoforge.platform.client;
 
 import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
 import dev.ftb.mods.ftblibrary.platform.client.keys.KeyConflict;
+import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMappingConfig;
 import dev.ftb.mods.ftblibrary.platform.client.keys.KeyModifier;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.datafixers.util.Either;
-import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -19,7 +17,6 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.settings.IKeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Set;
@@ -62,17 +59,14 @@ public class NeoPlatformClientImpl implements PlatformClient {
     }
 
     @Override
-    public KeyMapping createKeyBinding(Identifier id, KeyMapping.Category category, Either<InputConstants.Key, Pair<InputConstants.Type, Integer>> key, KeyModifier modifier, @Nullable Either<InputConstants.Key, Pair<InputConstants.Type, Integer>> noModifierFallbackKey, KeyConflict conflictContext) {
-        InputConstants.Type type = key.map(InputConstants.Key::getType, Pair::first);
-        int value = key.map(InputConstants.Key::getValue, Pair::second);
-
+    public KeyMapping createKeyBinding(KeyMappingConfig config) {
         return new KeyMapping(
-                id.getNamespace() + "_" + id.getPath(),
-                convertConflictContext(conflictContext),
-                fromModifier(modifier),
-                type,
-                value,
-                category
+                config.translationKey(),
+                convertConflictContext(config.conflictContext()),
+                fromModifier(config.modifier()),
+                config.type(true),
+                config.code(true),
+                config.category()
         );
     }
 

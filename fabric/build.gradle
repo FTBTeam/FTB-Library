@@ -46,9 +46,9 @@ dependencies {
     localRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
 
     compileOnly "de.siphalor.amecs.amecs-key-modifiers:amecs-key-modifiers-${amecs_key_modifiers_version}"
-    runtimeOnly "de.siphalor.amecs.amecs-bundle:amecs-bundle-${amecs_key_bundle_version}"
+    localRuntime "de.siphalor.amecs.amecs-bundle:amecs-bundle-${amecs_key_bundle_version}"
 
-    runtimeOnly "com.terraformersmc:modmenu:${modmenu_version}"
+    localRuntime "com.terraformersmc:modmenu:${modmenu_version}"
 
     include(api("de.marhali:json5-java:${json5_version}"))
 }

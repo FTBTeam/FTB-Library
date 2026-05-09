@@ -5,6 +5,7 @@ import dev.ftb.mods.ftblibrary.fabric.integrations.keys.KeyProvider;
 import dev.ftb.mods.ftblibrary.fabric.integrations.keys.VanillaKeyProvider;
 import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
 import dev.ftb.mods.ftblibrary.platform.client.keys.KeyConflict;
+import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMappingConfig;
 import dev.ftb.mods.ftblibrary.platform.client.keys.KeyModifier;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.datafixers.util.Either;
@@ -50,7 +51,7 @@ public class FabricPlatformClientImpl implements PlatformClient {
     }
 
     @Override
-    public KeyMapping createKeyBinding(Identifier id, KeyMapping.Category category, Either<InputConstants.Key, Pair<InputConstants.Type, Integer>> key, KeyModifier modifier, @Nullable Either<InputConstants.Key, Pair<InputConstants.Type, Integer>> noModifierFallbackKey, KeyConflict conflictContext) {
+    public KeyMapping createKeyBinding(KeyMappingConfig config) {
         if (keyProvider == null) {
             if (FabricLoader.getInstance().isModLoaded("amecs")) {
                 keyProvider = new AmecsKeyProvider();
@@ -59,6 +60,6 @@ public class FabricPlatformClientImpl implements PlatformClient {
             }
         }
 
-        return keyProvider.create(id, category, key, modifier, noModifierFallbackKey, conflictContext);
+        return keyProvider.create(config);
     }
 }

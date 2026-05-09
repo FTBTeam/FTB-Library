@@ -1,0 +1,117 @@
+package dev.ftb.mods.ftblibrary.platform.client.keys;
+
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
+
+public record KeyMappingConfig(
+        Identifier id,
+        KeyMapping.Category category,
+        Either<InputConstants.Key, Pair<InputConstants.Type, Integer>> key,
+        KeyModifier modifier,
+        @Nullable Either<InputConstants.Key, Pair<InputConstants.Type, Integer>> noModifierFallbackKey,
+        KeyConflict conflictContext
+) {
+    public String translationKey() {
+        return "key." + id.getNamespace() + "." + id.getPath();
+    }
+
+    public InputConstants.Type type(boolean supportsModifiers) {
+        var either = !supportsModifiers && noModifierFallbackKey != null ? noModifierFallbackKey : key;
+        return either.map(InputConstants.Key::getType, Pair::left);
+    }
+
+    public int code(boolean supportsModifiers) {
+        var either = !supportsModifiers && noModifierFallbackKey != null ? noModifierFallbackKey : key;
+        return either.map(InputConstants.Key::getValue, Pair::right);
+    }
+
+    public static Builder builder(Identifier id, KeyMapping.Category category) {
+        return new Builder(id, category);
+    }
+
+    public static class Builder {
+        private final Identifier id;
+        private final KeyMapping.Category category;
+
+        // We only support one modifier even though the Fabric library supports multiple because NeoForge's KeyModifier only supports one
+        // When on Vanilla / Fabric without a mod, this is completely ignored anyway.
+        private KeyModifier modifier = KeyModifier.NONE;
+
+        private Either<InputConstants.Key, Pair<InputConstants.Type, Integer>> key;
+
+        // If there is no modifier support on the current platform, this key will override the main key
+        // as there may be a case where a key with modifier makes sense but without the modifier, it doesn't and another key is preferred.
+        private @Nullable Either<InputConstants.Key, Pair<InputConstants.Type, Integer>> noModifierFallbackKey = null;
+
+        // This is ignored on Fabric even with the mod as this is a NeoForge concept.
+        private KeyConflict conflictContext = KeyConflict.EVERYWHERE;
+
+        private Builder(Identifier id, KeyMapping.Category category) {
+            this.id = id;
+            this.category = category;
+        }
+
+        public Builder shift() {
+            return modifier(KeyModifier.SHIFT);
+        }
+
+        public Builder control() {
+            return modifier(KeyModifier.CONTROL);
+        }
+
+        public Builder superModifier() {
+            return modifier(KeyModifier.SUPER);
+        }
+
+        public Builder alt() {
+            return modifier(KeyModifier.ALT);
+        }
+
+        public Builder modifier(KeyModifier modifier) {
+            this.modifier = modifier;
+            return this;
+        }
+
+        public Builder noDefaultKey() {
+            this.key = Either.left(InputConstants.UNKNOWN);
+            return this;
+        }
+
+        public Builder key(InputConstants.Key key) {
+            this.key = Either.left(key);
+            return this;
+        }
+
+        public Builder noModifierFallbackKey(InputConstants.Key noModifierFallbackKey) {
+            this.noModifierFallbackKey = Either.left(noModifierFallbackKey);
+            return this;
+        }
+
+        public Builder key(InputConstants.Type type, int code) {
+            this.key = Either.right(Pair.of(type, code));
+            return this;
+        }
+
+        public Builder noModifierFallbackKey(InputConstants.Type type, int code) {
+            this.noModifierFallbackKey = Either.right(Pair.of(type, code));
+            return this;
+        }
+
+        public Builder conflictContext(KeyConflict conflictContext) {
+            this.conflictContext = conflictContext;
+            return this;
+        }
+
+        public KeyMappingConfig build() {
+            if (key == null) {
+                throw new IllegalStateException("Key must be set");
+            }
+
+            return new KeyMappingConfig(id, category, key, modifier, noModifierFallbackKey, conflictContext);
+        }
+    }
+}
