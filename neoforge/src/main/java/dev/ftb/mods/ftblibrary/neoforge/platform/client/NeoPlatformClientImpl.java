@@ -13,11 +13,13 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.NonNull;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NeoPlatformClientImpl implements PlatformClient {
+    private final Set<KeyMapping.Category> registeredCategories = ConcurrentHashMap.newKeySet();
+
     @Override
     public void sendToServer(CustomPacketPayload payload) {
         ClientPacketDistributor.sendToServer(payload);
@@ -30,14 +32,24 @@ public class NeoPlatformClientImpl implements PlatformClient {
     }
 
     @Override
+    public KeyMapping.Category registerKeyMappingCategory(Identifier id) {
+        var category = new KeyMapping.Category(id);
+        if (!registeredCategories.add(category)) {
+            throw new IllegalStateException("Key mapping category " + id + " is already registered");
+        }
+
+        return category;
+    }
+
+    @Override
     public void registerKeyMapping(String modId, KeyMapping... keyMappings) {
         getModBusOrThrow(modId).addListener(RegisterKeyMappingsEvent.class, event -> {
-            Set<KeyMapping.Category> cats = new HashSet<>();
             for (var k : keyMappings) {
-                cats.add(k.getCategory());
                 event.register(k);
             }
-            cats.forEach(event::registerCategory);
+
+            registeredCategories.forEach(event::registerCategory);
+            registeredCategories.clear();
         });
     }
 
