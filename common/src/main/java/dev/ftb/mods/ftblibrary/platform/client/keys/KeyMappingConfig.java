@@ -86,19 +86,43 @@ public record KeyMappingConfig(
             return this;
         }
 
-        public Builder noModifierFallbackKey(InputConstants.Key noModifierFallbackKey) {
-            this.noModifierFallbackKey = Either.left(noModifierFallbackKey);
+        public Builder key(InputConstants.Type type, int code) {
+            this.key = Either.right(Pair.of(type, code));
             return this;
         }
 
-        public Builder key(InputConstants.Type type, int code) {
-            this.key = Either.right(Pair.of(type, code));
+        public Builder keyboard(int keyCode) {
+            return key(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+        }
+
+        public Builder mouse(int buttonCode) {
+            return key(InputConstants.Type.MOUSE.getOrCreate(buttonCode));
+        }
+
+        public Builder scan(int buttonCode) {
+            return key(InputConstants.Type.SCANCODE.getOrCreate(buttonCode));
+        }
+
+        public Builder noModifierFallbackKey(InputConstants.Key noModifierFallbackKey) {
+            this.noModifierFallbackKey = Either.left(noModifierFallbackKey);
             return this;
         }
 
         public Builder noModifierFallbackKey(InputConstants.Type type, int code) {
             this.noModifierFallbackKey = Either.right(Pair.of(type, code));
             return this;
+        }
+
+        public Builder noModifierFallbackKeyboard(int keyCode) {
+            return noModifierFallbackKey(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+        }
+
+        public Builder noModifierFallbackMouse(int buttonCode) {
+            return noModifierFallbackKey(InputConstants.Type.MOUSE.getOrCreate(buttonCode));
+        }
+
+        public Builder noModifierFallbackScan(int buttonCode) {
+            return noModifierFallbackKey(InputConstants.Type.SCANCODE.getOrCreate(buttonCode));
         }
 
         public Builder conflictContext(KeyConflict conflictContext) {
