@@ -25,6 +25,11 @@ public class FabricPlatformClientImpl implements PlatformClient {
     }
 
     @Override
+    public KeyMapping.Category registerKeyMappingCategory(Identifier id) {
+        return KeyMapping.Category.register(id);
+    }
+
+    @Override
     public void registerKeyMapping(String modId, KeyMapping... keyMappings) {
         for (var k : keyMappings) {
             KeyMappingHelper.registerKeyMapping(k);

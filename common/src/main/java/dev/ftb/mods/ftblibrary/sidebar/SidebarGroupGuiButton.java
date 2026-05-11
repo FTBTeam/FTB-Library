@@ -17,7 +17,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2fStack;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,9 +35,11 @@ public class SidebarGroupGuiButton extends AbstractButton {
     boolean gridStartRight = false;
     int yRenderStart;
     int xRenderStart;
+    @Nullable
     private SidebarGuiButton mouseOver;
+    @Nullable
     private SidebarGuiButton selectedButton;
-    private GridLocation selectedLocation;
+    private GridLocation selectedLocation = GridLocation.OUT_OF_BOUNDS;
     private int lastMouseClickButton = 0;
     private boolean isEditMode;
     private int currentMouseX;
@@ -211,10 +213,10 @@ public class SidebarGroupGuiButton extends AbstractButton {
                 graphics.pose().pushMatrix();
 
                 if (gridStartRight) {
-                    drawHoveredGrid(graphics, addIconX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight);
+                    drawHoveredGrid(graphics, addIconX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, true);
                     drawGrid(graphics, addIconX - maxWidth - 6, gridY, 1, disabledButtonList.size(), maxWidth + 6, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
                 } else {
-                    drawHoveredGrid(graphics, gridX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, gridStartRight);
+                    drawHoveredGrid(graphics, gridX, gridY, 1, disabledButtonList.size(), BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK, mx, my, gridStartBottom, false);
                     drawGrid(graphics, gridX + BUTTON_SPACING, gridY, 1, disabledButtonList.size(), maxWidth + 6, BUTTON_SPACING, Color4I.GRAY, Color4I.BLACK);
                 }
 
@@ -267,6 +269,8 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     private void updateButtonLocations(GridLocation gLocation) {
+        assert selectedButton != null;
+
         // Checks if moved from the first spot, so we can move other icons over but only as the same row
 
         boolean isFrom0XTo1X = selectedLocation.y() == gLocation.y() && selectedLocation.x() == 0 && gLocation.x() == 1;
@@ -340,7 +344,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
         }
 
         if (isEditMode && addBoxOpen) {
-            int disabledList = SidebarButtonManager.INSTANCE.getDisabledButtonList(isEditMode).size();
+            int disabledList = SidebarButtonManager.INSTANCE.getDisabledButtonList(true).size();
             girdAmountX += 4;
             girdAmountY = Math.max(girdAmountY, disabledList);
         }
@@ -428,7 +432,7 @@ public class SidebarGroupGuiButton extends AbstractButton {
     }
 
     @Override
-    public void onPress(@NonNull InputWithModifiers inputWithModifiers) {
+    public void onPress(InputWithModifiers inputWithModifiers) {
         if (lastMouseClickButton == 1) {
             isEditMode = !isEditMode;
             ensureGridAlignment();

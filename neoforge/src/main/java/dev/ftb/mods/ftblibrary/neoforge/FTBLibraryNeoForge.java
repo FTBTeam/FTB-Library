@@ -17,6 +17,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
@@ -33,7 +34,7 @@ public class FTBLibraryNeoForge {
         IEventBus bus = NeoForge.EVENT_BUS;
 
         bus.addListener(ServerStartedEvent.class, (event) -> this.library.serverStarted(event.getServer()));
-        bus.addListener(ServerStartingEvent.class, (event) -> ConfigManager.getInstance().onServerStarting(event.getServer()));
+        bus.addListener(ServerAboutToStartEvent.class, (event) -> ConfigManager.getInstance().onServerStarting(event.getServer()));
         bus.addListener(ServerStoppedEvent.class, (event) -> this.library.serverStopped(event.getServer()));
 
         bus.addListener(RegisterCommandsEvent.class, (event) -> this.library.registerCommands(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection()));

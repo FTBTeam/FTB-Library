@@ -23,5 +23,7 @@ public interface PlatformClient {
         addResourcePackReloadListeners(modId, Map.of(id, listener));
     }
 
+    KeyMapping.Category registerKeyMappingCategory(Identifier id);
+
     void registerKeyMapping(String modId, KeyMapping... keyMappings);
 }
