@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Server configs are now loaded earlier on NeoForge (using `ServerAboutToStartEvent`, not `ServerStartingEvent`)
   * Fixes an issues with forceloading and FTB Chunks
 * Fixed a tooltip issues with some GUI button types (not showing first line of tooltip)
+* Fixed keybinding registration bug on Fabric where key categories weren't properly registered
 
 ## [26.1.2.2-beta]
 
