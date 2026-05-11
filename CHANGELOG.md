@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * Fixed item data component viewing/editing in the item selection screen
 * Fixed sidebar buttons showing tooltip translation keys (when shift is held) when the button shouldn't have a tooltip
+* Server configs are now loaded earlier on NeoForge (using `ServerAboutToStartEvent`, not `ServerStartingEvent`)
+  * Fixes an issues with forceloading and FTB Chunks
+* Fixed a tooltip issues with some GUI button types (not showing first line of tooltip)
 
 ## [26.1.2.2-beta]
 
