@@ -31,6 +31,8 @@ public abstract class SimpleTextButton extends Button {
 
             @Override
             public void addMouseOverText(TooltipList list) {
+                super.addMouseOverText(list);
+
                 for (Component c : tooltip) {
                     list.add(c);
                 }
