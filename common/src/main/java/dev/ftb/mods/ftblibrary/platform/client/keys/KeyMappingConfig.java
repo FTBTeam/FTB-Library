@@ -123,10 +123,6 @@ public record KeyMappingConfig(
         }
 
         public KeyMappingConfig build() {
-            if (key == null) {
-                throw new IllegalStateException("Key must be set");
-            }
-
             return new KeyMappingConfig(id, category, key, modifier, noModifierFallbackKey, conflictContext);
         }
     }
