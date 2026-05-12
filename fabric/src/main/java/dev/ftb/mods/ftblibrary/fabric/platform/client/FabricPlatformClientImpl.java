@@ -14,9 +14,12 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+import org.apache.commons.lang3.Validate;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class FabricPlatformClientImpl implements PlatformClient {
     @Nullable
@@ -34,15 +37,14 @@ public class FabricPlatformClientImpl implements PlatformClient {
     }
 
     @Override
-    public KeyMapping.Category registerKeyMappingCategory(Identifier id) {
-        return KeyMapping.Category.register(id);
-    }
-
-    @Override
     public void registerKeyMapping(String modId, KeyMapping... keyMappings) {
+        Validate.isTrue(keyMappings.length > 0, "must provide at least one keymapping");
+        Set<KeyMapping.Category> cats = new HashSet<>();
         for (var k : keyMappings) {
+            cats.add(k.getCategory());
             KeyMappingHelper.registerKeyMapping(k);
         }
+        cats.forEach(c -> KeyMapping.Category.register(c.id()));
     }
 
     @Override

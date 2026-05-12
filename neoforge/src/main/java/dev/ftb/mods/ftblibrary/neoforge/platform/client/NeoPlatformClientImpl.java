@@ -14,17 +14,16 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.apache.commons.lang3.Validate;
 import net.neoforged.neoforge.client.settings.IKeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.jspecify.annotations.NonNull;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class NeoPlatformClientImpl implements PlatformClient {
-    private final Set<KeyMapping.Category> registeredCategories = ConcurrentHashMap.newKeySet();
-
     @Override
     public void sendToServer(CustomPacketPayload payload) {
         ClientPacketDistributor.sendToServer(payload);
@@ -37,24 +36,16 @@ public class NeoPlatformClientImpl implements PlatformClient {
     }
 
     @Override
-    public KeyMapping.Category registerKeyMappingCategory(Identifier id) {
-        var category = new KeyMapping.Category(id);
-        if (!registeredCategories.add(category)) {
-            throw new IllegalStateException("Key mapping category " + id + " is already registered");
-        }
-
-        return category;
-    }
-
-    @Override
     public void registerKeyMapping(String modId, KeyMapping... keyMappings) {
+        Validate.isTrue(keyMappings.length > 0, "must provide at least one keymapping");
+
         getModBusOrThrow(modId).addListener(RegisterKeyMappingsEvent.class, event -> {
+            Set<KeyMapping.Category> cats = new HashSet<>();
             for (var k : keyMappings) {
+                cats.add(k.getCategory());
                 event.register(k);
             }
-
-            registeredCategories.forEach(event::registerCategory);
-            registeredCategories.clear();
+            cats.forEach(event::registerCategory);
         });
     }
 
