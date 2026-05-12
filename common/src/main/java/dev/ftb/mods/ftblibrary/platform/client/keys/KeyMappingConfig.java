@@ -1,16 +1,15 @@
 package dev.ftb.mods.ftblibrary.platform.client.keys;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.KeyMapping;
 import org.jspecify.annotations.Nullable;
 
 public record KeyMappingConfig(
         String id,
         KeyMapping.Category category,
-        Pair<InputConstants.Type, Integer> key,
+        TypedKey key,
         KeyModifier modifier,
-        @Nullable Pair<InputConstants.Type, Integer> noModifierFallbackKey,
+        @Nullable TypedKey noModifierFallbackKey,
         KeyConflict conflictContext
 ) {
     public String translationKey() {
@@ -19,12 +18,12 @@ public record KeyMappingConfig(
 
     public InputConstants.Type type(boolean supportsModifiers) {
         var selectedKey = !supportsModifiers && noModifierFallbackKey != null ? noModifierFallbackKey : key;
-        return selectedKey.left();
+        return selectedKey.type();
     }
 
     public int code(boolean supportsModifiers) {
         var selectedKey = !supportsModifiers && noModifierFallbackKey != null ? noModifierFallbackKey : key;
-        return selectedKey.right();
+        return selectedKey.code();
     }
 
     public static Builder builder(String id, KeyMapping.Category category) {
@@ -39,11 +38,11 @@ public record KeyMappingConfig(
         // When on Vanilla / Fabric without a mod, this is completely ignored anyway.
         private KeyModifier modifier = KeyModifier.NONE;
 
-        private Pair<InputConstants.Type, Integer> key = Pair.of(InputConstants.UNKNOWN.getType(), InputConstants.UNKNOWN.getValue());
+        private TypedKey key = TypedKey.fromKey(InputConstants.UNKNOWN);
 
         // If there is no modifier support on the current platform, this key will override the main key
         // as there may be a case where a key with modifier makes sense but without the modifier, it doesn't and another key is preferred.
-        private @Nullable Pair<InputConstants.Type, Integer> noModifierFallbackKey = null;
+        private @Nullable TypedKey noModifierFallbackKey = null;
 
         // This is ignored on Fabric even with the mod as this is a NeoForge concept.
         private KeyConflict conflictContext = KeyConflict.EVERYWHERE;
@@ -75,12 +74,12 @@ public record KeyMappingConfig(
         }
 
         public Builder key(InputConstants.Type type, int code) {
-            this.key = Pair.of(type, code);
+            this.key = new TypedKey(type, code);
             return this;
         }
 
         public Builder key(InputConstants.Key key) {
-            this.key = Pair.of(key.getType(), key.getValue());
+            this.key = TypedKey.fromKey(key);
             return this;
         }
 
@@ -97,12 +96,12 @@ public record KeyMappingConfig(
         }
 
         public Builder noModifierFallbackKey(InputConstants.Key noModifierFallbackKey) {
-            this.noModifierFallbackKey = Pair.of(noModifierFallbackKey.getType(), noModifierFallbackKey.getValue());
+            this.noModifierFallbackKey = TypedKey.fromKey(noModifierFallbackKey);
             return this;
         }
 
         public Builder noModifierFallbackKey(InputConstants.Type type, int code) {
-            this.noModifierFallbackKey = Pair.of(type, code);
+            this.noModifierFallbackKey = new TypedKey(type, code);
             return this;
         }
 
@@ -129,6 +128,12 @@ public record KeyMappingConfig(
             }
 
             return new KeyMappingConfig(id, category, key, modifier, noModifierFallbackKey, conflictContext);
+        }
+    }
+
+    public record TypedKey(InputConstants.Type type, int code) {
+        public static TypedKey fromKey(InputConstants.Key key) {
+            return new TypedKey(key.getType(), key.getValue());
         }
     }
 }
