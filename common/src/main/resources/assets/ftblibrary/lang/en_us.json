@@ -85,6 +85,7 @@
   "ftblibrary.client_settings.tooltips.item_modname": "Show Mod Name in Item Select GUI",
   "ftblibrary.client_settings.tooltips.fluid_modname": "Show Mod Name in Fluid Select GUI",
   "ftblibrary.client_settings.tooltips.image_modname": "Show Mod Name in Image Select GUI",
+  "ftblibrary.client_settings.tooltips.entity_modname": "Show Mod Name in Entity Face Select GUI",
   "ftblibrary.client_settings.sidebar": "Sidebar Buttons",
   "ftblibrary.client_settings.sidebar.enabled": "Enable Sidebar Buttons",
   "ftblibrary.client_settings.sidebar.position": "Position of Sidebar Buttons",
