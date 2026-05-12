@@ -11,6 +11,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.apache.commons.lang3.Validate;
 import org.jspecify.annotations.NonNull;
 
 import java.util.HashSet;
@@ -30,12 +31,9 @@ public class NeoPlatformClientImpl implements PlatformClient {
     }
 
     @Override
-    public KeyMapping.Category registerKeyMappingCategory(Identifier id) {
-        return new KeyMapping.Category(id);  // TODO temporary - rework for 26.1.2.4
-    }
-
-    @Override
     public void registerKeyMapping(String modId, KeyMapping... keyMappings) {
+        Validate.isTrue(keyMappings.length > 0, "must provide at least one keymapping");
+
         getModBusOrThrow(modId).addListener(RegisterKeyMappingsEvent.class, event -> {
             Set<KeyMapping.Category> cats = new HashSet<>();
             for (var k : keyMappings) {
