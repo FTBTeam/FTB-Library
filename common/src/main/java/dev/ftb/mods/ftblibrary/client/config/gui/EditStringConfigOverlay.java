@@ -100,7 +100,8 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
 
     protected void onAccepted(Button btn, MouseButton mb) {
         if (textBox.isTextValid()) {
-            callback.save(config.updateValue(currentValue));
+            config.updateValue(currentValue);
+            callback.save(true);
             getGui().popModalPanel();
         }
     }
