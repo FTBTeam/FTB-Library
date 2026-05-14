@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.platform.client;
 
+import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMappingConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -47,4 +48,6 @@ public interface PlatformClient {
     /// @throws IllegalArgumentException if the same category is passed to multiple cals of this method, or if the
     /// method is called with no keymappings
     void registerKeyMapping(String modId, KeyMapping... keyMappings);
+
+    KeyMapping createKeyBinding(KeyMappingConfig config);
 }
