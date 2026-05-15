@@ -8,7 +8,9 @@ import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.*;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -24,10 +26,16 @@ public class KeyReferenceScreen extends BaseScreen {
     private final Panel textPanel;
     private final PanelScrollBar scrollBar;
     private final SimpleTextButton closeButton;
-    private final String[] translationKeys;
+    private final List<Pair<Component, Component>> lines;
+    private int widestLeft = 0;
+    private int widestOverall = 0;
 
     public KeyReferenceScreen(String... translationKeys) {
-        this.translationKeys = translationKeys;
+        lines = buildText(translationKeys);
+        for (var line : lines) {
+            widestLeft = Math.max(widestLeft, getGui().getTheme().getStringWidth(line.getLeft()));
+            widestOverall = Math.max(widestOverall, widestLeft + getGui().getTheme().getStringWidth(line.getRight()));
+        }
 
         textPanel = new TextPanel(this);
 
@@ -40,7 +48,7 @@ public class KeyReferenceScreen extends BaseScreen {
         scrollBar = new PanelScrollBar(this, textPanel);
     }
 
-    private static List<Pair<Component, Component>> buildText(String... translationKeys) {
+    private List<Pair<Component, Component>> buildText(String... translationKeys) {
         List<Pair<Component, Component>> res = new ArrayList<>();
         for (String translationKey : translationKeys) {
             for (String line : I18n.get(translationKey).split("\\n")) {
@@ -50,7 +58,7 @@ public class KeyReferenceScreen extends BaseScreen {
                     case 1 ->
                             res.add(Pair.of(Component.literal(parts[0]).withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE), Component.empty()));
                     default ->
-                            res.add(Pair.of(Component.literal(parts[0]), Component.literal(parts[1]).withStyle(ChatFormatting.GRAY)));
+                            res.add(substituteKeyMapping(parts[0], parts[1]));
                 }
             }
             res.add(Pair.of(Component.empty(), Component.empty()));
@@ -58,9 +66,31 @@ public class KeyReferenceScreen extends BaseScreen {
         return res;
     }
 
+    private static Pair<Component,Component> substituteKeyMapping(String part0, String part1) {
+        int s = part0.indexOf('{');
+        int e = part0.indexOf('}');
+        if (s >= 0 && e >= 0 && e > s + 1) {
+            String key = part0.substring(s + 1, e);
+            var keyMapping = KeyMapping.get(key);
+            if (keyMapping != null) {
+                var c0 = Component.literal(part0.substring(0, s))
+                        .append(PlatformClient.get().keymap().getKeyMappingDisplayName(keyMapping))
+                        .append(part0.substring(e + 1));
+                Component c1 = part1.isEmpty() ? Component.translatable(keyMapping.getName()) : Component.literal(part1);
+                return Pair.of(c0, c1.copy().withStyle(ChatFormatting.GRAY));
+            }
+        }
+        return Pair.of(Component.literal(part0), Component.literal(part1).withStyle(ChatFormatting.GRAY));
+    }
+
     @Override
     public boolean onInit() {
-        return setSizeProportional(0.75f, 0.8f);
+        boolean ok = setSizeProportional(0.75f, 0.8f);
+
+        setWidth(Math.min(getWidth(), widestOverall + GUTTER_SIZE * 3 + 10));
+        setHeight(Math.min(getHeight(), (getGui().getTheme().getFontHeight() + 2) * lines.size() + 10));
+
+        return ok;
     }
 
     @Override
@@ -104,8 +134,7 @@ public class KeyReferenceScreen extends BaseScreen {
         theme.drawPanelBackground(graphics, x, y, w, h);
     }
 
-    private static class TwoColumnList extends Widget {
-        private final int widestL;
+    private class TwoColumnList extends Widget {
         private final List<Pair<Component, Component>> data;
         private final List<Pair<Component, FormattedCharSequence>> reflowed = new ArrayList<>();
 
@@ -113,10 +142,6 @@ public class KeyReferenceScreen extends BaseScreen {
             super(p);
 
             this.data = data;
-            this.widestL = data.stream()
-                    .map(e -> getGui().getTheme().getStringWidth(e.getLeft()))
-                    .max(Integer::compareTo)
-                    .orElse(0);
         }
 
         @Override
@@ -137,7 +162,7 @@ public class KeyReferenceScreen extends BaseScreen {
                     reflowed.add(Pair.of(entry.getLeft(), FormattedCharSequence.EMPTY));
                     h += theme.getFontHeight() + 3;
                 } else {
-                    var l = theme.getFont().split(entry.getRight(), maxWidth - 10 - widestL);
+                    var l = theme.getFont().split(entry.getRight(), maxWidth - 10 - widestLeft);
                     if (!l.isEmpty()) {
                         reflowed.add(Pair.of(entry.getLeft(), l.getFirst()));
                         for (int i = 1; i < l.size(); i++) {
@@ -158,10 +183,10 @@ public class KeyReferenceScreen extends BaseScreen {
             for (var entry : reflowed) {
                 boolean header = entry.getRight() == FormattedCharSequence.EMPTY;
                 int leftWidth = theme.getStringWidth(entry.getLeft());
-                int xOff = header ? (width - leftWidth) / 2 : widestL - leftWidth - 2;
+                int xOff = header ? (width - leftWidth) / 2 : widestLeft - leftWidth - 2;
                 theme.drawString(graphics, entry.getLeft(), x + xOff, yPos);
                 if (!header) {
-                    theme.drawString(graphics, entry.getRight(), x + widestL + 10, yPos);
+                    theme.drawString(graphics, entry.getRight(), x + widestLeft + 10, yPos);
                 }
                 yPos += theme.getFontHeight() + (header ? 3 : 1);
             }
@@ -174,7 +199,7 @@ public class KeyReferenceScreen extends BaseScreen {
         public TextPanel(Panel panel) {
             super(panel);
 
-            textWidget = new TwoColumnList(this, buildText(translationKeys));
+            textWidget = new TwoColumnList(this, lines);
         }
 
         @Override

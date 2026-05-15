@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.platform.client;
 
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMappingConfig;
+import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMap;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -16,6 +16,8 @@ public interface PlatformClient {
     static PlatformClient get() {
         return INSTANCE;
     }
+
+    KeyMap keymap();
 
     /// Send a network packet to the server.
     ///
@@ -37,17 +39,13 @@ public interface PlatformClient {
         addResourcePackReloadListeners(modId, Map.of(id, listener));
     }
 
-    /// Register one or more keymappings with vanilla.
-    ///
-    /// **IMPORTANT**: all keymappings for any single keymapping category _must_ be registered in a single call to this
-    /// method, or you will get a "Category is already registered" exception from vanilla. It is fine to call this method
-    /// multiple times, as long as the same category isn't passed to more than one invocation of this method.
-    ///
-    /// @param modId your mod's unique ID
-    /// @param keyMappings one or more keymapping objects
-    /// @throws IllegalArgumentException if the same category is passed to multiple cals of this method, or if the
-    /// method is called with no keymappings
-    void registerKeyMapping(String modId, KeyMapping... keyMappings);
-
-    KeyMapping createKeyBinding(KeyMappingConfig config);
+    /**
+     * @param modId the mod
+     * @param keyMappings the mappings
+     * @deprecated use {@link KeyMap#registerKeyMapping(String, KeyMapping...)}
+     */
+    @Deprecated(forRemoval = true)
+    default void registerKeyMapping(String modId, KeyMapping... keyMappings) {
+        keymap().registerKeyMapping(modId, keyMappings);
+    }
 }

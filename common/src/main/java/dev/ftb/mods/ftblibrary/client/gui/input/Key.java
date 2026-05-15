@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.gui.input;
 
-import dev.ftb.mods.ftblibrary.platform.Platform;
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
@@ -23,7 +23,7 @@ public record Key(KeyEvent event) {
     public boolean escOrInventory() {
         // arch expect
         //noinspection ConstantValue
-        return esc() || matchesWithoutConflicts(Minecraft.getInstance().options.keyInventory, getInputMapping());
+        return esc() || matches(Minecraft.getInstance().options.keyInventory);
     }
 
     public boolean enter() {
@@ -58,7 +58,11 @@ public record Key(KeyEvent event) {
         return new KeyModifiers(event.modifiers());
     }
 
-    private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
-        return Platform.get().misc().matchesWithoutConflicts(keyBinding, keyCode);
+    public boolean matches(KeyMapping keyMapping) {
+        return PlatformClient.get().keymap().matches(keyMapping, event);
     }
+
+//    private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
+//        return Platform.get().misc().matchesWithoutConflicts(keyBinding, keyCode);
+//    }
 }
