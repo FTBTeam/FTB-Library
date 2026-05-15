@@ -6,8 +6,6 @@ import dev.ftb.mods.ftblibrary.api.event.client.SidebarButtonCreatedEvent;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
-import java.util.Arrays;
-
 public class FTBLibraryFabricEvents {
     public static Event<CustomClickEvent> CUSTOM_CLICK = EventFactory.createArrayBacked(CustomClickEvent.class,
             callbacks -> data -> {

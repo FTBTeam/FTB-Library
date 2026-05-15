@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.neoforge.platform;
 
-import dev.ftb.mods.ftblibrary.platform.Misc;
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.ftb.mods.ftblibrary.platform.Misc;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

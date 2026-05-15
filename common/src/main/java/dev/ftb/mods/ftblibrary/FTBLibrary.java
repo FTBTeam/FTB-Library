@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary;
 
+import com.mojang.brigadier.CommandDispatcher;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryStartupConfig;
@@ -15,7 +16,6 @@ import dev.ftb.mods.ftblibrary.util.KnownServerRegistries;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.text.ExtendableTextColor;
 import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
-import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

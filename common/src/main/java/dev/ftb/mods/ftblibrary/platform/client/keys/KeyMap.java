@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.platform.client.keys;
 
-import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;

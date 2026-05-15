@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.neoforge.platform.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.platform.client.keys.KeyConflict;
 import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMap;
 import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMappingConfig;

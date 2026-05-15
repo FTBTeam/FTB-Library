@@ -3,12 +3,12 @@ package dev.ftb.mods.ftblibrary.util;
 import dev.ftb.mods.ftblibrary.util.text.RainbowTextColor;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.util.Util;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Function;

@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.config.serializer;
 
+import com.mojang.serialization.Codec;
+import de.marhali.json5.*;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.value.*;
 import dev.ftb.mods.ftblibrary.json5.Json5Ops;
 import dev.ftb.mods.ftblibrary.util.NameMap;
-import com.mojang.serialization.Codec;
-import de.marhali.json5.*;
 import net.minecraft.util.Util;
 
 import java.io.FileInputStream;
