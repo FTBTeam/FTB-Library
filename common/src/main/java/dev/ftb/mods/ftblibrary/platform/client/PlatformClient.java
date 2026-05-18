@@ -30,7 +30,7 @@ public interface PlatformClient {
     /// @param listeners a map of unique listener ID's to the listeners to register
     void addResourcePackReloadListeners(String modId, Map<Identifier, PreparableReloadListener> listeners);
 
-    /// Register a resource pack reload listeneers, to be called when client-side resource packs reload.
+    /// Register a resource pack reload listener, to be called when client-side resource packs reload.
     ///
     /// @param modId your mod's unique ID
     /// @param id the reload listener's unique ID
