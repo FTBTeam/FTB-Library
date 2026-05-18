@@ -1,4 +1,4 @@
-package dev.ftb.mods.ftblibrary.platform.client.keys;
+package dev.ftb.mods.ftblibrary.platform.client.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;

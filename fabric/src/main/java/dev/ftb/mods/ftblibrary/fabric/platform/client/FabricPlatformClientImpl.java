@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.fabric.platform.client;
 
 import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMap;
+import dev.ftb.mods.ftblibrary.platform.client.input.Input;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -12,10 +12,10 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import java.util.Map;
 
 public class FabricPlatformClientImpl implements PlatformClient {
-    private final KeyMap keyMap = new FabricKeyMapImpl();
+    private final Input keyMap = new FabricInputImpl();
 
     @Override
-    public KeyMap keymap() {
+    public Input input() {
         return keyMap;
     }
 

@@ -74,7 +74,7 @@ public class KeyReferenceScreen extends BaseScreen {
             var keyMapping = KeyMapping.get(key);
             if (keyMapping != null) {
                 var c0 = Component.literal(part0.substring(0, s))
-                        .append(PlatformClient.get().keymap().getKeyMappingDisplayName(keyMapping))
+                        .append(PlatformClient.get().input().getKeyMappingDisplayName(keyMapping))
                         .append(part0.substring(e + 1));
                 Component c1 = part1.isEmpty() ? Component.translatable(keyMapping.getName()) : Component.literal(part1);
                 return Pair.of(c0, c1.copy().withStyle(ChatFormatting.GRAY));

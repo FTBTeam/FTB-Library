@@ -2,8 +2,8 @@ package dev.ftb.mods.ftblibrary.fabric.integrations.keys;
 
 import de.siphalor.amecs.key_modifiers.api.AmecsKeyMappingWithKeyModifiers;
 import de.siphalor.amecs.key_modifiers.api.AmecsKeyModifierCombination;
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMappingConfig;
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyModifier;
+import dev.ftb.mods.ftblibrary.platform.client.input.KeyMappingConfig;
+import dev.ftb.mods.ftblibrary.platform.client.input.KeyModifier;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;

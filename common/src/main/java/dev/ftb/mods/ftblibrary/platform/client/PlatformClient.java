@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.platform.client;
 
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMap;
+import dev.ftb.mods.ftblibrary.platform.client.input.Input;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -17,7 +17,7 @@ public interface PlatformClient {
         return INSTANCE;
     }
 
-    KeyMap keymap();
+    Input input();
 
     /// Send a network packet to the server.
     ///
@@ -42,10 +42,10 @@ public interface PlatformClient {
     /**
      * @param modId the mod
      * @param keyMappings the mappings
-     * @deprecated use {@link KeyMap#registerKeyMapping(String, KeyMapping...)}
+     * @deprecated use {@link Input#registerKeyMapping(String, KeyMapping...)}
      */
     @Deprecated(forRemoval = true)
     default void registerKeyMapping(String modId, KeyMapping... keyMappings) {
-        keymap().registerKeyMapping(modId, keyMappings);
+        input().registerKeyMapping(modId, keyMappings);
     }
 }

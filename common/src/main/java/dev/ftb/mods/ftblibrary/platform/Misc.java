@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 
 public interface Misc {
+    /// Use {@link dev.ftb.mods.ftblibrary.client.gui.input.Key#matches(KeyMapping)}
+    @Deprecated(forRemoval = true)
     boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode);
 
     Component componentWithLinks(String message);

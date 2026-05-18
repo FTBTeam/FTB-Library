@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.neoforge.platform.client;
 
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyConflict;
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMap;
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMappingConfig;
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyModifier;
+import dev.ftb.mods.ftblibrary.platform.client.input.KeyConflict;
+import dev.ftb.mods.ftblibrary.platform.client.input.Input;
+import dev.ftb.mods.ftblibrary.platform.client.input.KeyMappingConfig;
+import dev.ftb.mods.ftblibrary.platform.client.input.KeyModifier;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 import static dev.ftb.mods.ftblibrary.neoforge.platform.client.NeoPlatformClientImpl.getModBusOrThrow;
 
-public class NeoKeyMapImpl implements KeyMap {
+public class NeoInputImpl implements Input {
     @Override
     public void registerKeyMapping(String modId, KeyMapping... keyMappings) {
         Validate.isTrue(keyMappings.length > 0, "must provide at least one keymapping");

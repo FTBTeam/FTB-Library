@@ -59,10 +59,6 @@ public record Key(KeyEvent event) {
     }
 
     public boolean matches(KeyMapping keyMapping) {
-        return PlatformClient.get().keymap().matches(keyMapping, event);
+        return PlatformClient.get().input().matches(keyMapping, event);
     }
-
-//    private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
-//        return Platform.get().misc().matchesWithoutConflicts(keyBinding, keyCode);
-//    }
 }

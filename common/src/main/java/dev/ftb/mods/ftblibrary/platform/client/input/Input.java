@@ -1,10 +1,10 @@
-package dev.ftb.mods.ftblibrary.platform.client.keys;
+package dev.ftb.mods.ftblibrary.platform.client.input;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 
-public interface KeyMap {
+public interface Input {
     /// Register one or more keymappings with vanilla.
     ///
     /// **IMPORTANT**: all keymappings for any single keymapping category _must_ be registered in a single call to this
@@ -29,5 +29,14 @@ public interface KeyMap {
     /// @param keyMapping the keymapping object
     Component getKeyMappingDisplayName(KeyMapping keyMapping);
 
+    /// Check if the key event matches the given key mapping. This differs from [KeyMapping#matches(KeyEvent)]
+    /// in that modifiers, if supported in the current environment, are also checked.
+    ///
+    /// @param mapping the KeyMapping to check
+    /// @param event the event representing a keypress with possible modifier
+    /// @return true if there's a match
+    ///
+    /// @implNote modifiers are supported if the platform is NeoForge, or if the platform is Fabric with the Amecs
+    /// mod installed
     boolean matches(KeyMapping mapping, KeyEvent event);
 }

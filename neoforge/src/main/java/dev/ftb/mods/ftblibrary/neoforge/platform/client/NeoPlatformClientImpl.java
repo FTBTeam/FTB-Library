@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.neoforge.platform.client;
 
 import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMap;
+import dev.ftb.mods.ftblibrary.platform.client.input.Input;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -14,10 +14,10 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import java.util.Map;
 
 public class NeoPlatformClientImpl implements PlatformClient {
-    private final KeyMap keymap = new NeoKeyMapImpl();
+    private final Input keymap = new NeoInputImpl();
 
     @Override
-    public KeyMap keymap() {
+    public Input input() {
         return keymap;
     }
 

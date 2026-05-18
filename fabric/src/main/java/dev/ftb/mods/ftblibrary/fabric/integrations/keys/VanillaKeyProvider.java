@@ -1,6 +1,6 @@
 package dev.ftb.mods.ftblibrary.fabric.integrations.keys;
 
-import dev.ftb.mods.ftblibrary.platform.client.keys.KeyMappingConfig;
+import dev.ftb.mods.ftblibrary.platform.client.input.KeyMappingConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
