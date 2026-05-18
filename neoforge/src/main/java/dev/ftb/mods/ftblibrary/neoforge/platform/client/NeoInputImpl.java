@@ -33,7 +33,7 @@ public class NeoInputImpl implements Input {
     }
 
     @Override
-    public KeyMapping createKeyBinding(KeyMappingConfig config) {
+    public KeyMapping createKeyMapping(KeyMappingConfig config) {
         return new KeyMapping(
                 config.translationKey(),
                 convertConflictContext(config.conflictContext()),

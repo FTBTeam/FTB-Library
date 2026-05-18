@@ -22,7 +22,7 @@ public interface Input {
     ///
     /// @param config defines the setup for the keymapping object
     /// @return a new keymapping object
-    KeyMapping createKeyBinding(KeyMappingConfig config);
+    KeyMapping createKeyMapping(KeyMappingConfig config);
 
     /// Get a displayable string for the key and possible modifiers for a {@code KeyMapping} object
     ///
