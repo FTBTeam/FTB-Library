@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Optional;

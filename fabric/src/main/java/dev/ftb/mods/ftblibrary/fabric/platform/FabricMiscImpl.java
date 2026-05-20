@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.fabric.platform;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.core.mixin.fabric.KeyMappingAccess;
 import dev.ftb.mods.ftblibrary.core.mixin.fabric.PatchedDataComponentMapAccess;
 import dev.ftb.mods.ftblibrary.fabric.PlayerDisplayNameCache;
 import dev.ftb.mods.ftblibrary.platform.Misc;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.BlockPos;

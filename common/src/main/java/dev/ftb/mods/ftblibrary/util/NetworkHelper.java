@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.util;
 
-import dev.ftb.mods.ftblibrary.platform.Platform;
-import dev.ftb.mods.ftblibrary.platform.network.NetworkRegistry;
 import com.mojang.datafixers.util.Function7;
 import com.mojang.datafixers.util.Function8;
 import com.mojang.datafixers.util.Function9;
+import dev.ftb.mods.ftblibrary.platform.Platform;
+import dev.ftb.mods.ftblibrary.platform.network.NetworkRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

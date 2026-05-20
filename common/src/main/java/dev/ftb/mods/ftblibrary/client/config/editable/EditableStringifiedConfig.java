@@ -2,9 +2,9 @@ package dev.ftb.mods.ftblibrary.client.config.editable;
 
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditStringConfigOverlay;
+import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.widget.BaseScreen;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
-import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 

@@ -4,7 +4,6 @@ import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.network.chat.Component;
-import org.jspecify.annotations.Nullable;
 
 public abstract class EditableNumber<T extends Number> extends EditableStringifiedConfig<T> {
     public static final Color4I COLOR = Color4I.rgb(0xAA5AE8);
