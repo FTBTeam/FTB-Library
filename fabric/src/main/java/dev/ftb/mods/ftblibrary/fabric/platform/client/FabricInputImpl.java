@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.fabric.platform.client;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.fabric.integrations.keys.AmecsKeyProvider;
 import dev.ftb.mods.ftblibrary.fabric.integrations.keys.KeyProvider;
 import dev.ftb.mods.ftblibrary.fabric.integrations.keys.VanillaKeyProvider;
@@ -35,7 +36,7 @@ public class FabricInputImpl implements Input {
             cats.add(k.getCategory());
             KeyMappingHelper.registerKeyMapping(k);
         }
-        cats.forEach(c -> KeyMapping.Category.register(c.id()));
+        Input.registerCategories(cats, c -> KeyMapping.Category.register(c.id()));
     }
 
     @Override

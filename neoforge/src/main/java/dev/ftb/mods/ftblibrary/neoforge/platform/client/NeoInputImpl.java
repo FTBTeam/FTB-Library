@@ -28,7 +28,7 @@ public class NeoInputImpl implements Input {
                 cats.add(k.getCategory());
                 event.register(k);
             }
-            cats.forEach(event::registerCategory);
+            Input.registerCategories(cats, event::registerCategory);
         });
     }
 

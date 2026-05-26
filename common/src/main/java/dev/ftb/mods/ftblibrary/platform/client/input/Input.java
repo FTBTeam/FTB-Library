@@ -1,8 +1,13 @@
 package dev.ftb.mods.ftblibrary.platform.client.input;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Collection;
+import java.util.function.Consumer;
 
 public interface Input {
     /// Register one or more keymappings with vanilla.
@@ -39,4 +44,15 @@ public interface Input {
     /// @implNote modifiers are supported if the platform is NeoForge, or if the platform is Fabric with the Amecs
     /// mod installed
     boolean matches(KeyMapping mapping, KeyEvent event);
+
+    @ApiStatus.Internal
+    static void registerCategories(Collection<KeyMapping.Category> categories, Consumer<KeyMapping.Category> consumer) {
+        for (var c : categories) {
+            try {
+                consumer.accept(c);
+            } catch (IllegalArgumentException e) {
+                FTBLibrary.LOGGER.warn("ignoring attempt to register duplicate keymapping category '{}'", c.id());
+            }
+        }
+    }
 }
