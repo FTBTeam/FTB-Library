@@ -37,7 +37,7 @@ public class ClientUtils {
                 if (printChat) {
                     Minecraft.getInstance().gui.getChat().addRecentChat(command);
                 }
-                Minecraft.getInstance().player.connection.sendCommand(command.replace("/", ""));
+                Minecraft.getInstance().player.connection.sendCommand(command.replaceFirst("/", ""));
             }
         }
     }
