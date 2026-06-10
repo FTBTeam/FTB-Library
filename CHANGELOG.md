@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2101.1.32]
 
 ### Fixed
+* Permission issues with NBT editing
 * Fixed command execution from sidebar buttons wrongly stripping all `/` characters from command instead just first `/` character (thanks @FalAut)
 
 ## [2101.1.31]

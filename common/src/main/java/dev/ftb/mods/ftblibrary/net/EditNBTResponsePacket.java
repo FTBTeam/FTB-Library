@@ -1,8 +1,9 @@
 package dev.ftb.mods.ftblibrary.net;
 
-import dev.architectury.networking.NetworkManager;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
+import dev.architectury.networking.NetworkManager;
+import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -20,7 +21,7 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
     );
 
     public static void handle(EditNBTResponsePacket packet, NetworkManager.PacketContext context) {
-        if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
+        if (context.getPlayer() instanceof ServerPlayer serverPlayer && serverPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
             context.queue(() -> NBTEditResponseHandlers.INSTANCE.handleResponse(packet.info.getString("type"), serverPlayer, packet.info, packet.tag));
         }
     }
