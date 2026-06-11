@@ -139,7 +139,7 @@ publishing {
 	repositories {
 		if (ENV.FTB_MAVEN_TOKEN) {
 			maven {
-				url "https://maven.ftb.dev/release"
+				url "https://maven.ftb.dev/releases"
 				credentials {
 					username = "ftb"
 					password = "${ENV.FTB_MAVEN_TOKEN}"
