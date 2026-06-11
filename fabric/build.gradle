@@ -78,7 +78,7 @@ if (ENV.CURSEFORGE_KEY) {
 				requiredDependency 'architectury-api'
 				optionalDependency 'roughly-enough-items'
 			}
-			changelog = getGitChangelog
+			changelog = ""
 			changelogType = 'markdown'
 		}
 	}
