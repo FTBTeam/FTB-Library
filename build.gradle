@@ -24,7 +24,6 @@ allprojects {
 	apply plugin: "java"
 	apply plugin: "architectury-plugin"
 	apply plugin: "maven-publish"
-	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
 
 	def ENV = System.getenv()
 	version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}"

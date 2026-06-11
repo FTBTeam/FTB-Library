@@ -78,7 +78,7 @@ if (ENV.CURSEFORGE_KEY) {
 				requiredDependency 'architectury-fabric'
 				optionalDependency 'roughly-enough-items'
 			}
-			changelog = getGitChangelog
+			changelog = ""
 			changelogType = 'markdown'
 		}
 	}
@@ -95,7 +95,7 @@ publishing {
 	repositories {
 		if (ENV.FTB_MAVEN_TOKEN) {
 			maven {
-				url "https://maven.ftb.dev/release"
+				url "https://maven.ftb.dev/releases"
 				credentials {
 					username = "ftb"
 					password = "${ENV.FTB_MAVEN_TOKEN}"

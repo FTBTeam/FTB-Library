@@ -44,6 +44,11 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 	public void handle(NetworkManager.PacketContext context) {
 		ServerPlayer player = (ServerPlayer) context.getPlayer();
 
+		// Don't trust the client, make sure they have permissions to edit NBT before doing anything with the data
+		if (!player.hasPermissions(2)) {
+			return;
+		}
+
 		if (info.equals(FTBLibraryCommands.EDITING_NBT.remove(player.getUUID()))) {
 			switch (info.getString("type")) {
 				case "block": {
