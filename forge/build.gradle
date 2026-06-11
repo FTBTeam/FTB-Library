@@ -122,7 +122,7 @@ if (ENV.CURSEFORGE_KEY) {
 				optionalDependency 'jei'
 				optionalDependency 'roughly-enough-items'
 			}
-			changelog = getGitChangelog
+			changelog = ""
 			changelogType = 'markdown'
 		}
 	}
