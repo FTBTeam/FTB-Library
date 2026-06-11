@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftblibrary.net;
 
+import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.simple.BaseC2SMessage;
 import dev.architectury.networking.simple.MessageType;
-import dev.ftb.mods.ftblibrary.FTBLibraryCommands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -39,6 +39,11 @@ public class EditNBTResponsePacket extends BaseC2SMessage {
 	@Override
 	public void handle(NetworkManager.PacketContext context) {
 		var player = (ServerPlayer) context.getPlayer();
+
+		// Don't trust the client, check if they have permissions to edit NBT before doing anything with the data
+		if (!player.hasPermissions(2)) {
+			return;
+		}
 
 		if (info.equals(FTBLibraryCommands.EDITING_NBT.remove(player.getUUID()))) {
 			switch (info.getString("type")) {
