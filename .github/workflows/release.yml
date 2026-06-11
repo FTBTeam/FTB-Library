@@ -1,8 +1,11 @@
 name: Java CI - Build Release
 
 on:
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+'
+      - 'v[0-9]+\.[0-9]+\.[0-9]+-[a-z]+'
+      - 'v[0-9]+\.[0-9]+\.[0-9]+-[a-z]+\.[0-9]+'
 
 jobs:
   build:
@@ -11,7 +14,7 @@ jobs:
     uses: FTBTeam/mods-meta/.github/workflows/standard-release.yml@main
     with:
       curse-publish-task: curseforge
+      java-version: 17
     secrets:
       ftb-maven-token: ${{ secrets.FTB_MAVEN_TOKEN }}
-      saps-token: ${{ secrets.SAPS_TOKEN }}
       curse-token: ${{ secrets.CURSEFORGE_KEY }}
