@@ -12,7 +12,6 @@ import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
-import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import net.minecraft.ChatFormatting;
@@ -33,15 +32,9 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import static net.minecraft.commands.Commands.literal;
 
 public class FTBLibraryCommands {
-    public static final Map<UUID, CompoundTag> EDITING_NBT = new HashMap<>();
-
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext ignoredCtx, Commands.CommandSelection ignoredType) {
         var command = literal(FTBLibrary.MOD_ID)
                 .then(literal("gamemode")
@@ -146,13 +139,7 @@ public class FTBLibraryCommands {
         var tag = new CompoundTag();
         data.accept(info, tag);
 
-        if (!info.isEmpty()) {
-            EDITING_NBT.put(player.getUUID(), info);
-            NetworkManager.sendToPlayer(player, new EditNBTPacket(info, tag));
-            return Command.SINGLE_SUCCESS;
-        }
-
-        return 0;
+        return NBTEditResponseHandlers.INSTANCE.sendRequestPacket(player, info, tag);
     }
 
     private static void editItemNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {

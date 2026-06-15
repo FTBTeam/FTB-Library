@@ -21,7 +21,7 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
     );
 
     public static void handle(EditNBTResponsePacket packet, NetworkManager.PacketContext context) {
-        if (context.getPlayer() instanceof ServerPlayer serverPlayer && serverPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
+        if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
             context.queue(() -> NBTEditResponseHandlers.INSTANCE.handleResponse(packet.info.getString("type"), serverPlayer, packet.info, packet.tag));
         }
     }
