@@ -1,6 +1,9 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
+import com.mojang.brigadier.Command;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
+import dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
@@ -15,6 +18,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +32,7 @@ public enum NBTEditResponseHandlers {
     public static final Identifier ENTITY = FTBLibrary.id("entity");
 
     private final Map<Identifier, NBTResponseHandler> MAP = new ConcurrentHashMap<>();
+    private final Map<UUID, CompoundTag> currentlyEditing = new HashMap<>();  // players who are currently editing
 
     public static void registerBuiltinHandlers(HolderLookup.Provider registryAccess) {
         INSTANCE.registerHandler(ITEM, (player, info, data) ->
@@ -53,15 +58,15 @@ public enum NBTEditResponseHandlers {
         });
 
         INSTANCE.registerHandler(PLAYER, (player, info, data) -> {
-            if (player.level().getServer() != null) {
-                var targetPlayer = player.level().getServer().getPlayerList().getPlayer(info.read("id", UUIDUtil.CODEC).orElse(null));
+            info.read("id", UUIDUtil.CODEC).ifPresent(playerId -> {
+                var targetPlayer = player.level().getServer().getPlayerList().getPlayer(playerId);
                 if (targetPlayer != null) {
                     UUID uuid = targetPlayer.getUUID();
                     targetPlayer.load(TagValueInput.create(ProblemReporter.DISCARDING, targetPlayer.registryAccess(), data));
                     targetPlayer.setUUID(uuid);
                     targetPlayer.setPos(new Vec3(targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ()));
                 }
-            }
+            });
         });
 
         INSTANCE.registerHandler(ENTITY, (player, info, data) -> {
@@ -78,8 +83,19 @@ public enum NBTEditResponseHandlers {
         MAP.put(name, handler);
     }
 
+    public int sendRequestPacket(ServerPlayer player, CompoundTag info, CompoundTag data) {
+        if (!info.isEmpty()) {
+            currentlyEditing.put(player.getUUID(), info);
+            Server2PlayNetworking.send(player, new EditNBTPacket(info, data));
+            return Command.SINGLE_SUCCESS;
+        }
+        return 0;
+    }
+
     public void handleResponse(Identifier name, ServerPlayer player, CompoundTag info, CompoundTag data) {
-        MAP.getOrDefault(name, NBTResponseHandler.NONE).handleResponse(player, info, data);
+        if (info.equals(currentlyEditing.remove(player.getUUID()))) {
+            MAP.getOrDefault(name, NBTResponseHandler.NONE).handleResponse(player, info, data);
+        }
     }
 
     @FunctionalInterface

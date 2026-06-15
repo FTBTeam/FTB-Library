@@ -9,7 +9,6 @@ import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
 import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
-import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import dev.ftb.mods.ftblibrary.net.OpenTestScreenPacket;
 import dev.ftb.mods.ftblibrary.platform.Mod;
 import dev.ftb.mods.ftblibrary.platform.Platform;
@@ -32,6 +31,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.ProblemReporter;
@@ -43,15 +43,9 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.TagValueOutput;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import static net.minecraft.commands.Commands.literal;
 
 public class FTBLibraryCommands {
-    public static final Map<UUID, CompoundTag> EDITING_NBT = new HashMap<>();
-
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext ignoredCtx, Commands.CommandSelection ignoredType) {
         var command = literal(FTBLibrary.MOD_ID)
                 .then(literal("gamemode")
@@ -128,39 +122,32 @@ public class FTBLibraryCommands {
         var tag = new CompoundTag();
         data.accept(info, tag);
 
-        if (!info.isEmpty()) {
-            EDITING_NBT.put(player.getUUID(), info);
-            Server2PlayNetworking.send(player, new EditNBTPacket(info, tag));
-            return Command.SINGLE_SUCCESS;
-        }
-
-        return 0;
+        return NBTEditResponseHandlers.INSTANCE.sendRequestPacket(player, info, tag);
     }
 
     private static void editItemNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
         var player = context.getSource().getPlayerOrException();
 
         ItemStack stack = player.getMainHandItem();
-        if (stack.isEmpty()) {
-            return;
+        if (!stack.isEmpty()) {
+            info.store("type", Identifier.CODEC, NBTEditResponseHandlers.ITEM);
+            ItemStack.CODEC.encodeStart(player.level().registryAccess().createSerializationContext(NbtOps.INSTANCE), stack)
+                    .ifSuccess(res -> {
+                        if (res instanceof CompoundTag t) tag.merge(t);
+                    });
+            var key = RegistryHelper.getIdentifier(stack.getItem(), Registries.ITEM);
+            info.put("text", InfoBuilder.create(context)
+                    .add("Class", Component.literal(stack.getItem().getClass().getName()))
+                    .add("ID", Component.literal(key == null ? "null" : key.toString()))
+                    .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
+                    .build());
         }
-        info.putString("type", "item");
-        ItemStack.CODEC.encodeStart(player.level().registryAccess().createSerializationContext(NbtOps.INSTANCE), stack)
-                .ifSuccess(res -> {
-                    if (res instanceof CompoundTag t) tag.merge(t);
-                });
-        var key = RegistryHelper.getIdentifier(stack.getItem(), Registries.ITEM);
-        info.put("text", InfoBuilder.create(context)
-                .add("Class", Component.literal(stack.getItem().getClass().getName()))
-                .add("ID", Component.literal(key == null ? "null" : key.toString()))
-                .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
-                .build());
     }
 
     private static void editPlayerNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
         var player = EntityArgument.getPlayer(context, "player");
 
-        info.putString("type", NBTEditResponseHandlers.PLAYER.toString());
+        info.store("type", Identifier.CODEC, NBTEditResponseHandlers.PLAYER);
         info.store("id", UUIDUtil.CODEC, player.getUUID());
 
         TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, player.level().registryAccess());
@@ -183,7 +170,7 @@ public class FTBLibraryCommands {
             return;
         }
 
-        info.putString("type", NBTEditResponseHandlers.ENTITY.toString());
+        info.store("type", Identifier.CODEC, NBTEditResponseHandlers.ENTITY);
         info.putInt("id", entity.getId());
 
         TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, entity.registryAccess());
@@ -197,8 +184,7 @@ public class FTBLibraryCommands {
                 .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
                 .build());
 
-        String name = entity.getDisplayName() == null ? "?" : entity.getDisplayName().getString();
-        info.putString("title", name);
+        info.putString("title", entity.getDisplayName().getString());
     }
 
     private static void editBlockNBT(CommandContext<CommandSourceStack> context, CompoundTag info, CompoundTag tag) throws CommandSyntaxException {
@@ -211,7 +197,7 @@ public class FTBLibraryCommands {
             return;
         }
 
-        info.putString("type", NBTEditResponseHandlers.BLOCK.toString());
+        info.store("type", Identifier.CODEC, NBTEditResponseHandlers.BLOCK);
         BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, pos).ifSuccess(nbt -> info.put("pos", nbt));
         tag.merge(blockEntity.saveWithFullMetadata(context.getSource().getLevel().registryAccess()));
         tag.remove("x");
@@ -228,7 +214,7 @@ public class FTBLibraryCommands {
                 .add("Block Class", Component.literal(blockEntity.getBlockState().getBlock().getClass().getName()))
                 .add("Position", Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]"))
                 .add("Mod", Component.literal(key == null ? "null" : Platform.get().getMod(key.getNamespace()).map(Mod::name).orElse("Unknown")))
-                .add("Ticking", Component.literal(isTicking(blockEntity) ? "true" : "false"))
+                .add("Ticking", Component.literal(Boolean.toString(isTicking(blockEntity))))
                 .build());
 
         var title = blockEntity instanceof Nameable n ? n.getDisplayName() : null;
@@ -239,7 +225,9 @@ public class FTBLibraryCommands {
     }
 
     private static boolean isTicking(BlockEntity be) {
-        return be.getBlockState().getBlock() instanceof EntityBlock eb && eb.getTicker(be.getLevel(), be.getBlockState(), be.getType()) != null;
+        return be.getLevel() != null
+                && be.getBlockState().getBlock() instanceof EntityBlock eb
+                && eb.getTicker(be.getLevel(), be.getBlockState(), be.getType()) != null;
     }
 
     private interface NBTEditCallback {

@@ -23,13 +23,9 @@ public record EditNBTResponsePacket(CompoundTag info, CompoundTag tag) implement
     );
 
     public static void handle(EditNBTResponsePacket packet, PacketContext context) {
-        if (context.player() instanceof ServerPlayer serverPlayer && serverPlayer.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
-            packet.info.getString("type").ifPresent(idStr -> {
-                try {
-                    context.enqueue(() -> NBTEditResponseHandlers.INSTANCE.handleResponse(Identifier.parse(idStr), serverPlayer, packet.info, packet.tag));
-                } catch (IdentifierException ignored) {
-                }
-            });
+        if (context.player() instanceof ServerPlayer serverPlayer) {
+            packet.info.read("type", Identifier.CODEC).ifPresent(id ->
+                    context.enqueue(() -> NBTEditResponseHandlers.INSTANCE.handleResponse(id, serverPlayer, packet.info, packet.tag)));
         }
     }
 
