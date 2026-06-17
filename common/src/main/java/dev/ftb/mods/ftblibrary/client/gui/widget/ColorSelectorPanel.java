@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import com.google.common.primitives.Ints;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableColor;
@@ -12,13 +11,14 @@ import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
-import net.minecraft.ChatFormatting;
+import com.google.common.primitives.Ints;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.scores.TeamColor;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -87,7 +87,7 @@ public class ColorSelectorPanel extends ModalPanel {
 
     private static void setupPalettes(Map<String,List<Integer>> presetMap) {
         presetMap.put("chat", Util.make(new ArrayList<>(), l -> {
-            Arrays.stream(ChatFormatting.values()).filter(ChatFormatting::isColor).map(ChatFormatting::getColor).forEach(e -> l.add(e | 0xFF000000));
+            Arrays.stream(TeamColor.values()).map(TeamColor::rgb).forEach(e -> l.add(e | 0xFF000000));
         }));
 
         presetMap.put("dye", Util.make(new ArrayList<>(), l -> {

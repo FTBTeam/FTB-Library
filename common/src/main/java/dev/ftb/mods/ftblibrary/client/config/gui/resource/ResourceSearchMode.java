@@ -86,13 +86,13 @@ public interface ResourceSearchMode<T> {
         }
     };
     ResourceSearchMode<EntityType<?>> ALL_LIVING_ENTITIES = entitySearchMode(e -> e instanceof LivingEntity,
-            "all_entities", () -> EntityIconLoader.getIcon(EntityType.VILLAGER));
+            "all_entities", () -> EntityIconLoader.getIcon(EntityTypes.VILLAGER));
     ResourceSearchMode<EntityType<?>> HOSTILES = entitySearchMode(e -> e instanceof Enemy && !(e instanceof NeutralMob),
-            "hostiles",() ->  EntityIconLoader.getIcon(EntityType.ZOMBIE));
+            "hostiles",() ->  EntityIconLoader.getIcon(EntityTypes.ZOMBIE));
     ResourceSearchMode<EntityType<?>> NEUTRALS = entitySearchMode(e -> e instanceof NeutralMob,
-            "neutrals", () ->  EntityIconLoader.getIcon(EntityType.ENDERMAN));
+            "neutrals", () ->  EntityIconLoader.getIcon(EntityTypes.ENDERMAN));
     ResourceSearchMode<EntityType<?>> ANIMALS = entitySearchMode(e -> e instanceof Animal,
-            "animals", () -> EntityIconLoader.getIcon(EntityType.SHEEP));
+            "animals", () -> EntityIconLoader.getIcon(EntityTypes.SHEEP));
 
     ResourceSearchMode<Identifier> IMAGES = new SearchMode<>(Component.translatable("ftblibrary.select_image.all_images"), () -> Icons.ART) {
         @Nullable

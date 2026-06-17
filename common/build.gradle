@@ -1,5 +1,6 @@
 plugins {
     id 'net.fabricmc.fabric-loom'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 loom {
@@ -16,15 +17,23 @@ dependencies {
     compileOnly group: 'net.fabricmc', name: 'sponge-mixin', version: '0.17.0+mixin.0.8.7'
     compileOnly "io.github.llamalad7:mixinextras-fabric:0.5.0"
 
-    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+//    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly("mezz.jei:jei-26.1.2-common-api:${jei_version}")
 
     api("de.marhali:json5-java:${json5_version}")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 test {
     useJUnitPlatform()
+}
+repositories {
+    mavenCentral()
+}
+kotlin {
+    jvmToolchain(25)
 }

@@ -8,7 +8,7 @@ import dev.ftb.mods.ftblibrary.net.SyncConfigToServerPacket;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.platform.network.Play2ServerNetworking;
 import dev.ftb.mods.ftblibrary.util.NameMap;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
@@ -133,8 +133,8 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      * @return the tooltip text, or {@code Component.empty()} if no tooltip translation key exists
      */
     public Component getTooltip() {
-        var t = getNameKey() + ".tooltip";
-        return I18n.exists(t) ? Component.translatable(t) : Component.empty();
+        var tooltipKey = getNameKey() + ".tooltip";
+        return Language.getInstance().has(tooltipKey) ? Component.translatable(tooltipKey) : Component.empty();
     }
 
     /**

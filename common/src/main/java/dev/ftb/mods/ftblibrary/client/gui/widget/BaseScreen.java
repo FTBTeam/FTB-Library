@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
@@ -13,6 +11,8 @@ import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -49,7 +49,7 @@ public abstract class BaseScreen extends Panel {
     }
 
     public BaseScreen() {
-        this(Minecraft.getInstance().screen);
+        this(Minecraft.getInstance().gui.screen());
     }
 
     /**
@@ -238,7 +238,7 @@ public abstract class BaseScreen extends Panel {
 
         if (usePreviousScreenOnBack()) {
             if (openPrevScreen && getPrevScreen() != null) {
-                mc.setScreen(getPrevScreen());
+                mc.gui.setScreen(getPrevScreen());
                 GLFW.glfwSetCursorPos(getWindow().handle(), mx, my);
             }
         }
@@ -497,7 +497,7 @@ public abstract class BaseScreen extends Panel {
     @Override
     public final void openGui() {
         openContextMenu((ContextMenu) null);
-        getMinecraft().setScreen(new ScreenWrapper(this));
+        getMinecraft().gui.setScreen(new ScreenWrapper(this));
     }
 
     @Override
@@ -544,7 +544,7 @@ public abstract class BaseScreen extends Panel {
     }
 
     public void openYesNoFull(Component title, Component desc, BooleanConsumer callback) {
-        getMinecraft().setScreen(new ConfirmScreen(result -> {
+        getMinecraft().gui.setScreen(new ConfirmScreen(result -> {
             openGui();
             callback.accept(result);
             refreshWidgets();
