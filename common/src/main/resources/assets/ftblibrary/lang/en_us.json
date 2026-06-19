@@ -111,5 +111,7 @@
   "dimension.hyperbox.hyperbox": "Hyperbox",
   "dimension.ae2.spatial_storage": "AE2 Spatial Storage",
   "itemGroup.ftbsuite.creative_tab": "FTB Suite",
-  "item.ftblibrary.icon_item": "FTB Icon"
+  "item.ftblibrary.icon_item": "FTB Icon",
+
+  "ftblibrary.test_translation": "This is a test translation with arguments: %s and %s"
 }

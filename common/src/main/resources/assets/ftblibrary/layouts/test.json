@@ -1,0 +1,27 @@
+{
+  "name": "Test Layout",
+  "elements": [
+    {
+      "type": "vstack",
+      "elements": [
+        {
+          "type": "text",
+          "text": "This is a test layout"
+        },
+        {
+          "type": "text",
+          "translation": "ftblibrary.test_translation",
+          "with": [
+            "argument1",
+            "var:test_variable"
+          ]
+        },
+        {
+          "type": "button",
+          "text": "Click me",
+          "action": "ftblibrary:test_action"
+        }
+      ]
+    }
+  ]
+}

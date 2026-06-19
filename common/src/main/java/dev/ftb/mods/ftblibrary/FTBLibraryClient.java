@@ -1,9 +1,5 @@
 package dev.ftb.mods.ftblibrary;
 
-import dev.architectury.event.events.client.ClientGuiEvent;
-import dev.architectury.event.events.client.ClientTickEvent;
-import dev.architectury.hooks.client.screen.ScreenAccess;
-import dev.architectury.registry.ReloadListenerRegistry;
 import dev.ftb.mods.ftblibrary.api.client.FTBLibraryClientApi;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
@@ -13,7 +9,12 @@ import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.ui2.LayoutLoader;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
+import dev.architectury.event.events.client.ClientGuiEvent;
+import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.hooks.client.screen.ScreenAccess;
+import dev.architectury.registry.ReloadListenerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -36,6 +37,7 @@ public class FTBLibraryClient {
         ClientGuiEvent.INIT_POST.register(FTBLibraryClient::guiInit);
         ClientTickEvent.CLIENT_POST.register(FTBLibraryClient::clientTick);
 
+        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, LayoutLoader.INSTANCE);
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SidebarButtonManager.INSTANCE);
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SelectImageResourceScreen.ResourceListener.INSTANCE);
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new EntityIconLoader());

@@ -1,5 +1,13 @@
 package dev.ftb.mods.ftblibrary;
 
+import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
+import dev.ftb.mods.ftblibrary.config.FTBLibraryServerConfig;
+import dev.ftb.mods.ftblibrary.nbtedit.NBTEditResponseHandlers;
+import dev.ftb.mods.ftblibrary.net.EditConfigPacket;
+import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
+import dev.ftb.mods.ftblibrary.ui.misc.UITesting;
+import dev.ftb.mods.ftblibrary.ui2.UiScreen;
+import dev.ftb.mods.ftblibrary.util.ModUtils;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -117,6 +125,16 @@ public class FTBLibraryCommands {
                             context.getSource().sendFailure(Component.literal("Can't do this on dedicated server!").withStyle(ChatFormatting.RED));
                         } else {
                             UITesting.openTestScreen();
+                        }
+                        return Command.SINGLE_SUCCESS;
+                    })
+            );
+            command.then(literal("test_screen_2")
+                    .executes(context -> {
+                        if (context.getSource().getServer().isDedicatedServer()) {
+                            context.getSource().sendFailure(Component.literal("Can't do this on dedicated server!").withStyle(ChatFormatting.RED));
+                        } else {
+                            UiScreen.openScreen("test");
                         }
                         return Command.SINGLE_SUCCESS;
                     })
