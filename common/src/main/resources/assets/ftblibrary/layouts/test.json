@@ -13,7 +13,7 @@
           "translation": "ftblibrary.test_translation",
           "with": [
             "argument1",
-            "var:test_variable"
+            "$test_variable"
           ]
         },
         {
