@@ -42,6 +42,10 @@ Proposed modifiers for UI 2:
 
 // TODO: Add state management section
 
+## Actions
+
+Actions are defined via the "action": "namespace:action_name" property which are then registered upon initialization of the layout. These actions are defined by a `Consumer<UIActionContext>` which is called when the action is triggered.
+
 ## Variables
 
 Variable parsing via a `$` prefix
