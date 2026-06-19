@@ -6,6 +6,16 @@ public class Button extends Component {
     }
 
     @Override
+    public Size sizeThatFits(Size proposal) {
+        return null;
+    }
+
+    @Override
+    public void placeSubviews(int x, int y, int width, int height) {
+
+    }
+
+    @Override
     void render(int x, int y, int width, int height, int mouseX, int mouseY, float partialTicks) {
 
     }
