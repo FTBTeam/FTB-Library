@@ -1,10 +1,43 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.10-SNAPSHOT" apply false
-    id "me.modmuss50.mod-publish-plugin" version "2.0.0-beta.2"
+    id "dev.ftb.plugins.ashwing" version "0.2.0"
 }
 
-apply from: 'https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/changelog.gradle'
+ashwing {
+    modName = "FTB Library"
+    modId = project.mod_id
+
+    publishing {
+        curseForgeToken = providers.environmentVariable("CURSEFORGE_KEY").getOrNull()
+
+        forClientAndServer()
+        releaseFromString(providers.environmentVariable("TAG").getOrElse(""))
+        minecraftVersion(project.minecraft_version)
+
+        maven {}
+
+        requires('architectury-api')
+        optional('jei')
+        optional('roughly-enough-items')
+
+        modProject {
+            fileFromTask(project(":fabric"), "jar")
+
+            modLoader = "fabric"
+            curseForgeId = project.curseforge_id_fabric.toInteger()
+
+            requires('fabric-api')
+        }
+
+        modProject {
+            fileFromTask(project(":neoforge"), "jar")
+
+            modLoader = "neoforge"
+            curseForgeId = project.curseforge_id_forge.toInteger()
+        }
+    }
+}
 
 architectury {
     minecraft = rootProject.minecraft_version
@@ -27,14 +60,10 @@ allprojects {
     apply plugin: "java"
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
-    apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/git-md-changelog.gradle"
 
-    version = project.mod_version
+    version = ashwing.utils().createFtbLikeVersion(project.minecraft_version, project.mod_version)
     group = project.maven_group
     archivesBaseName = project.archives_base_name
-
-    // needs to be done AFTER version is set
-    apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/publishing.gradle"
 
     sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = 21
 
@@ -46,37 +75,17 @@ allprojects {
         mavenCentral()
         mavenLocal()
 
-        maven {
-            url "https://maven.architectury.dev/"
+        def repos = ashwing.repos(project)
+        repos.ftb()
+        repos.ftbSnapshots()
+        repos.kubejs()
+        repos.architectury()
+        repos.curseMaven()
+        repos.modmaven {
+            it.includeGroup("mezz.jei")
         }
-
-        maven {
-            url "https://www.cursemaven.com"
-            content {
-                includeGroup "curse.maven"
-            }
-        }
-
-        maven {
-            url "https://maven.saps.dev/minecraft"
-            content {
-                includeGroup "dev.latvian.mods"
-                includeGroup "dev.ftb.mods"
-            }
-        }
-
-        maven {
-            name "ModMaven (JEI)"
-            url "https://modmaven.dev/"
-            content {
-                includeGroup "mezz.jei"
-            }
-        }
-
-        maven {
-            // Emi
-            name = "TerraformersMC"
-            url = "https://maven.terraformersmc.com/"
+        repos.terraformers {
+            it.includeGroup("dev.emi")
         }
     }
 
@@ -86,65 +95,5 @@ allprojects {
 
     java {
         withSourcesJar()
-    }
-
-    publishing {
-        repositories {
-            if (ftbPublishing.ftbToken) {
-                maven {
-                    url ftbPublishing.ftbURL
-                    credentials {
-                        username = ftbPublishing.ftbUser
-                        password = ftbPublishing.ftbToken
-                    }
-                }
-            }
-        }
-    }
-}
-
-publishMods {
-    dryRun = providers.environmentVariable("CURSEFORGE_KEY").getOrNull() == null
-    changelog = createChangelog(project)
-    version = mod_version
-
-    // TODO: Migrate to something else
-    def tag = providers.environmentVariable("TAG").getOrElse("release")
-    type = tag.endsWith("-beta") ? BETA : (tag.endsWith("-alpha") ? ALPHA : STABLE)
-
-    def createOptions = (String projectName) -> {
-        publishOptions {
-            file = project.provider { project(":$projectName").tasks.remapJar }.flatMap { it.archiveFile }
-            displayName = "[${projectName.toUpperCase()}][${minecraft_version}] ${readable_name} ${mod_version}"
-            modLoaders.add(projectName.toLowerCase())
-        }
-    }
-
-    def fabricOptions = createOptions("fabric")
-    def neoForgeOptions = createOptions("neoforge")
-
-    def curseForgeOptions = curseforgeOptions {
-        accessToken = providers.environmentVariable("CURSEFORGE_KEY")
-        minecraftVersions.add("${minecraft_version}")
-        javaVersions.add(JavaVersion.VERSION_21)
-        client = true
-        server = true
-    }
-
-    curseforge("curseforgeFabric") {
-        from(curseForgeOptions, fabricOptions)
-        projectId = curseforge_id_fabric
-        requires('architectury-api')
-        requires('fabric-api')
-        optional('jei')
-        optional('roughly-enough-items')
-    }
-
-    curseforge("curseforgeNeoForge") {
-        from(curseForgeOptions, neoForgeOptions)
-        projectId = curseforge_id_forge
-        requires("architectury-api")
-        optional('jei')
-        optional('roughly-enough-items')
     }
 }

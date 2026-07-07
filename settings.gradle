@@ -1,8 +1,9 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
+        maven { url "https://maven.ftb.dev/releases/" }
         maven { url "https://maven.architectury.dev/" }
         maven { url "https://maven.creeperhost.net/" }
-        gradlePluginPortal()
     }
 }
 

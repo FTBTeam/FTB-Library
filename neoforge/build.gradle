@@ -42,8 +42,6 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
 }
 
-apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
-
 processResources {
     exclude '.cache'
 
@@ -92,15 +90,5 @@ jar {
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
-    }
-}
-
-publishing {
-    publications {
-        mavenForge(MavenPublication) {
-            artifactId = "${rootProject.archives_base_name}-${project.name}"
-            version ftbPublishing.mavenVersion
-            from components.java
-        }
     }
 }

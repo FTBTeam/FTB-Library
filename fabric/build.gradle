@@ -47,8 +47,6 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
-apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
-
 tasks.register('copyAccessWidener', Copy) {
     from accessWidenerFile
     into generatedResources
@@ -89,15 +87,5 @@ jar {
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
-    }
-}
-
-publishing {
-    publications {
-        mavenFabric(MavenPublication) {
-            artifactId = "${rootProject.archives_base_name}-${project.name}"
-            version ftbPublishing.mavenVersion
-            from components.java
-        }
     }
 }
