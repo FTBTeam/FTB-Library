@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Added `Vec2d` utility class
 
+### Fixed
+* Fixed execClientCommand() incorrectly stripping all forward slashes from commands (thanks @FalAut)
+
 ## [26.1.2.6-beta]
 
 ### Fixed
