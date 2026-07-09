@@ -51,7 +51,7 @@ public class ImageComponent implements ComponentContents {
         return image;
     }
 
-    public void setImage(Icon<?> image) {
+    public void setImage(Icon image) {
         this.image = image;
     }
 
