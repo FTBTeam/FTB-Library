@@ -47,7 +47,8 @@ public class ClientTextComponentUtils {
                         Integer.parseInt(map.getOrDefault("width", "100")),
                         Integer.parseInt(map.getOrDefault("height", "100")),
                         ImageComponent.ImageAlign.byName(map.getOrDefault("align", "center")),
-                        map.getOrDefault("fit", "false").equals("true")
+                        map.getOrDefault("fit", "false").equals("true"),
+                        map.getOrDefault("click_action", "")
                 );
                 var output = MutableComponent.create(c);
                 if (map.containsKey("text")) {
