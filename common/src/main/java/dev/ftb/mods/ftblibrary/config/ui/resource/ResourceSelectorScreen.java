@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.config.ui.resource;
 
-import com.google.common.base.Stopwatch;
-import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.config.ResourceConfigValue;
@@ -21,6 +19,8 @@ import dev.ftb.mods.ftblibrary.ui.misc.AbstractThreePanelScreen;
 import dev.ftb.mods.ftblibrary.ui.misc.SimpleToast;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.google.common.base.Stopwatch;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -347,13 +347,13 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         }
 
         @Override
-        public boolean mouseScrolled(double scroll) {
+        public boolean mouseScrolled(double mouseX, double mouseY, double scrollHorizontal, double scrollVertical) {
             if (!isMouseOver) return false;
             if (isShiftKeyDown()) {
-                int adj = scroll > 0 ? getCount() : -getCount() / 2;
+                int adj = scrollVertical > 0 ? getCount() : -getCount() / 2;
                 adjust(adj);
             } else {
-                adjust((int) Math.signum(scroll));
+                adjust((int) Math.signum(scrollVertical));
             }
             return true;
         }

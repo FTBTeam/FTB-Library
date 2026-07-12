@@ -331,19 +331,19 @@ public abstract class Panel extends Widget {
     }
 
     @Override
-    public boolean mouseScrolled(double scroll) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollHorizontal, double scrollVertical) {
         setOffset(true);
 
         for (var i = widgets.size() - 1; i >= 0; i--) {
             var widget = widgets.get(i);
 
-            if (widget.isEnabled() && widget.mouseScrolled(scroll)) {
+            if (widget.isEnabled() && widget.mouseScrolled(mouseX, mouseY, scrollHorizontal, scrollVertical)) {
                 setOffset(false);
                 return true;
             }
         }
 
-        var scrollPanel = scrollPanel(scroll);
+        var scrollPanel = scrollPanel(scrollHorizontal, scrollVertical);
         setOffset(false);
         return scrollPanel;
     }
@@ -365,16 +365,16 @@ public abstract class Panel extends Widget {
         return false;
     }
 
-    public boolean scrollPanel(double scroll) {
+    public boolean scrollPanel(double scrollHorizontal, double scrollVertical) {
         if (attachedScrollbar != null || !isMouseOver()) {
             return false;
         }
 
-        if (isDefaultScrollVertical() != isShiftKeyDown()) {
-            return movePanelScroll(0, -getScrollStep() * scroll);
-        } else {
-            return movePanelScroll(-getScrollStep() * scroll, 0);
-        }
+        var isInverted = isDefaultScrollVertical() != isShiftKeyDown();
+        return movePanelScroll(
+                isInverted ? scrollHorizontal : -getScrollStep() * scrollVertical,
+                isInverted ? -getScrollStep() * scrollVertical : scrollHorizontal
+        );
     }
 
     public boolean movePanelScroll(double dx, double dy) {

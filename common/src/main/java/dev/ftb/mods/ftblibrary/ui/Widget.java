@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -192,7 +192,15 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
     public void mouseReleased(MouseButton button) {
     }
 
+    /**
+     * @deprecated use {@link #mouseScrolled(double, double, double, double)} instead
+     */
+    @Deprecated
     public boolean mouseScrolled(double scroll) {
+        return false;
+    }
+
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollHorizontal, double scrollVertical) {
         return false;
     }
 

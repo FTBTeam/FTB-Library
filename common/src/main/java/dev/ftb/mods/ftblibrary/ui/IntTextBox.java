@@ -43,9 +43,9 @@ public class IntTextBox extends TextBox {
     }
 
     @Override
-    public boolean mouseScrolled(double scroll) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollHorizontal, double scrollVertical) {
         if (allowInput()) {
-            setAmount(getIntValue() + (int) scroll);
+            setAmount(getIntValue() + (int) scrollVertical);
             return true;
         }
         return false;
