@@ -379,12 +379,10 @@ public abstract class Panel extends Widget {
         // If the user is pressing shift, we'll always attempt to scroll horizontally, otherwise we'll just blindly apply both directions
         if (isShiftKeyDown()) {
             var scrollAmount = -getScrollStep() * directionlessDelta;
-            movePanelScroll(scrollAmount, 0);
+            return movePanelScroll(scrollAmount, 0);
         } else {
-            movePanelScroll(-getScrollStep() * xDelta, -getScrollStep() * yDelta);
+            return movePanelScroll(-getScrollStep() * xDelta, -getScrollStep() * yDelta);
         }
-
-        return true;
     }
 
     public boolean movePanelScroll(double dx, double dy) {

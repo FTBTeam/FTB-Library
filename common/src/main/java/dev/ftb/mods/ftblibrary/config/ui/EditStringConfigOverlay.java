@@ -166,7 +166,8 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
 
         @Override
         public boolean mouseScrolled(double mouseX, double mouseY, double xDelta, double yDelta) {
-            return config.scrollValue(currentValue, yDelta > 0).map(v -> {
+            var directionlessDelta = xDelta != 0 ? xDelta : yDelta;
+            return config.scrollValue(currentValue, directionlessDelta > 0).map(v -> {
                 textBox.setText(config.getStringFromValue(v));
                 textBox.setSelectionPos(textBox.getCursorPos());
                 return true;
