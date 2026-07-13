@@ -196,12 +196,12 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
      * @deprecated use {@link #mouseScrolled(double, double, double, double)} instead
      */
     @Deprecated
-    public boolean mouseScrolled(double scroll) {
+    public boolean mouseScrolled(double yDelta) {
         return false;
     }
 
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollHorizontal, double scrollVertical) {
-        return false;
+    public boolean mouseScrolled(double mouseX, double mouseY, double xDelta, double yDelta) {
+        return this.mouseScrolled(yDelta);
     }
 
     public boolean mouseDragged(int button, double dragX, double dragY) {

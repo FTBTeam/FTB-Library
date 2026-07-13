@@ -71,9 +71,11 @@ public class ScrollBar extends Widget {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollHorizontal, double scrollVertical) {
-        if (scrollVertical != 0 && canMouseScrollPlane() && canMouseScroll()) {
-            setValue(getValue() - getScrollStep() * scrollVertical);
+    public boolean mouseScrolled(double mouseX, double mouseY, double xDelta, double yDelta) {
+        // We don't care which direction the user scrolled, just apply it.
+        var scrollDelta = yDelta == 0  ? xDelta : yDelta;
+        if (scrollDelta != 0 && canMouseScrollPlane() && canMouseScroll()) {
+            setValue(getValue() - getScrollStep() * scrollDelta);
             return true;
         }
 

@@ -331,19 +331,19 @@ public abstract class Panel extends Widget {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollHorizontal, double scrollVertical) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double xDelta, double yDelta) {
         setOffset(true);
 
         for (var i = widgets.size() - 1; i >= 0; i--) {
             var widget = widgets.get(i);
 
-            if (widget.isEnabled() && widget.mouseScrolled(mouseX, mouseY, scrollHorizontal, scrollVertical)) {
+            if (widget.isEnabled() && widget.mouseScrolled(mouseX, mouseY, xDelta, yDelta)) {
                 setOffset(false);
                 return true;
             }
         }
 
-        var scrollPanel = scrollPanel(scrollHorizontal, scrollVertical);
+        var scrollPanel = scrollPanel(xDelta, yDelta);
         setOffset(false);
         return scrollPanel;
     }
@@ -365,16 +365,26 @@ public abstract class Panel extends Widget {
         return false;
     }
 
-    public boolean scrollPanel(double scrollHorizontal, double scrollVertical) {
+    public boolean scrollPanel(double xDelta, double yDelta) {
         if (attachedScrollbar != null || !isMouseOver()) {
             return false;
         }
 
-        var isInverted = isDefaultScrollVertical() != isShiftKeyDown();
-        return movePanelScroll(
-                isInverted ? scrollHorizontal : -getScrollStep() * scrollVertical,
-                isInverted ? -getScrollStep() * scrollVertical : scrollHorizontal
-        );
+        // No scroll direction was given?
+        var directionlessDelta = yDelta != 0 ? yDelta : xDelta;
+        if (directionlessDelta == 0) {
+            return false;
+        }
+
+        // If the user is pressing shift, we'll always attempt to scroll horizontally, otherwise we'll just blindly apply both directions
+        if (isShiftKeyDown()) {
+            var scrollAmount = -getScrollStep() * directionlessDelta;
+            movePanelScroll(scrollAmount, 0);
+        } else {
+            movePanelScroll(-getScrollStep() * xDelta, -getScrollStep() * yDelta);
+        }
+
+        return true;
     }
 
     public boolean movePanelScroll(double dx, double dy) {
@@ -402,10 +412,6 @@ public abstract class Panel extends Widget {
         }
 
         return getScrollX() != sx || getScrollY() != sy;
-    }
-
-    public boolean isDefaultScrollVertical() {
-        return true;
     }
 
     public double getScrollStep() {

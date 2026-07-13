@@ -468,11 +468,11 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollHorizontal, double scrollVertical) {
-        if (focusedWidget != null && focusedWidget.mouseScrolled(mouseX, mouseY, scrollHorizontal, scrollVertical)) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double xDelta, double yDelta) {
+        if (focusedWidget != null && focusedWidget.mouseScrolled(mouseX, mouseY, xDelta, yDelta)) {
             return true;
         }
-        return modalPanels.isEmpty() ? super.mouseScrolled(mouseX, mouseY, scrollHorizontal, scrollVertical) : modalPanels.peekFirst().mouseScrolled(mouseX, mouseY, scrollHorizontal, scrollVertical);
+        return modalPanels.isEmpty() ? super.mouseScrolled(mouseX, mouseY, xDelta, yDelta) : modalPanels.peekFirst().mouseScrolled(mouseX, mouseY, xDelta, yDelta);
     }
 
     @Override
