@@ -7,6 +7,7 @@ import dev.ftb.mods.ftblibrary.config.manager.ConfigManagerClient;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -136,51 +137,53 @@ public class SidebarGroupGuiButton extends AbstractButton {
         } else {
             for (SidebarGuiButton button : SidebarButtonManager.INSTANCE.getButtonList()) {
                 pose.pushMatrix();
-                GridLocation realGridLocation = realLocationMap.get(button);
-                if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
-                    if (isEditMode && button == selectedButton) {
-                        button.x = mx - mouseOffsetX;
-                        button.y = my - mouseOffsetY;
-                    } else {
-                        if (realGridLocation == null) {
-                            // Make sure we pop the matric if the button is not enabled and not selected
-                            pose.popMatrix();
-                            continue;
-                        }
+                renderSidebarButton(graphics, mx, my, button, pose, font);
+                pose.popMatrix();
+            }
+        }
+    }
 
-                        int adjustedX = gridStartRight ? xRenderStart + (currentGirdWidth - realGridLocation.x() - 1) * BUTTON_SPACING : xRenderStart + realGridLocation.x() * BUTTON_SPACING;
-                        int adjustedY = gridStartBottom ? yRenderStart + (currentGridHeight - realGridLocation.y() - 1) * BUTTON_SPACING : yRenderStart + realGridLocation.y() * BUTTON_SPACING;
-                        button.x = adjustedX + 1;
-                        button.y = adjustedY + 1;
-                    }
-                    IconHelper.renderIcon(button.getSidebarButton().getData().icon(), graphics, button.x, button.y, 16, 16);
-
-                    if (isEditMode) {
-                        if (mx >= button.x + 12 && my <= button.y + 4 && mx < button.x + 16 && my >= button.y) {
-                            IconHelper.renderIcon(Icons.CANCEL, graphics, button.x + 11, button.y - 1, 6, 6);
-                        } else {
-                            IconHelper.renderIcon(Icons.CANCEL, graphics, button.x + 12, button.y, 4, 4);
-                        }
-                    } else {
-                        pose.pushMatrix();
-                        pose.translate(button.x, button.y);
-                        for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
-                            buttonOverlayRender.render(graphics, font, 16);
-                        }
-                        pose.popMatrix();
-                    }
-
-                    if (button == mouseOver) {
-                        IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, button.x, button.y, 16, 16);
-                    }
-
+    private void renderSidebarButton(GuiGraphicsExtractor graphics, int mx, int my, SidebarGuiButton button, Matrix3x2fStack pose, Font font) {
+        GridLocation realGridLocation = realLocationMap.get(button);
+        if (isEditMode || (button.equals(selectedButton) || button.isEnabled())) {
+            if (isEditMode && button == selectedButton) {
+                button.x = mx - mouseOffsetX;
+                button.y = my - mouseOffsetY;
+            } else {
+                if (realGridLocation == null) {
+                    return;
                 }
-                if (!isEditMode && mouseOver == button) {
-                    graphics.setTooltipForNextFrame(font, button.getSidebarButton().getTooltip(Minecraft.getInstance().hasShiftDown()),
-                            Optional.empty(), mx, Math.max(7, my - 9) + 10);
+
+                int adjustedX = gridStartRight ? xRenderStart + (currentGirdWidth - realGridLocation.x() - 1) * BUTTON_SPACING : xRenderStart + realGridLocation.x() * BUTTON_SPACING;
+                int adjustedY = gridStartBottom ? yRenderStart + (currentGridHeight - realGridLocation.y() - 1) * BUTTON_SPACING : yRenderStart + realGridLocation.y() * BUTTON_SPACING;
+                button.x = adjustedX + 1;
+                button.y = adjustedY + 1;
+            }
+            IconHelper.renderIcon(button.getSidebarButton().getData().icon(), graphics, button.x, button.y, 16, 16);
+
+            if (isEditMode) {
+                if (mx >= button.x + 12 && my <= button.y + 4 && mx < button.x + 16 && my >= button.y) {
+                    IconHelper.renderIcon(Icons.CANCEL, graphics, button.x + 11, button.y - 1, 6, 6);
+                } else {
+                    IconHelper.renderIcon(Icons.CANCEL, graphics, button.x + 12, button.y, 4, 4);
+                }
+            } else {
+                pose.pushMatrix();
+                pose.translate(button.x, button.y);
+                for (ButtonOverlayRender buttonOverlayRender : button.getSidebarButton().getExtraRenderers()) {
+                    buttonOverlayRender.render(graphics, font, 16);
                 }
                 pose.popMatrix();
             }
+
+            if (button == mouseOver) {
+                IconHelper.renderIcon(Color4I.WHITE.withAlpha(33), graphics, button.x, button.y, 16, 16);
+            }
+
+        }
+        if (!isEditMode && mouseOver == button) {
+            graphics.setTooltipForNextFrame(font, button.getSidebarButton().getTooltip(Minecraft.getInstance().hasShiftDown()),
+                    Optional.empty(), mx, Math.max(7, my - 9) + 10);
         }
     }
 
