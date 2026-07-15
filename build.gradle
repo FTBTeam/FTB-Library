@@ -1,11 +1,11 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.10-SNAPSHOT" apply false
-    id "dev.ftb.plugins.ashwing" version "0.2.0"
+    id "dev.ftb.plugins.ashwing" version "0.2.2"
 }
 
 ashwing {
-    modName = "FTB Library"
+    modName = project.readable_name
     modId = project.mod_id
 
     publishing {
@@ -15,7 +15,7 @@ ashwing {
         releaseFromString(providers.environmentVariable("TAG").getOrElse(""))
         minecraftVersion(project.minecraft_version)
 
-        maven {}
+        withMaven()
 
         requires('architectury-api')
         optional('jei')
