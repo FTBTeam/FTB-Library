@@ -15,7 +15,8 @@ public class ImageComponent implements ComponentContents {
             Codec.INT.optionalFieldOf("width", 100).forGetter(ImageComponent::getWidth),
             Codec.INT.optionalFieldOf("height", 100).forGetter(ImageComponent::getHeight),
             ImageAlign.CODEC.optionalFieldOf("align", ImageAlign.CENTER).forGetter(ImageComponent::getAlign),
-            Codec.BOOL.optionalFieldOf("fit", false).forGetter(ImageComponent::isFit)
+            Codec.BOOL.optionalFieldOf("fit", false).forGetter(ImageComponent::isFit),
+            Codec.STRING.optionalFieldOf("click_action", "").forGetter(ImageComponent::getClickAction)
     ).apply(instance, ImageComponent::create));
 
     private static final ComponentContents.Type<ImageComponent> TYPE = new ComponentContents.Type<>(CODEC, "image");
@@ -25,18 +26,20 @@ public class ImageComponent implements ComponentContents {
     private int height = 100;
     private ImageAlign align = ImageAlign.CENTER;
     private boolean fit = false;
+    private String clickAction = "";
 
     public ImageComponent() {
         super();
     }
 
-    public static ImageComponent create(String id, int width, int height, ImageAlign align, boolean fit) {
+    public static ImageComponent create(String id, int width, int height, ImageAlign align, boolean fit, String clickAction) {
         ImageComponent c = new ImageComponent();
         c.image = Icon.getIcon(id);
         c.width = width;
         c.height = height;
         c.align = align;
         c.fit = fit;
+        c.clickAction = clickAction;
         return c;
     }
 
@@ -84,6 +87,14 @@ public class ImageComponent implements ComponentContents {
         this.fit = fit;
     }
 
+    public String getClickAction() {
+        return clickAction;
+    }
+
+    public void setClickAction(String clickAction) {
+        this.clickAction = clickAction;
+    }
+
     @Override
     public String toString() {
         var sb = new StringBuilder("{image:");
@@ -95,6 +106,10 @@ public class ImageComponent implements ComponentContents {
 
         if (fit) {
             sb.append(" fit:true");
+        }
+
+        if (!clickAction.isEmpty()) {
+            sb.append(" click_action:").append(clickAction.replace(" ", "%20"));
         }
 
         sb.append('}');

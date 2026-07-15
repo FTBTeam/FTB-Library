@@ -1,14 +1,16 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
-import net.minecraft.core.BlockPos;
+import com.mojang.brigadier.Command;
+import dev.architectury.networking.NetworkManager;
+import dev.ftb.mods.ftblibrary.net.EditNBTPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +23,7 @@ public enum NBTEditResponseHandlers {
     public static final String PLAYER = "player";
     public static final String ENTITY = "entity";
 
+    private final Map<UUID, CompoundTag> currentlyEditing = new HashMap<>();  // players who are currently editing
     private final Map<String, NBTResponseHandler> MAP = new ConcurrentHashMap<>();
 
     public static void registerBuiltinHandlers() {
@@ -44,7 +47,6 @@ public enum NBTEditResponseHandlers {
                     }
                 }
             });
-//            var pos = new BlockPos(info.getInt("x"), info.getInt("y"), info.getInt("z"));
         });
 
         INSTANCE.registerHandler(PLAYER, (player, info, data) -> {
@@ -73,8 +75,19 @@ public enum NBTEditResponseHandlers {
         MAP.put(name, handler);
     }
 
+    public int sendRequestPacket(ServerPlayer player, CompoundTag info, CompoundTag data) {
+        if (!info.isEmpty()) {
+            currentlyEditing.put(player.getUUID(), info);
+            NetworkManager.sendToPlayer(player, new EditNBTPacket(info, data));
+            return Command.SINGLE_SUCCESS;
+        }
+        return 0;
+    }
+
     public void handleResponse(String name, ServerPlayer player, CompoundTag info, CompoundTag data) {
-        MAP.getOrDefault(name, NBTResponseHandler.NONE).handleResponse(player, info, data);
+        if (info.equals(currentlyEditing.remove(player.getUUID()))) {
+            MAP.getOrDefault(name, NBTResponseHandler.NONE).handleResponse(player, info, data);
+        }
     }
 
     @FunctionalInterface
