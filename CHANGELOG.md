@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2101.1.33]
 
+### Changed
+* String edit overlay popups are now a bit wider by default
+
 ### Added
 * Added 3 new icons: "undo", "redo" and "keyboard"
+* Added `DocsMod` and `DocsModRegistry` abstraction layer for calling out to documentation mods
+* `ImageComponent` now has a a `click_action` field
+* Added `Vec2` utility class
+
+### Fixed
+* Fixed a pose stack leak under some specific circumstances in the sidebar renderer
 
 ## [2101.1.32]
 
