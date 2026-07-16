@@ -134,7 +134,7 @@ public class EditableConfigGroup implements Comparable<EditableConfigGroup> {
      */
     public Component getTooltip() {
         var t = getNameKey() + ".tooltip";
-        return I18n.exists(t) ? Component.translatable(t) : Component.empty();
+        return !I18n.get(t).isEmpty() ? Component.translatable(t) : Component.empty();
     }
 
     /**

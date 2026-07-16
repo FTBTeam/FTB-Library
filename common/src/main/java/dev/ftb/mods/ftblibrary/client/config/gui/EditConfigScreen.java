@@ -234,7 +234,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             }
 
             var infoKey = group.getPath() + ".info";
-            info = I18n.exists(infoKey) ? Component.translatable(infoKey) : null;
+            info = !I18n.get(infoKey).isEmpty() ? Component.translatable(infoKey) : null;
             setCollapsed(collapsed);
         }
 

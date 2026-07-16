@@ -33,7 +33,7 @@ public class RegisteredSidebarButton implements SidebarButton {
         this.id = id;
         this.data = data;
         this.langKey = Util.makeDescriptionId("sidebar_button", id);
-        tooltip = I18n.exists(langKey + ".tooltip") ? Component.translatable(langKey + ".tooltip") : null;
+        tooltip = !I18n.get(langKey + ".tooltip").isEmpty() ? Component.translatable(langKey + ".tooltip") : null;
         if (data.requiresOp()) {
             addVisibilityCondition(ClientUtils.IS_CLIENT_OP);
         }

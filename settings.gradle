@@ -10,4 +10,4 @@ pluginManagement {
 
 include "common", "fabric", "neoforge"
 
-rootProject.name = 'FTB-Library-26.1'
+rootProject.name = 'FTB-Library-26.2'

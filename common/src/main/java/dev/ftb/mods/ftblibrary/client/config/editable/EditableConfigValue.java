@@ -216,7 +216,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
 
     public String getTooltip() {
         var k = getNameKey() + ".tooltip";
-        return I18n.exists(k) ? I18n.get(k) : "";
+        return !I18n.get(k).isEmpty() ? I18n.get(k) : "";
     }
 
     public EditableConfigValue<T> setOrder(int o) {

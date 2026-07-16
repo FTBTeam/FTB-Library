@@ -29,6 +29,7 @@ public class ColorSelectorPanel extends ModalPanel {
     private static final Icon<?> WHEEL = Icon.getIcon(FTBLibrary.id("textures/gui/rgbcolorwheel.png"));
     private static final MutableComponent ARGB = Component.literal("ARGB");
     private static final MutableComponent RGB = Component.literal("RGB");
+    private static final Map<ChatFormatting, Integer> COLOR_RGB = new EnumMap<>(ChatFormatting.class);
     private static final Map<String, List<Integer>> PRESETS = Util.make(new LinkedHashMap<>(), ColorSelectorPanel::setupPalettes);
     private static String curPalette = "chat";
 
@@ -43,6 +44,25 @@ public class ColorSelectorPanel extends ModalPanel {
     private final List<PaletteButton> paletteButtons = new ArrayList<>();
     private final float[] hsb = new float[3];
     private boolean allowAlphaEdit = false;
+
+    static {
+        COLOR_RGB.put(ChatFormatting.BLACK, 0x000000);
+        COLOR_RGB.put(ChatFormatting.DARK_BLUE, 0x0000AA);
+        COLOR_RGB.put(ChatFormatting.DARK_GREEN, 0x00AA00);
+        COLOR_RGB.put(ChatFormatting.DARK_AQUA, 0x00AAAA);
+        COLOR_RGB.put(ChatFormatting.DARK_RED, 0xAA0000);
+        COLOR_RGB.put(ChatFormatting.DARK_PURPLE, 0xAA00AA);
+        COLOR_RGB.put(ChatFormatting.GOLD, 0xFFAA00);
+        COLOR_RGB.put(ChatFormatting.GRAY, 0xAAAAAA);
+        COLOR_RGB.put(ChatFormatting.DARK_GRAY, 0x555555);
+        COLOR_RGB.put(ChatFormatting.BLUE, 0x5555FF);
+        COLOR_RGB.put(ChatFormatting.GREEN, 0x55FF55);
+        COLOR_RGB.put(ChatFormatting.AQUA, 0x55FFFF);
+        COLOR_RGB.put(ChatFormatting.RED, 0xFF5555);
+        COLOR_RGB.put(ChatFormatting.LIGHT_PURPLE, 0xFF55FF);
+        COLOR_RGB.put(ChatFormatting.YELLOW, 0xFFFF55);
+        COLOR_RGB.put(ChatFormatting.WHITE, 0xFFFFFF);
+    }
 
     public ColorSelectorPanel(Panel panel, EditableColor config, ConfigCallback callback) {
         super(panel);
@@ -87,7 +107,10 @@ public class ColorSelectorPanel extends ModalPanel {
 
     private static void setupPalettes(Map<String,List<Integer>> presetMap) {
         presetMap.put("chat", Util.make(new ArrayList<>(), l -> {
-            Arrays.stream(ChatFormatting.values()).filter(ChatFormatting::isColor).map(ChatFormatting::getColor).forEach(e -> l.add(e | 0xFF000000));
+            Arrays.stream(ChatFormatting.values())
+                    .filter(COLOR_RGB::containsKey)
+                    .map(f -> COLOR_RGB.get(f) | 0xFF000000)
+                    .forEach(l::add);
         }));
 
         presetMap.put("dye", Util.make(new ArrayList<>(), l -> {
