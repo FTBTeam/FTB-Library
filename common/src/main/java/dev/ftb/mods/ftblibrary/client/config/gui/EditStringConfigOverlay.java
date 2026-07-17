@@ -36,8 +36,8 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         this.currentValue = config.copy(config.getValue());
         this.title = title;
 
-        int stringWidth = getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue));
-        width = Math.min(getWindow().getGuiScaledWidth() / 2, stringWidth + config.getExtraEditorWidth());
+        width = Math.clamp(currentValue == null ? 0 : getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue)) + 86,
+                150, getWindow().getGuiScaledWidth() * 3 / 4);
 
         titleField = new TextField(this).addFlags(Theme.SHADOW).setText(Objects.requireNonNullElse(title, Component.empty()));
         titleField.setSize(0, 0);
