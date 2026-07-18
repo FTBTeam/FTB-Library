@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.gradleup.shadow" version "9.5.0"
 }
 
 architectury {
@@ -35,6 +35,12 @@ artifacts {
     dev(jar)
 }
 
+repositories {
+    maven {
+        url = uri("https://maven.siphalor.de/")
+    }
+}
+
 dependencies {
     modApi "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
@@ -45,6 +51,9 @@ dependencies {
 
     common(project(path: ":common", configuration: "dev")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+
+    modCompileOnlyApi "de.siphalor.amecs.amecs-key-modifiers:amecs-key-modifiers-${amecs_key_modifiers_version}"
+    modLocalRuntime "de.siphalor.amecs.amecs-bundle:amecs-bundle-${amecs_key_bundle_version}"
 }
 
 apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"

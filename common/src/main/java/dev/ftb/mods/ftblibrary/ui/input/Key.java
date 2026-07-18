@@ -1,25 +1,24 @@
 package dev.ftb.mods.ftblibrary.ui.input;
 
+import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import org.lwjgl.glfw.GLFW;
 
-
 public class Key {
     public final int keyCode, scanCode;
     public final KeyModifiers modifiers;
-    public Key(int k, int s, int m) {
-        keyCode = k;
-        scanCode = s;
-        modifiers = new KeyModifiers(m);
+
+    public Key(int keyCode, int scanCode, int modifiers) {
+        this.keyCode = keyCode;
+        this.scanCode = scanCode;
+        this.modifiers = new KeyModifiers(modifiers);
     }
 
-    @ExpectPlatform
-    private static boolean matchesWithoutConflicts(KeyMapping keyBinding, InputConstants.Key keyCode) {
-        throw new AssertionError();
+    public boolean matches(KeyMapping keyMapping) {
+        return ClientUtils.input().matches(keyMapping, keyCode, scanCode);
     }
 
     public boolean is(int k) {
@@ -35,7 +34,7 @@ public class Key {
     }
 
     public boolean escOrInventory() {
-        return esc() || matchesWithoutConflicts(Minecraft.getInstance().options.keyInventory, getInputMapping());
+        return esc() || matches(Minecraft.getInstance().options.keyInventory);
     }
 
     public boolean enter() {
