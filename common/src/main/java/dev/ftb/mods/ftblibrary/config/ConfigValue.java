@@ -5,6 +5,7 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.ui.Widget;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.util.BooleanConsumer;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
@@ -24,7 +26,7 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
     private int order = 0;
     private String nameKey = "";
     private Icon icon = Icons.SETTINGS;
-    private boolean canEdit = true;
+    private BooleanSupplier canEdit = () -> true;
 
     protected static Component info(String key) {
         return Component.literal(key + ":").withStyle(ChatFormatting.AQUA);
@@ -153,10 +155,15 @@ public abstract class ConfigValue<T> implements Comparable<ConfigValue<T>> {
     }
 
     public boolean getCanEdit() {
-        return canEdit;
+        return canEdit.getAsBoolean();
     }
 
     public ConfigValue<T> setCanEdit(boolean e) {
+        canEdit = () -> e;
+        return this;
+    }
+
+    public ConfigValue<T> setCanEdit(BooleanSupplier e) {
         canEdit = e;
         return this;
     }
