@@ -20,12 +20,13 @@ public class KeyReferenceScreen extends BaseScreen {
     private final Panel textPanel;
     private final PanelScrollBar scrollBar;
     private final SimpleTextButton closeButton;
-    private final String[] translationKeys;
 
     public KeyReferenceScreen(String... translationKeys) {
-        this.translationKeys = translationKeys;
+        this(buildText(translationKeys));
+    }
 
-        textPanel = new TextPanel(this);
+    public KeyReferenceScreen(List<Pair<Component, Component>> keyValueComponents) {
+        textPanel = new TextPanel(this, keyValueComponents);
 
         closeButton = new SimpleTextButton(this, Component.translatable("gui.close"), Icons.CANCEL) {
             @Override
@@ -167,10 +168,10 @@ public class KeyReferenceScreen extends BaseScreen {
     private class TextPanel extends Panel {
         private final TwoColumnList textWidget;
 
-        public TextPanel(Panel panel) {
+        public TextPanel(Panel panel, List<Pair<Component, Component>> keyValueComponents) {
             super(panel);
 
-            textWidget = new TwoColumnList(this, buildText(translationKeys));
+            textWidget = new TwoColumnList(this, keyValueComponents);
         }
 
         @Override

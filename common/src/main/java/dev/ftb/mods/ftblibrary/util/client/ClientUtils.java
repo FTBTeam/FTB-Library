@@ -1,12 +1,13 @@
 package dev.ftb.mods.ftblibrary.util.client;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
+import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
+import dev.ftb.mods.ftblibrary.util.input.Input;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientChatEvent;
 import dev.architectury.fluid.FluidStack;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.ui.CustomClickEvent;
-import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -28,6 +29,11 @@ public class ClientUtils {
     public static final List<Runnable> RUN_LATER = new ArrayList<>();
     private static final MethodType EMPTY_METHOD_TYPE = MethodType.methodType(void.class);
     private static final HashMap<String, Optional<MethodHandle>> staticMethodCache = new HashMap<>();
+
+    @ExpectPlatform
+    public static Input input() {
+        throw new AssertionError();
+    }
 
     public static void execClientCommand(String command, boolean printChat) {
         if (!command.isEmpty() && Minecraft.getInstance().player != null) {
