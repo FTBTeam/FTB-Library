@@ -8,9 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * Added `Vec2d` utility class
+* Added `EditableConfigValue#setCanEdit` variant taking a `BooleanSupplier`
+  * Allows for more dynamic control of can-edit visual appearance for entries in config editor screen
+* Added "undo" and "redo" icons
+* Added `DocsMod` abstraction layer
+* `ImageComponent` now has a "click_action" field
+
+### Changed
+* Default width of string editor overlays is a bit wider now
 
 ### Fixed
 * Fixed execClientCommand() incorrectly stripping all forward slashes from commands (thanks @FalAut)
+* Fixed pose stack leak which could happen under some circumstances in sidebar rendering
 
 ## [26.1.2.6-beta]
 
