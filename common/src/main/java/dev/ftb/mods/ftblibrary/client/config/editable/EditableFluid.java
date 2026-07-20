@@ -50,9 +50,7 @@ public class EditableFluid extends EditableResource<FluidStack> {
 
     @Override
     public void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback) {
-        if (getCanEdit()) {
-            new SelectFluidScreen(this, callback).openGui();
-        }
+        new SelectFluidScreen(this, callback).openGui();
     }
 
     @Override

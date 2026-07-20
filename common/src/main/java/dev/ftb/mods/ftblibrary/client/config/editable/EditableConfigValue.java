@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
@@ -40,7 +41,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
     private int order = 0;
     private String nameKey = "";
     private Icon<?> icon = Icons.SETTINGS;
-    private boolean canEdit = true;
+    private BooleanSupplier canEdit = () -> true;
 
     protected static Component info(String key) {
         return Component.literal(key + ":").withStyle(ChatFormatting.AQUA);
@@ -225,10 +226,15 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
     }
 
     public boolean getCanEdit() {
-        return canEdit;
+        return canEdit.getAsBoolean();
     }
 
     public EditableConfigValue<T> setCanEdit(boolean e) {
+        canEdit = () -> e;
+        return this;
+    }
+
+    public EditableConfigValue<T> setCanEdit(BooleanSupplier e) {
         canEdit = e;
         return this;
     }

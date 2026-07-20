@@ -52,9 +52,7 @@ public class EditableItemStack extends EditableResource<ItemStack> {
 
     @Override
     public void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback) {
-        if (getCanEdit()) {
-            new SelectItemStackScreen(this, callback).openGui();
-        }
+        new SelectItemStackScreen(this, callback).openGui();
     }
 
     @Override

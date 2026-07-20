@@ -159,17 +159,19 @@ public class EditConfigListScreen<E, CV extends EditableConfigValue<E>> extends 
 
         @Override
         public void onClicked(MouseButton button) {
-            playClickSound();
-            CV listType = listConfig.getType();
-            listType.setValue(listType.copy(listType.getDefaultValue()));
-            listType.onClicked(this, button, accepted -> {
-                if (accepted) {
-                    localValues.add(listType.getValue());
-                    changed = true;
-                }
+            if (listConfig.getCanEdit()) {
+                playClickSound();
+                CV listType = listConfig.getType();
+                listType.setValue(listType.copy(listType.getDefaultValue()));
+                listType.onClicked(this, button, accepted -> {
+                    if (accepted) {
+                        localValues.add(listType.getValue());
+                        changed = true;
+                    }
 
-                openGui();
-            });
+                    openGui();
+                });
+            }
         }
 
         @Override
