@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
@@ -10,6 +8,8 @@ import dev.ftb.mods.ftblibrary.ui.misc.LoadingScreen;
 import dev.ftb.mods.ftblibrary.util.BooleanConsumer;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ChatScreen;
@@ -468,11 +468,11 @@ public abstract class BaseScreen extends Panel {
     }
 
     @Override
-    public boolean mouseScrolled(double scroll) {
-        if (focusedWidget != null && focusedWidget.mouseScrolled(scroll)) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double xDelta, double yDelta) {
+        if (focusedWidget != null && focusedWidget.mouseScrolled(mouseX, mouseY, xDelta, yDelta)) {
             return true;
         }
-        return modalPanels.isEmpty() ? super.mouseScrolled(scroll) : modalPanels.peekFirst().mouseScrolled(scroll);
+        return modalPanels.isEmpty() ? super.mouseScrolled(mouseX, mouseY, xDelta, yDelta) : modalPanels.peekFirst().mouseScrolled(mouseX, mouseY, xDelta, yDelta);
     }
 
     @Override
