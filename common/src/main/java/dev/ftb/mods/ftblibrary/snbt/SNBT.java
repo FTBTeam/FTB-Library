@@ -7,8 +7,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.List;
 
@@ -72,11 +74,20 @@ public class SNBT {
 
     public static boolean write(Path path, CompoundTag nbt) {
         try {
-            if (Files.notExists(path.getParent())) {
-                Files.createDirectories(path.getParent());
+            Path parent = path.getParent();
+            if (Files.notExists(parent)) {
+                Files.createDirectories(parent);
             }
 
-            Files.write(path, writeLines(nbt));
+            // write to a temp file first and rename into place, so a crash/kill mid-write
+            // can never leave a truncated/corrupt file at the real path
+            Path tmp = parent.resolve(path.getFileName().toString() + ".tmp");
+            Files.write(tmp, writeLines(nbt));
+            try {
+                Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException ex) {
+                Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING);
+            }
             return true;
         } catch (Exception ex) {
             return false;
