@@ -1,13 +1,12 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ftb.mods.ftblibrary.core.mixin.common.MultilineTextFieldAccess;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultilineTextField;
@@ -321,6 +320,8 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
                 d0 = textField.getLineAtCursor() * lh - parent.height + lh + innerPadding() * 2;
             }
         }
+
+        d0 = Mth.clamp(d0, 0, Math.max(0, parent.getContentHeight() - parent.height));
 
         parent.setScrollY(d0);
     }

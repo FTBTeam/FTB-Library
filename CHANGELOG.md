@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.34]
+
+### Added
+* Backport keymapping abstraction system from 26.1
+  * Support for key modifiers on both NeoForge and Fabric (Fabric support requires the Amecs mod)
+* Added `ConfigValue#setCanEdit` variant which takes a `BooleanSupplier`
+  * Allows more for dynamic updating of config editor screen
+
+### Changed
+* Reworked panel scrolling to properly support vanilla's multi-axis scrolling (e.g. simultaneous X/Y scrolling via trackpad)
+
+### Fixed
+* Fixed a bug in MultilineTextBox causing widget to blank under certain circumstances (used by FTB Quests quest description editor)
+
 ## [2101.1.33]
 
 ### Changed

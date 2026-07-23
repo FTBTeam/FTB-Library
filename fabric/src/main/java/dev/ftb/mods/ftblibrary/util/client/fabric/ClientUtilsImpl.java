@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.util.client.fabric;
 
+import dev.ftb.mods.ftblibrary.util.fabric.InputImpl;
+import dev.ftb.mods.ftblibrary.util.input.Input;
 import dev.architectury.fluid.FluidStack;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.minecraft.client.Minecraft;
@@ -7,6 +9,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 
 public class ClientUtilsImpl {
+    private static final Input fabricInputImpl = new InputImpl();
+
+    public static Input input() {
+        return fabricInputImpl;
+    }
+
     public static ResourceLocation getStillTexture(FluidStack stack) {
         var fluid = stack.getFluid();
         var handler = FluidRenderHandlerRegistry.INSTANCE.get(fluid);

@@ -24,6 +24,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
 
@@ -110,7 +111,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
         allConfigButtons.forEach(w -> {
             if (w instanceof ConfigEntryButton<?> eb) {
-                widestKey = Math.max(widestKey, getTheme().getFont().width(eb.keyText));
+                widestKey = Math.max(widestKey, getTheme().getFont().width(eb.keyText.get()));
                 widestValue = Math.max(widestValue, getTheme().getFont().width(eb.getValueStr()));
             } else if (w instanceof ConfigGroupButton gb) {
                 widestGroup.setValue(Math.max(widestGroup.intValue(), getTheme().getStringWidth(gb.title)));
@@ -265,7 +266,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
     private class ConfigEntryButton<T> extends Button implements EditStringConfigOverlay.PosProvider {
         private final ConfigGroupButton groupButton;
         private final ConfigValue<T> configValue;
-        private final Component keyText;
+        private final Supplier<Component> keyText;
 
         public ConfigEntryButton(Panel panel, ConfigGroupButton groupButton, ConfigValue<T> configValue) {
             super(panel);
@@ -273,9 +274,9 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             this.groupButton = groupButton;
             this.configValue = configValue;
 
-            keyText = this.configValue.getCanEdit() ?
+            keyText = () -> this.configValue.getCanEdit() ?
                     Component.literal(this.configValue.getName()) :
-                    Component.literal(this.configValue.getName()).withStyle(ChatFormatting.GRAY);
+                    Component.literal(this.configValue.getName()).withStyle(ChatFormatting.DARK_GRAY);
         }
 
         @Override
@@ -283,7 +284,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             Icons.COLOR_BLANK.withColor(Color4I.GRAY).draw(graphics, x, y + 1, 10, 10);
             Icons.INFO.draw(graphics, x + 1, y + 2, 8, 8);
 
-            theme.drawString(graphics, keyText, x + 13, y + 2, Bits.setFlag(0, Theme.SHADOW, isMouseOver()));
+            theme.drawString(graphics, keyText.get(), x + 13, y + 2, Bits.setFlag(0, Theme.SHADOW, isMouseOver()));
 
             Component valueText = configValue.getStringForGUI(configValue.getValue());
 
@@ -293,7 +294,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             }
 
             var textCol = configValue.getColor().mutable();
-            textCol.setAlpha(255);
+            textCol.setAlpha(configValue.getCanEdit() ? 255 : 128);
 
             if (isMouseOver()) {
                 textCol.addBrightness(60);
@@ -307,7 +308,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
         @Override
         public void onClicked(MouseButton button) {
-            if (!readOnly && getMouseY() >= 20) {
+            if (!readOnly && getMouseY() >= 20 && configValue.getCanEdit()) {
                 playClickSound();
                 configValue.onClicked(this, button, accepted -> {
                     if (accepted) changed = true;
@@ -321,7 +322,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             if (getMouseY() > 18) {
                 int x = getMouseX() - getX();
                 if (x < 16) {
-                    list.add(keyText.copy().withStyle(ChatFormatting.UNDERLINE));
+                    list.add(keyText.get().copy().withStyle(ChatFormatting.UNDERLINE));
                     var tooltip = configValue.getTooltip();
 
                     if (!tooltip.isEmpty()) {

@@ -43,9 +43,11 @@ public class IntTextBox extends TextBox {
     }
 
     @Override
-    public boolean mouseScrolled(double scroll) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double xDelta, double yDelta) {
+        var directionlessDelta = xDelta != 0 ? xDelta : yDelta;
+
         if (allowInput()) {
-            setAmount(getIntValue() + (int) scroll);
+            setAmount(getIntValue() + (int) directionlessDelta);
             return true;
         }
         return false;

@@ -331,19 +331,19 @@ public abstract class Panel extends Widget {
     }
 
     @Override
-    public boolean mouseScrolled(double scroll) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double xDelta, double yDelta) {
         setOffset(true);
 
         for (var i = widgets.size() - 1; i >= 0; i--) {
             var widget = widgets.get(i);
 
-            if (widget.isEnabled() && widget.mouseScrolled(scroll)) {
+            if (widget.isEnabled() && widget.mouseScrolled(mouseX, mouseY, xDelta, yDelta)) {
                 setOffset(false);
                 return true;
             }
         }
 
-        var scrollPanel = scrollPanel(scroll);
+        var scrollPanel = scrollPanel(xDelta, yDelta);
         setOffset(false);
         return scrollPanel;
     }
@@ -365,15 +365,23 @@ public abstract class Panel extends Widget {
         return false;
     }
 
-    public boolean scrollPanel(double scroll) {
+    public boolean scrollPanel(double xDelta, double yDelta) {
         if (attachedScrollbar != null || !isMouseOver()) {
             return false;
         }
 
-        if (isDefaultScrollVertical() != isShiftKeyDown()) {
-            return movePanelScroll(0, -getScrollStep() * scroll);
+        // No scroll direction was given?
+        var directionlessDelta = yDelta != 0 ? yDelta : xDelta;
+        if (directionlessDelta == 0) {
+            return false;
+        }
+
+        // If the user is pressing shift, we'll always attempt to scroll horizontally, otherwise we'll just blindly apply both directions
+        if (isShiftKeyDown()) {
+            var scrollAmount = -getScrollStep() * directionlessDelta;
+            return movePanelScroll(scrollAmount, 0);
         } else {
-            return movePanelScroll(-getScrollStep() * scroll, 0);
+            return movePanelScroll(-getScrollStep() * xDelta, -getScrollStep() * yDelta);
         }
     }
 
@@ -402,10 +410,6 @@ public abstract class Panel extends Widget {
         }
 
         return getScrollX() != sx || getScrollY() != sy;
-    }
-
-    public boolean isDefaultScrollVertical() {
-        return true;
     }
 
     public double getScrollStep() {

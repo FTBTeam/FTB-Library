@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.ui;
 
-import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import dev.architectury.platform.Platform;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
@@ -53,7 +53,9 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
     @Override
     public boolean mouseScrolled(double x, double y, double dirX, double dirY) {
-        return wrappedGui.mouseScrolled(dirY) || super.mouseScrolled(x, y, dirX, dirY);
+        return wrappedGui.mouseScrolled(x, y, dirX, dirY) ||
+                wrappedGui.mouseScrolled(dirY) || // TODO: Remove this when all guis are updated to the new mouseScrolled method
+                super.mouseScrolled(x, y, dirX, dirY);
     }
 
     @Override
