@@ -308,7 +308,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
 
         @Override
         public void onClicked(MouseButton button) {
-            if (!readOnly && getMouseY() >= 20) {
+            if (!readOnly && getMouseY() >= 20 && configValue.getCanEdit()) {
                 playClickSound();
                 configValue.onClicked(this, button, accepted -> {
                     if (accepted) changed = true;
