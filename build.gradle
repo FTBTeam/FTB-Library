@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'net.fabricmc.fabric-loom' version '1.15.2' apply(false)
     id 'net.neoforged.moddev' version '2.0.140' apply(false)
-    id "me.modmuss50.mod-publish-plugin" version "2.0.0-beta.2"
+    id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
 tasks.named('wrapper', Wrapper).configure {
