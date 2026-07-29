@@ -34,11 +34,6 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
     }
 
     @Override
-    public boolean scrollPanel(double scroll) {
-        return super.scrollPanel(scroll);
-    }
-
-    @Override
     public void addWidgets() {
         add(textBox);
         add(mainPanel);

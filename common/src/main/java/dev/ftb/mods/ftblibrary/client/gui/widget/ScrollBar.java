@@ -73,9 +73,10 @@ public class ScrollBar extends Widget {
     }
 
     @Override
-    public boolean mouseScrolled(double scroll) {
-        if (scroll != 0 && canMouseScrollPlane() && canMouseScroll()) {
-            setValue(getValue() - getScrollStep() * scroll);
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        var scrollDelta = scrollY == 0  ? scrollX : scrollY;
+        if (scrollDelta != 0 && canMouseScrollPlane() && canMouseScroll()) {
+            setValue(getValue() - getScrollStep() * scrollDelta);
             return true;
         }
 
