@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * Default width of string editor overlays is a bit wider now
+* Update panel scrolling to handle both X and Y axes, since this is well-supported by vanilla
+  * `Panel#scrollPanel` signature has changed
+  * Soft-breaking change; mods need to update to new API. They won't crash if not but panel scrolling may not function well
 
 ### Fixed
 * Fixed execClientCommand() incorrectly stripping all forward slashes from commands (thanks @FalAut)
