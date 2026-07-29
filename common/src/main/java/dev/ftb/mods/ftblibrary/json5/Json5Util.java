@@ -6,8 +6,10 @@ import net.minecraft.core.HolderLookup;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -82,9 +84,16 @@ public class Json5Util {
         }
     }
 
-    public static void save(Path outputFile, Json5Element json) throws IOException {
-        Files.createDirectories(outputFile.getParent());
-        Files.writeString(outputFile, new Json5().serialize(json));
+    public static void save(Path path, Json5Element json) throws IOException {
+        Path parent = path.getParent();
+        Files.createDirectories(parent);
+        Path tmp = parent.resolve(path.getFileName().toString() + ".tmp");
+        Files.writeString(tmp, new Json5().serialize(json));
+        try {
+            Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        } catch (AtomicMoveNotSupportedException ex) {
+            Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     /// Use [#load(Path)]
