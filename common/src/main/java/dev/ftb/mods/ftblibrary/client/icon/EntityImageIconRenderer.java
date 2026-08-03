@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.client.icon;
 
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.EntityImageIcon;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -21,10 +22,10 @@ public enum EntityImageIconRenderer implements IconRenderer<EntityImageIcon> {
         pose.translate(x, y);
         pose.scale(scaleX, scaleY);
 
-        IconHelper.renderIcon(icon.getMainIcon(), graphics, 0, 0, (int) drawWidth, (int) drawHeight);
+        IconHelper.renderIcon(colorize(icon, icon.getMainIcon()), graphics, 0, 0, (int) drawWidth, (int) drawHeight);
 
         icon.children().forEach(pair -> {
-            Icon<?> subIcon = pair.getLeft();
+            Icon<?> subIcon = colorize(icon, pair.getLeft());
             EntityImageIcon.ChildIconData child = pair.getRight();
             pose.pushMatrix();
             child.offset().ifPresent(offset -> pose.translate(offset.x(), offset.y()));
@@ -33,5 +34,9 @@ public enum EntityImageIconRenderer implements IconRenderer<EntityImageIcon> {
         });
 
         pose.popMatrix();
+    }
+
+    private Icon<?> colorize(EntityImageIcon imgIcon, Icon<?> icon) {
+        return imgIcon.getColor() == Color4I.WHITE ? icon : icon.withColor(imgIcon.getColor());
     }
 }

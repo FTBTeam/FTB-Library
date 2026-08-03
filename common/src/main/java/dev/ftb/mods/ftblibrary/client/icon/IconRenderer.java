@@ -20,7 +20,7 @@ public interface IconRenderer<T extends Icon<T>> {
     void render(T icon, GuiGraphicsExtractor graphics, int x, int y, int w, int h);
 
     /**
-     * In most cases, this can just default to {@link #render(Icon, GuiGraphics, int, int, int, int)}, but some icon types
+     * In most cases, this can just default to {@link #render(Icon, GuiGraphicsExtractor, int, int, int, int)}, but some icon types
      * can have dynamic textures which change over time. This method can be overridden for those types to draw a
      * static, unchanging image, where needed.
      *
