@@ -54,7 +54,7 @@ public class InputImpl implements Input {
             case CONTROL -> Screen.hasControlDown();
             case SHIFT -> Screen.hasShiftDown();
             case ALT -> Screen.hasAltDown();
-            case NONE -> true;
+            case NONE -> !Screen.hasAltDown() && !Screen.hasControlDown() && !Screen.hasShiftDown();
         };
     }
 
