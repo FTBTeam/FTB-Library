@@ -22,7 +22,7 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
         AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(icon.texture);
 
         if (icon.tileSize <= 0D) {
-            graphics.guiRenderState.addBlitToCurrentLayer(new BlitRenderState(
+            graphics.guiRenderState.addGuiElement(new BlitRenderState(
                     RenderPipelines.GUI_TEXTURED,
                     TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler()),
                     new Matrix3x2f(graphics.pose()),

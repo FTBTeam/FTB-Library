@@ -311,6 +311,8 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
             }
         }
 
+        d0 = Mth.clamp(d0, 0, Math.max(0, parent.getContentHeight() - parent.height));
+
         parent.setScrollY(d0);
     }
 

@@ -18,20 +18,32 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class EntityImageIcon extends Icon<EntityImageIcon> {
+    private final Icon<?> mainIcon;
+    private final List<Icon<?>> childIcons;
     @Nullable
     private final Slice mainSlice;
     private final List<ChildIconData> children;
-    private final Icon<?> mainIcon;
-    private final List<Icon<?>> childIcons;
-    private final EntityIconLoader.@Nullable WidthHeight defaultImageSize;
+    private final Color4I color;
 
-    public EntityImageIcon(Identifier mainTexture, @Nullable Slice mainSlice, List<ChildIconData> children, EntityIconLoader.@Nullable WidthHeight defaultImageSize) {
+    public EntityImageIcon(Identifier mainTexture, @Nullable Slice mainSlice, List<ChildIconData> children, EntityIconLoader.@Nullable WidthHeight defaultImageSize, Color4I color) {
         this.mainSlice = mainSlice;
         this.children = children;
-        this.defaultImageSize = defaultImageSize;
+        this.color = color;
 
-        mainIcon = createIcon(mainTexture, mainSlice);
-        childIcons = children.stream().map(c -> createIcon(c.texture.orElse(mainTexture), c.slice)).collect(Collectors.toList());
+        mainIcon = createIcon(mainTexture, mainSlice, defaultImageSize);
+        childIcons = children.stream().map(c -> createIcon(c.texture.orElse(mainTexture), c.slice, defaultImageSize)).collect(Collectors.toList());
+    }
+
+    public EntityImageIcon(Identifier mainTexture, @Nullable Slice mainSlice, List<ChildIconData> children, EntityIconLoader.@Nullable WidthHeight defaultImageSize) {
+        this(mainTexture, mainSlice, children, defaultImageSize, Color4I.WHITE);
+    }
+
+    private EntityImageIcon(Icon<?> mainIcon, List<Icon<?>> childIcons, @Nullable Slice mainSlice, List<ChildIconData> children, Color4I color) {
+        this.mainSlice = mainSlice;
+        this.children = children;
+        this.color = color;
+        this.mainIcon = mainIcon;
+        this.childIcons = childIcons;
     }
 
     public int getDrawWidth(int defWidth) {
@@ -52,6 +64,20 @@ public class EntityImageIcon extends Icon<EntityImageIcon> {
 
     public Stream<Pair<Icon<?>, ChildIconData>> children() {
         return Streams.zip(childIcons.stream(), children.stream(), Pair::of);
+    }
+
+    public Color4I getColor() {
+        return color;
+    }
+
+    @Override
+    public Icon<EntityImageIcon> copy() {
+        return new EntityImageIcon(mainIcon, childIcons, mainSlice, children, color);
+    }
+
+    @Override
+    public Icon<EntityImageIcon> withColor(Color4I newColor) {
+        return new EntityImageIcon(mainIcon, childIcons, mainSlice, children, newColor);
     }
 
     @Override
@@ -83,7 +109,7 @@ public class EntityImageIcon extends Icon<EntityImageIcon> {
         ).apply(instance, ChildIconData::new));
     }
 
-    private Icon<?> createIcon(Identifier texture, @Nullable Slice slice) {
+    private Icon<?> createIcon(Identifier texture, @Nullable Slice slice, EntityIconLoader.@Nullable WidthHeight defaultImageSize) {
         try (SimpleTexture tex = new SimpleTexture(texture)) {
             TextureContents load = tex.loadContents(Minecraft.getInstance().getResourceManager());
             ImageIcon imageIcon = new ImageIcon(texture);

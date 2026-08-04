@@ -345,13 +345,15 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         }
 
         @Override
-        public boolean mouseScrolled(double scroll) {
+        public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
             if (!isMouseOver) return false;
+
+            var directionlessDelta = scrollX != 0 ? scrollX : scrollY;
             if (isShiftKeyDown()) {
-                int adj = scroll > 0 ? getCount() : -getCount() / 2;
+                int adj = directionlessDelta > 0 ? getCount() : -getCount() / 2;
                 adjust(adj);
             } else {
-                adjust((int) Math.signum(scroll));
+                adjust((int) Math.signum(directionlessDelta));
             }
             return true;
         }

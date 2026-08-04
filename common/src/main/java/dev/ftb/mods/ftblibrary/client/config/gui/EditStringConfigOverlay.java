@@ -36,8 +36,8 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         this.currentValue = config.copy(config.getValue());
         this.title = title;
 
-        int stringWidth = getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue));
-        width = Math.min(getWindow().getGuiScaledWidth() / 2, stringWidth + config.getExtraEditorWidth());
+        width = Math.clamp(currentValue == null ? 0 : getGui().getTheme().getStringWidth(config.getStringFromValue(currentValue)) + 86,
+                150, getWindow().getGuiScaledWidth() * 3 / 4);
 
         titleField = new TextField(this).addFlags(Theme.SHADOW).setText(Objects.requireNonNullElse(title, Component.empty()));
         titleField.setSize(0, 0);
@@ -165,12 +165,13 @@ public class EditStringConfigOverlay<T> extends ModalPanel {
         }
 
         @Override
-        public boolean mouseScrolled(double scroll) {
-            return config.scrollValue(currentValue, scroll > 0).map(v -> {
+        public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+            var directionlessDelta = scrollX != 0 ? scrollX : scrollY;
+            return config.scrollValue(currentValue, directionlessDelta > 0).map(v -> {
                 textBox.setText(config.getStringFromValue(v));
                 textBox.setSelectionPos(textBox.getCursorPos());
                 return true;
-            }).orElse(super.mouseScrolled(scroll));
+            }).orElse(super.mouseScrolled(mouseX, mouseY, scrollX, scrollY));
         }
     }
 }

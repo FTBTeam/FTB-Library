@@ -18,9 +18,7 @@ public abstract class EditableVariantConfig<T> extends EditableConfigValue<T> {
 
     @Override
     public void onClicked(Widget clickedWidget, MouseButton button, ConfigCallback callback) {
-        if (getCanEdit()) {
-            boolean changed = updateValue(getIteration(value, button.isLeft()));
-            callback.save(changed);
-        }
+        boolean changed = updateValue(getIteration(value, button.isLeft()));
+        callback.save(changed);
     }
 }

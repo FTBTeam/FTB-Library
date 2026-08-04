@@ -21,12 +21,16 @@ import net.minecraft.world.item.Items;
 import org.jspecify.annotations.Nullable;
 
 public class ItemIcon extends Icon<ItemIcon> implements IResourceIcon {
-    // important to an ItemStackTemplate here; a full ItemStack will cause problems for early-loading
+    // important to use an ItemStackTemplate here; a full ItemStack will cause problems for early-loading
     // e.g. sidebar Json loading
     private final ItemStackTemplate stack;
 
     private ItemIcon(ItemStackTemplate is) {
         stack = is;
+    }
+
+    public static ItemIcon ofTemplate(ItemStackTemplate stack) {
+        return new ItemIcon(stack);
     }
 
     public static Icon<?> ofItemStack(ItemStack stack) {

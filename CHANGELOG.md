@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [26.1.2.7]
+
+### Added
+* Added `Vec2d` utility class
+* Added `EditableConfigValue#setCanEdit` variant taking a `BooleanSupplier`
+  * Allows for more dynamic control of can-edit visual appearance for entries in config editor screen
+* Added "undo" and "redo" icons
+* Added `DocsMod` abstraction layer
+* `ImageComponent` now has a "click_action" field
+
+### Changed
+* Default width of string editor overlays is a bit wider now
+* Update panel scrolling to handle both X and Y axes, since this is well-supported by vanilla
+  * `Panel#scrollPanel` signature has changed
+  * Soft-breaking change; mods need to update to new API. They won't crash if not but panel scrolling may not function well
+
+### Fixed
+* Fixed execClientCommand() incorrectly stripping all forward slashes from commands (thanks @FalAut)
+* Fixed pose stack leak which could happen under some circumstances in sidebar rendering
+
 ## [26.1.2.6-beta]
 
 ### Fixed

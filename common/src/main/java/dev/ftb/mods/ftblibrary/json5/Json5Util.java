@@ -2,12 +2,18 @@ package dev.ftb.mods.ftblibrary.json5;
 
 import com.mojang.serialization.Codec;
 import de.marhali.json5.*;
+import de.marhali.json5.exception.Json5Exception;
 import net.minecraft.core.HolderLookup;
+import org.apache.commons.io.Charsets;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -73,18 +79,30 @@ public class Json5Util {
 
     public static <T extends Json5Element> T load(Path inputFile, Class<T> jsonCls) throws IOException {
         try (FileInputStream stream = new FileInputStream(inputFile.toFile())) {
-            var json = new Json5().parse(stream);
-            if (jsonCls.isAssignableFrom(json.getClass())) {
-                return jsonCls.cast(json);
-            } else {
-                throw new IOException("expected object of type " + jsonCls.getName());
+            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+            try {
+                var json = new Json5().parse(reader);
+                if (jsonCls.isAssignableFrom(json.getClass())) {
+                    return jsonCls.cast(json);
+                } else {
+                    throw new IOException("expected object of type " + jsonCls.getName());
+                }
+            } catch (Json5Exception ex) {
+                throw new IOException("caught Json5Exception while parsing " + inputFile + ": " + ex.getMessage());
             }
         }
     }
 
-    public static void save(Path outputFile, Json5Element json) throws IOException {
-        Files.createDirectories(outputFile.getParent());
-        Files.writeString(outputFile, new Json5().serialize(json));
+    public static void save(Path path, Json5Element json) throws IOException {
+        Path parent = path.getParent();
+        Files.createDirectories(parent);
+        Path tmp = parent.resolve(path.getFileName().toString() + ".tmp");
+        Files.writeString(tmp, new Json5().serialize(json), StandardCharsets.UTF_8);
+        try {
+            Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        } catch (AtomicMoveNotSupportedException ex) {
+            Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     /// Use [#load(Path)]
