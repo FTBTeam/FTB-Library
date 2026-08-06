@@ -15,6 +15,14 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
+/// Legacy support utility class for converting FTB SNBT files to JSON5.
+///
+/// To reduce the amount of work needed to do the conversion, we utilize Minecraft's built-in SNBT parser by first converting
+/// our home-grown SNBT format into a "valid" SNBT format. The built-in parser is luckily very lenient and will accept our
+/// slightly funky output.
+///
+/// Most of the bulk of the implementation is correctly pulling comments from the SNBT file and
+/// attaching them to the correct keys in the JSON5 output.
 public class SnbtToJson5 {
     static void main() throws IOException {
         var userHome = System.getProperty("user.home");
@@ -25,6 +33,10 @@ public class SnbtToJson5 {
         System.out.printf("%s", jsonData.toString());
     }
 
+    /// Convert an FTB SNBT string to a JSON5 object.
+    /// @param input the FTB SNBT string
+    /// @return the JSON5 object
+    /// @throws RuntimeException if the input is not valid SNBT (TODO: Harden exception handling)
     public static Json5Object convert(String input) {
         // Take in an FTB SNBT string and add ',' to the end of each line except the comments, etc.
         StringBuilder output = new StringBuilder();
@@ -122,6 +134,11 @@ public class SnbtToJson5 {
         return asObject;
     }
 
+    /// Recursively attach comments to the json5 object based on the comments map.
+    ///
+    /// @param asObject the json5 object to attach comments to
+    /// @param comments the map of comments to attach
+    /// @param lastKey the last key in the hierarchy, used to build the full key
     private static void attachComments(Json5Object asObject, Map<String, String> comments, String lastKey) {
         for (var entry : asObject.entrySet()) {
             var key = entry.getKey();
@@ -136,8 +153,12 @@ public class SnbtToJson5 {
         }
     }
 
-    private static String normalizeComment(String cmt) {
-        var comment = cmt.trim();
+    /// Trims out the comment markers and whitespace from a comment line.
+    ///
+    /// @param commentLine the comment line
+    /// @return the normalized comment
+    private static String normalizeComment(String commentLine) {
+        var comment = commentLine.trim();
         // Remove the comment markers, trim, and return
         int sliceStart = 0;
         int sliceEnd = comment.length();
@@ -154,6 +175,10 @@ public class SnbtToJson5 {
         return comment.substring(sliceStart, sliceEnd).trim();
     }
 
+    /// Checks if a line is a comment line per the FTB SNBT format.
+    ///
+    /// @param line the line to check
+    /// @return true if the line is a comment line, false otherwise
     private static boolean isCommentLine(String line) {
         String trimmedLine = line.trim();
         return trimmedLine.startsWith("/*") ||
