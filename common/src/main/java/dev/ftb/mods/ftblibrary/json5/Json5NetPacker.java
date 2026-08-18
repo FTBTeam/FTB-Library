@@ -18,6 +18,8 @@ import java.util.Map;
 ///
 /// It's important to note that comments are *not* preserved in this serialization.
 public class Json5NetPacker {
+    private static final int MAX_STR_LEN = 65536;
+
     public static final StreamCodec<ByteBuf, Json5Element> CODEC = StreamCodec.of(
             Json5NetPacker::pack,
             Json5NetPacker::unpack
@@ -103,6 +105,10 @@ public class Json5NetPacker {
     }
 
     private static void writeString(ByteBuf buffer, String s) {
+        if (s.length() > MAX_STR_LEN) {
+            throw new IllegalStateException("writeString: string too large! " + s.length() + " > " + MAX_STR_LEN);
+        }
+
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
         buffer.writeInt(bytes.length);
         buffer.writeBytes(bytes);
@@ -110,6 +116,9 @@ public class Json5NetPacker {
 
     private static String readString(ByteBuf buffer) {
         int length = buffer.readInt();
+        if (length > MAX_STR_LEN) {
+            throw new IllegalStateException("readString: string too large! " + length + " > " + MAX_STR_LEN);
+        }
         byte[] bytes = new byte[length];
         buffer.readBytes(bytes);
         return new String(bytes, StandardCharsets.UTF_8);
@@ -225,6 +234,9 @@ public class Json5NetPacker {
             case LONG -> Json5Primitive.fromNumber(buffer.readLong());
             case BIG_INT -> {
                 int length = buffer.readInt();
+                if (length > MAX_STR_LEN) {
+                    throw new IllegalStateException("unpack big integer: string too large! " + length + " > " + MAX_STR_LEN);
+                }
                 byte[] bigIntBytes = new byte[length];
                 buffer.readBytes(bigIntBytes);
                 yield Json5Primitive.fromNumber(new BigInteger(bigIntBytes));
