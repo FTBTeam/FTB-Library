@@ -76,7 +76,7 @@ public class Json5NetPacker {
     }
 
     private static void validateStrLength(int len, String msg) {
-        if (len <= 0 || len > MAX_STR_LEN) {
+        if (len < 0 || len > MAX_STR_LEN) {
             throw new IllegalStateException(msg + ": invalid length! " + len + " not in range (0," + MAX_STR_LEN + "]");
         }
     }
