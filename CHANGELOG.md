@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Added `CursorType.MOVE`
 
+### Fixed
+* Fixed some numeric value handling in the NBT editor (thanks @BaklajanPremium)
+
 ## [2101.1.35]
 
 ### Fixed
