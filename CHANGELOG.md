@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `CursorType.MOVE`
 
 ### Fixed
-* FIxed empty strings in Json5 objects not serializing over the network
+* Fixed some numeric value handling in the NBT editor (thanks @BaklajanPremium)
+* Save configs after loading to ensure any new fields added have their defaults written to the config file
 
 ## [26.1.2.7]
 
