@@ -305,9 +305,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         @Override
         public void updateTitle() {
             Object value = switch (nbt.getId()) {
-                case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT -> ((NumericTag) nbt).getAsInt();
+                case Tag.TAG_BYTE -> ((NumericTag) nbt).getAsByte();
+                case Tag.TAG_SHORT -> ((NumericTag) nbt).getAsShort();
+                case Tag.TAG_INT -> ((NumericTag) nbt).getAsInt();
                 case Tag.TAG_LONG -> ((NumericTag) nbt).getAsLong();
-                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> ((NumericTag) nbt).getAsDouble();
+                case Tag.TAG_FLOAT -> ((NumericTag) nbt).getAsFloat();
+                case Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> ((NumericTag) nbt).getAsDouble();
                 case Tag.TAG_STRING -> nbt.getAsString();
                 default -> "";
             };
@@ -342,12 +345,15 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
         public void edit() {
             switch (nbt.getId()) {
-                case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
-                        openEditOverlay(new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), ((NumericTag) nbt).getAsInt());
+                case Tag.TAG_BYTE ->
+                        openEditOverlay(new IntConfig(Byte.MIN_VALUE, Byte.MAX_VALUE), ((NumericTag) nbt).getAsInt());
+                case Tag.TAG_SHORT -> openEditOverlay(new IntConfig(Short.MIN_VALUE, Short.MAX_VALUE), ((NumericTag) nbt).getAsInt());
+                case Tag.TAG_INT -> openEditOverlay(new IntConfig(Integer.MIN_VALUE, Integer.MAX_VALUE), ((NumericTag) nbt).getAsInt());
                 case Tag.TAG_LONG ->
                         openEditOverlay(new LongConfig(Long.MIN_VALUE, Long.MAX_VALUE), ((NumericTag) nbt).getAsLong());
-                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC ->
-                        openEditOverlay(new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), ((NumericTag) nbt).getAsDouble());
+                case Tag.TAG_FLOAT ->
+                        openEditOverlay(new DoubleConfig(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY), ((NumericTag) nbt).getAsDouble());
+                case Tag.TAG_ANY_NUMERIC, Tag.TAG_DOUBLE -> openEditOverlay(new DoubleConfig(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), ((NumericTag) nbt).getAsDouble());
                 case Tag.TAG_STRING -> openEditOverlay(new StringConfig(), nbt.getAsString());
             }
         }
@@ -363,11 +369,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         public void onCallback(ConfigValue<?> value, boolean accepted) {
             if (accepted) {
                 switch (nbt.getId()) {
-                    case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
-                            nbt = IntTag.valueOf(((Number) value.getValue()).intValue());
+                    case Tag.TAG_BYTE -> nbt = ByteTag.valueOf(((Number) value.getValue()).byteValue());
+                    case Tag.TAG_SHORT -> nbt = ShortTag.valueOf(((Number) value.getValue()).shortValue());
+                    case Tag.TAG_INT -> nbt = IntTag.valueOf(((Number) value.getValue()).intValue());
                     case Tag.TAG_LONG -> nbt = LongTag.valueOf(((Number) value.getValue()).longValue());
-                    case Tag.TAG_FLOAT, Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC ->
-                            nbt = DoubleTag.valueOf(((Number) value.getValue()).doubleValue());
+                    case Tag.TAG_FLOAT -> nbt = FloatTag.valueOf(((Number) value.getValue()).floatValue());
+                    case Tag.TAG_DOUBLE, Tag.TAG_ANY_NUMERIC -> nbt = DoubleTag.valueOf(((Number) value.getValue()).doubleValue());
                     case Tag.TAG_STRING -> nbt = StringTag.valueOf(value.getValue().toString());
                 }
 
