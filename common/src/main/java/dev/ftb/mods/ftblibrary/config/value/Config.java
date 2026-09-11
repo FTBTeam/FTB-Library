@@ -11,8 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * A config group is basically a list of config values of any BaseValue type, including another ConfigGroup,
- * allowing for nested config groups.
+ * A {@code Config} is basically a list of values of any {@link BaseValue} type, including another
+ * {@code Config}, allowing for nested config groups.
  */
 public class Config extends BaseValue<List<BaseValue<?>>> {
     private int displayOrder = 0;

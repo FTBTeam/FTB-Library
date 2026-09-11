@@ -58,11 +58,11 @@ public enum ConfigManager {
     }
 
     /**
-     * Register a client config. Client configs are loaded on client setup, specifically when the
-     * Architectury {@code ClientLifecycleEvent.CLIENT_SETUP} event is fired. This method does not need to be called
-     * on the server, though it does not hurt to do so.
+     * Register a client config. Client configs are loaded on client setup, specifically when the NeoForge
+     * {@code ClientStartedEvent} or Fabric  {@code ClientLifecycleEvents.CLIENT_STARTED} event is fired.
+     * This method does not need to be called on the server, though it does not hurt to do so.
      *
-     * @param config the {@link Config} object, typically statically created by {@code ConfigGroup.create()}
+     * @param config the {@link Config} object, typically statically created by {@link Config#create(String)}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param onEdited a BooleanConsumer which is called when the config is edited via GUI, or changed via sync from server
      * @return the same config object
@@ -75,7 +75,7 @@ public enum ConfigManager {
     /**
      * @see #registerServerConfig(Config, String, boolean, BooleanConsumer)
      *
-     * @param config the {@link Config} object, typically statically created by {@code ConfigGroup.create()}
+     * @param config the {@link Config} object, typically statically created by {@link Config#create(String)}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param sync if true, this config is automatically sync'd to clients when players log in
      * @return the same config object
@@ -85,10 +85,10 @@ public enum ConfigManager {
     }
 
     /**
-     * Register a server config. Server configs are loaded on server startup, specifically when the
-     * Architectury {@code LifecycleEvent.SERVER_BEFORE_START} event is fired.
+     * Register a server config. Server configs are loaded on server startup, specifically when the NeoForge
+     * {@code ServerAboutToStartEvent} or the Fabric {@code ServerLifecycleEvents.SERVER_STARTING} event is fired.
      *
-     * @param config the {@link Config} object, typically created by {@code ConfigGroup.create()}
+     * @param config the {@link Config} object, typically created by {@link Config#create(String)}
      * @param groupPrefix a group prefix for translation purposes; should start with your mod ID
      * @param sync if true, this config is automatically sync'd to clients when players log in
      * @param onEdited a BooleanConsumer which is called when the config is changed via sync from client
