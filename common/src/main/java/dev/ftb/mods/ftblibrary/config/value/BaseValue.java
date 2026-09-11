@@ -159,7 +159,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     public final void addToEditableConfigGroup(EditableConfigGroup group) {
         var editable = fillClientConfig(group);
         if (editable != null) {
-            editable.setCanEdit(enabled.getAsBoolean());
+            editable.setCanEdit(enabled);
         }
     }
 

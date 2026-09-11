@@ -351,12 +351,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
 
         public void edit() {
             switch (nbt.getId()) {
-                case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
-                        openEditOverlay(new EditableInt(Integer.MIN_VALUE, Integer.MAX_VALUE), nbt.asInt().orElseThrow());
-                case Tag.TAG_LONG ->
-                        openEditOverlay(new EditableLong(Long.MIN_VALUE, Long.MAX_VALUE), nbt.asLong().orElseThrow());
-                case Tag.TAG_FLOAT, Tag.TAG_DOUBLE ->
-                        openEditOverlay(new EditableDouble(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), nbt.asDouble().orElseThrow());
+                case Tag.TAG_BYTE -> openEditOverlay(new EditableInt(Byte.MIN_VALUE, Byte.MAX_VALUE), nbt.asInt().orElseThrow());
+                case Tag.TAG_SHORT -> openEditOverlay(new EditableInt(Short.MIN_VALUE, Short.MAX_VALUE), nbt.asInt().orElseThrow());
+                case Tag.TAG_INT -> openEditOverlay(new EditableInt(Integer.MIN_VALUE, Integer.MAX_VALUE), nbt.asInt().orElseThrow());
+                case Tag.TAG_LONG -> openEditOverlay(new EditableLong(Long.MIN_VALUE, Long.MAX_VALUE), nbt.asLong().orElseThrow());
+                case Tag.TAG_FLOAT -> openEditOverlay(new EditableDouble(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY), nbt.asDouble().orElseThrow());
+                case Tag.TAG_DOUBLE -> openEditOverlay(new EditableDouble(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), nbt.asDouble().orElseThrow());
                 case Tag.TAG_STRING -> openEditOverlay(new EditableString(), nbt.asString().orElseThrow());
             }
         }
@@ -372,11 +372,12 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
         public void onCallback(EditableConfigValue<?> value, boolean accepted) {
             if (accepted) {
                 switch (nbt.getId()) {
-                    case Tag.TAG_BYTE, Tag.TAG_SHORT, Tag.TAG_INT ->
-                            nbt = IntTag.valueOf(((Number) value.getValue()).intValue());
+                    case Tag.TAG_BYTE -> nbt = ByteTag.valueOf(((Number) value.getValue()).byteValue());
+                    case Tag.TAG_INT -> nbt = IntTag.valueOf(((Number) value.getValue()).intValue());
+                    case Tag.TAG_SHORT -> nbt = ShortTag.valueOf(((Number) value.getValue()).shortValue());
                     case Tag.TAG_LONG -> nbt = LongTag.valueOf(((Number) value.getValue()).longValue());
-                    case Tag.TAG_FLOAT, Tag.TAG_DOUBLE ->
-                            nbt = DoubleTag.valueOf(((Number) value.getValue()).doubleValue());
+                    case Tag.TAG_DOUBLE -> nbt = DoubleTag.valueOf(((Number) value.getValue()).doubleValue());
+                    case Tag.TAG_FLOAT -> nbt = FloatTag.valueOf(((Number) value.getValue()).floatValue());
                     case Tag.TAG_STRING -> nbt = StringTag.valueOf(value.getValue().toString());
                 }
 

@@ -31,6 +31,7 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
         try (FileInputStream input = new FileInputStream(path.toFile())) {
             var element = new Json5().parse(input);
             config.read(new Json5ConfigSerializer(element.getAsJson5Object()));
+            writeToFile(config, path);
         } catch (FileNotFoundException | IllegalStateException e) {
             throw new IOException(e);
         }
