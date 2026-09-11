@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [26.1.2.8]
 
+### Added
+* Added `CursorType.MOVE`
+
 ### Fixed
+* FIxed empty strings in Json5 objects not serializing over the network
 
 ## [26.1.2.7]
 
