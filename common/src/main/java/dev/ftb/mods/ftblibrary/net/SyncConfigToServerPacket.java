@@ -33,7 +33,7 @@ public record SyncConfigToServerPacket(String configName, SNBTCompoundTag config
     }
 
     public static void handle(SyncConfigToServerPacket message, NetworkManager.PacketContext context) {
-        if (context.getPlayer() instanceof ServerPlayer sp && sp.hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
+        if (context.getPlayer() instanceof ServerPlayer sp && sp.hasPermissions(Commands.LEVEL_OWNERS)) {
             context.queue(() -> {
                 MinecraftServer server = sp.getServer();
 

@@ -45,12 +45,12 @@ public record EditConfigChoicePacket(ConfigType configType, String clientConfig,
         switch (message.configType) {
             case CLIENT -> ConfigManagerClient.editConfig(message.clientConfig);
             case SERVER -> {
-                if (context.getPlayer().hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
+                if (context.getPlayer().hasPermissions(Commands.LEVEL_OWNERS)) {
                     ConfigManagerClient.editConfig(message.serverConfig());
                 }
             }
             case CHOOSE -> {
-                if (context.getPlayer().hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
+                if (context.getPlayer().hasPermissions(Commands.LEVEL_OWNERS)) {
                     ChooseConfigScreen.open(message);
                 } else {
                     ConfigManagerClient.editConfig(message.clientConfig());
