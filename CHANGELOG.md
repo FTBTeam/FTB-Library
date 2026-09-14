@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [26.1.2.9]
+
+### Changed
+* `SyncConfigToServerPacket` now requires player permission level of 4 instead of 2
+  * Tighter restriction is appropriate since editing server configs of mods is a server admin task, not game master
+
+
 ## [26.1.2.8]
 
 ### Added
