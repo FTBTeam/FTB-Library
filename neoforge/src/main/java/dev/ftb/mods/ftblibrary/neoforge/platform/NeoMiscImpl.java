@@ -54,6 +54,14 @@ public class NeoMiscImpl implements Misc {
 
     @Override
     public boolean canAxeStrip(ItemStack stack) {
+//        InteractionResult interactionResult = Minecraft.getInstance().level.registryAccess()
+//                .lookupOrThrow(Registries.BLOCK_TRANSFORMER)
+//                .getOrThrow(BlockTransformers.AXE)
+//                .unwrap()
+//                .right()
+//                .orElseThrow()
+//                .transformBlock(new UseOnContext());
+
         return false;
 //        return stack.getItem().canPerformAction(stack, ItemAbilities.AXE_STRIP);
     }

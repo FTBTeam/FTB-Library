@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftblibrary.fabric.platform;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.core.mixin.fabric.KeyMappingAccess;
 import dev.ftb.mods.ftblibrary.core.mixin.fabric.PatchedDataComponentMapAccess;
 import dev.ftb.mods.ftblibrary.fabric.PlayerDisplayNameCache;
 import dev.ftb.mods.ftblibrary.platform.Misc;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.BlockPos;
@@ -12,10 +12,7 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
@@ -65,17 +62,20 @@ public class FabricMiscImpl implements Misc {
 
     @Override
     public boolean canAxeStrip(ItemStack stack) {
-        return stack.getItem() instanceof AxeItem;
+//        return stack.getItem() instanceof AxeItem;
+        return false;
     }
 
     @Override
     public boolean canTillSoil(ItemStack stack) {
-        return stack.getItem() instanceof HoeItem;
+//        return stack.getItem() instanceof HoeItem;
+        return false;
     }
 
     @Override
     public boolean canFlattenPath(ItemStack stack) {
-        return stack.getItem() instanceof ShovelItem;
+//        return stack.getItem() instanceof ShovelItem;
+        return false;
     }
 
     @Override

@@ -1,14 +1,11 @@
 package dev.ftb.mods.ftblibrary.fabric.platform.client;
 
-import dev.ftb.mods.ftblibrary.FTBLibrary;
-import dev.ftb.mods.ftblibrary.fabric.integrations.keys.AmecsKeyProvider;
 import dev.ftb.mods.ftblibrary.fabric.integrations.keys.KeyProvider;
 import dev.ftb.mods.ftblibrary.fabric.integrations.keys.VanillaKeyProvider;
 import dev.ftb.mods.ftblibrary.platform.client.input.Input;
 import dev.ftb.mods.ftblibrary.platform.client.input.KeyMappingConfig;
 import dev.ftb.mods.ftblibrary.util.Lazy;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
@@ -17,15 +14,17 @@ import org.apache.commons.lang3.Validate;
 import java.util.HashSet;
 import java.util.Set;
 
+//import dev.ftb.mods.ftblibrary.fabric.integrations.keys.AmecsKeyProvider;
+
 public class FabricInputImpl implements Input {
     private final Lazy<KeyProvider> keyProvider = Lazy.of(FabricInputImpl::initKeyProvider);
 
     private static KeyProvider initKeyProvider() {
-        if (FabricLoader.getInstance().isModLoaded("amecs")) {
-            return new AmecsKeyProvider();
-        } else {
+//        if (FabricLoader.getInstance().isModLoaded("amecs")) {
+//            return new AmecsKeyProvider();
+//        } else {
             return new VanillaKeyProvider();
-        }
+//        }
     }
 
     @Override
