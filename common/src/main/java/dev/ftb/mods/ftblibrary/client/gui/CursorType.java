@@ -12,7 +12,7 @@ public enum CursorType {
     HAND(SDLMouse.SDL_SYSTEM_CURSOR_POINTER),
     HRESIZE(SDLMouse.SDL_SYSTEM_CURSOR_SE_RESIZE),
     VRESIZE(SDLMouse.SDL_SYSTEM_CURSOR_NE_RESIZE),
-    MOVE(GLFW.GLFW_RESIZE_ALL_CURSOR);
+    MOVE(SDLMouse.SDL_SYSTEM_CURSOR_MOVE);
 
     private final int shape;
     private long cursor = 0L;
