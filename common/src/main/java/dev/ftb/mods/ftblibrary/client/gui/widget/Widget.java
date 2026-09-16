@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.GuiHelper;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
@@ -10,6 +9,7 @@ import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
@@ -18,8 +18,10 @@ import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.sounds.SoundEvents;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLKeyboard;
+import org.lwjgl.sdl.SDLMouse;
 
+import java.nio.ByteBuffer;
 import java.util.Optional;
 
 public class Widget implements IScreenWrapper, Comparable<Widget> {
@@ -33,14 +35,17 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
         parent = p;
     }
 
+    // TODO: I think this is right.
     public static boolean isMouseButtonDown(MouseButton button) {
-        return GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().handle(), button.id) == GLFW.GLFW_PRESS;
+        int buttons = SDLMouse.SDL_GetMouseState(null, null);
+        int mask = 1 << (button.id - 1);
+        return (buttons & mask) != 0;
     }
 
-    public static boolean isKeyDown(int key) {
-        return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().handle(), key) == GLFW.GLFW_PRESS;
+    public static boolean isKeyDown(int scancode) {
+        ByteBuffer state = SDLKeyboard.SDL_GetKeyboardState();
+        return state != null && state.get(scancode) != 0;
     }
-
     public static String getClipboardString() {
         return Minecraft.getInstance().keyboardHandler.getClipboard();
     }

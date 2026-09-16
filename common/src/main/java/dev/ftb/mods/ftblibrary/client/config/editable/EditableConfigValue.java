@@ -12,6 +12,7 @@ import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
@@ -217,7 +218,7 @@ public abstract class EditableConfigValue<T> implements Comparable<EditableConfi
 
     public String getTooltip() {
         var k = getNameKey() + ".tooltip";
-        return I18n.exists(k) ? I18n.get(k) : "";
+        return Language.getInstance().getOrDefault(k, "");
     }
 
     public EditableConfigValue<T> setOrder(int o) {

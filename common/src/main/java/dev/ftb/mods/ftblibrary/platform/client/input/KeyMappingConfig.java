@@ -84,15 +84,11 @@ public record KeyMappingConfig(
         }
 
         public Builder keyboard(int keyCode) {
-            return key(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+            return key(InputConstants.Type.KEYBOARD.getOrCreate(keyCode));
         }
 
         public Builder mouse(int buttonCode) {
             return key(InputConstants.Type.MOUSE.getOrCreate(buttonCode));
-        }
-
-        public Builder scan(int buttonCode) {
-            return key(InputConstants.Type.SCANCODE.getOrCreate(buttonCode));
         }
 
         public Builder noModifierFallbackKey(InputConstants.Key noModifierFallbackKey) {
@@ -106,15 +102,11 @@ public record KeyMappingConfig(
         }
 
         public Builder noModifierFallbackKeyboard(int keyCode) {
-            return noModifierFallbackKey(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+            return noModifierFallbackKey(InputConstants.Type.KEYBOARD.getOrCreate(keyCode));
         }
 
         public Builder noModifierFallbackMouse(int buttonCode) {
             return noModifierFallbackKey(InputConstants.Type.MOUSE.getOrCreate(buttonCode));
-        }
-
-        public Builder noModifierFallbackScan(int buttonCode) {
-            return noModifierFallbackKey(InputConstants.Type.SCANCODE.getOrCreate(buttonCode));
         }
 
         public Builder conflictContext(KeyConflict conflictContext) {

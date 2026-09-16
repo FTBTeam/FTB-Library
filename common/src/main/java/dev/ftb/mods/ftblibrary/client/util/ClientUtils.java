@@ -5,6 +5,7 @@ import dev.ftb.mods.ftblibrary.api.event.client.AllowChatCommandEvent;
 import dev.ftb.mods.ftblibrary.api.event.client.CustomClickEvent;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
+import com.mojang.blaze3d.Blaze3D;
 import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
@@ -15,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
-import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
@@ -40,7 +40,7 @@ public class ClientUtils {
         if (!command.isEmpty() && Minecraft.getInstance().player != null) {
             if (AllowChatCommandEvent.TYPE.post(new AllowChatCommandEvent.Data(command))) {
                 if (printChat) {
-                    Minecraft.getInstance().gui.getChat().addRecentChat(command);
+                    Minecraft.getInstance().gui.hud.getChat().addRecentChat(command);
                 }
                 Minecraft.getInstance().player.connection.sendCommand(command.replaceFirst("/", ""));
             }
@@ -53,7 +53,7 @@ public class ClientUtils {
 
     @Nullable
     @SuppressWarnings("unchecked")
-    public static <T> T getGuiAs(Screen gui, Class<T> clazz) {
+    public static <T> T getGuiAs(@Nullable Screen gui, Class<T> clazz) {
         if (gui instanceof IScreenWrapper wrapper) {
             var guiBase = wrapper.getGui();
             if (clazz.isAssignableFrom(guiBase.getClass())) {
@@ -61,12 +61,12 @@ public class ClientUtils {
             }
         }
 
-        return clazz.isAssignableFrom(gui.getClass()) ? (T) Minecraft.getInstance().screen : null;
+        return gui != null && clazz.isAssignableFrom(gui.getClass()) ? (T) gui : null;
     }
 
     @Nullable
     public static <T> T getCurrentGuiAs(Class<T> clazz) {
-        return Minecraft.getInstance().screen == null ? null : getGuiAs(Minecraft.getInstance().screen, clazz);
+        return Minecraft.getInstance().gui.screen() == null ? null : getGuiAs(Minecraft.getInstance().gui.screen(), clazz);
     }
 
     public static boolean handleClick(String scheme, String path) {
@@ -76,15 +76,15 @@ public class ClientUtils {
                 try {
                     final var uri = new URI(uriStr);
                     if (Minecraft.getInstance().options.chatLinksPrompt().get()) {
-                        final var currentScreen = Minecraft.getInstance().screen;
-                        Minecraft.getInstance().setScreen(new ConfirmLinkScreen(accepted -> {
+                        final var currentScreen = Minecraft.getInstance().gui.screen();
+                        Minecraft.getInstance().gui.setScreen(new ConfirmLinkScreen(accepted -> {
                             if (accepted) {
-                                Util.getPlatform().openUri(uri);
+                                Blaze3D.openUri(uri);
                             }
-                            Minecraft.getInstance().setScreen(currentScreen);
-                        }, uriStr, false));
+                            Minecraft.getInstance().gui.setScreen(currentScreen);
+                        }, uri, false));
                     } else {
-                        Util.getPlatform().openUri(uri);
+                        Blaze3D.openUri(uri);
                     }
 
                     return true;
@@ -96,7 +96,7 @@ public class ClientUtils {
             }
             case "file" -> {
                 try {
-                    Util.getPlatform().openUri(new URI("file:" + path));
+                    Blaze3D.openUri(new URI("file:" + path));
                     return true;
                 } catch (Exception ex) {
                     logHandleClickFailure(scheme, path, ex);

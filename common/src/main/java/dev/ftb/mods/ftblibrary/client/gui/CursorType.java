@@ -1,17 +1,17 @@
 package dev.ftb.mods.ftblibrary.client.gui;
 
-import net.minecraft.client.Minecraft;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 import org.lwjgl.system.MemoryUtil;
 
 public enum CursorType {
-    ARROW(GLFW.GLFW_ARROW_CURSOR),
-    IBEAM(GLFW.GLFW_IBEAM_CURSOR),
-    CROSSHAIR(GLFW.GLFW_CROSSHAIR_CURSOR),
-    HAND(GLFW.GLFW_HAND_CURSOR),
-    HRESIZE(GLFW.GLFW_HRESIZE_CURSOR),
-    VRESIZE(GLFW.GLFW_VRESIZE_CURSOR),
+    // TODO: I do not believe any of these have been ported correctly. They didn't map properly
+    ARROW(SDLMouse.SDL_SYSTEM_CURSOR_DEFAULT),
+    IBEAM(SDLMouse.SDL_SYSTEM_CURSOR_TEXT),
+    CROSSHAIR(SDLMouse.SDL_SYSTEM_CURSOR_CROSSHAIR),
+    HAND(SDLMouse.SDL_SYSTEM_CURSOR_POINTER),
+    HRESIZE(SDLMouse.SDL_SYSTEM_CURSOR_SE_RESIZE),
+    VRESIZE(SDLMouse.SDL_SYSTEM_CURSOR_NE_RESIZE),
     MOVE(GLFW.GLFW_RESIZE_ALL_CURSOR);
 
     private final int shape;
@@ -22,17 +22,17 @@ public enum CursorType {
     }
 
     public static void set(@Nullable CursorType type) {
-        var window = Minecraft.getInstance().getWindow().handle();
+//        var window = Minecraft.getInstance().getWindow().handle();
 
         if (type == null) {
-            GLFW.glfwSetCursor(window, MemoryUtil.NULL);
+            SDLMouse.SDL_SetCursor(MemoryUtil.NULL);
             return;
         }
 
         if (type.cursor == 0L) {
-            type.cursor = GLFW.glfwCreateStandardCursor(type.shape);
+            type.cursor = SDLMouse.SDL_CreateSystemCursor(type.shape);
         }
 
-        GLFW.glfwSetCursor(window, type.cursor);
+        SDLMouse.SDL_SetCursor(type.cursor);
     }
 }

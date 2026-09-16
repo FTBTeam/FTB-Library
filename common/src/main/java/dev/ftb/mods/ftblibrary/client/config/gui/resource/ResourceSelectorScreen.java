@@ -1,8 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
-import com.google.common.base.Stopwatch;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
@@ -24,12 +21,14 @@ import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.nbtedit.NBTEditorScreen;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.google.common.base.Stopwatch;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
@@ -303,7 +302,8 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             CompoundTag toEdit = Objects.requireNonNullElse(selectedStack.getComponentsTag(), new CompoundTag());
             if (button.isLeft()) {
                 EditableString config = new EditableString();
-                config.updateValue(NbtUtils.prettyPrint(toEdit, true));
+                // TODO: This is gone now.
+//                config.updateValue(NbtUtils.prettyPrint(toEdit, true));
                 getGui().pushModalPanel(makeMultilineEditPanel(config));
             } else if (button.isRight()) {
                 CompoundTag info = Util.make(new CompoundTag(), tag -> tag.putString("type", "item"));

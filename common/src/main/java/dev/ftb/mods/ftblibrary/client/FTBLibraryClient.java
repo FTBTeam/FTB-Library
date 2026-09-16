@@ -67,7 +67,7 @@ public class FTBLibraryClient {
 
     public void clientTick() {
         var client = Minecraft.getInstance();
-        var cursorType = client.screen instanceof IScreenWrapper w ? w.getGui().getCursor() : null;
+        var cursorType = client.gui.screen() instanceof IScreenWrapper w ? w.getGui().getCursor() : null;
         if (lastCursorType != cursorType) {
             lastCursorType = cursorType;
             CursorType.set(cursorType);

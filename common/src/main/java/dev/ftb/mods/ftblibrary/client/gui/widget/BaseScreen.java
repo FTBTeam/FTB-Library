@@ -1,7 +1,5 @@
 package dev.ftb.mods.ftblibrary.client.gui.widget;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
@@ -13,6 +11,8 @@ import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -24,7 +24,8 @@ import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLKeycode;
+import org.lwjgl.sdl.SDLMouse;
 
 import java.util.*;
 
@@ -49,7 +50,7 @@ public abstract class BaseScreen extends Panel {
     }
 
     public BaseScreen() {
-        this(Minecraft.getInstance().screen);
+        this(Minecraft.getInstance().gui.screen());
     }
 
     /**
@@ -238,8 +239,8 @@ public abstract class BaseScreen extends Panel {
 
         if (usePreviousScreenOnBack()) {
             if (openPrevScreen && getPrevScreen() != null) {
-                mc.setScreen(getPrevScreen());
-                GLFW.glfwSetCursorPos(getWindow().handle(), mx, my);
+                mc.gui.setScreen(getPrevScreen());
+                SDLMouse.SDL_WarpMouseInWindow(getWindow().handle(), (float) mx, (float) my);
             }
         }
 
@@ -432,7 +433,7 @@ public abstract class BaseScreen extends Panel {
             return modalPanels.peekFirst().keyPressed(event);  // we already checked it's not empty
         } else if (super.keyPressed(event)) {
             return true;
-        } else if (InputConstants.isKeyDown(getWindow(), GLFW.GLFW_KEY_F3) && event.is(GLFW.GLFW_KEY_B)) {
+        } else if (InputConstants.isKeyDown(SDLKeycode.SDLK_F3) && event.is(SDLKeycode.SDLK_B)) {
             Theme.renderDebugBoxes = !Theme.renderDebugBoxes;
             return true;
         }
@@ -497,7 +498,7 @@ public abstract class BaseScreen extends Panel {
     @Override
     public final void openGui() {
         openContextMenu((ContextMenu) null);
-        getMinecraft().setScreen(new ScreenWrapper(this));
+        getMinecraft().gui.setScreen(new ScreenWrapper(this));
     }
 
     @Override
@@ -544,7 +545,7 @@ public abstract class BaseScreen extends Panel {
     }
 
     public void openYesNoFull(Component title, Component desc, BooleanConsumer callback) {
-        getMinecraft().setScreen(new ConfirmScreen(result -> {
+        getMinecraft().gui.setScreen(new ConfirmScreen(result -> {
             openGui();
             callback.accept(result);
             refreshWidgets();

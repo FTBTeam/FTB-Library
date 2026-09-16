@@ -11,12 +11,13 @@ import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 
 import java.util.OptionalLong;
 
 public class EditableEntityFace extends EditableResource<EntityType<?>> {
     // any non-living entity would be ok here
-    public static final EntityType<?> NONE = EntityType.AREA_EFFECT_CLOUD;
+    public static final EntityType<?> NONE = EntityTypes.AREA_EFFECT_CLOUD;
 
     public EditableEntityFace() {
         value = NONE;

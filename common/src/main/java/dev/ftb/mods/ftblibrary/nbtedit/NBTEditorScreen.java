@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftblibrary.nbtedit;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.editable.*;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditStringConfigOverlay;
@@ -21,6 +20,7 @@ import dev.ftb.mods.ftblibrary.util.NBTUtils;
 import dev.ftb.mods.ftblibrary.util.SerializationUtil;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import com.mojang.blaze3d.platform.InputConstants;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.ChatFormatting;
@@ -33,7 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLKeycode;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -176,7 +176,7 @@ public class NBTEditorScreen extends AbstractThreePanelScreen<NBTEditorScreen.NB
             return true;
         } else if (event.is(InputConstants.KEY_ADD) || event.is(InputConstants.KEY_EQUALS)) {
             collapseAll(false);
-        } else if (event.is(InputConstants.KEY_MINUS) || event.is(GLFW.GLFW_KEY_KP_SUBTRACT)) {
+        } else if (event.is(InputConstants.KEY_MINUS) || event.is(SDLKeycode.SDLK_KP_MEMSUBTRACT)) { // TODO: .KEY_KP_SUBTRACT (used to be this, not sure)
             collapseAll(true);
         } else if (event.is(InputConstants.KEY_C) && event.modifiers().control()) {
             copyToClipboard();

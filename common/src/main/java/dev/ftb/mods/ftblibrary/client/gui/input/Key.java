@@ -1,11 +1,11 @@
 package dev.ftb.mods.ftblibrary.client.gui.input;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.platform.client.PlatformClient;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLKeycode;
 
 public record Key(KeyEvent event) {
     public boolean is(int k) {
@@ -27,11 +27,11 @@ public record Key(KeyEvent event) {
     }
 
     public boolean enter() {
-        return is(GLFW.GLFW_KEY_ENTER);
+        return is(SDLKeycode.SDLK_KP_ENTER);
     }
 
     public boolean backspace() {
-        return is(GLFW.GLFW_KEY_BACKSPACE);
+        return is(SDLKeycode.SDLK_BACKSPACE);
     }
 
     public boolean cut() {
@@ -51,7 +51,7 @@ public record Key(KeyEvent event) {
     }
 
     public boolean deselectAll() {
-        return is(GLFW.GLFW_KEY_D) && event.hasControlDown() && !event.hasShiftDown() && !event.hasAltDown();
+        return is(SDLKeycode.SDLK_D) && event.hasControlDown() && !event.hasShiftDown() && !event.hasAltDown();
     }
 
     public KeyModifiers modifiers() {

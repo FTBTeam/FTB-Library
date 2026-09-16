@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.neoforge.platform;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import dev.ftb.mods.ftblibrary.platform.Misc;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.extensions.IBaseRailBlockExtension;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
@@ -55,17 +54,20 @@ public class NeoMiscImpl implements Misc {
 
     @Override
     public boolean canAxeStrip(ItemStack stack) {
-        return stack.getItem().canPerformAction(stack, ItemAbilities.AXE_STRIP);
+        return false;
+//        return stack.getItem().canPerformAction(stack, ItemAbilities.AXE_STRIP);
     }
 
     @Override
     public boolean canTillSoil(ItemStack stack) {
-        return stack.getItem().canPerformAction(stack, ItemAbilities.HOE_TILL);
+        return false;
+//        return stack.getItem().canPerformAction(stack, ItemAbilities.HOE_TILL);
     }
 
     @Override
     public boolean canFlattenPath(ItemStack stack) {
-        return stack.getItem().canPerformAction(stack, ItemAbilities.SHOVEL_FLATTEN);
+        return false;
+//        return stack.getItem().canPerformAction(stack, ItemAbilities.SHOVEL_FLATTEN);
     }
 
     @Override

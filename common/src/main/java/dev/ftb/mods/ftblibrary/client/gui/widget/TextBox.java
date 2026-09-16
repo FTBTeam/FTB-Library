@@ -18,7 +18,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLKeycode;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -347,19 +347,19 @@ public class TextBox extends Widget implements IFocusableWidget {
             return true;
         } else {
             switch (key.event().key()) {
-                case GLFW.GLFW_KEY_ESCAPE -> {
+                case SDLKeycode.SDLK_ESCAPE -> {
                     setFocused(false);
                     return true;
                 }
-                case GLFW.GLFW_KEY_BACKSPACE -> {
+                case SDLKeycode.SDLK_BACKSPACE -> {
                     deleteText(-1);
                     return true;
                 }
-                case GLFW.GLFW_KEY_HOME -> {
+                case SDLKeycode.SDLK_HOME -> {
                     moveCursorToStart(isShiftKeyDown());
                     return true;
                 }
-                case GLFW.GLFW_KEY_LEFT -> {
+                case SDLKeycode.SDLK_LEFT -> {
                     if (isCtrlKeyDown()) {
                         moveCursorTo(getWordPosition(-1), isShiftKeyDown());
                     } else {
@@ -367,7 +367,7 @@ public class TextBox extends Widget implements IFocusableWidget {
                     }
                     return true;
                 }
-                case GLFW.GLFW_KEY_RIGHT -> {
+                case SDLKeycode.SDLK_RIGHT -> {
                     if (isCtrlKeyDown()) {
                         moveCursorTo(getWordPosition(1), isShiftKeyDown());
                     } else {
@@ -375,22 +375,22 @@ public class TextBox extends Widget implements IFocusableWidget {
                     }
                     return true;
                 }
-                case GLFW.GLFW_KEY_END -> {
+                case SDLKeycode.SDLK_END -> {
                     moveCursorToEnd(isShiftKeyDown());
                     return true;
                 }
-                case GLFW.GLFW_KEY_DELETE -> {
+                case SDLKeycode.SDLK_DELETE -> {
                     deleteText(1);
                     return true;
                 }
-                case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
+                case SDLKeycode.SDLK_RETURN, SDLKeycode.SDLK_KP_ENTER -> {
                     if (validText) {
                         setFocused(false);
                         onEnterPressed();
                     }
                     return true;
                 }
-                case GLFW.GLFW_KEY_TAB -> {
+                case SDLKeycode.SDLK_TAB -> {
                     if (validText) {
                         setFocused(false);
                         onTabPressed();
