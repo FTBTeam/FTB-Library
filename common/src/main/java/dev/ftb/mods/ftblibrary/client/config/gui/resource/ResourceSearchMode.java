@@ -170,10 +170,6 @@ public interface ResourceSearchMode<T> {
             this.icon = icon;
         }
 
-//        protected SearchMode(Component name, Icon<?> icon) {
-//            this(name, () -> icon);
-//        }
-
         @Override
         public Component getDisplayName() {
             return name;
