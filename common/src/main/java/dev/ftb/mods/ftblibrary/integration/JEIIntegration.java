@@ -22,9 +22,12 @@ import mezz.jei.api.runtime.IClickableIngredient;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +39,10 @@ import java.util.Optional;
 @JeiPlugin
 public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     public static IJeiRuntime runtime = null;
+
+    private static final TagKey<Item> HIDDEN = TagKey.create(Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath("c", "hidden_from_recipe_viewers"));
+
     private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
         @Override
         public Icon getIcon() {
@@ -54,6 +61,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
             }
 
             return runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK).stream()
+                    .filter(s -> !s.is(HIDDEN))
                     .map(SelectableResource::item)
                     .toList();
         }
