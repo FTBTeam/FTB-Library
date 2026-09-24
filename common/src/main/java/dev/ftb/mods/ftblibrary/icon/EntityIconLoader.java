@@ -138,17 +138,35 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
         return null;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T extends Entity> Optional<Icon<?>> getIconCache(T entity) {
+        Optional<EntityIconSettings> opt = getSettings(entity.getType());
+        if (opt.isPresent()) {
+            EntityIconSettings settings = opt.get();
+            return settings.useMobTexture ?
+                    getIconFromVanillaRenderer(entity, settings) :
+                    settings.texture.map(texture -> getOrCreateIcon(entity.getType(), texture, settings));
+        }
+        return Optional.empty();
+
+//        EntityRenderer<? super T, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
+//        EntityRenderState state = renderer.createRenderState(entity, 0f);
+//        if (renderer instanceof LivingEntityRenderer/*<?,?,?>*/ entityRenderer && state instanceof LivingEntityRenderState ls) {
+//            return getSettings(entity.getType()).map(settings -> settings.useMobTexture ?
+//                    getOrCreateIcon(entity.getType(), entityRenderer.getTextureLocation(ls), settings) :
+//                    settings.texture.map(texture -> getOrCreateIcon(entity.getType(), texture, settings)).orElse(null));
+//        } else {
+//            return Optional.empty();
+//        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static <T extends Entity> Optional<Icon<?>> getIconFromVanillaRenderer(T entity, EntityIconSettings settings) {
         EntityRenderer<? super T, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
         EntityRenderState state = renderer.createRenderState(entity, 0f);
         if (renderer instanceof LivingEntityRenderer/*<?,?,?>*/ entityRenderer && state instanceof LivingEntityRenderState ls) {
-            return getSettings(entity.getType()).map(settings -> settings.useMobTexture ?
-                    getOrCreateIcon(entity.getType(), entityRenderer.getTextureLocation(ls), settings) :
-                    settings.texture.map(texture -> getOrCreateIcon(entity.getType(), texture, settings)).orElse(null));
-        } else {
-            return Optional.empty();
+            return Optional.of(getOrCreateIcon(entity.getType(), entityRenderer.getTextureLocation(ls), settings));
         }
+        return Optional.empty();
     }
 
     public static Optional<EntityIconSettings> getSettings(EntityType<?> entityType) {
