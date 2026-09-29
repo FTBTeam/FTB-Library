@@ -25,12 +25,16 @@ import mezz.jei.api.runtime.IClickableIngredient;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +48,12 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
             .findFirst()
             .orElseThrow(() -> new IllegalStateException("No platform integrations found!"));
 
+    @Nullable
     public static IJeiRuntime runtime = null;
+
+    private static final TagKey<Item> HIDDEN = TagKey.create(Registries.ITEM,
+            Identifier.fromNamespaceAndPath("c", "hidden_from_recipe_viewers"));
+
     private static final ResourceSearchMode<ItemStack> JEI_ITEMS = new ResourceSearchMode<>() {
         @Override
         public Icon<?> getIcon() {
@@ -58,22 +67,18 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
         @Override
         public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
-            if (runtime == null) {
-                return Collections.emptySet();
-            }
-
-            return runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK).stream()
+            return runtime == null ?
+                    Collections.emptySet() :
+                    runtime.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK).stream()
+                    .filter(s -> !s.is(HIDDEN))
                     .map(SelectableResource::item)
                     .toList();
+
         }
     };
 
     static {
         SelectItemStackScreen.KNOWN_MODES.prependMode(JEI_ITEMS);
-    }
-
-    public static Optional<IClickableIngredient<?>> handleExtraIngredientTypes(IJeiRuntime runtime, PositionedIngredient underMouse) {
-        throw new AssertionError();
     }
 
     @Override
@@ -106,7 +111,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
     public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(IClickableIngredientFactory builder, double mouseX, double mouseY) {
         var currentScreen = Minecraft.getInstance().screen;
 
-        if (currentScreen instanceof IScreenWrapper wrapper && wrapper.getGui().getIngredientUnderMouse().isPresent()) {
+        if (runtime != null && currentScreen instanceof IScreenWrapper wrapper && wrapper.getGui().getIngredientUnderMouse().isPresent()) {
             PositionedIngredient underMouse = wrapper.getGui().getIngredientUnderMouse().get();
             if (underMouse.ingredient() instanceof ItemStack stack) {
                 Optional<ITypedIngredient<ItemStack>> typed = runtime.getIngredientManager().createTypedIngredient(VanillaTypes.ITEM_STACK, stack, false);

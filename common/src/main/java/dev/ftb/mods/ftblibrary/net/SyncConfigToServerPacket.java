@@ -33,7 +33,7 @@ public record SyncConfigToServerPacket(String configName, String config) impleme
     }
 
     public static void handle(SyncConfigToServerPacket message, PacketContext context) {
-        if (context.player() instanceof ServerPlayer sp && sp.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+        if (context.player() instanceof ServerPlayer sp && sp.permissions().hasPermission(Permissions.COMMANDS_OWNER)) {
             context.enqueue(() -> {
                 MinecraftServer server = sp.level().getServer();
 
