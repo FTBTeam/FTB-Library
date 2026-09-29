@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.37]
+
+### Changed
+* `SyncConfigToServerPacket` now requires player permission level of 4 instead of 2
+  * Tighter restriction is appropriate since editing server configs of mods is a server admin task, not game master
+* The item selector GUI in JEI mode now ignores items in the `c:hidden_from_recipe_viewers` item tag
+
 ## [2101.1.36]
 
 ### Added
