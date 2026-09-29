@@ -147,16 +147,6 @@ public class EntityIconLoader extends SimplePreparableReloadListener<Map<EntityT
                     settings.texture.map(texture -> getOrCreateIcon(entity.getType(), texture, settings));
         }
         return Optional.empty();
-
-//        EntityRenderer<? super T, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
-//        EntityRenderState state = renderer.createRenderState(entity, 0f);
-//        if (renderer instanceof LivingEntityRenderer/*<?,?,?>*/ entityRenderer && state instanceof LivingEntityRenderState ls) {
-//            return getSettings(entity.getType()).map(settings -> settings.useMobTexture ?
-//                    getOrCreateIcon(entity.getType(), entityRenderer.getTextureLocation(ls), settings) :
-//                    settings.texture.map(texture -> getOrCreateIcon(entity.getType(), texture, settings)).orElse(null));
-//        } else {
-//            return Optional.empty();
-//        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
