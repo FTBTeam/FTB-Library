@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [26.1.2.10]
+
+### Added
+* Added a `AbstractButtonListScreen#ExtraSearchability` interface
+  * Allows implementors to add custom search behavior for widgets in the list, in addition to standard widget title search
+
 ## [26.1.2.9]
 
 ### Changed
