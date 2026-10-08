@@ -112,14 +112,9 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     @Override
     protected void renderBg(GuiGraphics graphics, float f, int mx, int my) {
         var theme = wrappedGui.getTheme();
-        GuiHelper.setupDrawing();
-        renderBackground(graphics, mx, my, f);
-        GuiHelper.setupDrawing();
         wrappedGui.draw(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
 
         if (drawSlots) {
-            GuiHelper.setupDrawing();
-
             for (var slot : menu.slots) {
                 theme.drawContainerSlot(graphics, leftPos + slot.x, topPos + slot.y, 16, 16);
             }
@@ -130,7 +125,6 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.pose().pushPose();
         graphics.pose().translate(-leftPos, -topPos, 0);
-        GuiHelper.setupDrawing();
 
         var theme = wrappedGui.getTheme();
         wrappedGui.drawForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
@@ -146,7 +140,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
                     var ingredient = underMouse.ingredient();
                     if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
                         graphics.pose().translate(0, 0, zLevel);
-                        graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
+                        graphics.renderTooltip(theme.getFont(), stack, mouseX, mouseY);
                     }
                 }
             });
@@ -176,7 +170,6 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics, mouseX, mouseY, partialTicks);
         wrappedGui.updateGui(mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
     }
