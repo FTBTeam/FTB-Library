@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [26.1.2.10]
 
 ### Added
-* Added a `AbstractButtonListScreen#ExtraSearchability` interface
+* Added a `AbstractButtonListScreen#ExtendedSearch` interface
   * Allows implementors to add custom search behavior for widgets in the list, in addition to standard widget title search
 
 ## [26.1.2.9]
