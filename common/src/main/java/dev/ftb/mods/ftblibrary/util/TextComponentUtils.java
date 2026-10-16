@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.util;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -25,5 +26,9 @@ public class TextComponentUtils {
 
     public static Component translatedDimension(ResourceLocation dimId) {
         return Component.translatableWithFallback(dimId.toLanguageKey("dimension"), dimId.toString());
+    }
+
+    public static boolean isComponentEmpty(Component c) {
+        return c.getSiblings().isEmpty() && c.getContents() == PlainTextContents.EMPTY;
     }
 }
