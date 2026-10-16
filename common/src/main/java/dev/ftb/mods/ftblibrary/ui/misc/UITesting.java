@@ -4,18 +4,18 @@ import dev.architectury.fluid.FluidStack;
 import dev.architectury.hooks.fluid.FluidStackHooks;
 import dev.ftb.mods.ftblibrary.config.*;
 import dev.ftb.mods.ftblibrary.config.ui.EditConfigScreen;
-import dev.ftb.mods.ftblibrary.config.ui.resource.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.config.ui.resource.ModalFluidStackSelector;
+import dev.ftb.mods.ftblibrary.config.ui.resource.ModalItemStackSelector;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
-import dev.ftb.mods.ftblibrary.ui.ContextMenu;
-import dev.ftb.mods.ftblibrary.ui.ContextMenuItem;
-import dev.ftb.mods.ftblibrary.ui.Panel;
-import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
+import dev.ftb.mods.ftblibrary.icon.ItemIcon;
+import dev.ftb.mods.ftblibrary.ui.*;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -77,6 +77,8 @@ public class UITesting {
     }
 
     public static class TestConfigScreen extends EditConfigScreen {
+        private ItemStack toDraw = ItemStack.EMPTY;
+
         public TestConfigScreen(ConfigGroup configGroup) {
             super(configGroup);
         }
@@ -91,7 +93,18 @@ public class UITesting {
                     ContextMenuItem.title(Component.literal("Title")),
                     ContextMenuItem.SEPARATOR,
                     new ContextMenuItem(Component.literal("Select item"), Icons.ADD, button -> {
-                        new SelectItemStackScreen(new ItemStackConfig(1), accepted -> parent.getGui().run()).openGui();
+                        ItemStackConfig config = new ItemStackConfig(false, true);
+                        getGui().pushModalPanel(
+                                new ModalItemStackSelector(parent, config, accepted -> toDraw = config.getValue())
+                        );
+                    }),
+                    new ContextMenuItem(Component.literal("Select fluid"), Icons.ADD, button -> {
+                        FluidConfig config = new FluidConfig(true);
+                        getGui().pushModalPanel(
+                                new ModalFluidStackSelector(parent, config, accepted -> {
+                                    if (accepted) SimpleToast.info(config.getValue().getName(), Component.literal(String.valueOf(config.getValue().getAmount())));
+                                }
+                                ));
                     }),
                     ContextMenuItem.subMenu(Component.literal("line 2 >"), Icons.REMOVE, List.of(
                             ContextMenuItem.title(Component.literal("Submenu")),
@@ -122,6 +135,14 @@ public class UITesting {
                     openTestContextMenu(this);
                 }
                 return super.mousePressed(mouseButton);
+            }
+
+            @Override
+            public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+                super.drawBackground(graphics, theme, x, y, w, h);
+                if (!toDraw.isEmpty()) {
+                    ItemIcon.getItemIcon(toDraw).draw(graphics, getX() + w - 54, getY() + 2, 16, 16);
+                }
             }
         }
     }
