@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TooltipList {
@@ -30,8 +31,12 @@ public class TooltipList {
         yOffset = 0;
     }
 
-    public void add(Component component) {
-        lines.add(component);
+    public void add(Component... component) {
+        lines.addAll(Arrays.asList(component));
+    }
+
+    public void addAll(List<Component> components) {
+        lines.addAll(components);
     }
 
     public void blankLine() {
