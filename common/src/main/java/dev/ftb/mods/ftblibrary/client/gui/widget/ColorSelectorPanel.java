@@ -13,6 +13,7 @@ import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -87,7 +88,7 @@ public class ColorSelectorPanel extends ModalPanel {
 
     private static void setupPalettes(Map<String,List<Integer>> presetMap) {
         presetMap.put("chat", Util.make(new ArrayList<>(), l -> {
-            Arrays.stream(ChatFormatting.values()).filter(ChatFormatting::isColor).map(ChatFormatting::getColor).forEach(e -> l.add(e | 0xFF000000));
+            Arrays.stream(ChatFormatting.values()).map(TextColor::fromLegacyFormat).filter(Objects::nonNull).map(TextColor::getValue).forEach(e -> l.add(e | 0xFF000000));
         }));
 
         presetMap.put("dye", Util.make(new ArrayList<>(), l -> {

@@ -7,7 +7,7 @@ import dev.ftb.mods.ftblibrary.client.gui.screens.LoadingScreen;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.platform.Platform;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -33,7 +33,7 @@ public class RegisteredSidebarButton implements SidebarButton {
         this.id = id;
         this.data = data;
         this.langKey = Util.makeDescriptionId("sidebar_button", id);
-        tooltip = I18n.exists(langKey + ".tooltip") ? Component.translatable(langKey + ".tooltip") : null;
+        tooltip = Language.getInstance().has(langKey + ".tooltip") ? Component.translatable(langKey + ".tooltip") : null;
         if (data.requiresOp()) {
             addVisibilityCondition(ClientUtils.IS_CLIENT_OP);
         }

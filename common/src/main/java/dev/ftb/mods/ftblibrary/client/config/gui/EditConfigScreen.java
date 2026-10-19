@@ -15,7 +15,7 @@ import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -235,7 +235,7 @@ public class EditConfigScreen extends AbstractThreePanelScreen<EditConfigScreen.
             }
 
             var infoKey = group.getPath() + ".info";
-            info = I18n.exists(infoKey) ? Component.translatable(infoKey) : null;
+            info = Language.getInstance().has(infoKey) ? Component.translatable(infoKey) : null;
             setCollapsed(collapsed);
         }
 

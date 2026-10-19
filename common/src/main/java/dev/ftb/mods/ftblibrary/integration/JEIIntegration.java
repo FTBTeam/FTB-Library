@@ -98,7 +98,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
     @Override
     public Collection<Rect2i> getGuiExtraAreas() {
-        var currentScreen = Minecraft.getInstance().screen;
+        var currentScreen = Minecraft.getInstance().gui.screen();
 
         if (FTBLibraryClient.areButtonsVisible(currentScreen)) {
             return Collections.singleton(SidebarGroupGuiButton.lastDrawnArea);
@@ -109,7 +109,7 @@ public class JEIIntegration implements IModPlugin, IGlobalGuiHandler {
 
     @Override
     public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(IClickableIngredientFactory builder, double mouseX, double mouseY) {
-        var currentScreen = Minecraft.getInstance().screen;
+        var currentScreen = Minecraft.getInstance().gui.screen();
 
         if (runtime != null && currentScreen instanceof IScreenWrapper wrapper && wrapper.getGui().getIngredientUnderMouse().isPresent()) {
             PositionedIngredient underMouse = wrapper.getGui().getIngredientUnderMouse().get();

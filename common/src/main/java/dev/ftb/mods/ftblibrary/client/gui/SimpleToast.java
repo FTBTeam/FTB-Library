@@ -20,7 +20,7 @@ public class SimpleToast implements Toast {
     private Visibility visibility = Visibility.SHOW;
 
     public static void info(Component title, Component subtitle) {
-        Minecraft.getInstance().getToastManager().addToast(
+        Minecraft.getInstance().gui.toastManager().addToast(
                 new SimpleToast() {
                     @Override
                     public Component getTitle() {
@@ -35,7 +35,7 @@ public class SimpleToast implements Toast {
     }
 
     public static void error(Component title, Component subtitle) {
-        Minecraft.getInstance().getToastManager().addToast(
+        Minecraft.getInstance().gui.toastManager().addToast(
                 new SimpleToast() {
                     @Override
                     public Component getTitle() {
