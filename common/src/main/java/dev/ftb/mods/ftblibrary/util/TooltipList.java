@@ -31,12 +31,16 @@ public class TooltipList {
         yOffset = 0;
     }
 
-    public void add(Component... component) {
-        lines.addAll(Arrays.asList(component));
+    public void add(Component component) {
+        lines.add(component);
     }
 
     public void addAll(List<Component> components) {
         lines.addAll(components);
+    }
+
+    public void addAll(Component... components) {
+        lines.addAll(List.of(components));
     }
 
     public void blankLine() {

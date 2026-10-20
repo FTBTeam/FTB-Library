@@ -49,14 +49,14 @@ public abstract class SimpleTextButton extends Button {
         return Button.builder(panel, callback)
                 .withLabel(Component.translatable("gui.accept"))
                 .withIcon(Icons.ACCEPT)
-                .withExtraTooltipLines(tooltipList -> tooltipList.add(tooltip));
+                .withExtraTooltipLines(tooltipList -> tooltipList.addAll(tooltip));
     }
 
     public static Button.Builder cancelBuilder(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
         return Button.builder(panel, callback)
                 .withLabel(Component.translatable("gui.cancel"))
                 .withIcon(Icons.CANCEL)
-                .withExtraTooltipLines(tooltipList -> tooltipList.add(tooltip));
+                .withExtraTooltipLines(tooltipList -> tooltipList.addAll(tooltip));
     }
 
     @Override
