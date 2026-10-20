@@ -104,11 +104,10 @@ public abstract class ModalResourceSelector<T> extends ModalPanel {
         topPanel.alignWidgets();
 
         mainPanel.setPosAndSize(2, topPanel.getHeight() + 2, 18 * nCols, 18 * nRows);
-
         scrollBar.setPosAndSize(mainPanel.getPosX() + mainPanel.getWidth() + 2, mainPanel.getPosY(), 12, mainPanel.getHeight());
 
-        bottomPanel.setPos(0, mainPanel.posY + mainPanel.height + 2);
-        bottomPanel.setSize(width, height - bottomPanel.height);
+        int yPos = mainPanel.posY + mainPanel.height + 2;
+        bottomPanel.setPosAndSize(0, yPos, width, height - yPos);
         bottomPanel.alignWidgets();
     }
 
