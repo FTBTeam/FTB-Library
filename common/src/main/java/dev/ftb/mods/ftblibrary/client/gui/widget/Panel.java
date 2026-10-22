@@ -109,6 +109,12 @@ public abstract class Panel extends Widget {
         }
     }
 
+    public void addAll(Widget... list) {
+        for (Widget w : list) {
+            add(w);
+        }
+    }
+
     public final int align(WidgetLayout layout) {
         contentWidth = contentHeight = -1;
         int res = layout.align(this);
@@ -212,13 +218,19 @@ public abstract class Panel extends Widget {
             var byLayer = widgets.stream().filter(Widget::shouldDraw)
                     .collect(Collectors.groupingBy(Widget::getDrawLayer, () -> new EnumMap<>(DrawLayer.class), Collectors.toList()));
 
-            byLayer.getOrDefault(DrawLayer.BACKGROUND, List.of())
-                    .forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
+            byLayer.getOrDefault(DrawLayer.BACKGROUND, List.of()).forEach(widget -> {
+                if (widget.shouldRenderInLayer(DrawLayer.BACKGROUND, x, y, w, h)) {
+                    drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h);
+                }
+            });
 
             drawOffsetBackground(graphics, theme, x + offsetX, y + offsetY, w, h);
 
-            byLayer.getOrDefault(DrawLayer.FOREGROUND, List.of())
-                    .forEach(widget -> drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h));
+            byLayer.getOrDefault(DrawLayer.FOREGROUND, List.of()).forEach(widget -> {
+                if (widget.shouldRenderInLayer(DrawLayer.FOREGROUND, x, y, w, h)) {
+                    drawWidget(graphics, theme, widget, x + offsetX, y + offsetY, w, h);
+                }
+            });
         });
 
         if (renderInside) {
