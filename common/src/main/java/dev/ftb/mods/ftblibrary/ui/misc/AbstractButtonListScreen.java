@@ -96,6 +96,19 @@ public abstract class AbstractButtonListScreen extends AbstractThreePanelScreen<
         searchBox.setFocused(true);
     }
 
+    /**
+     * Implement on widgets being added to the list to allow extra searching in addition to the widget's visible title.
+     */
+    @FunctionalInterface
+    public interface ExtendedSearch {
+        /**
+         * {@return true if this widget should be included in the list}
+         *
+         * @param filterText the text currently in the search box, always non-empty
+         */
+        boolean extendedSearch(String filterText);
+    }
+
     protected class ButtonPanel extends Panel {
         public ButtonPanel() {
             super(AbstractButtonListScreen.this);
@@ -103,7 +116,11 @@ public abstract class AbstractButtonListScreen extends AbstractThreePanelScreen<
 
         @Override
         public void add(Widget widget) {
-            if (!hasSearchBox || searchBox.getText().isEmpty() || getFilterText(widget).contains(searchBox.getText().toLowerCase())) {
+            if (!hasSearchBox
+                    || searchBox.getText().isEmpty()
+                    || getFilterText(widget).contains(searchBox.getText().toLowerCase())
+                    || widget instanceof ExtendedSearch e && e.extendedSearch(searchBox.getText().toLowerCase()))
+            {
                 super.add(widget);
             }
         }

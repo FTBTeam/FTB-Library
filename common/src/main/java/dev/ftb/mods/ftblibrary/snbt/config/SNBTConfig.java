@@ -2,6 +2,7 @@ package dev.ftb.mods.ftblibrary.snbt.config;
 
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.config.NameMap;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.snbt.SNBT;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.SNBTNet;
@@ -210,5 +211,9 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
 
     public IntArrayValue addIntArray(String key, int[] def) {
         return add(new IntArrayValue(this, key, def));
+    }
+
+    public ColorValue addColor(String key, Color4I def) {
+        return add(new ColorValue(this, key, def));
     }
 }

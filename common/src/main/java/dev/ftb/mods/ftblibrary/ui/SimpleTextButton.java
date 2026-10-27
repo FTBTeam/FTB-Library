@@ -45,6 +45,20 @@ public abstract class SimpleTextButton extends Button {
         return create(panel, Component.translatable("gui.cancel"), Icons.CANCEL, callback, tooltip);
     }
 
+    public static Button.Builder acceptBuilder(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
+        return Button.builder(panel, callback)
+                .withLabel(Component.translatable("gui.accept"))
+                .withIcon(Icons.ACCEPT)
+                .withExtraTooltipLines(tooltipList -> tooltipList.addAll(tooltip));
+    }
+
+    public static Button.Builder cancelBuilder(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
+        return Button.builder(panel, callback)
+                .withLabel(Component.translatable("gui.cancel"))
+                .withIcon(Icons.CANCEL)
+                .withExtraTooltipLines(tooltipList -> tooltipList.addAll(tooltip));
+    }
+
     @Override
     public SimpleTextButton setTitle(Component txt) {
         super.setTitle(txt);
@@ -75,29 +89,24 @@ public abstract class SimpleTextButton extends Button {
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
         drawBackground(graphics, theme, x, y, w, h);
-        var s = h >= 16 ? 16 : 8;
-        var off = (h - s) / 2;
+
+        var iconSize = h >= 16 ? 16 : 8;
+        var iconOffset = (h - iconSize) / 2;
+
         FormattedText title = getTitle();
-        var textX = x;
+
+        var textWidth = theme.getStringWidth(title);
+        var availableWidth = w - (hasIcon() ? iconOffset + iconSize : 0) - 6;
+        if (textWidth > availableWidth) {
+            textWidth = availableWidth;
+            title = theme.trimStringToWidth(title, availableWidth);
+        }
+
+        var textX = x + (renderTitleInCenter() ? (availableWidth - textWidth + 6) / 2 : 4);
         var textY = y + (h - theme.getFontHeight() + 1) / 2;
-
-        var sw = theme.getStringWidth(title);
-        var mw = w - (hasIcon() ? off + s : 0) - 6;
-
-        if (sw > mw) {
-            sw = mw;
-            title = theme.trimStringToWidth(title, mw);
-        }
-
-        if (renderTitleInCenter()) {
-            textX += (mw - sw + 6) / 2;
-        } else {
-            textX += 4;
-        }
-
         if (hasIcon()) {
-            drawIcon(graphics, theme, x + off, y + off, s, s);
-            textX += off + s;
+            drawIcon(graphics, theme, x + iconOffset, y + iconOffset, iconSize, iconSize);
+            textX += iconOffset + iconSize;
         }
 
         theme.drawString(graphics, title, textX, textY, theme.getContentColor(getWidgetType()), Theme.SHADOW);

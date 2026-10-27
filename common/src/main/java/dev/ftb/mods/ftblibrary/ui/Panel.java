@@ -99,6 +99,12 @@ public abstract class Panel extends Widget {
         }
     }
 
+    public void addAll(Widget... widgets) {
+        for (Widget w : widgets) {
+            add(w);
+        }
+    }
+
     public final int align(WidgetLayout layout) {
         contentWidth = contentHeight = -1;
         int res = layout.align(this);

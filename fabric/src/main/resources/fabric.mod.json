@@ -36,5 +36,8 @@
     "fabric": "${fabricapiversionrange}",
     "minecraft": "~${mcversion}",
     "architectury": ">=${archversion}"
+  },
+  "breaks": {
+    "ftbxmodcompat": "<2101.1.14"
   }
 }

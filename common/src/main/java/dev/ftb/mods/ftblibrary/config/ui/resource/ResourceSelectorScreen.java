@@ -151,6 +151,8 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
     @Override
     public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        super.drawForeground(graphics, theme, x, y, w, h);
+
         if (!selectedStack.isEmpty()) {
             selectedStack.getIcon().drawStatic(graphics, getX() + 6, getY() + 17, 30, 30);
             GuiHelper.drawRectWithShade(graphics, getX() + 5, getY() + 16, 32, 32, Color4I.DARK_GRAY, -16);
