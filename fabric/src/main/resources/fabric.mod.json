@@ -38,6 +38,6 @@
     "architectury": ">=${archversion}"
   },
   "breaks": {
-    "ftbxmodcompat": "<2101.1.13"
+    "ftbxmodcompat": "<2101.1.14"
   }
 }
