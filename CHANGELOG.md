@@ -9,9 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Added a `AbstractButtonListScreen#ExtendedSearch` interface
   * Allows implementors to add custom search behavior for widgets in the list, in addition to standard widget title search
+* Added `ColorValue` class for color configs, along with `SNBTConfig#addColor` method
+* Added new `Button.Builder` class to provide much more flexibility in creating button widgets
+* Added modal panel versions of item and fluid selector screens
+  * Intended for use with menu-based screens, where switching screens would cause the menu to be closed
+* Added `TextComponentUtils#isComponentEmpty` method
+* Added `TooltipList#addAll` method taking a `Component...` argument
+* Added `Panel#addAll` method taking a `Widget...` argument
+
+### Changed
+* `CurrencyProvider` abstraction layer now uses longs instead of ints
+  * This is an API break! FTB XMod Compat 21.1.13 or later is needed to work with this
+* Extracted `AbstractThreePanelScreen.BottomPanel` to its own `LowerButtonPanel` class for reusability
 
 ### Fixed
-* Fixed `MenuScreenWrapper` rendering
+* Fixed several `MenuScreenWrapper` rendering problems
+* Fixed some modal panel drawing issues, in conjunction with menu-based screens
 
 ## [2101.1.37]
 
