@@ -49,6 +49,7 @@ dependencies {
     localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
     jarJar(api("de.marhali:json5-java:${json5_version}"))
+    jarJar(api("org.glavo:webp:${jwebp_version}"))
 }
 
 jar {

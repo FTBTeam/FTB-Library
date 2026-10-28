@@ -112,7 +112,7 @@ public interface ResourceSearchMode<T> {
                 Map<Identifier, Resource> textures = Collections.emptyMap();
 
                 try {
-                    textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.getPath().endsWith(".png"));
+                    textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.getPath().endsWith(".png") || t.getPath().endsWith(".webp"));
                 } catch (Exception ex) {
                     FTBLibrary.LOGGER.error("A mod has a broken resource preventing this list from loading: {}", String.valueOf(ex));
                 }

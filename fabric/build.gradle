@@ -51,4 +51,5 @@ dependencies {
     localRuntime "com.terraformersmc:modmenu:${modmenu_version}"
 
     include(api("de.marhali:json5-java:${json5_version}"))
+    include(api("org.glavo:webp:${jwebp_version}"))
 }

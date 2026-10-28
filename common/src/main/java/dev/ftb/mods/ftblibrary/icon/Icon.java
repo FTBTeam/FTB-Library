@@ -195,7 +195,11 @@ public abstract class Icon<T extends Icon<T>> {
                     return new BulletIcon().withColor(Color4I.parse(ida[1]));
                 case "file":
                     try {
-                        return new URLImageIcon(new URI(id));
+                        var uri = new URI(id);
+                        if (uri.getPath() != null && WebPIcon.isWebPId(uri.getPath())) {
+                            return new WebPIcon(uri);
+                        }
+                        return new URLImageIcon(uri);
                     } catch (Exception ex) {
                         return new ImageIcon(ImageIcon.MISSING_IMAGE);
                     }
@@ -204,6 +208,10 @@ public abstract class Icon<T extends Icon<T>> {
                 case "part":
                     return new PartIcon(getIcon(ida[1]));
             }
+        }
+
+        if (WebPIcon.isWebPId(id)) {
+            return new WebPIcon(Identifier.parse(id));
         }
 
         return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(Identifier.parse(id)) : new AtlasSpriteIcon(Identifier.parse(id));

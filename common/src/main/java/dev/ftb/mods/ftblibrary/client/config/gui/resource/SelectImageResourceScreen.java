@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.client.config.ConfigCallback;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableImageResource;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableResource;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
+import dev.ftb.mods.ftblibrary.client.icon.webp.WebPCache;
 import dev.ftb.mods.ftblibrary.config.FTBLibraryClientConfig;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.SearchTerms;
@@ -52,6 +53,7 @@ public class SelectImageResourceScreen extends ResourceSelectorScreen<Identifier
         @Override
         public void onResourceManagerReload(ResourceManager resourceManager) {
             ResourceSearchMode.IMAGES.clearCache();
+            WebPCache.clear();
         }
     }
 
