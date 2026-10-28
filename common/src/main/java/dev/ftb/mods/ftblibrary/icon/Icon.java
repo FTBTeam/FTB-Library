@@ -211,7 +211,11 @@ public abstract class Icon implements Drawable {
                 case "https":
                 case "file":
                     try {
-                        return new URLImageIcon(new URI(id));
+                        var uri = new URI(id);
+                        if (uri.getPath() != null && WebPIcon.isWebPId(uri.getPath())) {
+                            return new WebPIcon(uri);
+                        }
+                        return new URLImageIcon(uri);
                     } catch (Exception ex) {
                         return new ImageIcon(ImageIcon.MISSING_IMAGE);
                     }
@@ -220,6 +224,10 @@ public abstract class Icon implements Drawable {
                 case "part":
                     return new PartIcon(getIcon(ida[1]));
             }
+        }
+
+        if (WebPIcon.isWebPId(id)) {
+            return new WebPIcon(ResourceLocation.parse(id));
         }
 
         return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(ResourceLocation.parse(id)) : new AtlasSpriteIcon(ResourceLocation.parse(id));
