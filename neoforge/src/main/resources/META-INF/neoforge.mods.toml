@@ -39,6 +39,6 @@ side = "BOTH"
 [[dependencies.ftblibrary]]
 modId = "ftbxmodcompat"
 type = "optional"
-versionRange = "[2101.1.14,)"
+versionRange = "[21.1.14,)"
 ordering = "BEFORE"
 side = "BOTH"
