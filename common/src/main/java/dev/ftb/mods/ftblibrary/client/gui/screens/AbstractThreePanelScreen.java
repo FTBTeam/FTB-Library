@@ -12,8 +12,6 @@ import dev.ftb.mods.ftblibrary.icon.Icons;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
-import static dev.ftb.mods.ftblibrary.util.TextComponentUtils.hotkeyTooltip;
-
 public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScreen {
     public static final Pair<Integer, Integer> NO_INSET = Pair.of(0, 0);
     protected static final int BOTTOM_PANEL_H = 25;
@@ -126,7 +124,7 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
     }
 
     protected Panel createBottomPanel() {
-        return new BottomPanel();
+        return new LowerButtonPanel(this, this::doAccept, this::doCancel);
     }
 
     public void showBottomPanel(boolean show) {
@@ -172,35 +170,6 @@ public abstract class AbstractThreePanelScreen<T extends Panel> extends BaseScre
         public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
             theme.drawPanelBackground(graphics, x, y, w, h);
             IconHelper.renderIcon(Color4I.BLACK.withAlpha(80), graphics, x, y + h - 1, w, 1);
-        }
-    }
-
-    private class BottomPanel extends Panel {
-        private final Button buttonAccept, buttonCancel;
-
-        public BottomPanel() {
-            super(AbstractThreePanelScreen.this);
-
-            buttonAccept = SimpleTextButton.accept(this, mb -> doAccept(), hotkeyTooltip("⇧ + Enter"));
-            buttonCancel = SimpleTextButton.cancel(this, mb -> doCancel(), hotkeyTooltip("ESC"));
-        }
-
-        @Override
-        public void addWidgets() {
-            add(buttonAccept);
-            add(buttonCancel);
-        }
-
-        @Override
-        public void alignWidgets() {
-            buttonCancel.setPos(width - buttonCancel.width - 5, 2);
-            buttonAccept.setPos(buttonCancel.posX - buttonAccept.width - 5, 2);
-        }
-
-        @Override
-        public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-            theme.drawPanelBackground(graphics, x, y, w, h);
-            IconHelper.renderIcon(Color4I.GRAY.withAlpha(64), graphics, x, y, w, 1);
         }
     }
 }

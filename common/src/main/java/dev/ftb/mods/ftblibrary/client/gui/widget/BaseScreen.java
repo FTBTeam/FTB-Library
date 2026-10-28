@@ -293,34 +293,6 @@ public abstract class BaseScreen extends Panel {
         });
     }
 
-    @Override
-    public final void draw(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-        super.draw(graphics, theme, x, y, w, h);
-
-        if (!modalPanels.isEmpty()) {
-            // allow modal panels to draw outside scissor area if needed
-            boolean r = getOnlyRenderWidgetsInside();
-            boolean i = getOnlyInteractWithWidgetsInside();
-            setOnlyRenderWidgetsInside(false);
-            setOnlyInteractWithWidgetsInside(false);
-
-            graphics.pose().pushMatrix();
-            Iterator<ModalPanel> iter = modalPanels.descendingIterator(); // stack is drawn from bottom to top
-            while (iter.hasNext()) {
-                ModalPanel p = iter.next();
-                if (!iter.hasNext()) {
-                    // dim the rest of the gui so the top modal panel is effectively highlighted
-                    IconHelper.renderIcon(Color4I.rgba(0xA0202020), graphics, 0, 0, getWindow().getGuiScaledWidth(), getWindow().getGuiScaledHeight());
-                }
-                p.draw(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
-            }
-            graphics.pose().popMatrix();
-
-            setOnlyRenderWidgetsInside(r);
-            setOnlyInteractWithWidgetsInside(i);
-        }
-    }
-
     public Optional<ModalPanel> getContextMenu() {
         return modalPanels.stream().filter(p -> p instanceof PopupMenu).findFirst();
     }
@@ -384,6 +356,28 @@ public abstract class BaseScreen extends Panel {
     }
 
     public void drawForeground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+        if (!modalPanels.isEmpty()) {
+            // allow modal panels to draw outside scissor area if needed
+            boolean r = getOnlyRenderWidgetsInside();
+            boolean i = getOnlyInteractWithWidgetsInside();
+            setOnlyRenderWidgetsInside(false);
+            setOnlyInteractWithWidgetsInside(false);
+
+            graphics.pose().pushMatrix();
+            Iterator<ModalPanel> iter = modalPanels.descendingIterator(); // stack is drawn from bottom to top
+            while (iter.hasNext()) {
+                ModalPanel p = iter.next();
+                if (!iter.hasNext()) {
+                    // dim the rest of the gui so the top modal panel is effectively highlighted
+                    IconHelper.renderIcon(Color4I.rgba(0xA0202020), graphics, 0, 0, getWindow().getGuiScaledWidth(), getWindow().getGuiScaledHeight());
+                }
+                p.draw(graphics, theme, p.getX(), p.getY(), p.getWidth(), p.getHeight());
+            }
+            graphics.pose().popMatrix();
+
+            setOnlyRenderWidgetsInside(r);
+            setOnlyInteractWithWidgetsInside(i);
+        }
     }
 
     private Panel getDoubleClickTarget() {

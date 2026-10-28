@@ -162,6 +162,8 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
                 theme.drawString(graphics, "x", getX() + 38, getY() + 28, Theme.SHADOW);
             }
         }
+
+        super.drawForeground(graphics, theme, x, y, w, h);
     }
 
     protected void setSelected(SelectableResource<T> stack) {
