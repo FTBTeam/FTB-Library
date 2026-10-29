@@ -8,11 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * Ported some widget fixes & improvements from 1.21.1
-* `CurrencyProvider` abstraction layer now uses longs instead of ints
-  * This is an API break! FTB XMod Compat 26.1.2.6 or later is needed to work with this
 
 ### Fixed
-* Fixed a bug introduced in 26.1.2.9 causing FTB Chunks maps to not render
+* Fixed a bug introduced in 26.1.2.10 (as part of an FPS fix for FTB Quests) causing FTB Chunks maps to not render
 
 ## [26.1.2.10]
 

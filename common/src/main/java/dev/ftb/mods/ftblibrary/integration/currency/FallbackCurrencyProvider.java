@@ -17,17 +17,17 @@ public enum FallbackCurrencyProvider implements CurrencyProvider {
     }
 
     @Override
-    public long getTotalCurrency(Player player) {
-        return 0L;
+    public int getTotalCurrency(Player player) {
+        return 0;
     }
 
     @Override
-    public boolean takeCurrency(Player player, long amount) {
+    public boolean takeCurrency(Player player, int amount) {
         return false;
     }
 
     @Override
-    public void giveCurrency(Player player, long amount) {
+    public void giveCurrency(Player player, int amount) {
     }
 
     @Override

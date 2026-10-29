@@ -32,8 +32,5 @@
   "depends": {
     "fabric-api": "${fabricapiversionrange}",
     "minecraft": "${minecraft_version_range_semver}"
-  },
-  "breaks": {
-    "ftbxmodcompat": "<26.1.2.6"
   }
 }

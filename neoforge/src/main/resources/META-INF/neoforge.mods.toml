@@ -28,10 +28,3 @@ type = "required"
 versionRange = "${minecraft_version_range_maven}"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies.ftblibrary]]
-modId = "ftbxmodcompat"
-type = "optional"
-versionRange = "[26.1.2.6,)"
-ordering = "NONE"
-side = "BOTH"
