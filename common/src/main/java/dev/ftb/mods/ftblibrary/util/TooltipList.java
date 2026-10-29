@@ -34,6 +34,14 @@ public class TooltipList {
         lines.add(component);
     }
 
+    public void addAll(List<Component> components) {
+        lines.addAll(components);
+    }
+
+    public void addAll(Component... components) {
+        lines.addAll(List.of(components));
+    }
+
     public void blankLine() {
         add(Component.empty());
     }
@@ -61,4 +69,5 @@ public class TooltipList {
     public List<Component> getLines() {
         return lines;
     }
+
 }

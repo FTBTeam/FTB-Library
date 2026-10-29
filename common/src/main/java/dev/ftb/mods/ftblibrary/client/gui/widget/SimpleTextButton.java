@@ -48,6 +48,20 @@ public abstract class SimpleTextButton extends Button {
         return create(panel, Component.translatable("gui.cancel"), Icons.CANCEL, callback, tooltip);
     }
 
+    public static Button.Builder acceptBuilder(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
+        return Button.builder(panel, callback)
+                .withLabel(Component.translatable("gui.accept"))
+                .withIcon(Icons.ACCEPT)
+                .withExtraTooltipLines(tooltipList -> tooltipList.addAll(tooltip));
+    }
+
+    public static Button.Builder cancelBuilder(Panel panel, Consumer<MouseButton> callback, Component... tooltip) {
+        return Button.builder(panel, callback)
+                .withLabel(Component.translatable("gui.cancel"))
+                .withIcon(Icons.CANCEL)
+                .withExtraTooltipLines(tooltipList -> tooltipList.addAll(tooltip));
+    }
+
     @Override
     public SimpleTextButton setTitle(Component txt) {
         super.setTitle(txt);

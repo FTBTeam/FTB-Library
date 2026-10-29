@@ -24,6 +24,7 @@ public interface CurrencyProvider {
 
     /**
      * {@return the player's total currency}
+     *
      * @param player the player to check
      */
     int getTotalCurrency(Player player);

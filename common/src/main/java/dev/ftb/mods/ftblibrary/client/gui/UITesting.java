@@ -5,21 +5,26 @@ import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.Tristate;
 import dev.ftb.mods.ftblibrary.client.config.editable.*;
 import dev.ftb.mods.ftblibrary.client.config.gui.EditConfigScreen;
-import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectItemStackScreen;
+import dev.ftb.mods.ftblibrary.client.config.gui.resource.ModalFluidStackSelector;
+import dev.ftb.mods.ftblibrary.client.config.gui.resource.ModalItemStackSelector;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.screens.AbstractButtonListScreen;
+import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.gui.widget.ContextMenu;
 import dev.ftb.mods.ftblibrary.client.gui.widget.ContextMenuItem;
 import dev.ftb.mods.ftblibrary.client.gui.widget.Panel;
 import dev.ftb.mods.ftblibrary.client.gui.widget.SimpleTextButton;
+import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
+import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.util.ModUtils;
 import dev.ftb.mods.ftblibrary.util.NameMap;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -71,6 +76,8 @@ public class UITesting {
     }
 
     public static class TestConfigScreen extends EditConfigScreen {
+        private ItemStack toDraw = ItemStack.EMPTY;
+
         public TestConfigScreen(EditableConfigGroup configGroup) {
             super(configGroup);
         }
@@ -84,9 +91,20 @@ public class UITesting {
             ContextMenu menu = new ContextMenu(parent, List.of(
                     ContextMenuItem.title(Component.literal("Title")),
                     ContextMenuItem.SEPARATOR,
-                    new ContextMenuItem(Component.literal("Select item"), Icons.ADD,
-                            button -> new SelectItemStackScreen(new EditableItemStack(1), accepted -> parent.getGui().run()).openGui()
-                    ),
+                    new ContextMenuItem(Component.literal("Select item"), Icons.ADD, button -> {
+                        EditableItemStack config = new EditableItemStack(false, true);
+                        getGui().pushModalPanel(
+                                new ModalItemStackSelector(parent, config, accepted -> toDraw = config.getValue())
+                        );
+                    }),
+                    new ContextMenuItem(Component.literal("Select fluid"), Icons.ADD, button -> {
+                        EditableFluid config = new EditableFluid(true);
+                        getGui().pushModalPanel(
+                                new ModalFluidStackSelector(parent, config, accepted -> {
+                                    if (accepted) SimpleToast.info(config.getValue().name(), Component.literal(String.valueOf(config.getValue().amount())));
+                                }
+                                ));
+                    }),
                     ContextMenuItem.subMenu(Component.literal("line 2 >"), Icons.REMOVE, List.of(
                                     ContextMenuItem.title(Component.literal("Submenu")),
                                     ContextMenuItem.SEPARATOR,
@@ -116,6 +134,14 @@ public class UITesting {
                     openTestContextMenu(this);
                 }
                 return super.mousePressed(mouseButton);
+            }
+
+            @Override
+            public void drawBackground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+                super.drawBackground(graphics, theme, x, y, w, h);
+                if (!toDraw.isEmpty()) {
+                    IconHelper.renderIcon(ItemIcon.ofItemStack(toDraw), graphics, getX() + w - 54, getY() + 2, 16, 16);
+                }
             }
         }
     }
