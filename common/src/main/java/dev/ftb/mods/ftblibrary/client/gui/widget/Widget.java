@@ -271,7 +271,7 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
     }
 
     final boolean shouldRenderInLayer(DrawLayer layer, int x, int y, int w, int h) {
-        return drawLayer == layer
+        return getDrawLayer() == layer
                 && shouldDraw()
                 && (!parent.getOnlyRenderWidgetsInside() || collidesWith(x, y, w, h));
     }
