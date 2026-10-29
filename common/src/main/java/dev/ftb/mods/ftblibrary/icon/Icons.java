@@ -86,6 +86,7 @@ public interface Icons {
     Icon<?> KEYBOARD = get("keyboard");
     Icon<?> UNDO = get("undo");
     Icon<?> REDO = get("redo");
+    Icon<?> RESIZE = get("resize");
 
     static Icon<?> get(String id) {
         return Icon.getIcon(FTBLibrary.MOD_ID + ":icons/" + id);
