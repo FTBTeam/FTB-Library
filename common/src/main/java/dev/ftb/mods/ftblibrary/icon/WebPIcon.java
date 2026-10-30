@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.icon;
 
+import com.mojang.util.UndashedUuid;
 import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import dev.ftb.mods.ftblibrary.client.icon.WebPIconRenderer;
 import net.minecraft.resources.Identifier;
@@ -20,15 +21,15 @@ public class WebPIcon extends ImageIcon {
     }
 
     public WebPIcon(URI uri) {
-        this(Identifier.parse("remote_image:webp_" + UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)).toString().replace("-", "")), uri);
+        super(Identifier.parse("remote_image:webp_" + UndashedUuid.toString(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
     }
 
-    public WebPIcon(Identifier texture, @Nullable URI uri) {
+    protected WebPIcon(Identifier texture, @Nullable URI uri) {
         super(texture, uri);
     }
 
-    public static boolean isWebPId(String id) {
-        return id.toLowerCase(Locale.ROOT).endsWith(".webp");
+    public static boolean isWebPId(@Nullable String id) {
+        return id != null && id.toLowerCase(Locale.ROOT).endsWith(".webp");
     }
 
     @Override

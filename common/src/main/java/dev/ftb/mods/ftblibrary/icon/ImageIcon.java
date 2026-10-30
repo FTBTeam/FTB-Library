@@ -1,13 +1,17 @@
 package dev.ftb.mods.ftblibrary.icon;
 
-import com.google.common.base.Objects;
+import com.mojang.util.UndashedUuid;
 import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import dev.ftb.mods.ftblibrary.client.icon.ImageIconRenderer;
 import net.minecraft.resources.Identifier;
+import org.apache.commons.lang3.Validate;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.UUID;
 
 public class ImageIcon extends Icon<ImageIcon> implements IResourceIcon {
     public static final Identifier MISSING_IMAGE = FTBLibrary.id("textures/gui/missing_image.png");
@@ -17,13 +21,15 @@ public class ImageIcon extends Icon<ImageIcon> implements IResourceIcon {
     public double tileSize;
     public Color4I color;
     @Nullable public final URI uri;
-    @Nullable private final String url;
+    @Nullable private final String urlStr;
 
     public ImageIcon(Identifier texture) {
         this(texture, null);
     }
 
-    public ImageIcon(Identifier texture, @Nullable URI uri) {
+    protected ImageIcon(Identifier texture, @Nullable URI uri) {
+        Validate.isTrue(uri == null || Objects.equals(uri.getScheme(), "file"), "Only file:// URIs are supported!");
+
         this.texture = texture;
         minU = 0f;
         minV = 0f;
@@ -31,9 +37,12 @@ public class ImageIcon extends Icon<ImageIcon> implements IResourceIcon {
         maxV = 1f;
         tileSize = 0.0;
         color = Color4I.WHITE;
-
         this.uri = uri;
-        url = uri == null ? null : uri.toString();
+        urlStr = uri == null ? null : uri.toString();
+    }
+
+    public ImageIcon(URI uri) {
+        this(Identifier.parse("remote_image:" + UndashedUuid.toString(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
     }
 
     @Override
@@ -64,7 +73,7 @@ public class ImageIcon extends Icon<ImageIcon> implements IResourceIcon {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(texture, minU, minV, maxU, maxV);
+        return Objects.hash(texture, minU, minV, maxU, maxV);
     }
 
     @Override
@@ -79,7 +88,7 @@ public class ImageIcon extends Icon<ImageIcon> implements IResourceIcon {
 
     @Override
     public String toString() {
-        return url == null ? texture.toString() : url;
+        return urlStr == null ? texture.toString() : urlStr;
     }
 
     @Override

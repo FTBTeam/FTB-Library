@@ -196,10 +196,7 @@ public abstract class Icon<T extends Icon<T>> {
                 case "file":
                     try {
                         var uri = new URI(id);
-                        if (uri.getPath() != null && WebPIcon.isWebPId(uri.getPath())) {
-                            return new WebPIcon(uri);
-                        }
-                        return new URLImageIcon(uri);
+                        return WebPIcon.isWebPId(uri.getPath()) ? new WebPIcon(uri) : new ImageIcon(uri);
                     } catch (Exception ex) {
                         return new ImageIcon(ImageIcon.MISSING_IMAGE);
                     }
