@@ -3,7 +3,6 @@ package dev.ftb.mods.ftblibrary.client.gui.widget;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
-import dev.ftb.mods.ftblibrary.client.gui.ScreenWrapper;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
