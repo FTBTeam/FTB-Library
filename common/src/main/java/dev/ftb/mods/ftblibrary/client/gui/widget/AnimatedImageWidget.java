@@ -6,7 +6,6 @@ import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.client.icon.WebPIconRenderer;
 import dev.ftb.mods.ftblibrary.client.icon.webp.WebPCache;
 import dev.ftb.mods.ftblibrary.client.icon.webp.WebPTexture;
-import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.icon.WebPIcon;
 import dev.ftb.mods.ftblibrary.icon.webp.WebPAnimation;
@@ -37,9 +36,8 @@ import java.util.Set;
 public class AnimatedImageWidget extends Widget {
     private static final int BAR_HEIGHT = 14;
     private static final int BUTTON_SIZE = 14;
-    private static final int BAR_COLOR = Color4I.rgb(0x000000).withAlpha(140).rgba();
-    private static final int GLYPH_COLOR = 0xFFFFFFFF;
-    private static final int PROGRESS_COLOR = 0xFF55AAFF;
+    private static final int BAR_COLOR = 0x8C000000;
+    private static final int PROGRESS_COLOR = 0xC055AAF0;
     private static final long IDLE_RELEASE_NANOS = 15_000_000_000L;
     private static final Set<AnimatedImageWidget> LIVE = new HashSet<>();
 
@@ -117,7 +115,7 @@ public class AnimatedImageWidget extends Widget {
                 graphics.scissorStack.peek()
         ));
 
-        if (isMouseOver() && hasControls()) {
+        if ((!player.isPlaying() || isMouseOver()) && hasControls()) {
             drawControls(graphics, x, y, w, h);
         }
     }
@@ -129,17 +127,11 @@ public class AnimatedImageWidget extends Widget {
         graphics.fill(x, by, x + w, by + BAR_HEIGHT, BAR_COLOR);
 
         // play/pause glyph
-        int gx = x + 4;
-        int gy = by + 3;
         if (player.isPlaying()) {
-            graphics.fill(gx + 1, gy, gx + 4, gy + 8, GLYPH_COLOR);
-            graphics.fill(gx + 6, gy, gx + 9, gy + 8, GLYPH_COLOR);
+            IconHelper.renderIcon(Icons.PAUSE, graphics, x + 2, by + 1, 12, 12);
         } else {
-            for (int i = 0; i < 4; i++) {
-                graphics.fill(gx + 1 + i * 2, gy + i, gx + 3 + i * 2, gy + 8 - i, GLYPH_COLOR);
-            }
+            IconHelper.renderIcon(Icons.RIGHT, graphics, x + 2, by + 1, 12, 12);
         }
-
         IconHelper.renderIcon(Icons.REFRESH, graphics, x + BUTTON_SIZE + 2, by + 1, 12, 12);
 
         graphics.fill(x, y + h - 2, x + Math.round(w * player.getProgress()), y + h, PROGRESS_COLOR);
