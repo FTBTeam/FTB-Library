@@ -20,6 +20,17 @@ public enum AtlasSpriteIconRenderer implements IconRenderer<AtlasSpriteIcon> {
         return getSprite(icon).contents().getFrameCount();
     }
 
+    @Override
+    public double aspectRatio(AtlasSpriteIcon icon) {
+        var s = getSprite(icon);
+        return (s.getU1() - s.getU0()) / (s.getV1() - s.getV0());
+    }
+
+    @Override
+    public boolean isAspectRatioKnown() {
+        return true;
+    }
+
     private TextureAtlasSprite getSprite(AtlasSpriteIcon icon) {
         // TODO: @since 21.11: This isn't ideal. We should really be looking this up or something?
         var isItem = icon.getSpriteId().getPath().startsWith("item/");

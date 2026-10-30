@@ -1,5 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.util;
 
+import dev.ftb.mods.ftblibrary.client.util.ImageComponent.AspectRatioHint;
+import dev.ftb.mods.ftblibrary.client.util.ImageComponent.ImageAlign;
 import dev.ftb.mods.ftblibrary.util.CustomComponentParser;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftblibrary.util.TextComponentParser;
@@ -46,7 +48,8 @@ public class ClientTextComponentUtils {
                 var c = ImageComponent.create(map.get("image"),
                         Integer.parseInt(map.getOrDefault("width", "100")),
                         Integer.parseInt(map.getOrDefault("height", "100")),
-                        ImageComponent.ImageAlign.byName(map.getOrDefault("align", "center")),
+                        ImageAlign.byName(map.getOrDefault("align", "center")),
+                        AspectRatioHint.byId(map.getOrDefault("aspect_ratio_hint", "none")),
                         map.getOrDefault("fit", "false").equals("true"),
                         map.getOrDefault("click_action", "")
                 );

@@ -66,4 +66,10 @@ public enum WebPIconRenderer implements IconRenderer<ImageIcon> {
         }
         return ImageIconRenderer.INSTANCE.aspectRatio(icon);
     }
+
+    @Override
+    public boolean isAspectRatioKnown() {
+        return true;
+    }
+
 }

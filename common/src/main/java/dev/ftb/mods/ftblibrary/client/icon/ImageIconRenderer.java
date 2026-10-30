@@ -73,4 +73,9 @@ public enum ImageIconRenderer implements IconRenderer<ImageIcon> {
 
         return (icon.maxU - icon.minU) / (icon.maxV - icon.minV);
     }
+
+    @Override
+    public boolean isAspectRatioKnown() {
+        return true;
+    }
 }
