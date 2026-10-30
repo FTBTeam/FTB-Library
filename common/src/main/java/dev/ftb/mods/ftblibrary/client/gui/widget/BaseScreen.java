@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.client.gui.widget;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
+import dev.ftb.mods.ftblibrary.client.gui.ScreenWrapper;
 import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
@@ -356,6 +357,9 @@ public abstract class BaseScreen extends Panel {
     }
 
     public void drawForeground(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
+    }
+
+    public final void drawModalPanels(GuiGraphicsExtractor graphics, Theme theme) {
         if (!modalPanels.isEmpty()) {
             // allow modal panels to draw outside scissor area if needed
             boolean r = getOnlyRenderWidgetsInside();

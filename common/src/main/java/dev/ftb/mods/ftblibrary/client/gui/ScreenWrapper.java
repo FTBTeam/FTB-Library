@@ -1,8 +1,8 @@
-package dev.ftb.mods.ftblibrary.client.gui.widget;
+package dev.ftb.mods.ftblibrary.client.gui;
 
-import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.client.gui.input.Key;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.client.gui.widget.BaseScreen;
 import dev.ftb.mods.ftblibrary.platform.Platform;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -115,6 +115,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
         wrappedGui.draw(graphics, theme, x, y, w, h);
         wrappedGui.drawForeground(graphics, theme, x, y, w, h);
+        wrappedGui.drawModalPanels(graphics, theme);
         wrappedGui.addMouseOverText(tooltipList);
 
         graphics.pose().pushMatrix();
