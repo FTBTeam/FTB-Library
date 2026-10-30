@@ -8,7 +8,9 @@
   ],
   "client": [
     "MultilineTextFieldAccess",
-    "TextureAtlasAccess"
+    "SpriteSourceListAccess",
+    "TextureAtlasAccess",
+    "TextureAtlasMixin"
   ],
   "injectors": {
     "defaultRequire": 1

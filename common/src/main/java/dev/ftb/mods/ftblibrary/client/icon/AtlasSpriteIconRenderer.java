@@ -1,11 +1,10 @@
 package dev.ftb.mods.ftblibrary.client.icon;
 
 import dev.ftb.mods.ftblibrary.icon.AtlasSpriteIcon;
-import net.minecraft.client.Minecraft;
+import dev.ftb.mods.ftblibrary.client.util.AtlasSpriteLookup;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.data.AtlasIds;
 
 public enum AtlasSpriteIconRenderer implements IconRenderer<AtlasSpriteIcon> {
     INSTANCE;
@@ -32,8 +31,6 @@ public enum AtlasSpriteIconRenderer implements IconRenderer<AtlasSpriteIcon> {
     }
 
     private TextureAtlasSprite getSprite(AtlasSpriteIcon icon) {
-        // TODO: @since 21.11: This isn't ideal. We should really be looking this up or something?
-        var isItem = icon.getSpriteId().getPath().startsWith("item/");
-        return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(isItem ? AtlasIds.ITEMS : AtlasIds.BLOCKS).getSprite(icon.getSpriteId());
+        return AtlasSpriteLookup.find(icon.getSpriteId());
     }
 }
