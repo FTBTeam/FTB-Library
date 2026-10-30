@@ -83,4 +83,15 @@ public interface IconRenderer<T extends Icon<T>> {
     default boolean isAspectRatioKnown() {
         return false;
     }
+
+    /**
+     * Has the aspect ratio of this particular icon been resolved yet? Always true for icons whose image data is
+     * available immediately; icons which load asynchronously (e.g. WebP) return false until loading has finished
+     * (successfully or not), and {@link #aspectRatio(Icon)} returns a placeholder 1.0 until then.
+     *
+     * @return true if {@link #aspectRatio(Icon)} now returns its final value
+     */
+    default boolean isAspectRatioResolved(T icon) {
+        return true;
+    }
 }

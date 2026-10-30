@@ -23,7 +23,7 @@ public enum AtlasSpriteIconRenderer implements IconRenderer<AtlasSpriteIcon> {
     @Override
     public double aspectRatio(AtlasSpriteIcon icon) {
         var s = getSprite(icon);
-        return (s.getU1() - s.getU0()) / (s.getV1() - s.getV0());
+        return (double) s.contents().width() / s.contents().height();
     }
 
     @Override

@@ -31,6 +31,10 @@ public class IconHelper {
         return icon != null ? icon.getRenderer().aspectRatio(icon.self()) : 1;
     }
 
+    public static <T extends Icon<T>> boolean isAspectRatioResolved(@Nullable Icon<T> icon) {
+        return icon == null || icon.getRenderer().isAspectRatioResolved(icon.self());
+    }
+
     public static <T extends Icon<T>> int getPixelBufferFrameCount(@Nullable Icon<T> icon) {
         return icon != null ? icon.getRenderer().getPixelBufferFrameCount(icon.self()) : 1;
     }

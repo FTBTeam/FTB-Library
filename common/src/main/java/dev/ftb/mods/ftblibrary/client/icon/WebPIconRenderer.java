@@ -68,6 +68,15 @@ public enum WebPIconRenderer implements IconRenderer<ImageIcon> {
     }
 
     @Override
+    public boolean isAspectRatioResolved(ImageIcon icon) {
+        if (icon instanceof WebPIcon webp) {
+            var entry = WebPCache.get(webp.texture, webp.uri);
+            return entry.getAnimation() != null || entry.isFailed();
+        }
+        return true;
+    }
+
+    @Override
     public boolean isAspectRatioKnown() {
         return true;
     }
