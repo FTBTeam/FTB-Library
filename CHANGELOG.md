@@ -17,7 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * `CurrencyProvider` abstraction layer now uses longs instead of ints
   * This is an API break! FTB XMod Compat 26.1.2.6 or later is needed to work with this
-  
+* Reworked image discovery to be properly texture-aware
+  * The benefit here is that all textures atlases are properly scanned, and useful information like image aspect ratios are available
+  * This will be of particular use to FTB Quests
+
+### Fixed
+* Adjusted modal panel drawing in `BaseScreen` so it's again safe to override `drawForeground` without need to call `super()`
+
 ## [26.1.2.11]
 
 ### Changed
