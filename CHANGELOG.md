@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [26.1.2.12]
 
+### Added
+* Support for webp image format, including animated .webp files
+  * Added a `WebPIcon` class for static webp image display
+  * Added a `AnimatedImageWidget` class to allow animated webp files to be embedded in GUIs
+* Added `IconRenderer#isAspectRatioResolved` method to handle icons which are async-loaded (e.g. the new `WebPIcon`)
+* Deprecated `URLImageIcon` since the base `ImageIcon` can do everything that class did
+* Added "resize" and "pause" icons
+
 ### Changed
 * `CurrencyProvider` abstraction layer now uses longs instead of ints
   * This is an API break! FTB XMod Compat 26.1.2.6 or later is needed to work with this
