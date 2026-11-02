@@ -118,6 +118,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
         var theme = wrappedGui.getTheme();
         wrappedGui.draw(graphics, theme, x, y, w, h);
         wrappedGui.drawForeground(graphics, theme, x, y, w, h);
+        wrappedGui.drawModalPanels(graphics, theme);
 
         wrappedGui.addMouseOverText(tooltipList);
 
@@ -130,7 +131,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
                     var ingredient = underMouse.ingredient();
                     if (ingredient instanceof ItemStack stack && !stack.isEmpty()) {
                         graphics.pose().translate(0, 0, zLevel);
-                        graphics.renderTooltip(theme.getFont(), (ItemStack) ingredient, mouseX, mouseY);
+                        graphics.renderTooltip(theme.getFont(), stack, mouseX, mouseY);
                     }
                 }
             });
