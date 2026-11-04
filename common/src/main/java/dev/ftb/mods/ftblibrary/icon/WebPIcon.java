@@ -75,6 +75,12 @@ public class WebPIcon extends ImageIcon {
     }
 
     @Override
+    public boolean isAspectRatioResolved() {
+        var entry = getCacheEntry();
+        return entry.getAnimation() != null || entry.isFailed();
+    }
+
+    @Override
     @Nullable
     public PixelBuffer createPixelBuffer() {
         WebPAnimation anim = getCacheEntry().getAnimation();

@@ -345,6 +345,27 @@ public abstract class Icon implements Drawable {
         return 1.0;
     }
 
+    /**
+     * Can the aspect ratio for this icon be determined? If this method returns false, {@link #aspectRatio()}
+     * always returns 1.0.
+     *
+     * @return true if it's possible to determine the correct aspect ratio for this icon
+     */
+    public boolean isAspectRatioKnown() {
+        return false;
+    }
+
+    /**
+     * Has the aspect ratio of this icon been resolved yet? Always true for icons whose image data is available
+     * immediately; icons which load asynchronously (e.g. WebP) return false until loading has finished (successfully
+     * or not), and {@link #aspectRatio()} returns a placeholder 1.0 until then.
+     *
+     * @return true if {@link #aspectRatio()} now returns its final value
+     */
+    public boolean isAspectRatioResolved() {
+        return true;
+    }
+
     @Nullable
     public Object getIngredient() {
         return null;

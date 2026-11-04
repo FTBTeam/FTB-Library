@@ -162,6 +162,11 @@ public class ImageIcon extends Icon implements IResourceIcon {
     }
 
     @Override
+    public boolean isAspectRatioKnown() {
+        return true;
+    }
+
+    @Override
     public double aspectRatio() {
         if (maxV == minV) return 1.0;
 

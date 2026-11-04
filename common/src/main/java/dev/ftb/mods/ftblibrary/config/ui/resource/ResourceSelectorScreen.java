@@ -145,6 +145,11 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         if (Util.getMillis() >= update) {
             update = Long.MAX_VALUE;
             CompletableFuture.supplyAsync(() -> this.makeResourceWidgets(searchBox.getText().toLowerCase()), SEARCH_EXECUTOR)
+                    .whenComplete((result, ex) -> {
+                        if (ex != null) {
+                            FTBLibrary.LOGGER.error("Failed to build resource list", ex);
+                        }
+                    })
                     .thenAcceptAsync(this::updateItemWidgets, Minecraft.getInstance());
         }
     }

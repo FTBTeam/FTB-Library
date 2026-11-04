@@ -9,7 +9,11 @@
     "TextColorMixin"
   ],
   "client": [
-    "MultilineTextFieldAccess"
+    "MultilineTextFieldAccess",
+    "SpriteSourceListAccess",
+    "TextureAtlasAccess",
+    "TextureAtlasMixin",
+    "TextureManagerAccess"
   ],
   "injectors": {
     "defaultRequire": 1
