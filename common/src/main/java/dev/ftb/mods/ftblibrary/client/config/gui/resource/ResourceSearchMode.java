@@ -115,7 +115,14 @@ public interface ResourceSearchMode<T> {
                     StringUtils.ignoreIdentifierErrors = false;
                 }
 
-                cachedImages = ids.stream().sorted().map(ImageResource::new).toList();
+                // the index was built with identifier validation disabled; drop ids which can't be used normally
+                cachedImages = ids.stream().filter(id -> {
+                    boolean valid = Identifier.read(id.toString()).result().isPresent();
+                    if (!valid) {
+                        FTBLibrary.LOGGER.warn("Image {} has invalid path! Report this to author of '{}'!", id, id.getNamespace());
+                    }
+                    return valid;
+                }).sorted().map(ImageResource::new).toList();
             }
             return cachedImages;
         }
