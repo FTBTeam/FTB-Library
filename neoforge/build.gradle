@@ -35,6 +35,11 @@ dependencies {
 
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 
+    // api: puts it on dev run classpaths and in the published pom; include: jar-in-jar for the production jar
+    include(api("org.glavo:webp:${rootProject.jwebp_version}"))
+    // NeoForge dev runs only see non-mod libraries declared here
+    forgeRuntimeLibrary "org.glavo:webp:${rootProject.jwebp_version}"
+
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rootProject.rei_version}"
     modCompileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
 

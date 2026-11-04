@@ -3,6 +3,9 @@ dependencies {
 
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
+    // pure-Java WebP decoder (MPL-2.0); bundled jar-in-jar by each loader
+    api "org.glavo:webp:${rootProject.jwebp_version}"
+
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}") {
         exclude group: "dev.architectury"
     }

@@ -7,21 +7,17 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
+import dev.ftb.mods.ftblibrary.util.client.AtlasImageIndex;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.SpriteContents;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -107,34 +103,27 @@ public interface ResourceSearchMode<T> {
         @Override
         public Collection<? extends SelectableResource<ResourceLocation>> getAllResources() {
             if (cachedImages == null) {
-                List<ResourceLocation> images = new ArrayList<>();
+                List<ResourceLocation> ids = List.of();
 
                 StringUtils.ignoreResourceLocationErrors = true;
-                Map<ResourceLocation, Resource> textures = Collections.emptyMap();
-
                 try {
-                    textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.getPath().endsWith(".png"));
+                    AtlasImageIndex index = AtlasImageIndex.build(Minecraft.getInstance().getResourceManager());
+                    index.logSummary(FTBLibrary.LOGGER);
+                    ids = index.selectableIds();
                 } catch (Exception ex) {
                     FTBLibrary.LOGGER.error("A mod has a broken resource preventing this list from loading: {}", String.valueOf(ex));
+                } finally {
+                    StringUtils.ignoreResourceLocationErrors = false;
                 }
 
-                StringUtils.ignoreResourceLocationErrors = false;
-
-                textures.keySet().forEach(rl -> ResourceLocation.read(rl.toString()).result().ifPresentOrElse(
-                        images::add,
-                        () -> FTBLibrary.LOGGER.warn("Image {} has invalid path! Report this to author of '{}'!", rl, rl.getNamespace())
-                ));
-
-                cachedImages = images.stream().sorted().map(res -> {
-                    // shorten <mod>:textures/A/B.png to <mod>:A/B
-                    ResourceLocation res1 = ResourceLocation.fromNamespaceAndPath(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(res1);
-                    SpriteContents contents = sprite.contents();
-                    if (contents.name().equals(MissingTextureAtlasSprite.getLocation())) {
-                        res1 = res;
+                // the index was built with resource location validation disabled; drop ids which can't be used normally
+                cachedImages = ids.stream().filter(id -> {
+                    boolean valid = ResourceLocation.read(id.toString()).result().isPresent();
+                    if (!valid) {
+                        FTBLibrary.LOGGER.warn("Image {} has invalid path! Report this to author of '{}'!", id, id.getNamespace());
                     }
-                    return new ImageResource(res1);
-                }).toList();
+                    return valid;
+                }).sorted().map(ImageResource::new).toList();
             }
             return cachedImages;
         }

@@ -211,7 +211,11 @@ public abstract class Icon implements Drawable {
                 case "https":
                 case "file":
                     try {
-                        return new URLImageIcon(new URI(id));
+                        var uri = new URI(id);
+                        if (uri.getPath() != null && WebPIcon.isWebPId(uri.getPath())) {
+                            return new WebPIcon(uri);
+                        }
+                        return new URLImageIcon(uri);
                     } catch (Exception ex) {
                         return new ImageIcon(ImageIcon.MISSING_IMAGE);
                     }
@@ -220,6 +224,10 @@ public abstract class Icon implements Drawable {
                 case "part":
                     return new PartIcon(getIcon(ida[1]));
             }
+        }
+
+        if (WebPIcon.isWebPId(id)) {
+            return new WebPIcon(ResourceLocation.parse(id));
         }
 
         return (id.endsWith(".png") || id.endsWith(".jpg")) ? new ImageIcon(ResourceLocation.parse(id)) : new AtlasSpriteIcon(ResourceLocation.parse(id));
@@ -335,6 +343,27 @@ public abstract class Icon implements Drawable {
      */
     public double aspectRatio() {
         return 1.0;
+    }
+
+    /**
+     * Can the aspect ratio for this icon be determined? If this method returns false, {@link #aspectRatio()}
+     * always returns 1.0.
+     *
+     * @return true if it's possible to determine the correct aspect ratio for this icon
+     */
+    public boolean isAspectRatioKnown() {
+        return false;
+    }
+
+    /**
+     * Has the aspect ratio of this icon been resolved yet? Always true for icons whose image data is available
+     * immediately; icons which load asynchronously (e.g. WebP) return false until loading has finished (successfully
+     * or not), and {@link #aspectRatio()} returns a placeholder 1.0 until then.
+     *
+     * @return true if {@link #aspectRatio()} now returns its final value
+     */
+    public boolean isAspectRatioResolved() {
+        return true;
     }
 
     @Nullable
