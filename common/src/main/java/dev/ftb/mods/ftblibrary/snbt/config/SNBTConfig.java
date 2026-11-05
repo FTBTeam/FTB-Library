@@ -73,10 +73,30 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
     }
 
     @Override
+    public void readUntrusted(SNBTCompoundTag tag) {
+        if (parent == null) {
+            for (var value : defaultValue) {
+                if (tag.contains(value.key)) {
+                    value.readUntrusted(tag);
+                }
+            }
+        } else {
+            if (tag.contains(key, Tag.TAG_COMPOUND)) {
+                var newTag = tag.getCompound(key);
+                for (var value : defaultValue) {
+                    if (newTag.contains(value.key)) {
+                        value.readUntrusted(newTag);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
         List<BaseValue<?>> sorted = defaultValue.stream()
-                .filter(v -> !v.excluded)
+                .filter(v -> !v.excluded && !v.fileOnly)
                 .sorted(Comparator.comparingInt(o -> o.displayOrder))
                 .toList();
 
