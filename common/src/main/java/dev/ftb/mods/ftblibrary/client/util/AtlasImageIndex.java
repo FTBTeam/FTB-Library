@@ -190,14 +190,14 @@ public final class AtlasImageIndex {
     }
 
     public void logSummary(Logger logger) {
-        logger.info("Image index: {} entries", entries.size());
-        atlasStats.forEach((id, s) -> logger.info("  atlas {}: {} sprites ({} from files, {} without a single file); {} files not stitched",
+        logger.debug("Image index: {} entries", entries.size());
+        atlasStats.forEach((id, s) -> logger.debug("  atlas {}: {} sprites ({} from files, {} without a single file); {} files not stitched",
                 id, s.stitched(), s.fromFiles(), s.fileless(), s.notStitched()));
 
         long files = entries.stream().filter(e -> e.fileId() != null).count();
         long inAtlas = entries.stream().filter(e -> e.fileId() != null && !e.isStandalone()).count();
         long multi = entries.stream().filter(e -> e.atlasSprites().size() > 1).count();
-        logger.info("  {} image files: {} in an atlas ({} in more than one), {} standalone", files, inAtlas, multi, files - inAtlas);
+        logger.debug("  {} image files: {} in an atlas ({} in more than one), {} standalone", files, inAtlas, multi, files - inAtlas);
 
         Map<String, Integer> standaloneByNs = new TreeMap<>();
         standalone().forEach(e -> standaloneByNs.merge(e.fileId().getNamespace(), 1, Integer::sum));
