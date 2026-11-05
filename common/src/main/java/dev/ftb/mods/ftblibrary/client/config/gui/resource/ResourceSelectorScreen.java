@@ -110,7 +110,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     @Override
     public boolean onInit() {
         setWidth(19 + 18 * nCols);
-        setHeight(108 + 18 * nRows);
+        setHeight(Math.min(getWindow().getGuiScaledHeight() * 19 / 20, 108 + 18 * nRows));
         return true;
     }
 
@@ -150,6 +150,11 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
         if (Util.getMillis() >= update) {
             update = Long.MAX_VALUE;
             CompletableFuture.supplyAsync(() -> this.makeResourceWidgets(searchBox.getText().toLowerCase()), SEARCH_EXECUTOR)
+                    .whenComplete((result, ex) -> {
+                        if (ex != null) {
+                            FTBLibrary.LOGGER.error("Failed to build resource list", ex);
+                        }
+                    })
                     .thenAcceptAsync(this::updateItemWidgets, Minecraft.getInstance());
         }
     }

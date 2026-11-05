@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public record SyncGameStagesMessage(Collection<String> stages, Operation op) implements CustomPacketPayload {
     public static final Type<SyncGameStagesMessage> TYPE = new Type<>(FTBLibrary.id("sync_game_stage"));
@@ -20,6 +21,11 @@ public record SyncGameStagesMessage(Collection<String> stages, Operation op) imp
             NetworkHelper.enumStreamCodec(Operation.class), SyncGameStagesMessage::op,
             SyncGameStagesMessage::new
     );
+
+    public SyncGameStagesMessage(Collection<String> stages, Operation op) {
+        this.stages = Set.copyOf(stages);
+        this.op = op;
+    }
 
     public static SyncGameStagesMessage add(String tag) {
         return new SyncGameStagesMessage(List.of(tag), Operation.ADD);

@@ -8,11 +8,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 
-
+/**
+ * This class adds nothing useful over what {@link ImageIcon} provides.
+ */
+@Deprecated(forRemoval = true)
 public class URLImageIcon extends ImageIcon {
     public final URI uri;
     private final String url;
 
+    /**
+     * Use {@link ImageIcon#fromURI(URI)}
+     */
     public URLImageIcon(Identifier textureID, URI uri) {
         super(textureID);
 
@@ -24,6 +30,9 @@ public class URLImageIcon extends ImageIcon {
         }
     }
 
+    /**
+     * Use {@link ImageIcon#fromURI(URI)}
+     */
     public URLImageIcon(URI uri) {
         this(Identifier.parse("remote_image:" + UndashedUuid.toString(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)))), uri);
     }

@@ -43,23 +43,27 @@ public record Json5ConfigSerializer(Json5Object configJson) implements ConfigSer
     }
 
     @Override
-    public List<BaseValue<?>> getConfigSection(String key, List<BaseValue<?>> defVal, boolean topLevel) {
+    public List<BaseValue<?>> getConfigSection(String key, List<BaseValue<?>> defVal, boolean topLevel, boolean networkSource) {
         if (topLevel) {
-            return readFromJson(configJson, defVal);
+            return readFromJson(configJson, defVal, networkSource);
         } else if (configJson.has(key)) {
-            return readFromJson(configJson.getAsJson5Object(key), defVal);
+            return readFromJson(configJson.getAsJson5Object(key), defVal, networkSource);
         } else {
             return List.of();
         }
     }
 
-    private List<BaseValue<?>> readFromJson(Json5Object json, List<BaseValue<?>> defVal) {
+    private List<BaseValue<?>> readFromJson(Json5Object json, List<BaseValue<?>> defVal, boolean networkSource) {
         Json5ConfigSerializer serializer = new Json5ConfigSerializer(json);
 
         List<BaseValue<?>> res = new ArrayList<>();
         for (var value : defVal) {
             if (json.has(value.getKey())) {
-                value.read(serializer);
+                if (networkSource) {
+                    value.readUntrusted(serializer);
+                } else {
+                    value.read(serializer);
+                }
             }
             res.add(value);
         }

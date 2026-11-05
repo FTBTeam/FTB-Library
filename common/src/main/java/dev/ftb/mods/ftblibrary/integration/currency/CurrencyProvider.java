@@ -27,14 +27,14 @@ public interface CurrencyProvider {
      *
      * @param player the player to check
      */
-    int getTotalCurrency(Player player);
+    long getTotalCurrency(Player player);
 
     /**
      * {@return true if the currency was actually taken, i.e. the player had sufficient funds}
      * @param player the player to take from
      * @param amount the amount to take
      */
-    boolean takeCurrency(Player player, int amount);
+    boolean takeCurrency(Player player, long amount);
 
     /**
      * Give some currency to the player.
@@ -42,7 +42,7 @@ public interface CurrencyProvider {
      * @param player the player to give to
      * @param amount the amount to give
      */
-    void giveCurrency(Player player, int amount);
+    void giveCurrency(Player player, long amount);
 
     /**
      * {@return a printable name for the currency in question, for tooltip/messaging purposes}

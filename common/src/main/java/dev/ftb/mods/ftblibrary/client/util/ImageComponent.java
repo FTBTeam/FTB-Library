@@ -8,13 +8,13 @@ import dev.ftb.mods.ftblibrary.util.NameMap;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.util.StringRepresentable;
 
-// TODO: Fix me
 public class ImageComponent implements ComponentContents {
     public static final MapCodec<ImageComponent> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("image_id").forGetter(ImageComponent::imageStr),
             Codec.INT.optionalFieldOf("width", 100).forGetter(ImageComponent::getWidth),
             Codec.INT.optionalFieldOf("height", 100).forGetter(ImageComponent::getHeight),
             ImageAlign.CODEC.optionalFieldOf("align", ImageAlign.CENTER).forGetter(ImageComponent::getAlign),
+            AspectRatioHint.CODEC.optionalFieldOf("aspect_ratio_hint", AspectRatioHint.NONE).forGetter(ImageComponent::getAspectRatioHint),
             Codec.BOOL.optionalFieldOf("fit", false).forGetter(ImageComponent::isFit),
             Codec.STRING.optionalFieldOf("click_action", "").forGetter(ImageComponent::getClickAction)
     ).apply(instance, ImageComponent::create));
@@ -23,6 +23,7 @@ public class ImageComponent implements ComponentContents {
     private int width = 100;
     private int height = 100;
     private ImageAlign align = ImageAlign.CENTER;
+    private AspectRatioHint aspectRatioHint = AspectRatioHint.NONE;
     private boolean fit = false;
     private String clickAction = "";
 
@@ -30,12 +31,13 @@ public class ImageComponent implements ComponentContents {
         super();
     }
 
-    public static ImageComponent create(String id, int width, int height, ImageAlign align, boolean fit, String clickAction) {
+    public static ImageComponent create(String id, int width, int height, ImageAlign align, AspectRatioHint aspectRatioHint, boolean fit, String clickAction) {
         ImageComponent c = new ImageComponent();
         c.image = Icon.getIcon(id);
         c.width = width;
         c.height = height;
         c.align = align;
+        c.aspectRatioHint = aspectRatioHint;
         c.fit = fit;
         c.clickAction = clickAction;
         return c;
@@ -77,6 +79,14 @@ public class ImageComponent implements ComponentContents {
         this.align = align;
     }
 
+    public AspectRatioHint getAspectRatioHint() {
+        return aspectRatioHint;
+    }
+
+    public void setAspectRatioHint(AspectRatioHint aspectRatioHint) {
+        this.aspectRatioHint = aspectRatioHint;
+    }
+
     public boolean isFit() {
         return fit;
     }
@@ -95,22 +105,26 @@ public class ImageComponent implements ComponentContents {
 
     @Override
     public String toString() {
-        var sb = new StringBuilder("{image:");
-        sb.append(image);
+        var sb = new StringBuilder("{image:")
+                .append(image)
+                .append(" width:").append(width)
+                .append(" height:").append(height);
 
-        sb.append(" width:").append(width);
-        sb.append(" height:").append(height);
-        sb.append(" align:").append(align.getName());
-
+        if (align != ImageAlign.CENTER) {
+            sb.append(" align:").append(align.getName());
+        }
+        if (aspectRatioHint != AspectRatioHint.NONE) {
+            sb.append(" aspect_ratio_hint:").append(aspectRatioHint.getId());
+        }
         if (fit) {
             sb.append(" fit:true");
         }
-
         if (!clickAction.isEmpty()) {
             sb.append(" click_action:").append(clickAction.replace(" ", "%20"));
         }
 
         sb.append('}');
+
         return sb.toString();
     }
 
@@ -144,6 +158,34 @@ public class ImageComponent implements ComponentContents {
         @Override
         public String getSerializedName() {
             return name;
+        }
+    }
+
+    public enum AspectRatioHint implements StringRepresentable {
+        NONE("none"),
+        ADJUST_WIDTH("adjust_width"),
+        ADJUST_HEIGHT("adjust_height");
+
+        public static final Codec<AspectRatioHint> CODEC = StringRepresentable.fromEnum(AspectRatioHint::values);
+        public static final NameMap<AspectRatioHint> NAME_MAP = NameMap.of(NONE, values()).id(AspectRatioHint::getId).create();
+
+        private final String id;
+
+        AspectRatioHint(String id) {
+            this.id = id;
+        }
+
+        public static AspectRatioHint byId(String id) {
+            return NAME_MAP.get(id);
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return id;
         }
     }
 }

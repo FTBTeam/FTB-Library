@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.api.client.FTBLibraryClientApi;
 import dev.ftb.mods.ftblibrary.api.event.client.RegisterCustomColorEvent;
 import dev.ftb.mods.ftblibrary.client.config.gui.resource.SelectImageResourceScreen;
+import dev.ftb.mods.ftblibrary.client.gui.widget.AnimatedImageWidget;
 import dev.ftb.mods.ftblibrary.client.gui.CursorType;
 import dev.ftb.mods.ftblibrary.client.gui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
@@ -66,6 +67,8 @@ public class FTBLibraryClient {
     }
 
     public void clientTick() {
+        AnimatedImageWidget.releaseIdle();
+
         var client = Minecraft.getInstance();
         var cursorType = client.screen instanceof IScreenWrapper w ? w.getGui().getCursor() : null;
         if (lastCursorType != cursorType) {

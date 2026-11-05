@@ -115,6 +115,7 @@ public class ScreenWrapper extends Screen implements IScreenWrapper {
 
         wrappedGui.draw(graphics, theme, x, y, w, h);
         wrappedGui.drawForeground(graphics, theme, x, y, w, h);
+        wrappedGui.drawModalPanels(graphics, theme);
         wrappedGui.addMouseOverText(tooltipList);
 
         graphics.pose().pushMatrix();

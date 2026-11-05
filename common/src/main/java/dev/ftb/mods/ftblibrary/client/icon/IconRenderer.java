@@ -66,11 +66,32 @@ public interface IconRenderer<T extends Icon<T>> {
     /**
      * Get the aspect ratio of the icon, which is the width divided by height. For most icon types this is always 1.0,
      * since icons do not in general know what size they are (they're scaled when drawn). However, for atlas sprite
-     * and image icons, the underlying image's aspect ratio is returned.
+     * and image icons, the underlying image's aspect ratio is returned. See also {@link #isAspectRatioKnown()}.
      *
      * @return the aspect ratio of the icon
      */
     default double aspectRatio(T icon) {
         return 1.0;
+    }
+
+    /**
+     * Can the aspect ratio for this icon be determined? If this method returns false, {@link #aspectRatio(Icon)}
+     * should always return 1.0.
+     *
+     * @return true if it's possible to determine the correct aspect ratio for this icon
+     */
+    default boolean isAspectRatioKnown() {
+        return false;
+    }
+
+    /**
+     * Has the aspect ratio of this particular icon been resolved yet? Always true for icons whose image data is
+     * available immediately; icons which load asynchronously (e.g. WebP) return false until loading has finished
+     * (successfully or not), and {@link #aspectRatio(Icon)} returns a placeholder 1.0 until then.
+     *
+     * @return true if {@link #aspectRatio(Icon)} now returns its final value
+     */
+    default boolean isAspectRatioResolved(T icon) {
+        return true;
     }
 }

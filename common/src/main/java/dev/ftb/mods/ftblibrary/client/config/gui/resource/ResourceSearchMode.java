@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.config.gui.resource;
 
 import dev.ftb.mods.ftblibrary.FTBLibrary;
+import dev.ftb.mods.ftblibrary.client.util.AtlasImageIndex;
 import dev.ftb.mods.ftblibrary.client.util.ClientUtils;
 import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
 import dev.ftb.mods.ftblibrary.icon.Icon;
@@ -9,14 +10,9 @@ import dev.ftb.mods.ftblibrary.icon.ItemIcon;
 import dev.ftb.mods.ftblibrary.platform.fluid.FluidStack;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Enemy;
@@ -106,34 +102,27 @@ public interface ResourceSearchMode<T> {
         @Override
         public Collection<? extends SelectableResource<Identifier>> getAllResources() {
             if (cachedImages == null) {
-                List<Identifier> images = new ArrayList<>();
+                List<Identifier> ids = List.of();
 
                 StringUtils.ignoreIdentifierErrors = true;
-                Map<Identifier, Resource> textures = Collections.emptyMap();
-
                 try {
-                    textures = Minecraft.getInstance().getResourceManager().listResources("textures", t -> t.getPath().endsWith(".png"));
+                    AtlasImageIndex index = AtlasImageIndex.build(Minecraft.getInstance().getResourceManager());
+                    index.logSummary(FTBLibrary.LOGGER);
+                    ids = index.selectableIds();
                 } catch (Exception ex) {
                     FTBLibrary.LOGGER.error("A mod has a broken resource preventing this list from loading: {}", String.valueOf(ex));
+                } finally {
+                    StringUtils.ignoreIdentifierErrors = false;
                 }
 
-                StringUtils.ignoreIdentifierErrors = false;
-
-                textures.keySet().forEach(rl -> Identifier.read(rl.toString()).result().ifPresentOrElse(
-                        images::add,
-                        () -> FTBLibrary.LOGGER.warn("Image {} has invalid path! Report this to author of '{}'!", rl, rl.getNamespace())
-                ));
-
-                TextureAtlas blockAtlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS);
-                cachedImages = images.stream().sorted().map(res -> {
-                    // shorten <mod>:textures/A/B.png to <mod>:A/B
-                    Identifier res1 = Identifier.fromNamespaceAndPath(res.getNamespace(), res.getPath().substring(9, res.getPath().length() - 4));
-                    TextureAtlasSprite sprite = blockAtlas.getSprite(res1);
-                    if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
-                        res1 = res;
+                // the index was built with identifier validation disabled; drop ids which can't be used normally
+                cachedImages = ids.stream().filter(id -> {
+                    boolean valid = Identifier.read(id.toString()).result().isPresent();
+                    if (!valid) {
+                        FTBLibrary.LOGGER.warn("Image {} has invalid path! Report this to author of '{}'!", id, id.getNamespace());
                     }
-                    return new ImageResource(res1);
-                }).toList();
+                    return valid;
+                }).sorted().map(ImageResource::new).toList();
             }
             return cachedImages;
         }

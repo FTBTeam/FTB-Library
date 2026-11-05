@@ -11,7 +11,10 @@ import java.util.Map;
  * An abstraction of the various get/put methods for serialization of config value types.
  */
 public interface ConfigSerializer {
-    List<BaseValue<?>> getConfigSection(String key, List<BaseValue<?>> defVal, boolean topLevel);
+    List<BaseValue<?>> getConfigSection(String key, List<BaseValue<?>> defVal, boolean topLevel, boolean networkSource);
+    default List<BaseValue<?>> getConfigSection(String key, List<BaseValue<?>> defVal, boolean topLevel) {
+        return getConfigSection(key, defVal, topLevel, false);
+    }
     void putConfigSection(String key, Config val, boolean topLevel);
 
     boolean getBoolean(String key, boolean defVal);

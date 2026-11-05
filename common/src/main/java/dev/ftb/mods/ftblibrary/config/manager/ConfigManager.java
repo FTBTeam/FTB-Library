@@ -159,7 +159,7 @@ public enum ConfigManager {
     public void syncFromClient(String serverConfigName, String configData, String playerName) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(new Json5ConfigSerializer(new Json5().parse(configData).getAsJson5Object()));
+            tc.config.readUntrusted(new Json5ConfigSerializer(new Json5().parse(configData).getAsJson5Object()));
             tc.onEdited.accept(true);
             save(serverConfigName);
             FTBLibrary.LOGGER.info("received client config settings from {} for config: {}", playerName, serverConfigName);
