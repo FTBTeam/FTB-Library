@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.config.value;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.client.config.EditableConfigGroup;
 import dev.ftb.mods.ftblibrary.client.config.editable.EditableConfigValue;
 import dev.ftb.mods.ftblibrary.config.serializer.ConfigSerializer;
@@ -23,6 +24,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     protected final String key;
     protected final T defaultValue;
     protected boolean excluded;
+    protected boolean fileOnly;
     protected BooleanSupplier enabled = Lambdas.ALWAYS_TRUE;
     protected int displayOrder = 0;
     protected List<String> comment = new ArrayList<>(0);
@@ -137,6 +139,15 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
         return self();
     }
 
+    /**
+     * File-only values cannot be changed by GUI (sync from client), only by a direct local file edit.
+     */
+    @SuppressWarnings("unchecked")
+    public <E extends BaseValue<T>> E fromFileOnly() {
+        fileOnly = true;
+        return (E) this;
+    }
+
     protected <E extends BaseValue<T>> E self() {
         //noinspection unchecked
         return (E) this;
@@ -186,6 +197,14 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
      * @param header the header list to add lines to
      */
     protected void addExtraHeaderInfo(List<String> header) {
+    }
+
+    public void readUntrusted(ConfigSerializer serializer) {
+        if (!fileOnly) {
+            read(serializer);
+        } else {
+            FTBLibrary.LOGGER.debug("not reading config value {} from network source", this);
+        }
     }
 
     @Nullable

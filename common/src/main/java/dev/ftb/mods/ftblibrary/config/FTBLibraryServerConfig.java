@@ -20,7 +20,7 @@ public interface FTBLibraryServerConfig {
     BooleanValue TEST3 = SECT1.addBoolean("test3", true);
 
     Config SECT2 = CONFIG.addGroup("section2");
-    BooleanValue TEST4 = SECT2.addBoolean("test4", false);
+    BooleanValue TEST4 = SECT2.addBoolean("test4", false).fromFileOnly();
     IntValue TEST5 = SECT2.addInt("test5", 1, 0, 10);
 
     static void onChanged(boolean isServer) {

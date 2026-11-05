@@ -42,10 +42,15 @@ public class Config extends BaseValue<List<BaseValue<?>>> {
     }
 
     @Override
+    public void readUntrusted(ConfigSerializer serializer) {
+        set(serializer.getConfigSection(key, defaultValue, parent == null, true));
+    }
+
+    @Override
     @Nullable
     protected EditableConfigValue<?> fillClientConfig(EditableConfigGroup group) {
         List<BaseValue<?>> sorted = defaultValue.stream()
-                .filter(v -> !v.excluded)
+                .filter(v -> !v.excluded && !v.fileOnly)
                 .sorted(Comparator.comparingInt(o -> o.displayOrder))
                 .toList();
 
