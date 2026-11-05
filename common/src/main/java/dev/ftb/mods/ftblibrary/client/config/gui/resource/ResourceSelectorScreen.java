@@ -110,7 +110,7 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     @Override
     public boolean onInit() {
         setWidth(19 + 18 * nCols);
-        setHeight(108 + 18 * nRows);
+        setHeight(Math.min(getWindow().getGuiScaledHeight() * 19 / 20, 108 + 18 * nRows));
         return true;
     }
 
