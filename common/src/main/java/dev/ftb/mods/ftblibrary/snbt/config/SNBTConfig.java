@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
@@ -52,12 +53,11 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
         }
     }
 
-    @Override
-    public void read(SNBTCompoundTag tag) {
+    private void readRecursively(SNBTCompoundTag tag, BiConsumer<BaseValue<?>, SNBTCompoundTag> consumer) {
         if (parent == null) {
             for (var value : defaultValue) {
                 if (tag.contains(value.key)) {
-                    value.read(tag);
+                    consumer.accept(value, tag);
                 }
             }
         } else {
@@ -65,7 +65,7 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
                 var newTag = tag.getCompound(key);
                 for (var value : defaultValue) {
                     if (newTag.contains(value.key)) {
-                        value.read(newTag);
+                        consumer.accept(value, newTag);
                     }
                 }
             }
@@ -73,23 +73,13 @@ public final class SNBTConfig extends BaseValue<List<BaseValue<?>>> {
     }
 
     @Override
+    public void read(SNBTCompoundTag tag) {
+        readRecursively(tag, BaseValue::read);
+    }
+
+    @Override
     public void readUntrusted(SNBTCompoundTag tag) {
-        if (parent == null) {
-            for (var value : defaultValue) {
-                if (tag.contains(value.key)) {
-                    value.readUntrusted(tag);
-                }
-            }
-        } else {
-            if (tag.contains(key, Tag.TAG_COMPOUND)) {
-                var newTag = tag.getCompound(key);
-                for (var value : defaultValue) {
-                    if (newTag.contains(value.key)) {
-                        value.readUntrusted(newTag);
-                    }
-                }
-            }
-        }
+        readRecursively(tag, BaseValue::readUntrusted);
     }
 
     @Override
