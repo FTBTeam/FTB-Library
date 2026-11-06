@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icons;
 import dev.ftb.mods.ftblibrary.icon.WebPIcon;
 import dev.ftb.mods.ftblibrary.icon.webp.WebPAnimation;
@@ -30,9 +29,8 @@ import java.util.Set;
 public class AnimatedImageWidget extends Widget {
     private static final int BAR_HEIGHT = 14;
     private static final int BUTTON_SIZE = 14;
-    private static final Color4I BAR_COLOR = Color4I.rgb(0x000000).withAlpha(140);
-    private static final Color4I GLYPH_COLOR = Color4I.WHITE;
-    private static final Color4I PROGRESS_COLOR = Color4I.rgb(0x55AAFF);
+    private static final int BAR_COLOR = 0x8C000000;
+    private static final int PROGRESS_COLOR = 0xC055AAF0;
     private static final long IDLE_RELEASE_NANOS = 15_000_000_000L;
     private static final Set<AnimatedImageWidget> LIVE = new HashSet<>();
 
@@ -81,7 +79,10 @@ public class AnimatedImageWidget extends Widget {
             return;
         }
 
+
         ensurePlayer(anim);
+        assert player != null && texture != null;
+
         lastDrawNanos = System.nanoTime();
         WebPFrameData frame = player.update(lastDrawNanos);
         if (frame == null) {
@@ -97,30 +98,26 @@ public class AnimatedImageWidget extends Widget {
         RenderSystem.setShaderTexture(0, texture.getId());
         GuiHelper.drawTexturedRect(graphics, x, y, w, h, icon.color, icon.minU, icon.minV, icon.maxU, icon.maxV);
 
-        if (isMouseOver() && hasControls()) {
+        if ((!player.isPlaying() || isMouseOver()) && hasControls()) {
             drawControls(graphics, x, y, w, h);
         }
     }
 
     private void drawControls(GuiGraphics graphics, int x, int y, int w, int h) {
-        int by = y + h - BAR_HEIGHT;
-        BAR_COLOR.draw(graphics, x, by, w, BAR_HEIGHT);
+        assert player != null;
 
-        // play/pause glyph
-        int gx = x + 4;
-        int gy = by + 3;
+        int by = y + h - BAR_HEIGHT;
+
+        graphics.fill(x, by, x + w, by + BAR_HEIGHT, BAR_COLOR);
+
         if (player.isPlaying()) {
-            GLYPH_COLOR.draw(graphics, gx + 1, gy, 3, 8);
-            GLYPH_COLOR.draw(graphics, gx + 6, gy, 3, 8);
+            Icons.PAUSE.draw(graphics, x + 2, by + 1, 12, 12);
         } else {
-            for (int i = 0; i < 4; i++) {
-                GLYPH_COLOR.draw(graphics, gx + 1 + i * 2, gy + i, 2, 8 - i * 2);
-            }
+            Icons.RIGHT.draw(graphics, x + 2, by + 1, 12, 12);
         }
 
         Icons.REFRESH.draw(graphics, x + BUTTON_SIZE + 2, by + 1, 12, 12);
-
-        PROGRESS_COLOR.draw(graphics, x, y + h - 2, Math.round(w * player.getProgress()), 2);
+        graphics.fill(x, y + h - 2, x + Math.round(w * player.getProgress()), y + h, PROGRESS_COLOR);
     }
 
     private boolean isOverBar() {
@@ -137,6 +134,8 @@ public class AnimatedImageWidget extends Widget {
     @Override
     public boolean mousePressed(MouseButton button) {
         if (isMouseOverControls()) {
+            assert player != null;
+
             if (button.isLeft()) {
                 int rel = getMouseX() - getX();
                 if (rel < BUTTON_SIZE) {
