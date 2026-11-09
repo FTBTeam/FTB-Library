@@ -10,5 +10,5 @@ import java.util.List;
 @Mixin(SpriteSourceList.class)
 public interface SpriteSourceListAccess {
     @Accessor("sources")
-    List<SpriteSource> getSources();
+    List<SpriteSource> ftblibrary$getSources();
 }

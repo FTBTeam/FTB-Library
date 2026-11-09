@@ -177,7 +177,7 @@ public final class AtlasImageIndex {
             }
         };
 
-        for (SpriteSource source : ((SpriteSourceListAccess) SpriteSourceList.load(resourceManager, atlasId)).getSources()) {
+        for (SpriteSource source : ((SpriteSourceListAccess) SpriteSourceList.load(resourceManager, atlasId)).ftblibrary$getSources()) {
             try {
                 source.run(recorder, output);
             } catch (Exception ex) {
