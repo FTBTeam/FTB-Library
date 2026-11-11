@@ -38,6 +38,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen<ResourceSelectorScreen<T>.StacksPanel> {
@@ -59,6 +60,8 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
     private final SearchModeButton searchModeButton;
     private final NBTButton nbtButton;
     public long update = Long.MAX_VALUE;
+    // searches in flight; the first search of a large resource list can take a while, so we show a loading message
+    private final AtomicInteger pendingSearches = new AtomicInteger();
     private SelectableResource<T> selectedStack;
     private int refreshTimer = 0;
     private int nRows = ITEM_ROWS;
@@ -144,13 +147,15 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
 
         if (Util.getMillis() >= update) {
             update = Long.MAX_VALUE;
+            pendingSearches.incrementAndGet();
             CompletableFuture.supplyAsync(() -> this.makeResourceWidgets(searchBox.getText().toLowerCase()), SEARCH_EXECUTOR)
                     .whenComplete((result, ex) -> {
                         if (ex != null) {
                             FTBLibrary.LOGGER.error("Failed to build resource list", ex);
                         }
                     })
-                    .thenAcceptAsync(this::updateItemWidgets, Minecraft.getInstance());
+                    .thenAcceptAsync(this::updateItemWidgets, Minecraft.getInstance())
+                    .whenComplete((result, ex) -> pendingSearches.decrementAndGet());
         }
     }
 
@@ -259,6 +264,11 @@ public abstract class ResourceSelectorScreen<T> extends AbstractThreePanelScreen
             super.draw(graphics, theme, x, y, w, h);
 
             GuiHelper.drawHollowRect(graphics, x - 1, y - 1, w + 2, h + 2, Color4I.rgb(0x101010), false);
+
+            if (pendingSearches.get() > 0 && getWidgets().isEmpty()) {
+                theme.drawString(graphics, Component.translatable("ftblibrary.gui.loading").withStyle(ChatFormatting.ITALIC),
+                        x + w / 2, y + h / 2, Theme.CENTERED | Theme.CENTERED_V);
+            }
         }
     }
 

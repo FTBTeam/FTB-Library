@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -117,12 +118,15 @@ public final class AtlasImageIndex {
         List<AtlasSprite> fileless = new ArrayList<>();
         Map<ResourceLocation, AtlasStats> stats = new TreeMap<>();
 
+        // shared by all atlases, so the (expensive) scan of every pack's textures is only done once
+        RecordingResourceManager recorder = new RecordingResourceManager(resourceManager);
+
         AtlasSpriteLookup.forEachAtlas((atlasId, atlas) -> {
             Set<ResourceLocation> stitched = new HashSet<>(((TextureAtlasAccess) atlas).getTexturesByName().keySet());
             stitched.remove(MissingTextureAtlasSprite.getLocation());
 
             int total = stitched.size();
-            Map<ResourceLocation, @Nullable ResourceLocation> spriteToFile = collectSprites(resourceManager, atlasId);
+            Map<ResourceLocation, @Nullable ResourceLocation> spriteToFile = collectSprites(resourceManager, recorder, atlasId);
 
             int fromFiles = 0, notStitched = 0;
             for (var e : spriteToFile.entrySet()) {
@@ -145,7 +149,7 @@ public final class AtlasImageIndex {
         });
 
         List<ImageEntry> entries = new ArrayList<>();
-        resourceManager.listResources("textures", id -> id.getPath().endsWith(".png") || id.getPath().endsWith(".webp"))
+        recorder.listResources("textures", id -> id.getPath().endsWith(".png") || id.getPath().endsWith(".webp"))
                 .keySet().stream().sorted()
                 .forEach(file -> entries.add(new ImageEntry(file, List.copyOf(byFile.getOrDefault(file, List.of())))));
         fileless.forEach(as -> entries.add(new ImageEntry(null, List.of(as))));
@@ -154,9 +158,8 @@ public final class AtlasImageIndex {
     }
 
     /** Run the atlas's sprite sources, returning sprite id -> backing file (null if there's no single backing file) */
-    private static Map<ResourceLocation, @Nullable ResourceLocation> collectSprites(ResourceManager resourceManager, ResourceLocation atlasId) {
+    private static Map<ResourceLocation, @Nullable ResourceLocation> collectSprites(ResourceManager resourceManager, RecordingResourceManager recorder, ResourceLocation atlasId) {
         Map<ResourceLocation, @Nullable ResourceLocation> result = new LinkedHashMap<>();
-        RecordingResourceManager recorder = new RecordingResourceManager(resourceManager);
 
         SpriteSource.Output output = new SpriteSource.Output() {
             @Override
@@ -209,10 +212,15 @@ public final class AtlasImageIndex {
      * Wraps a resource manager, remembering the path each returned {@link Resource} was found at. Sprite sources only
      * hand the {@code Resource} to their output, not its path; since the same instance is passed through, an identity
      * lookup recovers the path.
+     * <p>
+     * Listings under {@code textures} are served from a single scan of the real resource manager, held in memory. Each
+     * sprite source would otherwise rescan every pack for its own directory, which is very slow with many mods.
      */
     private static class RecordingResourceManager implements ResourceManager {
         private final ResourceManager delegate;
         private final Map<Resource, ResourceLocation> paths = new IdentityHashMap<>();
+        @Nullable
+        private NavigableMap<ResourceLocation, Resource> allTextures = null;
 
         RecordingResourceManager(ResourceManager delegate) {
             this.delegate = delegate;
@@ -244,9 +252,26 @@ public final class AtlasImageIndex {
 
         @Override
         public Map<ResourceLocation, Resource> listResources(String directory, Predicate<ResourceLocation> filter) {
+            if (directory.equals("textures") || directory.startsWith("textures/")) {
+                return listTextures(directory + "/", filter);
+            }
             var res = delegate.listResources(directory, filter);
             res.forEach((id, r) -> paths.put(r, id));
             return res;
+        }
+
+        private Map<ResourceLocation, Resource> listTextures(String prefix, Predicate<ResourceLocation> filter) {
+            if (allTextures == null) {
+                allTextures = new TreeMap<>(delegate.listResources("textures", id -> true));
+                allTextures.forEach((id, r) -> paths.put(r, id));
+            }
+            Map<ResourceLocation, Resource> result = new TreeMap<>();
+            allTextures.forEach((id, r) -> {
+                if (id.getPath().startsWith(prefix) && filter.test(id)) {
+                    result.put(id, r);
+                }
+            });
+            return result;
         }
 
         @Override
