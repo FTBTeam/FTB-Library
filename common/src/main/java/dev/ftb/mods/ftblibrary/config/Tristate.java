@@ -11,7 +11,7 @@ import net.minecraft.world.InteractionResult;
 public enum Tristate {
     FALSE("false", "false", InteractionResult.FAIL, Color4I.rgb(0xD52834), 1, Icons.CANCEL),
     TRUE("true", "true", InteractionResult.SUCCESS, Color4I.rgb(0x33AA33), 0, Icons.ACCEPT),
-    DEFAULT("default", "Default", InteractionResult.PASS, Color4I.rgb(0x0094FF), 2, Icons.UP);
+    DEFAULT("default", "Default", InteractionResult.PASS, Color4I.rgb(0x0094FF), 2, Icons.REMOVE_GRAY);
 
     public static final Tristate[] VALUES = values();
     public static final NameMap<Tristate> NAME_MAP = NameMap.of(DEFAULT, VALUES).id(v -> v.name).name(v -> Component.literal(v.displayName)).color(v -> v.color).icon(v -> v.icon).create();
