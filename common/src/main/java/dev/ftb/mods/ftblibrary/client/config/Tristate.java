@@ -13,9 +13,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 
 public enum Tristate {
-    FALSE("false", "false", InteractionResult.FAIL, Color4I.rgb(0xD52834), Color4I.rgb(0x991A24),1, Icons.ACCEPT_GRAY),
+    FALSE("false", "false", InteractionResult.FAIL, Color4I.rgb(0xD52834), Color4I.rgb(0x991A24),1, Icons.CANCEL),
     TRUE("true", "true", InteractionResult.SUCCESS, Color4I.rgb(0x33AA33), Color4I.rgb(0x158015),0, Icons.ACCEPT),
-    DEFAULT("default", "Default", InteractionResult.PASS, Color4I.rgb(0x0094FF), Color4I.rgb(0x0065A0), 2, Icons.SETTINGS);
+    DEFAULT("default", "Default", InteractionResult.PASS, Color4I.rgb(0x0094FF), Color4I.rgb(0x0065A0), 2, Icons.REMOVE_GRAY);
 
     public static final Tristate[] VALUES = values();
     public static final NameMap<Tristate> NAME_MAP = NameMap.of(DEFAULT, VALUES).id(v -> v.name).name(v -> Component.literal(v.displayName)).color(v -> v.colorHi).icon(v -> v.icon).create();
