@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [26.1.2.13]
 
+### Fixed
+* Some performance improvements in texture scanning (used by the image selector screen)
+  * Should reduce the time taken for the client's first scan (which can be quite log in large modpacks)
 
 ## [26.1.2.12]
 
