@@ -13,8 +13,12 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
@@ -166,4 +170,26 @@ public class ClientUtils {
         throw new AssertionError();
     }
 
+    public static void rebuildAllCreativeTabsIfNeeded() {
+        creativeTabDisplayParams().ifPresent(params -> {
+            var player = Objects.requireNonNull(Minecraft.getInstance().player);
+            if (CreativeModeTabs.tryRebuildTabContents(params.enabledFeatures(), params.hasPermissions(), params.holders())) {
+                // must rebuild search trees now - https://github.com/FTBTeam/FTB-Mods-Issues/issues/2277
+                List<ItemStack> list = List.copyOf(CreativeModeTabs.searchTab().getDisplayItems());
+                var sessionSearchTrees = player.connection.searchTrees();
+                sessionSearchTrees.updateCreativeTooltips(ClientUtils.registryAccess(), list);
+                sessionSearchTrees.updateCreativeTags(list);
+
+                FTBLibrary.LOGGER.debug("creative tabs rebuilt, search tab now has {} items", list.size());
+            }
+        });
+    }
+
+    private static Optional<CreativeModeTab.ItemDisplayParameters> creativeTabDisplayParams() {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            return Optional.of(new CreativeModeTab.ItemDisplayParameters(player.connection.enabledFeatures(), Minecraft.getInstance().options.operatorItemsTab().get(), player.clientLevel.registryAccess()));
+        }
+        return Optional.empty();
+    }
 }

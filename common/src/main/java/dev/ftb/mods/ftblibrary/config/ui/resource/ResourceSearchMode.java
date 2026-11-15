@@ -13,16 +13,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public interface ResourceSearchMode<T> {
     ResourceSearchMode<ItemStack> ALL_ITEMS = new SearchMode<>(Component.translatable("ftblibrary.select_item.list_mode.all"), Icons.COMPASS) {
@@ -31,7 +32,7 @@ public interface ResourceSearchMode<T> {
         @Override
         public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
             if (allItemsCache == null) {
-                CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false, ClientUtils.registryAccess());
+                ClientUtils.rebuildAllCreativeTabsIfNeeded();
                 allItemsCache = CreativeModeTabs.searchTab().getDisplayItems().stream()
                         .map(SelectableResource::item)
                         .toList();
