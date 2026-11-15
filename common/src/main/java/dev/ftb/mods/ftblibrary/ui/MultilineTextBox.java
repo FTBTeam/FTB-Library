@@ -161,7 +161,7 @@ public class MultilineTextBox extends Widget implements IFocusableWidget {
             setCursorPos(getMouseX(), (int) (getMouseY() - parent.getScrollY()));
             MultilineTextField.StringView view = textField.getPreviousWord();
             textField.seekCursor(Whence.ABSOLUTE, view.beginIndex());
-            ((MultilineTextFieldAccess) textField).setSelectCursor(view.endIndex());
+            ((MultilineTextFieldAccess) textField).ftblibrary$setSelectCursor(view.endIndex());
             return true;
         }
         return false;

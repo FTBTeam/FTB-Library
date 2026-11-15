@@ -122,7 +122,7 @@ public final class AtlasImageIndex {
         RecordingResourceManager recorder = new RecordingResourceManager(resourceManager);
 
         AtlasSpriteLookup.forEachAtlas((atlasId, atlas) -> {
-            Set<ResourceLocation> stitched = new HashSet<>(((TextureAtlasAccess) atlas).getTexturesByName().keySet());
+            Set<ResourceLocation> stitched = new HashSet<>(((TextureAtlasAccess) atlas).ftblibrary$getTexturesByName().keySet());
             stitched.remove(MissingTextureAtlasSprite.getLocation());
 
             int total = stitched.size();

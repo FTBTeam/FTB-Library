@@ -11,5 +11,5 @@ import java.util.Map;
 @Mixin(TextureManager.class)
 public interface TextureManagerAccess {
     @Accessor("byPath")
-    Map<ResourceLocation, AbstractTexture> getByPath();
+    Map<ResourceLocation, AbstractTexture> ftblibrary$getByPath();
 }

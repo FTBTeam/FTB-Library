@@ -15,7 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `BaseValue#fromFileOnly` method
   * Can be applied to config values which may not be edited via GUI on client
   * Such values can only be read from the config file
-  * Although client config sync'ing requires player permission lvl 4, this is an extra defensive layer
+  * While client config sync'ing requires player permission lvl 4, this is an extra defensive layer
+
+### Changed
+* Reworked image discovery to be properly texture-atlas-aware
+  * The benefit here is that all textures atlases are properly scanned, and useful information like image aspect ratios are available
+  * This will be of particular use to FTB Quests
 
 ### Fixed
 * Adjusted modal panel drawing in `BaseScreen` so it's again safe to override `drawForeground` without need to call `super()`

@@ -73,7 +73,7 @@ public final class AtlasSpriteLookup {
      */
     public static void forEachAtlas(BiConsumer<ResourceLocation, TextureAtlas> consumer) {
         List<AtlasRef> atlases = new ArrayList<>();
-        ((TextureManagerAccess) Minecraft.getInstance().getTextureManager()).getByPath().forEach((location, texture) -> {
+        ((TextureManagerAccess) Minecraft.getInstance().getTextureManager()).ftblibrary$getByPath().forEach((location, texture) -> {
             String path = location.getPath();
             if (texture instanceof TextureAtlas atlas && path.startsWith(ATLAS_TEXTURE_PREFIX) && path.endsWith(ATLAS_TEXTURE_SUFFIX)) {
                 String name = path.substring(ATLAS_TEXTURE_PREFIX.length(), path.length() - ATLAS_TEXTURE_SUFFIX.length());
@@ -101,7 +101,7 @@ public final class AtlasSpriteLookup {
         Map<ResourceLocation, AtlasRef> map = new HashMap<>();
 
         // forEachAtlas visits the preferred atlas first, so putIfAbsent gives it priority
-        forEachAtlas((id, atlas) -> ((TextureAtlasAccess) atlas).getTexturesByName().keySet().forEach(sprite -> {
+        forEachAtlas((id, atlas) -> ((TextureAtlasAccess) atlas).ftblibrary$getTexturesByName().keySet().forEach(sprite -> {
             if (!sprite.equals(MissingTextureAtlasSprite.getLocation())) {
                 map.putIfAbsent(sprite, new AtlasRef(id, atlas));
             }
