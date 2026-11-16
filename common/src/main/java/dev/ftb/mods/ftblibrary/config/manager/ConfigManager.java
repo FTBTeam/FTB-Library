@@ -158,7 +158,7 @@ public enum ConfigManager {
     public void syncFromClient(String serverConfigName, SNBTCompoundTag tag, String playerName) {
         TrackedConfig tc = trackedConfigs.get(serverConfigName);
         if (tc != null) {
-            tc.config.read(tag);
+            tc.config.readUntrusted(tag);
             tc.onEdited.accept(true);
             save(serverConfigName);
             FTBLibrary.LOGGER.info("received client config settings from {} for config: {}", playerName, serverConfigName);

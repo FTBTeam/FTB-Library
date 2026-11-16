@@ -46,6 +46,7 @@ public class ClientTextComponentUtils {
                         Integer.parseInt(map.getOrDefault("width", "100")),
                         Integer.parseInt(map.getOrDefault("height", "100")),
                         ImageComponent.ImageAlign.byName(map.getOrDefault("align", "center")),
+                        ImageComponent.AspectRatioHint.byId(map.getOrDefault("aspect_ratio_hint", "none")),
                         map.getOrDefault("fit", "false").equals("true"),
                         map.getOrDefault("click_action", "")
                 );

@@ -355,6 +355,9 @@ public abstract class BaseScreen extends Panel {
     }
 
     public void drawForeground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+    }
+
+    public final void drawModalPanels(GuiGraphics graphics, Theme theme) {
         if (!modalPanels.isEmpty()) {
             // allow modal panels to draw outside scissor area if needed
             boolean r = getOnlyRenderWidgetsInside();

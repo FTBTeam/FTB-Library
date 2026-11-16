@@ -11,6 +11,7 @@ import dev.ftb.mods.ftblibrary.config.ui.resource.SelectImageResourceScreen;
 import dev.ftb.mods.ftblibrary.icon.EntityIconLoader;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarButtonManager;
 import dev.ftb.mods.ftblibrary.sidebar.SidebarGroupGuiButton;
+import dev.ftb.mods.ftblibrary.ui.AnimatedImageWidget;
 import dev.ftb.mods.ftblibrary.ui.CursorType;
 import dev.ftb.mods.ftblibrary.ui.IScreenWrapper;
 import dev.ftb.mods.ftblibrary.util.client.ClientUtils;
@@ -48,6 +49,8 @@ public class FTBLibraryClient {
     }
 
     private static void clientTick(Minecraft client) {
+        AnimatedImageWidget.releaseIdle();
+
         var t = client.screen instanceof IScreenWrapper ? ((IScreenWrapper) client.screen).getGui().getCursor() : null;
 
         if (lastCursorType != t) {

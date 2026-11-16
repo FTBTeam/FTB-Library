@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2101.1.40]
+
+### Added
+* Support for webp image format, including animated .webp files
+  * Added a `WebPIcon` class for static webp image display
+  * Added a `AnimatedImageWidget` class to allow animated webp files to be embedded in GUIs
+* Added `Icon#isAspectRatioResolved` method to handle icons which are async-loaded (e.g. the new `WebPIcon`)
+* Added "resize" and "pause" icons
+* Added `BaseValue#fromFileOnly` method
+  * Can be applied to config values which may not be edited via GUI on client
+  * Such values can only be read from the config file
+  * While client config sync'ing requires player permission lvl 4, this is an extra defensive layer
+
+### Changed
+* Reworked image discovery to be properly texture-atlas-aware
+  * The benefit here is that all textures atlases are properly scanned, and useful information like image aspect ratios are available
+  * This will be of particular use to FTB Quests
+
+### Fixed
+* Adjusted modal panel drawing in `BaseScreen` so it's again safe to override `drawForeground` without need to call `super()`
+
 ## [2101.1.39]
 
 ### Fixed

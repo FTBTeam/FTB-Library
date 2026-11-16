@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface MultilineTextFieldAccess {
     @Accessor("selectCursor")
     @Mutable
-    void setSelectCursor(int pos);
+    void ftblibrary$setSelectCursor(int pos);
 }

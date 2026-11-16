@@ -6,13 +6,14 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.ftb.mods.ftblibrary.math.PixelBuffer;
+import dev.ftb.mods.ftblibrary.util.client.AtlasSpriteLookup;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 import org.jetbrains.annotations.Nullable;
 
 public class AtlasSpriteIcon extends Icon implements IResourceIcon {
@@ -32,14 +33,15 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
         return id;
     }
 
+    @Environment(EnvType.CLIENT)
+    private TextureAtlasSprite getSprite() {
+        return AtlasSpriteLookup.find(id);
+    }
+
     @Override
     @Environment(EnvType.CLIENT)
     public void draw(GuiGraphics graphics, int x, int y, int w, int h) {
-        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
-
-        if (sprite == null) {
-            return;
-        }
+        var sprite = getSprite();
 
         var m = graphics.pose().last().pose();
 
@@ -95,16 +97,19 @@ public class AtlasSpriteIcon extends Icon implements IResourceIcon {
 
     @Override
     public int getPixelBufferFrameCount() {
-        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+        return getSprite().contents().getFrameCount();
+    }
 
-        return sprite.contents().getFrameCount();
+    @Override
+    public boolean isAspectRatioKnown() {
+        return true;
     }
 
     @Override
     public double aspectRatio() {
-        var sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(id);
+        var contents = getSprite().contents();
 
-        return (double) sprite.contents().width() / (double) sprite.contents().height();
+        return (double) contents.width() / (double) contents.height();
     }
 
     @Override

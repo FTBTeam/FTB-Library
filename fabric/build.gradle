@@ -47,6 +47,9 @@ dependencies {
 
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
+    // api: puts it on dev run classpaths and in the published pom; include: jar-in-jar for the production jar
+    include(api("org.glavo:webp:${rootProject.jwebp_version}"))
+
     modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
 
     common(project(path: ":common", configuration: "dev")) { transitive false }

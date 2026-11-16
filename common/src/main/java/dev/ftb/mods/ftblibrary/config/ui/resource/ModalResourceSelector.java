@@ -127,6 +127,11 @@ public abstract class ModalResourceSelector<T> extends ModalPanel {
         if (Util.getMillis() >= update) {
             update = Long.MAX_VALUE;
             CompletableFuture.supplyAsync(() -> this.makeResourceWidgets(topPanel.getSearchText()), SEARCH_EXECUTOR)
+                    .whenComplete((result, ex) -> {
+                        if (ex != null) {
+                            FTBLibrary.LOGGER.error("Failed to build resource list", ex);
+                        }
+                    })
                     .thenAcceptAsync(this::updateItemWidgets, Minecraft.getInstance());
         }
     }

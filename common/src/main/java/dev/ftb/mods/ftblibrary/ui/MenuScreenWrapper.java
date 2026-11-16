@@ -146,6 +146,7 @@ public class MenuScreenWrapper<T extends AbstractContainerMenu> extends Abstract
 
         var theme = wrappedGui.getTheme();
         wrappedGui.drawForeground(graphics, theme, leftPos, topPos, imageWidth, imageHeight);
+        wrappedGui.drawModalPanels(graphics, theme);
 
         wrappedGui.addMouseOverText(tooltipList);
 

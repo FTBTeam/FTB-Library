@@ -19,7 +19,7 @@ public record SyncConfigToServerPacket(String configName, SNBTCompoundTag config
 
     public static final StreamCodec<FriendlyByteBuf, SyncConfigToServerPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, SyncConfigToServerPacket::configName,
-            dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag.STREAM_CODEC, SyncConfigToServerPacket::config,
+            SNBTCompoundTag.STREAM_CODEC, SyncConfigToServerPacket::config,
             SyncConfigToServerPacket::new
     );
 

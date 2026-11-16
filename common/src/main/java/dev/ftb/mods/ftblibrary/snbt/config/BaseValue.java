@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.snbt.config;
 
+import dev.ftb.mods.ftblibrary.FTBLibrary;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftblibrary.snbt.SNBTUtils;
@@ -17,6 +18,7 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
     public final String key;
     protected final T defaultValue;
     protected boolean excluded;
+    protected boolean fileOnly;
     protected BooleanSupplier enabled = SNBTUtils.ALWAYS_TRUE;
     protected int displayOrder = 0;
     protected List<String> comment = new ArrayList<>(0);
@@ -68,6 +70,16 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
         return (E) this;
     }
 
+
+    /**
+     * File-only values cannot be changed by GUI (sync from client), only by a direct local file edit.
+     */
+    @SuppressWarnings("unchecked")
+    public <E extends BaseValue<T>> E fromFileOnly() {
+        fileOnly = true;
+        return (E) this;
+    }
+
     public abstract void write(SNBTCompoundTag tag);
 
     public abstract void read(SNBTCompoundTag tag);
@@ -89,5 +101,13 @@ public abstract class BaseValue<T> implements Comparable<BaseValue<T>> {
 
     @Environment(EnvType.CLIENT)
     public void createClientConfig(ConfigGroup group) {
+    }
+
+    protected void readUntrusted(SNBTCompoundTag tag) {
+        if (!fileOnly) {
+            read(tag);
+        } else {
+            FTBLibrary.LOGGER.debug("not reading config value {} from network source", this);
+        }
     }
 }
