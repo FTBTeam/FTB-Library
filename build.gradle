@@ -133,6 +133,7 @@ publishMods {
         projectId = curseforge_id_fabric
         requires('fabric-api')
         optional('jei')
+        optional('keybindfix-plus-renewed')
     }
 
     curseforge("curseforgeNeoForge") {
