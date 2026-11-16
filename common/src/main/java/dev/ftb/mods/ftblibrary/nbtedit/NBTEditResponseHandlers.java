@@ -83,6 +83,10 @@ public enum NBTEditResponseHandlers {
         MAP.put(name, handler);
     }
 
+    public void clear() {
+        MAP.clear();
+    }
+
     public int sendRequestPacket(ServerPlayer player, CompoundTag info, CompoundTag data) {
         if (!info.isEmpty()) {
             currentlyEditing.put(player.getUUID(), info);

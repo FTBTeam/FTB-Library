@@ -64,6 +64,8 @@ public class FTBLibrary {
 
     public void serverStopped(MinecraftServer server) {
         KnownServerRegistries.server = null;
+
+        NBTEditResponseHandlers.INSTANCE.clear();
     }
 
     public void playerJoined(ServerPlayer player) {
