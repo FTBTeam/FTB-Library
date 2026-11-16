@@ -141,6 +141,7 @@ publishMods {
         requires('fabric-api')
         optional('jei')
         optional('roughly-enough-items')
+        optional('keybindfix-plus-renewed')
     }
 
     curseforge("curseforgeNeoForge") {
