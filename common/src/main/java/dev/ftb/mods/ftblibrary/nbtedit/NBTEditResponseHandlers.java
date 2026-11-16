@@ -71,6 +71,10 @@ public enum NBTEditResponseHandlers {
         });
     }
 
+    public void clear() {
+        MAP.clear();
+    }
+
     public void registerHandler(String name, NBTResponseHandler handler) {
         MAP.put(name, handler);
     }
