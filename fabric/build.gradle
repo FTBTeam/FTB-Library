@@ -16,6 +16,11 @@ configurations {
     dev
 }
 
+// Pin: amecs-priority-key-mappings 1.0.1+ is built with Loom 1.19.4; remove if we ever get Arch Loom >= 1.19
+configurations.configureEach {
+    resolutionStrategy.force "de.siphalor.amecs.amecs-priority-key-mappings:amecs-priority-key-mappings-mc1.21.1:1.0.0"
+}
+
 def generatedResources = file("src/generated/resources")
 def accessWidenerFile = project(":common").file("src/main/resources/ftblibrary.accesswidener")
 
