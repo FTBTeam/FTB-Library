@@ -36,7 +36,7 @@ public interface ResourceSearchMode<T> {
         @Override
         public Collection<? extends SelectableResource<ItemStack>> getAllResources() {
             if (allItemsCache == null) {
-                CreativeModeTabs.tryRebuildTabContents(FeatureFlags.DEFAULT_FLAGS, false, ClientUtils.registryAccess());
+                ClientUtils.rebuildAllCreativeTabsIfNeeded();
                 allItemsCache = CreativeModeTabs.searchTab().getDisplayItems().stream()
                         .map(SelectableResource::item)
                         .toList();

@@ -9,6 +9,7 @@ import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -17,6 +18,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -183,5 +187,27 @@ public class ClientUtils {
 
     public static String getCurrentLanguageCode() {
         return Minecraft.getInstance().options.languageCode;
+    }
+
+    public static void rebuildAllCreativeTabsIfNeeded() {
+        creativeTabDisplayParams().ifPresent(params -> {
+            if (CreativeModeTabs.tryRebuildTabContents(params.enabledFeatures(), params.hasPermissions(), params.holders())) {
+                // must rebuild search trees now - https://github.com/FTBTeam/FTB-Mods-Issues/issues/2277
+                List<ItemStack> list = List.copyOf(CreativeModeTabs.searchTab().getDisplayItems());
+                var trees = Objects.requireNonNull(Minecraft.getInstance().player).connection.searchTrees();
+                trees.updateCreativeTooltips(ClientUtils.registryAccess(), list);
+                trees.updateCreativeTags(list);
+
+                FTBLibrary.LOGGER.debug("creative tabs rebuilt, search tab now has {} items", list.size());
+            }
+        });
+    }
+
+    private static Optional<CreativeModeTab.ItemDisplayParameters> creativeTabDisplayParams() {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            return Optional.of(new CreativeModeTab.ItemDisplayParameters(player.connection.enabledFeatures(), Minecraft.getInstance().options.operatorItemsTab().get(), player.level().registryAccess()));
+        }
+        return Optional.empty();
     }
 }
