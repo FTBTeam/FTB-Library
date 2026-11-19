@@ -43,14 +43,18 @@ public class ContextMenuItem implements Comparable<ContextMenuItem> {
         return new ContextMenuItem(title, icon, button -> {
             ContextMenu subMenu = new ContextMenu(button.getParent(), subItems);
             button.getGui().openContextMenu(subMenu);
-            int xPos = button.getPosX() + button.width;
-            int yPos = button.getPosY();
-            if (button.getX() + button.width + subMenu.width >= button.getWindow().getGuiScaledWidth()) {
-                xPos = button.getPosX() - subMenu.width;
+            // work out the position in absolute screen coordinates (flipping to the left, and sliding up, if it
+            // wouldn't fit), then convert to the coordinates the submenu uses, which are relative to its parent
+            int screenW = button.getWindow().getGuiScaledWidth();
+            int screenH = button.getWindow().getGuiScaledHeight();
+            int absX = button.getX() + button.width;
+            if (absX + subMenu.width > screenW) {
+                absX = button.getX() - subMenu.width;
             }
-            if (button.getY() + subMenu.height >= button.getWindow().getGuiScaledHeight()) {
-                yPos -= subMenu.height - button.getWindow().getGuiScaledHeight();
-            }
+            int absY = Math.clamp(button.getY(), 0, screenH - subMenu.height);
+            Panel parent = button.getParent();
+            int xPos = Math.max(0, absX) - parent.getX();
+            int yPos = absY - parent.getY();
             subMenu.setPos(xPos, yPos);
         }).setCloseMenu(false);
     }
