@@ -20,10 +20,15 @@ import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
 import org.lwjgl.glfw.GLFW;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Objects;
 import java.util.function.Predicate;
 
 public class TextBox extends Widget implements IFocusableWidget {
+    /** Horizontal space between the edge of the box and its text, on each side */
+    protected static final int PADDING = 4;
+
     public int charLimit = 2000;
     public Color4I textColor = Icon.empty();
     public String ghostText = "";
@@ -38,6 +43,7 @@ public class TextBox extends Widget implements IFocusableWidget {
     private Component label;
     private Color4I labelColor = Color4I.WHITE;
     private boolean strictValidity = false;
+    private @Nullable CustomStyle style = null;
 
     public TextBox(Panel panel) {
         super(panel);
@@ -80,6 +86,24 @@ public class TextBox extends Widget implements IFocusableWidget {
         this.filter = filter;
     }
 
+    /**
+     * Draw this box with a self-contained style rather than the active theme's text box background.
+     *
+     * @param style the style, or null to use the theme's (the default)
+     */
+    public void setStyle(@Nullable CustomStyle style) {
+        this.style = style;
+    }
+
+    public @Nullable CustomStyle getStyle() {
+        return style;
+    }
+
+    /** @return the width available for text, i.e. the box width less the padding on both sides */
+    protected int getTextWidth() {
+        return Math.max(0, width - PADDING * 2);
+    }
+
     public void setLabel(Component label) {
         this.label = label;
     }
@@ -100,6 +124,14 @@ public class TextBox extends Widget implements IFocusableWidget {
         return text.substring(Math.min(cursorPos, highlightPos), Math.max(cursorPos, highlightPos));
     }
 
+    /**
+     * Set the text without notifying {@link #onTextChanged()}. Use this when updating the box from code, e.g. to
+     * reflect a value which was changed elsewhere, so that listeners only see edits made by the user.
+     */
+    public final void setTextQuietly(String s) {
+        setText(s, false);
+    }
+
     public void setText(String string, boolean triggerChange) {
         if (filter.test(string)) {
             if (string.length() > maxLength) {
@@ -110,7 +142,7 @@ public class TextBox extends Widget implements IFocusableWidget {
 
             validText = isValid(text);
 
-            moveCursorToEnd(false);
+            setCursorPosition(text.length());
             setSelectionPos(cursorPos);
             if (triggerChange) {
                 onTextChanged();
@@ -136,8 +168,6 @@ public class TextBox extends Widget implements IFocusableWidget {
         if (!extendSelection) {
             setSelectionPos(cursorPos);
         }
-
-        onTextChanged();
     }
 
     public void moveCursorToStart(boolean extendSelection) {
@@ -196,10 +226,10 @@ public class TextBox extends Widget implements IFocusableWidget {
         Font font = getGui().getTheme().getFont();
         if (font != null) {
             displayPos = Math.min(displayPos, text.length());
-            String string = font.plainSubstrByWidth(text.substring(displayPos), width);
+            String string = font.plainSubstrByWidth(text.substring(displayPos), getTextWidth());
             int k = string.length() + displayPos;
             if (pos == displayPos) {
-                displayPos -= font.plainSubstrByWidth(text, width, true).length();
+                displayPos -= font.plainSubstrByWidth(text, getTextWidth(), true).length();
             }
 
             if (pos > k) {
@@ -302,9 +332,9 @@ public class TextBox extends Widget implements IFocusableWidget {
 
             if (button.isLeft()) {
                 if (isFocused) {
-                    var i = getMouseX() - getX();
+                    var i = getMouseX() - getX() - PADDING;
                     var theme = getGui().getTheme();
-                    var s = theme.trimStringToWidth(text.substring(displayPos), width);
+                    var s = theme.trimStringToWidth(text.substring(displayPos), getTextWidth());
                     if (isShiftKeyDown()) {
                         setSelectionPos(theme.trimStringToWidth(s, i).length() + displayPos);
                     } else {
@@ -437,8 +467,8 @@ public class TextBox extends Widget implements IFocusableWidget {
 
         var col = validText ? (textColor.isEmpty() ? theme.getContentColor(WidgetType.NORMAL) : textColor).withAlpha(drawGhostText ? 120 : 255) : Color4I.RED;
         var j = cursorPos - displayPos;
-        var s = theme.trimStringToWidth(textToDraw.substring(displayPos), w);
-        var textX = x + 4;
+        var s = theme.trimStringToWidth(textToDraw.substring(displayPos), getTextWidth());
+        var textX = x + PADDING;
         var textY = y + (h - 8) / 2;
         var textX1 = textX;
 
@@ -452,7 +482,7 @@ public class TextBox extends Widget implements IFocusableWidget {
         var drawCursor = cursorPos < textToDraw.length() || textToDraw.length() >= charLimit;
         var cursorX = textX1;
         if (j <= 0 || j > s.length()) {
-            cursorX = j > 0 ? textX + w : textX;
+            cursorX = j > 0 ? textX + getTextWidth() : textX;
         } else if (drawCursor) {
             cursorX = textX1 - 1;
         }
@@ -481,8 +511,8 @@ public class TextBox extends Widget implements IFocusableWidget {
             int startY = textY - 1;
             int endY = textY + theme.getFontHeight();
 
-            endX = Math.min(endX, x + w);
-            startX = Math.min(startX, x + w);
+            endX = Math.min(endX, x + w - PADDING);
+            startX = Math.min(startX, x + w - PADDING);
 
             graphics.textHighlight(startX, startY, endX, endY, true);
             graphics.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, startX, startY, endX, endY, 0x80000080);
@@ -490,7 +520,12 @@ public class TextBox extends Widget implements IFocusableWidget {
     }
 
     public void drawTextBox(GuiGraphicsExtractor graphics, Theme theme, int x, int y, int w, int h) {
-        theme.drawTextBox(graphics, x, y, w, h);
+        if (style != null) {
+            IconHelper.renderIcon(isFocused() ? style.focusedBorder() : isMouseOver() ? style.hoverBorder() : style.border(), graphics, x, y, w, h);
+            IconHelper.renderIcon(style.fill(), graphics, x + 1, y + 1, w - 2, h - 2);
+        } else {
+            theme.drawTextBox(graphics, x, y, w, h);
+        }
 
         if (label != null) {
             Matrix3x2fStack pose = graphics.pose();
@@ -514,4 +549,17 @@ public class TextBox extends Widget implements IFocusableWidget {
     public CursorType getCursor() {
         return CursorType.IBEAM;
     }
+
+    /// Optional custom style for text box edge and background drawing where the default theme isn't suitable.
+    ///
+    /// @param border        border colour when the box is neither focused nor hovered
+    /// @param hoverBorder   border colour when the mouse is over the box
+    /// @param focusedBorder border colour when the box has keyboard focus
+    /// @param fill          background colour inside the border
+    public record CustomStyle(Color4I border, Color4I hoverBorder, Color4I focusedBorder, Color4I fill) {
+        // neutral light-on-dark style
+        public static final CustomStyle DARK = new CustomStyle(
+                Color4I.rgb(0x6A6F73), Color4I.rgb(0x9AA2AA), Color4I.rgb(0xC8D0D8), Color4I.rgb(0x0B0C0D));
+    }
+
 }
