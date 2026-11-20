@@ -13,15 +13,19 @@ public class ToggleableButton extends SimpleButton {
     private Component disabledText;
 
     private boolean state;
+    private final Icon<?> enabled;
+    private final Icon<?> disabled;
     private boolean drawBg;
 
     public ToggleableButton(Panel panel, boolean defaultState, Icon<?> enabled, Icon<?> disabled, ToggleableCallback toggleableCallback) {
         super(panel, Component.empty(), defaultState ? enabled : disabled, null);
 
         this.state = defaultState;
+        this.enabled = enabled;
+        this.disabled = disabled;
         this.setConsumer((widget, _) -> {
             this.state = !this.state;
-            widget.setIcon(this.state ? enabled : disabled);
+            updateIcon();
             updateTitle();
             toggleableCallback.onClicked(widget, this.state);
         });
@@ -66,8 +70,24 @@ public class ToggleableButton extends SimpleButton {
         return this;
     }
 
+    /**
+     * Set the toggleable button's state without firing the on-changed callback.
+     *
+     * @param state the new state
+     */
+    public void setState(boolean state) {
+        this.state = state;
+
+        updateIcon();
+        updateTitle();
+    }
+
     private void updateTitle() {
         setTitle(state ? enabledText : disabledText);
+    }
+
+    private void updateIcon() {
+        setIcon(state ? enabled : disabled);
     }
 
     public interface ToggleableCallback {
