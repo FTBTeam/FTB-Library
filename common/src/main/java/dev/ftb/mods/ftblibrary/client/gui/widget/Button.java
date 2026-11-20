@@ -112,7 +112,7 @@ public abstract class Button extends Widget {
         private Consumer<TooltipList> extraTooltips = _ -> {};
         private boolean drawBackground = true;
         private boolean centered = false;
-        private boolean alwaysShowTooltip = false;
+        private boolean alwaysShowTooltip = true;
 
         public Builder(Panel parent, Consumer<MouseButton> onClicked) {
             this.parent = parent;
