@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static dev.ftb.mods.ftblibrary.client.icon.IconHelper.renderIcon;
+import static net.minecraft.network.chat.CommonComponents.ELLIPSIS;
 
 
 public class Theme {
@@ -169,6 +170,18 @@ public class Theme {
 
     public final String trimStringToWidthReverse(String text, int width) {
         return text.isEmpty() || width <= 0 ? "" : getFont().plainSubstrByWidth(text, width, true);
+    }
+
+    public final FormattedText ellipsize(FormattedText text, int maxWidth) {
+        var font = getFont();
+        final int strWidth = font.width(text);
+        final int ellipsisWidth = font.width(ELLIPSIS);
+        if (strWidth > maxWidth) {
+            return ellipsisWidth >= maxWidth ?
+                    font.substrByWidth(text, maxWidth) :
+                    FormattedText.composite(font.substrByWidth(text, maxWidth - ellipsisWidth), ELLIPSIS);
+        }
+        return text;
     }
 
     public final List<FormattedText> listFormattedStringToWidth(FormattedText text, int width) {

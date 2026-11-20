@@ -6,7 +6,6 @@ import dev.ftb.mods.ftblibrary.client.gui.WidgetType;
 import dev.ftb.mods.ftblibrary.client.gui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.client.gui.theme.Theme;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
-import dev.ftb.mods.ftblibrary.client.icon.IconRenderer;
 import dev.ftb.mods.ftblibrary.client.util.PositionedIngredient;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.util.TextComponentUtils;
@@ -110,9 +109,10 @@ public abstract class Button extends Widget {
         private Icon<?> disabledIcon = Icon.empty();
         private BooleanSupplier visiblityPredicate = () -> true;
         private BooleanSupplier enabledPredicate = () -> visiblityPredicate.getAsBoolean();
-        private Consumer<TooltipList> extraTooltips = list -> {};
+        private Consumer<TooltipList> extraTooltips = _ -> {};
         private boolean drawBackground = true;
         private boolean centered = false;
+        private boolean alwaysShowTooltip = false;
 
         public Builder(Panel parent, Consumer<MouseButton> onClicked) {
             this.parent = parent;
@@ -156,6 +156,11 @@ public abstract class Button extends Widget {
 
         public Builder drawBackground(boolean drawBackground) {
             this.drawBackground = drawBackground;
+            return this;
+        }
+
+        public Builder alwaysShowTooltip(boolean alwaysShowTooltip) {
+            this.alwaysShowTooltip = alwaysShowTooltip;
             return this;
         }
 
@@ -206,9 +211,10 @@ public abstract class Button extends Widget {
 
                 @Override
                 public void addMouseOverText(TooltipList list) {
-                    super.addMouseOverText(list);
-
-                    extraTooltips.accept(list);
+                    if (alwaysShowTooltip || enabledPredicate.getAsBoolean()) {
+                        super.addMouseOverText(list);
+                        extraTooltips.accept(list);
+                    }
                 }
             };
         }

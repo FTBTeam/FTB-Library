@@ -37,7 +37,7 @@ public abstract class NordButton extends SimpleTextButton {
 
         if (sw > mw) {
             sw = mw;
-            title = theme.trimStringToWidth(title, mw);
+            title = theme.ellipsize(title, mw);
         }
 
         if (renderTitleInCenter()) {

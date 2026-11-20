@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.client.gui;
 
 import dev.ftb.mods.ftblibrary.client.gui.widget.BaseScreen;
+import dev.ftb.mods.ftblibrary.client.gui.widget.Widget;
 import dev.ftb.mods.ftblibrary.client.icon.IconHelper;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import net.minecraft.ChatFormatting;
@@ -115,6 +116,14 @@ public class GuiHelper {
         graphics.verticalLine(x, y + h, y + h, color.rgba());
         graphics.horizontalLine(x + 1, x + w, y + h, lo.rgba());
         graphics.verticalLine(x + w, y, y + h, lo.rgba());
+    }
+
+    public static int below(Widget widget, int spacing) {
+        return widget.getPosY() + widget.getHeight() + spacing;
+    }
+
+    public static int rightOf(Widget widget, int spacing) {
+        return widget.getPosX() + widget.getWidth() + spacing;
     }
 
 }
