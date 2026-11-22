@@ -41,7 +41,8 @@ public class CompactGridLayout implements WidgetLayout {
                 panel.getWidgets().get(i).setPosAndSize((i % 4) * size, (i / 4) * size, size, size);
             }
 
-            return (nWidgets / 4) * size;
+            // round up: a partial last row still occupies a full row of height
+            return ((nWidgets + 3) / 4) * size;
         }
 
         int[] layout = LAYOUTS[nWidgets - 1];
