@@ -5,6 +5,10 @@ import dev.ftb.mods.ftblibrary.ui.Button;
 import dev.ftb.mods.ftblibrary.ui.Panel;
 import dev.ftb.mods.ftblibrary.ui.SimpleTextButton;
 import dev.ftb.mods.ftblibrary.ui.Theme;
+import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
+import dev.ftb.mods.ftblibrary.ui.layout.Align;
+import dev.ftb.mods.ftblibrary.ui.layout.Insets;
+import dev.ftb.mods.ftblibrary.ui.layout.LayoutHints;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.BooleanSupplier;
@@ -35,8 +39,11 @@ public class LowerButtonPanel extends Panel {
 
     @Override
     public void alignWidgets() {
-        buttonCancel.setPos(width - buttonCancel.width - 5, (height - buttonCancel.height) / 2);
-        buttonAccept.setPos(buttonCancel.posX - buttonAccept.width - 5, buttonCancel.getPosY());
+        // both buttons hug the right edge and are vertically centred; accept sits to the left of cancel
+        LayoutHints rightCentred = LayoutHints.DEFAULT.withHAlign(Align.END).withVAlign(Align.CENTER);
+        buttonCancel.setLayoutHints(rightCentred.withMargin(new Insets(0, 5, 0, 0)));
+        buttonAccept.setLayoutHints(rightCentred.withMargin(new Insets(0, buttonCancel.width + 10, 0, 0)));
+        align(WidgetLayout.stack().build());
     }
 
     @Override

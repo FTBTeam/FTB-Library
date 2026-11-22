@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui;
 
 import dev.ftb.mods.ftblibrary.ui.input.Key;
+import dev.ftb.mods.ftblibrary.ui.layout.LayoutHints;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -24,6 +25,7 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
     public int posX, posY, width, height;
     protected boolean isMouseOver;
     private DrawLayer drawLayer = DrawLayer.FOREGROUND;
+    private LayoutHints layoutHints = LayoutHints.DEFAULT;
 
     public Widget(Panel p) {
         parent = p;
@@ -75,7 +77,11 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
     }
 
     public void setWidth(int v) {
+        int old = width;
         width = Math.max(v, 0);
+        if (width != old && parent != null) {
+            parent.invalidateLayout();
+        }
     }
 
     public int getHeight() {
@@ -83,7 +89,39 @@ public class Widget implements IScreenWrapper, Comparable<Widget> {
     }
 
     public void setHeight(int v) {
+        int old = height;
         height = Math.max(v, 0);
+        if (height != old && parent != null) {
+            parent.invalidateLayout();
+        }
+    }
+
+    /**
+     * @return instructions for layouts that understand them; {@link LayoutHints#DEFAULT} unless set
+     */
+    public LayoutHints getLayoutHints() {
+        return layoutHints;
+    }
+
+    /**
+     * Set instructions for the parent's layout. Call this before the parent lays its widgets out.
+     */
+    public void setLayoutHints(LayoutHints hints) {
+        layoutHints = hints == null ? LayoutHints.DEFAULT : hints;
+        if (parent != null) {
+            parent.invalidateLayout();
+        }
+    }
+
+    /**
+     * Whether this widget's size on one axis is decided by its own content, so a parent layout must not stretch it
+     * along that axis (a {@link dev.ftb.mods.ftblibrary.ui.layout.Flex#RESIZE} hint or a fill option is ignored for
+     * it). False for ordinary widgets; {@link Panel#setFitContent(boolean, boolean)} turns it on for panels.
+     *
+     * @param horizontal true for the width, false for the height
+     */
+    public boolean isFittingContent(boolean horizontal) {
+        return false;
     }
 
     public final void setPos(int x, int y) {

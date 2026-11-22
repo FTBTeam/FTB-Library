@@ -2,12 +2,15 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.ui.layout.Insets;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.List;
 
 public class ContextMenu extends ModalPanel implements PopupMenu {
     private static final int MARGIN = 3;
+    static final WidgetLayout SINGLE_COLUMN = WidgetLayout.vertical()
+            .padding(Insets.of(MARGIN)).spacing(1).fillCross().build();
 
     private final List<ContextMenuItem> items;
     private final boolean hasIcons;
@@ -22,6 +25,7 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
         items = i;
 
         hasIcons = items.stream().anyMatch(item -> !item.getIcon().isEmpty());
+        setFitContent(true, true);
     }
 
     public void setMaxRows(int maxRows) {
@@ -50,10 +54,18 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
         return pressed;
     }
 
+    /**
+     * The usual single column of items is a managed layout, and the menu fits itself around it. A menu with too many
+     * items for the screen is laid out in columns, filled top to bottom, which the layouts can't express (a grid
+     * fills left to right), so those are positioned by hand in {@link #alignWidgets()}.
+     */
+    @Override
+    protected WidgetLayout getLayout() {
+        return nColumns > 1 ? null : SINGLE_COLUMN;
+    }
+
     @Override
     public void alignWidgets() {
-        setWidth(0);
-
         int totalHeight = 0;
         int maxWidth = 0;
         for (var widget : widgets) {
@@ -67,6 +79,15 @@ public class ContextMenu extends ModalPanel implements PopupMenu {
         if (maxRows > 0) {
             nColumns = Math.max(nColumns, (int) Math.ceil((double) widgets.size() / maxRows));
         }
+
+        if (nColumns <= 1) {
+            nColumns = 1;
+            columnWidth = maxWidth + MARGIN * 2;
+            super.alignWidgets();
+            return;
+        }
+
+        setWidth(0);
         int nRows = (int) Math.ceil((double) widgets.size() / nColumns);
 
         columnWidth = maxWidth + MARGIN * 2;

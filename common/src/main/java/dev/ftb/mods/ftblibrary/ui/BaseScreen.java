@@ -63,10 +63,6 @@ public abstract class BaseScreen extends Panel {
         return this;
     }
 
-    @Override
-    public void alignWidgets() {
-    }
-
     public final void initGui() {
         if (onInit()) {
             super.refreshWidgets();
@@ -274,6 +270,9 @@ public abstract class BaseScreen extends Panel {
             modalPanels.forEach(Panel::refreshWidgets);
             refreshWidgets = false;
         }
+
+        // a screen that fits its content may have a new size, which changes where it is centred
+        validateLayout();
 
         posX = getX();
         posY = getY();

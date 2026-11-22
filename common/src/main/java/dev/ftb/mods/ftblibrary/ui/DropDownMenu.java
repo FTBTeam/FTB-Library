@@ -2,6 +2,11 @@ package dev.ftb.mods.ftblibrary.ui;
 
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.ui.layout.Align;
+import dev.ftb.mods.ftblibrary.ui.layout.Flex;
+import dev.ftb.mods.ftblibrary.ui.layout.Insets;
+import dev.ftb.mods.ftblibrary.ui.layout.LayoutHints;
+import dev.ftb.mods.ftblibrary.ui.layout.StackLayout;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -9,6 +14,13 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class DropDownMenu extends ModalPanel implements PopupMenu {
+    private static final int SEARCH_HEIGHT = 12;
+    private static final int SCROLLBAR_WIDTH = 14;
+    private static final int LIST_TOP = 14;
+
+    // every widget sits over the same area, placed by its hints: search box across the top, list below it, scrollbar
+    // down the right hand side
+    private static final WidgetLayout LAYOUT = StackLayout.builder().align(Align.START, Align.START).build();
 
     private final ScrollBar scrollBar;
     private final Panel mainPanel;
@@ -29,6 +41,28 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
         boolean hasIcons = i.stream().anyMatch(item -> !item.getIcon().isEmpty());
         this.mainPanel = new MainPanel(this, i, hasIcons, textBox::getText);
         this.scrollBar = new PanelScrollBar(this, ScrollBar.Plane.VERTICAL, mainPanel);
+
+        describeParts(textBox, mainPanel, scrollBar);
+        setFitContent(true, true);
+    }
+
+    @Override
+    protected WidgetLayout getLayout() {
+        return LAYOUT;
+    }
+
+    static WidgetLayout layout() {
+        return LAYOUT;
+    }
+
+    /** Give the three parts of the menu the size and hints that {@link #LAYOUT} places them by. */
+    static void describeParts(Widget searchBox, Widget list, Widget scrollBar) {
+        searchBox.setHeight(SEARCH_HEIGHT);
+        searchBox.setLayoutHints(LayoutHints.DEFAULT.withHFlex(Flex.RESIZE));
+        list.setLayoutHints(LayoutHints.DEFAULT.withMargin(new Insets(LIST_TOP, SCROLLBAR_WIDTH, 0, 0)));
+        scrollBar.setWidth(SCROLLBAR_WIDTH);
+        scrollBar.setLayoutHints(LayoutHints.DEFAULT.withHAlign(Align.END).withVFlex(Flex.RESIZE)
+                .withMargin(new Insets(SEARCH_HEIGHT, 0, 0, 0)));
     }
 
     @Override
@@ -53,18 +87,12 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
 
     @Override
     public void alignWidgets() {
-        mainPanel.setPos(0, 14);
-        mainPanel.alignWidgets();
-        mainPanel.setHeight(mainPanel.getHeight() + 14);
-
-
-        setWidth(mainPanel.width + 14);
-        setHeight(mainPanel.height + 14);
-
-        scrollBar.setPosAndSize(width - 14, 12, 14, height - 12);
-        textBox.setPosAndSize(0, 0, width, 12);
+        // widgets that stretch are measured at their current size, so forget the size they had for the previous
+        // contents, or a list that has become shorter would leave the menu as tall as it was
+        textBox.setWidth(0);
+        scrollBar.setHeight(0);
+        super.alignWidgets();
     }
-
 
     @Override
     public void drawBackground(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
@@ -130,7 +158,8 @@ public class DropDownMenu extends ModalPanel implements PopupMenu {
 
             int wantedHeight = (int) Math.min(totalHeight, this.getWindow().getGuiScaledHeight() * (maxHeightPercent));
 
-            setHeight(Math.max(wantedHeight, 32));
+            // the extra space below the entries is part of the list's size
+            setHeight(Math.max(wantedHeight, 32) + LIST_TOP);
 
             for (int i = 0; i < activeWidgets.size(); i++) {
                 Widget widget = activeWidgets.get(i);

@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
+import dev.ftb.mods.ftblibrary.ui.layout.Insets;
 import dev.ftb.mods.ftblibrary.ui.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
@@ -138,12 +139,11 @@ public abstract class ButtonListBaseScreen extends BaseScreen {
 
         @Override
         public void alignWidgets() {
-            align(new WidgetLayout.Vertical(borderV, borderW, borderV));
-
-            widgets.forEach(w -> {
-                w.setX(borderH);
-                w.setWidth(width - borderH * 2);
-            });
+            align(WidgetLayout.vertical()
+                    .padding(new Insets(borderV, borderH, borderV, borderH))
+                    .spacing(borderW)
+                    .fillCross()
+                    .build());
         }
 
         @Override

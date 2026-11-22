@@ -28,6 +28,7 @@ logs/
 bin
 eclipse
 .vscode
+.claude
 
 # Sekrit files
 private.properties

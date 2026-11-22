@@ -121,6 +121,16 @@ public class FTBLibraryCommands {
                         return Command.SINGLE_SUCCESS;
                     })
             );
+            command.then(literal("test_layout_screen")
+                    .executes(context -> {
+                        if (context.getSource().getServer().isDedicatedServer()) {
+                            context.getSource().sendFailure(Component.literal("Can't do this on dedicated server!").withStyle(ChatFormatting.RED));
+                        } else {
+                            UITesting.openTestLayoutScreen();
+                        }
+                        return Command.SINGLE_SUCCESS;
+                    })
+            );
             command.then(literal("serverconfig")
                     .requires(cs -> cs.hasPermission(Commands.LEVEL_GAMEMASTERS))
                     .executes(context -> {

@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UITesting {
+    public static void openTestLayoutScreen() {
+        new LayoutTestScreen().openGuiLater();
+    }
+
     public static void openTestScreen() {
         var group = new ConfigGroup("test", accepted ->
                 Minecraft.getInstance().player.displayClientMessage(Component.literal("Accepted: " + accepted), false));

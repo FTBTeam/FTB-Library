@@ -25,6 +25,8 @@ public class TextField extends Widget {
     private FormattedText[] formattedText = new FormattedText[0];
     private Component rawText = Component.empty();
     private boolean tooltip = false;
+    private boolean wrapToWidth = false;
+    private boolean sizing = false;
 
     public TextField(Panel panel) {
         super(panel);
@@ -70,10 +72,25 @@ public class TextField extends Widget {
         return this;
     }
 
-    public TextField setText(Component txt) {
-        var theme = getGui().getTheme();
+    /**
+     * Let a layout decide how wide the text is: whenever the width is set from outside, for example by a layout that
+     * stretches the field ({@link dev.ftb.mods.ftblibrary.ui.layout.LayoutHints#resize()}), the text wraps again to
+     * that width and the height follows, so a panel that fits its content gets taller or shorter with it. Text set
+     * afterwards wraps to the current width too, once it has one. Without this the text wraps to
+     * {@link #setMaxWidth(int)} and sizes the field itself, as before.
+     */
+    public TextField setWrapToWidth() {
+        wrapToWidth = true;
+        return this;
+    }
 
+    public TextField setText(Component txt) {
         rawText = txt;
+        if (wrapToWidth && width > 0) {
+            return rewrap();
+        }
+
+        var theme = getGui().getTheme();
         formattedText = theme.listFormattedStringToWidth(Component.literal("").append(txt), maxWidth).toArray(new FormattedText[0]);
 
         return resize(theme);
@@ -84,6 +101,10 @@ public class TextField extends Widget {
     }
 
     public TextField reflow() {
+        if (wrapToWidth && width > 0) {
+            return rewrap();
+        }
+
         var theme = getGui().getTheme();
 
         formattedText = theme.listFormattedStringToWidth(rawText, (int) (maxWidth / scale)).toArray(new FormattedText[0]);
@@ -92,15 +113,49 @@ public class TextField extends Widget {
     }
 
     public TextField resize(Theme theme) {
-        setWidth(0);
+        sizing = true;
+        try {
+            setWidth(0);
 
-        for (var s : getDisplayedText()) {
-            setWidth(Math.max(width, (int) ((float) theme.getStringWidth(s) * scale)));
+            for (var s : getDisplayedText()) {
+                setWidth(Math.max(width, (int) ((float) theme.getStringWidth(s) * scale)));
+            }
+
+            setWidth(Mth.clamp(width, minWidth, maxWidth));
+        } finally {
+            sizing = false;
         }
-
-        setWidth(Mth.clamp(width, minWidth, maxWidth));
-        setHeight((int) ((float) (Math.max(1, formattedText.length) * textSpacing - (textSpacing - theme.getFontHeight() + 1)) * scale));
+        setHeight(heightOfLines(theme.getFontHeight()));
         return this;
+    }
+
+    private int heightOfLines(int fontHeight) {
+        return (int) ((float) (Math.max(1, formattedText.length) * textSpacing - (textSpacing - fontHeight + 1)) * scale);
+    }
+
+    /** Wrap the text to the current width, keeping the width and changing the height. */
+    private TextField rewrap() {
+        formattedText = wrap(rawText, (int) (width / scale));
+        setHeight(heightOfLines(fontHeight()));
+        return this;
+    }
+
+    @Override
+    public void setWidth(int v) {
+        boolean changed = v != width;
+        super.setWidth(v);
+        if (wrapToWidth && !sizing && changed && width > 0) {
+            rewrap();
+        }
+    }
+
+    /** Break text into lines no wider than {@code width}; the seam that lets the wrapping be tested without a client. */
+    FormattedText[] wrap(Component text, int width) {
+        return getGui().getTheme().listFormattedStringToWidth(Component.literal("").append(text), width).toArray(new FormattedText[0]);
+    }
+
+    int fontHeight() {
+        return getGui().getTheme().getFontHeight();
     }
 
     @Override

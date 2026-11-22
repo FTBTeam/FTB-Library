@@ -4,6 +4,8 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.ui.layout.LayoutHints;
+import dev.ftb.mods.ftblibrary.ui.layout.Size;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import dev.ftb.mods.ftblibrary.util.client.PositionedIngredient;
 import net.minecraft.ChatFormatting;
@@ -26,6 +28,12 @@ public abstract class Panel extends Widget {
     private int contentWidth = -1, contentHeight = -1;
     private int contentWidthExtra, contentHeightExtra;
     private PanelScrollBar attachedScrollbar = null;
+    private static final int MAX_LAYOUT_PASSES = 8;
+
+    private boolean layoutDirty = false;
+    private boolean inLayout = false;
+    private boolean fitWidth = false;
+    private boolean fitHeight = false;
 
     public Panel(Panel panel) {
         super(panel);
@@ -54,10 +62,182 @@ public abstract class Panel extends Widget {
 
     public abstract void addWidgets();
 
-    public abstract void alignWidgets();
+    /**
+     * Position and size the child widgets. By default this applies {@link #getLayout()}, if there is one, and does
+     * nothing otherwise. Existing panels override this and call {@link #align(WidgetLayout)} themselves; that keeps
+     * working unchanged.
+     */
+    public void alignWidgets() {
+        applyManagedLayout();
+    }
+
+    /**
+     * Opt this panel in to managed layout by returning a layout here. The panel then lays its widgets out by itself:
+     * when {@link #refreshWidgets()} runs, and again, before the panel is next drawn, after its width or height
+     * changes (so widgets with {@link dev.ftb.mods.ftblibrary.ui.layout.Flex#RESIZE} follow their parent). Child panels that are resized by the layout
+     * are re-laid out in turn, from the top down, and panels that {@link #setFitContent(boolean, boolean) fit their
+     * content} are settled first, from the bottom up, so a parent always sees their current size.
+     * <p>
+     * Return {@code null} (the default) to keep full manual control. This may be called at any time, including during
+     * construction, so it should not depend on fields that might not be initialised yet.
+     */
+    @Nullable
+    protected WidgetLayout getLayout() {
+        return null;
+    }
+
+    /**
+     * Make this panel's own size follow its content on the chosen axes. Off by default.
+     * <p>
+     * A fitting panel measures its {@link #getLayout() layout} and sets its width and/or height to what the content
+     * wants (within its own {@link LayoutHints} min and max size), then lays the widgets out. Widgets marked
+     * {@link dev.ftb.mods.ftblibrary.ui.layout.Flex#RESIZE} on a fitted axis keep their current size instead of
+     * stretching, since there is no fixed room to stretch into. On an axis that is not fitted, the panel's current size
+     * is the room the content is laid out in, so for example a flow layout that fits only its height wraps to the
+     * panel's width.
+     * <p>
+     * The panel refits when its content or the size of a widget in it changes, and its parent is told, so a parent
+     * layout always sees the up to date size. A parent layout will not stretch a fitting panel along a fitted axis.
+     * <p>
+     * Fitting needs a layout that can {@link WidgetLayout#measure(Panel, int, int) measure}; for any other layout,
+     * and for panels without a layout, the flags have no effect.
+     *
+     * @param width  fit the width to the content
+     * @param height fit the height to the content
+     */
+    public void setFitContent(boolean width, boolean height) {
+        fitWidth = width;
+        fitHeight = height;
+        invalidateLayout();
+    }
+
+    public boolean isFitContentWidth() {
+        return fitWidth;
+    }
+
+    public boolean isFitContentHeight() {
+        return fitHeight;
+    }
+
+    @Override
+    public boolean isFittingContent(boolean horizontal) {
+        return horizontal ? fitWidth : fitHeight;
+    }
+
+    /**
+     * Mark this panel's layout, and that of every panel above it, as out of date. The managed layout is redone by
+     * {@link #validateLayout()}, which runs before the panel is drawn. Adding or removing widgets, changing the size or
+     * layout hints of a widget in the panel, and resizing the panel all do this for you. Has no visible effect on panels
+     * without a {@link #getLayout() layout}.
+     */
+    public void invalidateLayout() {
+        layoutDirty = true;
+        for (Panel p = parent; p != null && !p.layoutDirty; p = p.parent) {
+            p.layoutDirty = true;
+        }
+    }
+
+    /**
+     * Redo the managed layout now if something made it stale. Does nothing for panels without a
+     * {@link #getLayout() layout}, or while a layout pass is already running.
+     */
+    public void validateLayout() {
+        if (!layoutDirty || inLayout) {
+            return;
+        }
+        layoutDirty = false;
+        applyManagedLayout();
+    }
+
+    private void applyManagedLayout() {
+        WidgetLayout layout = getLayout();
+        if (layout == null || inLayout) {
+            return;
+        }
+
+        inLayout = true;
+        try {
+            // Child panels whose content changed settle their own size first, so what is measured below is current
+            validateChildLayouts();
+
+            // Fitting a size and laying out can each change what the other needs, e.g. a child that is stretched to
+            // a new width may then want a different height. Repeat until the child panels stop changing size.
+            for (int pass = 0; pass < MAX_LAYOUT_PASSES; pass++) {
+                int availableWidth = fitWidth || width <= 0 ? Size.UNBOUNDED : width;
+                int availableHeight = fitHeight || height <= 0 ? Size.UNBOUNDED : height;
+
+                if (fitWidth || fitHeight) {
+                    fitToContent(layout, availableWidth, availableHeight);
+                }
+                // From here on, anything that marks this layout dirty is a widget that changed size while being laid
+                // out (a text field that rewraps to its new width, say), which the layout has to be redone for.
+                layoutDirty = false;
+                align(layout, availableWidth, availableHeight);
+
+                if (!validateChildLayouts() && !layoutDirty) {
+                    break;
+                }
+            }
+        } finally {
+            inLayout = false;
+            layoutDirty = false;
+        }
+    }
+
+    private void fitToContent(WidgetLayout layout, int availableWidth, int availableHeight) {
+        Size wanted = layout.measure(this, availableWidth, availableHeight);
+        if (wanted == null) {
+            return;
+        }
+
+        LayoutHints hints = getLayoutHints();
+        if (fitWidth) {
+            setWidth(Math.clamp(wanted.width(), hints.minWidth(), hints.maxWidth()));
+        }
+        if (fitHeight) {
+            setHeight(Math.clamp(wanted.height(), hints.minHeight(), hints.maxHeight()));
+        }
+    }
+
+    /**
+     * Let every child panel that needs it redo its layout.
+     *
+     * @return true if any of them changed size while doing so
+     */
+    private boolean validateChildLayouts() {
+        boolean changed = false;
+        for (Widget widget : widgets) {
+            if (widget instanceof Panel child) {
+                int w = child.width;
+                int h = child.height;
+                child.validateLayout();
+                changed |= child.width != w || child.height != h;
+            }
+        }
+        return changed;
+    }
+
+    @Override
+    public void setWidth(int v) {
+        int old = width;
+        super.setWidth(v);
+        if (width != old) {
+            layoutDirty = true;
+        }
+    }
+
+    @Override
+    public void setHeight(int v) {
+        int old = height;
+        super.setHeight(v);
+        if (height != old) {
+            layoutDirty = true;
+        }
+    }
 
     public void clearWidgets() {
         widgets.clear();
+        invalidateLayout();
     }
 
     public void refreshWidgets() {
@@ -91,6 +271,7 @@ public abstract class Panel extends Widget {
 
         widgets.add(widget);
         contentWidth = contentHeight = -1;
+        invalidateLayout();
     }
 
     public void addAll(Iterable<? extends Widget> list) {
@@ -108,6 +289,21 @@ public abstract class Panel extends Widget {
     public final int align(WidgetLayout layout) {
         contentWidth = contentHeight = -1;
         int res = layout.align(this);
+        contentHeightExtra = layout.getLayoutPadding().vertical();
+        contentWidthExtra = layout.getLayoutPadding().horizontal();
+        return res;
+    }
+
+    /**
+     * Like {@link #align(WidgetLayout)}, but lays the widgets out within the given room rather than this panel's own
+     * size; see {@link WidgetLayout#align(Panel, int, int)}.
+     *
+     * @param availableWidth  room available horizontally, or {@link dev.ftb.mods.ftblibrary.ui.layout.Size#UNBOUNDED}
+     * @param availableHeight room available vertically, or {@link dev.ftb.mods.ftblibrary.ui.layout.Size#UNBOUNDED}
+     */
+    public final int align(WidgetLayout layout, int availableWidth, int availableHeight) {
+        contentWidth = contentHeight = -1;
+        int res = layout.align(this, availableWidth, availableHeight);
         contentHeightExtra = layout.getLayoutPadding().vertical();
         contentWidthExtra = layout.getLayoutPadding().horizontal();
         return res;
@@ -196,6 +392,8 @@ public abstract class Panel extends Widget {
 
     @Override
     public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+        validateLayout();
+
         var renderInside = getOnlyRenderWidgetsInside();
 
         drawBackground(graphics, theme, x, y, w, h);

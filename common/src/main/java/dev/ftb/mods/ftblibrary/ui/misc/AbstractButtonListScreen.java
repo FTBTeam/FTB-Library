@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftblibrary.ui.misc;
 
+import dev.ftb.mods.ftblibrary.ui.layout.Insets;
 import com.mojang.datafixers.util.Pair;
 import dev.ftb.mods.ftblibrary.ui.*;
 import net.minecraft.client.resources.language.I18n;
@@ -132,12 +133,11 @@ public abstract class AbstractButtonListScreen extends AbstractThreePanelScreen<
 
         @Override
         public void alignWidgets() {
-            align(new WidgetLayout.Vertical(borderV, borderW, borderV));
-
-            widgets.forEach(w -> {
-                w.setX(borderH);
-                w.setWidth(width - borderH * 2);
-            });
+            align(WidgetLayout.vertical()
+                    .padding(new Insets(borderV, borderH, borderV, borderH))
+                    .spacing(borderW)
+                    .fillCross()
+                    .build());
         }
     }
 
