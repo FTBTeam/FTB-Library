@@ -3,6 +3,7 @@ package dev.ftb.mods.ftblibrary.ui;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftblibrary.math.Bits;
+import dev.ftb.mods.ftblibrary.ui.layout.LayoutHints;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -74,7 +75,7 @@ public class TextField extends Widget {
 
     /**
      * Let a layout decide how wide the text is: whenever the width is set from outside, for example by a layout that
-     * stretches the field ({@link dev.ftb.mods.ftblibrary.ui.layout.LayoutHints#resize()}), the text wraps again to
+     * stretches the field ({@link LayoutHints#resize()}), the text wraps again to
      * that width and the height follows, so a panel that fits its content gets taller or shorter with it. Text set
      * afterwards wraps to the current width too, once it has one. Without this the text wraps to
      * {@link #setMaxWidth(int)} and sizes the field itself, as before.

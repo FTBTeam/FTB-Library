@@ -1,7 +1,9 @@
 package dev.ftb.mods.ftblibrary.ui.layout;
 
+import dev.ftb.mods.ftblibrary.ui.WidgetLayout;
+
 /**
- * A width and a height in pixels, as reported by {@link dev.ftb.mods.ftblibrary.ui.WidgetLayout#measure}.
+ * A width and a height in pixels, as reported by {@link WidgetLayout#measure}.
  *
  * @param width  width in pixels
  * @param height height in pixels

@@ -1,7 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui.layout;
 
 /**
- * Pure integer helpers for layouts. No widget or Minecraft types are used here, so everything is unit-testable.
+ * Some integer-arithmetic helpers for layouts.
  */
 final class LayoutMath {
     private LayoutMath() {

@@ -4,6 +4,7 @@ import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.input.Key;
 import dev.ftb.mods.ftblibrary.ui.input.KeyModifiers;
 import dev.ftb.mods.ftblibrary.ui.input.MouseButton;
+import dev.ftb.mods.ftblibrary.ui.layout.Flex;
 import dev.ftb.mods.ftblibrary.ui.layout.LayoutHints;
 import dev.ftb.mods.ftblibrary.ui.layout.Size;
 import dev.ftb.mods.ftblibrary.util.TooltipList;
@@ -74,7 +75,7 @@ public abstract class Panel extends Widget {
     /**
      * Opt this panel in to managed layout by returning a layout here. The panel then lays its widgets out by itself:
      * when {@link #refreshWidgets()} runs, and again, before the panel is next drawn, after its width or height
-     * changes (so widgets with {@link dev.ftb.mods.ftblibrary.ui.layout.Flex#RESIZE} follow their parent). Child panels that are resized by the layout
+     * changes (so widgets with {@link Flex#RESIZE} follow their parent). Child panels that are resized by the layout
      * are re-laid out in turn, from the top down, and panels that {@link #setFitContent(boolean, boolean) fit their
      * content} are settled first, from the bottom up, so a parent always sees their current size.
      * <p>
@@ -91,13 +92,13 @@ public abstract class Panel extends Widget {
      * <p>
      * A fitting panel measures its {@link #getLayout() layout} and sets its width and/or height to what the content
      * wants (within its own {@link LayoutHints} min and max size), then lays the widgets out. Widgets marked
-     * {@link dev.ftb.mods.ftblibrary.ui.layout.Flex#RESIZE} on a fitted axis keep their current size instead of
+     * {@link Flex#RESIZE} on a fitted axis keep their current size instead of
      * stretching, since there is no fixed room to stretch into. On an axis that is not fitted, the panel's current size
      * is the room the content is laid out in, so for example a flow layout that fits only its height wraps to the
      * panel's width.
      * <p>
      * The panel refits when its content or the size of a widget in it changes, and its parent is told, so a parent
-     * layout always sees the up to date size. A parent layout will not stretch a fitting panel along a fitted axis.
+     * layout always sees the up-to-date size. A parent layout will not stretch a fitting panel along a fitted axis.
      * <p>
      * Fitting needs a layout that can {@link WidgetLayout#measure(Panel, int, int) measure}; for any other layout,
      * and for panels without a layout, the flags have no effect.
@@ -298,8 +299,8 @@ public abstract class Panel extends Widget {
      * Like {@link #align(WidgetLayout)}, but lays the widgets out within the given room rather than this panel's own
      * size; see {@link WidgetLayout#align(Panel, int, int)}.
      *
-     * @param availableWidth  room available horizontally, or {@link dev.ftb.mods.ftblibrary.ui.layout.Size#UNBOUNDED}
-     * @param availableHeight room available vertically, or {@link dev.ftb.mods.ftblibrary.ui.layout.Size#UNBOUNDED}
+     * @param availableWidth  room available horizontally, or {@link Size#UNBOUNDED}
+     * @param availableHeight room available vertically, or {@link Size#UNBOUNDED}
      */
     public final int align(WidgetLayout layout, int availableWidth, int availableHeight) {
         contentWidth = contentHeight = -1;

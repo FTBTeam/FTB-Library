@@ -11,7 +11,7 @@ import java.util.Objects;
 
 /**
  * Lays a panel's widgets out in a single row or column. Unlike {@link WidgetLayout.Vertical} and
- * {@link WidgetLayout.Horizontal}, it can also place widgets on the cross axis (the x axis for a column, the y axis
+ * {@link WidgetLayout.Horizontal}, it can also place widgets on the cross axis (the X axis for a column, the Y axis
  * for a row) and optionally stretch them to fill it.
  * <p>
  * Instances are immutable and hold no per-layout state, so they are safe to share. Create them with

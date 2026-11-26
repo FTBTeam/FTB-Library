@@ -1,8 +1,7 @@
 package dev.ftb.mods.ftblibrary.ui.layout;
 
 /**
- * Space reserved around the content of a panel, in pixels. Unlike {@link dev.ftb.mods.ftblibrary.ui.WidgetLayout.Padding}, which only carries
- * the combined vertical and horizontal totals, this keeps each side separate.
+ * Space reserved around the content of a panel, in pixels.
  */
 public record Insets(int top, int right, int bottom, int left) {
     public static final Insets ZERO = new Insets(0, 0, 0, 0);

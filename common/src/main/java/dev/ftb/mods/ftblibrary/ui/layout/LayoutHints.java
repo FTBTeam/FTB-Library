@@ -5,14 +5,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * Per-widget instructions for layouts that understand them (currently {@link LinearLayout} and {@link GridLayout}).
- * Layouts that do not know about hints ignore them, and a widget without hints behaves exactly as it always did.
+ * Per-widget instructions for layouts that understand them; different layouts pay attention to different subsets
+ * of these hints.
  * <p>
- * This is an immutable value; use the {@code with} methods to derive a changed copy from {@link #DEFAULT}:
+ * This is an immutable value, so is safe to store and share between widgets; use the {@code with} methods to derive
+ * a changed copy from {@link #DEFAULT}:
  * <pre>{@code
  * widget.setLayoutHints(LayoutHints.DEFAULT.withVFlex(Flex.RESIZE).withWeight(2));
  * }</pre>
- * Hints must be set before the layout runs; changing them afterwards has no effect until the next layout.
+ * Hints must be set before the layout runs; changing them afterward has no effect until the next layout.
  *
  * @param hFlex     how the width is decided (never null)
  * @param vFlex     how the height is decided (never null)

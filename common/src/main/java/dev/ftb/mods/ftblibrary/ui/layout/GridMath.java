@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Pure placement and track-sizing helpers for {@link GridLayout}.
+ * Placement and track-sizing helpers for {@link GridLayout}.
  */
 final class GridMath {
     private GridMath() {

@@ -23,7 +23,7 @@ public interface WidgetLayout {
      * Align the panel's widget according to this layout's policy.
      *
      * @param panel the panel to lay out
-     * @return the new height or width of the panel, depending on alignment direction
+     * @return the overall extents of the layout operation in the direction of the layout's axis
      * @apiNote the return value is intended for use when manually laying out widgets, and is ignored for
      * fully-managed layouts (i.e. when {@link Panel#getLayout()} returns a non-null result)
      */
@@ -103,7 +103,7 @@ public interface WidgetLayout {
      * <p>
      * The answer is what the content <em>wants</em>, so widgets that would stretch to fill spare room are counted at
      * their current size. The available width and height only matter to layouts whose answer depends on them (a
-     * wrapping flow needs a width to know how many lines it has); most ignore them.
+     * wrapping flow needs a width to know how many lines it has); layouts are free to ignore them.
      * <p>
      * Layouts that cannot say return {@code null}, which is the default, so existing implementations are unaffected.
      *
